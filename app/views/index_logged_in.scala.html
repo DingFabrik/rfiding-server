@@ -1,0 +1,36 @@
+@import utils.navigation.NavigationComponent
+@import controllers.security.LoginState.User
+
+@(
+    user: User,
+    personLength: Int,
+    tokenLength: Int,
+    activeToken: Int
+)(
+    implicit navigation: NavigationComponent,
+    request: RequestHeader,
+    flash: Flash
+)
+
+@main(userOpt = Some(user), title = "Welcome to RfiDing") {
+<div class="mb-3">
+    <div class="col-md-12 order-md-1">
+        <div class="row justify-content-md-center">
+            <div class="col-md-10 mb-3">
+                <p>
+                    This is the DingFabrik's RfiDing. RfiDing is used to control access to machines and doors at
+                    our hackerspace.
+                </p>
+            </div>
+        </div>
+        <div class="row justify-content-md-center">
+            <div class="col-md-10 mb-3">
+                <ul>
+                    <li>@personLength Persons</li>
+                    <li>@tokenLength Tokens from which are @activeToken active.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+}

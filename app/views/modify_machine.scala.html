@@ -1,0 +1,66 @@
+@import MachineController.ModifyMachineData
+@import MachineController.FormID
+@import utils.navigation.NavigationComponent
+@import security.LoginState.User
+@import helper.CSRF
+@import forms.inputText
+@import forms.inputNumber
+@import forms.inputTime
+@import forms.checkBox
+
+@(
+    modifyMachineForm: Form[ModifyMachineData]
+)(
+    implicit navigation: NavigationComponent,
+    user: User,
+    request: RequestHeader,
+    messagesProvider: MessagesProvider,
+    flash: Flash
+)
+
+@main(userOpt = Some(user), title = "Modify machine") {
+
+<div>
+    @helper.form(action = controllers.routes.MachineController.modifyMachinePost) {
+
+    @if(flash.get("error").isDefined) {
+    <div class="alert alert-danger" role="alert">@flash.get("error")</div>
+    }
+
+    @CSRF.formField
+    <div class="col-md-12 order-md-1">
+        <div class="form-row">
+            <div class="col-md-8 mb-3">
+                @inputText(modifyMachineForm(FormID.name), "Machine name", required = true)
+            </div>
+            <div class="col-md-4 mb-3">
+                @inputNumber(modifyMachineForm(FormID.id), "Database ID",
+                              onEmptyValue = "Automatically assigned",
+                              prependSymbol = Some("#"),
+                              readonly = true)
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="col-md-12 mb-3">
+                @inputText(modifyMachineForm(FormID.macAddress), "MAC-Address", required = true)
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="col-md-12 mb-3">
+                @inputText(modifyMachineForm(FormID.comment), "Comment")
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="col-md-12 mb-3">
+                @checkBox(modifyMachineForm(FormID.isActive), "Active")
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="col-md-12 mb-3">
+                <button class="btn btn-primary btn-lg btn-block" type="submit">Modify Machine</button>
+            </div>
+        </div>
+    </div>
+    }
+</div>
+}

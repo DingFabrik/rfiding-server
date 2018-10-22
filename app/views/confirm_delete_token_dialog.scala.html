@@ -1,0 +1,21 @@
+@*
+ * Modal dialog to confirm deletion of token.
+ *
+ * Call dialog via:
+ *
+ *     <button type="button" class="btn btn-danger btn-lg btn-block"
+               data-toggle="modal" data-target="#confirmDeleteToken@token.id">
+ *         <span data-feather="trash-2"></span>
+ *     </button>
+ *
+ * Note that every dialog needs to be identified by a unique id. (unique per html page).
+ *@
+
+@(token: Token, returnTo: String)
+@confirm_delete_dialog(
+    id    = "Token" + token.id.get,
+    title = "Confirm deletion of token #" + token.id.get,
+    body  = "Really delete token #" + token.id.get + "?",
+    link  = controllers.routes.TokenController.deleteToken(token.id.get, returnTo).toString
+)
+

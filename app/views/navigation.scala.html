@@ -1,0 +1,30 @@
+@import utils.navigation.NavigationComponent
+@import utils.navigation.NavigationItem
+@import utils.navigation.NavigationEntry
+@import utils.navigation.NavigationTitle
+
+@(navigationComponent: NavigationComponent)(implicit request: RequestHeader)
+
+@for((item, index) <- navigationComponent.navigationItems.zipWithIndex) {
+    @item match {
+        case item: NavigationTitle => {
+            <li class="nav-item dropdown @if(item.active) {active}">
+                <a class="nav-link dropdown-toggle" href="@item.target" id="dropdown@index" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">@item.title</a>
+                <div class="dropdown-menu" aria-labelledby="dropdown@index">
+                    @for(subItem <- item.subItems) {
+                        <a class="dropdown-item" href="@subItem.target">
+                            @subItem.title @if(item.active) {<span class="sr-only">(current)</span>}
+                        </a>
+                    }
+                </div>
+            </li>
+        }
+        case item: NavigationEntry => {
+            <li class="nav-item @if(item.active) {active}">
+                <a class="nav-link" href="@item.target">
+                    @item.title @if(item.active) {<span class="sr-only">(current)</span>}
+                </a>
+            </li>
+        }
+    }
+}

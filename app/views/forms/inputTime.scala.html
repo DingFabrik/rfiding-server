@@ -1,0 +1,21 @@
+@(
+    field: play.api.data.Field,
+    description: String,
+    onEmptyValue: String = "",
+    prependSymbol: Option[String] = None,
+    required: Boolean = false,
+    readonly: Boolean = false,
+    hideLabel: Boolean = false
+)(
+    implicit messagesProvider: MessagesProvider
+)
+@inputBase(
+    field         = field,
+    description   = description,
+    inputType     = "time",
+    onEmptyValue  = onEmptyValue,
+    prependSymbol = prependSymbol,
+    required      = required,
+    readonly      = readonly,
+    hideLabel     = hideLabel
+)

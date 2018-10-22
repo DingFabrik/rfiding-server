@@ -1,0 +1,21 @@
+@import utils.navigation.NavigationComponent
+
+@(
+    output: String
+)(
+    implicit navigation: NavigationComponent,
+    request: RequestHeader
+)
+
+@scripts = {
+    <script type="text/javascript" src="@routes.Assets.versioned("lib/highlightjs/highlight.min.js")"></script>
+    <script type="text/javascript" src="/assets/javascripts/highlight.js"></script>
+}
+
+@main(title = "Show content of String", scripts = scripts) {
+    <dev class="row">
+        <dev class="col-md-12 mb-3">
+            <pre><code class="sql">@output</code></pre>
+        </dev>
+    </dev>
+}

@@ -1,0 +1,62 @@
+@import utils.navigation.NavigationComponent
+@import security.LoginState.User
+@import controllers.routes.PersonController
+@import controllers.routes.TokenController
+@import utils.ByteOps.RichByte
+@import controllers.FlashKey.UpdatedToken
+@import controllers.FlashKey.DeletedToken
+@import helper.CSRF
+
+@(
+    tokensAndOwner: Seq[(Token, Person)]
+)(
+    implicit navigation: NavigationComponent,
+    user: User,
+    request: RequestHeader,
+    flash: Flash
+)
+
+@scripts = {
+    <script type="text/javascript" src="/assets/javascripts/checkbox.js"></script>
+}
+
+@main(userOpt = Some(user), title = "List Persons and their Tokens", scripts = scripts) {
+@for(tid <- flash.get(UpdatedToken)) {
+<div class="alert alert-success" role="alert">Updated Token ID #@tid</div>
+}
+@for(tid <- flash.get(DeletedToken)) {
+<div class="alert alert-success" role="alert">Token ID #@tid deleted.</div>
+}
+
+<div class="table-responsive">
+    <table class="table table-striped table-sm">
+        <thead>
+        <tr>
+            <th>Database ID</th>
+            <th>Serial</th>
+            <th>Purpose</th>
+            <th>Token Active</th>
+            <th>Owner</th>
+            <th>Modify</th>
+        </tr>
+        </thead>
+        <tbody>
+        @for((token, owner) <- tokensAndOwner) {
+        <tr>
+            <td>@token.id</td>
+            <td><tt>@token.serial.stringForUI()</tt></td>
+            <td>@token.purpose</td>
+            <td class="click-handler">
+                @CSRF.formField
+                <input type="checkbox" @if(token.isActive) {checked="checked"} value="@token.id" />
+                <span id="nok" class="gone text-danger" data-feather="alert-triangle"></span>
+                <span id="ok" class="gone text-success" data-feather="check-circle"></span>
+            </td>
+            <td><a href="@PersonController.modifyPerson(owner.id.get)">@owner.name (#@owner.id)</a></td>
+            <td><a href="@TokenController.modifyToken(token.id.get)"><span data-feather="edit"></span></a></td>
+        </tr>
+        }
+        </tbody>
+    </table>
+</div>
+}

@@ -1,0 +1,101 @@
+@import MachineController.ConfigureMachineData
+@import MachineController.FormID
+@import utils.navigation.NavigationComponent
+@import security.LoginState.User
+@import helper.CSRF
+@import utils.time.Weekday.week
+@import forms.inputText
+@import forms.inputNumber
+@import forms.inputTime
+@import forms.checkBox
+
+@(
+    machine: Machine,
+    form: Form[ConfigureMachineData]
+)(
+    implicit navigation: NavigationComponent,
+    user: User,
+    request: RequestHeader,
+    messagesProvider: MessagesProvider,
+    flash: Flash
+)
+
+@scripts = {
+    <script type="text/javascript" src="@routes.MachineController.addButtonsJs()"></script>
+}
+
+@main(
+    userOpt = Some(user),
+    title   = "Configure machine #" + machine.id.get + " (" + machine.name + ")",
+    scripts = scripts
+) {
+
+<div>
+
+    <div class="col-md-12 order-md-1">
+        @helper.form(action = controllers.routes.MachineController.configureMachinePost) {
+        @CSRF.formField
+        <input type="hidden" name="machineID" id="machineID" value="@machine.id" />
+        <div class="form-row">
+            <div class="col-md-12 mb-3">
+                @inputNumber(form("runtimer"), "Runtimer")
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="col">
+                <label for="weekdays[0]">Weekdays</label>
+            </div>
+            <div class="col">
+                <label for="start[0]">Start time</label>
+            </div>
+            <div class="col">
+                <label for="end[0]">End time</label>
+            </div>
+        </div>
+        @for(index <- 0 until 7) {
+        <div class="form-row">
+            <div class="col mb-3">
+                <input type="hidden" name="weekdays[@index].idx" value="@index" />
+                <div class="btn-block btn-group btn-group-toggle" data-toggle="buttons">
+                    @for(day <- week) {
+                    <label class="btn btn-secondary @form("weekdays["+index+"]."+day).value.map(_=>"active")">
+                        <input type="checkbox"
+                               name="weekdays[@index].@day"
+                               id="@day"
+                               value="@day"
+                               @form("weekdays["+index+"]."+day).value.map(_=>"checked")
+                               autocomplete="off"
+                        />@day
+                    </label>
+                    }
+                </div>
+            </div>
+            <div class="col mb-3">
+                <input type="time"
+                       class="form-control"
+                       id="start[@index]"
+                       name="start[@index]"
+                       value="@form("start["+index+"]").value"
+                       placeholder="Start time"
+                />
+            </div>
+            <div class="col mb-3">
+                <input type="time"
+                       class="form-control"
+                       id="end[@index]"
+                       name="end[@index]"
+                       value="@form("end["+index+"]").value"
+                       placeholder="End time"
+                />
+            </div>
+        </div>
+        }
+        <div class="form-row">
+            <div class="col-md-12 mb-3">
+                <button class="btn btn-primary btn-lg btn-block" type="submit">Configure Machine</button>
+            </div>
+        </div>
+        }
+    </div>
+</div>
+}

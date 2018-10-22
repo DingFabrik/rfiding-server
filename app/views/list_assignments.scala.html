@@ -1,0 +1,45 @@
+@import utils.navigation.NavigationComponent
+@import security.LoginState.User
+@import utils.ByteOps.RichByte
+
+@(
+    result: Map[Person, Seq[Token]]
+)(
+    implicit navigation: NavigationComponent,
+    user: User,
+    request: RequestHeader
+)
+
+@main(userOpt = Some(user), title = "List Persons and their Tokens") {
+<div class="table-responsive">
+    <table class="table table-striped table-sm">
+        <thead>
+        <tr>
+            <th>Database ID</th>
+            <th>Member ID</th>
+            <th>Name</th>
+            <th>Active</th>
+            <th>E-Mail</th>
+            <th>Assigned Tokens</th>
+        </tr>
+        </thead>
+        <tbody>
+        @for((person, tokens) <- result) {
+        <tr>
+            <td>@person.id</td>
+            <td>@person.memberId</td>
+            <td>@person.name</td>
+            <td><input type="checkbox" disabled @if(person.isActive) {checked="checked"} /></td>
+            <td>@person.email</td>
+            <td><ul>@for(token <- tokens) {
+                <li>
+                    @token.id: @token.purpose (@token.serial.stringForUI())
+                    <input type="checkbox" disabled @if(token.isActive) {checked="checked"} />
+                </li>
+            }</ul></td>
+        </tr>
+        }
+        </tbody>
+    </table>
+</div>
+}

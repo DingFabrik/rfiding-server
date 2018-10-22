@@ -1,0 +1,58 @@
+@import MachineController.AddMachineData
+@import MachineController.FormID
+@import utils.navigation.NavigationComponent
+@import security.LoginState.User
+@import helper.CSRF
+@import forms.inputText
+@import forms.checkBox
+
+@(
+    addMachineForm: Form[AddMachineData]
+)(
+    implicit navigation: NavigationComponent,
+    user: User,
+    request: RequestHeader,
+    messagesProvider: MessagesProvider,
+    flash: Flash
+)
+
+@main(userOpt = Some(user), title = "Add new machine") {
+
+<div>
+    @if(flash.get("error").isDefined) {
+    <div class="alert alert-danger" role="alert">@flash.get("error")</div>
+    }
+
+    @helper.form(action = controllers.routes.MachineController.addMachinePost()) {
+
+    @CSRF.formField
+    <div class="col-md-12 order-md-1">
+        <div class="form-row">
+            <div class="col-md-12 mb-3">
+                @inputText(addMachineForm(FormID.name), "Machine name", required = true)
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="col-md-12 mb-3">
+                @inputText(addMachineForm(FormID.macAddress), "MAC-Address", required = true)
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="col-md-12 mb-3">
+                @inputText(addMachineForm(FormID.comment), "Comment")
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="col-md-6 mb-3">
+                @checkBox(addMachineForm(FormID.isActive), "Active")
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="col-md-12 mb-3">
+                <button class="btn btn-primary btn-lg btn-block" type="submit">Add Machine</button>
+            </div>
+        </div>
+    </div>
+    }
+</div>
+}

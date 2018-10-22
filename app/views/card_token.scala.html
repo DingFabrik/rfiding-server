@@ -1,0 +1,28 @@
+@import utils.ByteOps.RichByte
+
+@(token: Token)
+<div class="card">
+    <div class="card-header">
+        <span class="@if(token.isActive) {text-success} else {text-danger}" data-feather="radio"></span>
+        Token #@token.id &bull; [@token.serial.stringForUI()]
+    </div>
+    <div class="card-body">
+        <p class="card-text">
+            @token.purpose
+        </p>
+        <hr />
+        <p class="card-text">
+            Active: <input type="checkbox" class="" @if(token.isActive) {checked="checked"} readonly disabled />
+        </p>
+    </div>
+    <div class="card-footer text-right">
+        @*
+        <a href="@controllers.routes.TokenController.deleteToken(token.id.get)" class="btn btn-danger btn-sm">
+            <span data-feather="trash-2"></span>
+        </a>
+        *@
+        <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#confirmDeleteToken@token.id">
+            <span data-feather="trash-2"></span>
+        </button>
+    </div>
+</div>

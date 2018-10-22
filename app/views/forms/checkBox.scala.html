@@ -1,0 +1,17 @@
+@(
+    field: play.api.data.Field,
+    description: String
+)(
+    implicit messagesProvider: MessagesProvider
+)
+<div class="form-check">
+    <input type="checkbox"
+           class="form-check-input @field.error.map(e => "is-invalid")"
+           id="@field.id"
+           name="@field.id"
+           value="true"
+           @if(field.value.contains("true")) {checked="checked"}
+    />
+    <label class="form-check-label" for="@field.id">@description</label>
+</div>
+@field.error.map { error => <div class="invalid-feedback">@error.format</div> }

@@ -1,0 +1,82 @@
+@import utils.navigation.NavigationComponent
+@import security.LoginState.User
+@import TokenController.TokenData
+@import TokenController.FormKey.findPersonId
+@import TokenController.FormKey.tokenId
+@import TokenController.FormKey.tokenSerial
+@import TokenController.FormKey.tokenPurpose
+@import TokenController.FormKey.tokenIsActive
+@import TokenController.FormKey.tokenOwnerName
+@import TokenController.FormKey.tokenOwnerId
+@import utils.ByteOps.RichByte
+@import helper._
+
+@(
+    token: Token,
+    owner: Person,
+    modifyTokenForm: Form[TokenData]
+)(
+    implicit navigation: NavigationComponent,
+    user: User,
+    request: RequestHeader,
+    flash: Flash
+)
+
+@main(userOpt = Some(user), title = "Modify Token #" + token.id.get) {
+<div class="mb-3">
+    @helper.form(action = controllers.routes.TokenController.modifyTokenPost(token.id.get)) {
+
+    @CSRF.formField
+    <div class="col-md-12 order-md-1">
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="@tokenId">DB-ID</label>
+                <input type="text" class="form-control" id="@tokenId" name="@tokenId" value="@token.id" readonly />
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="@tokenSerial">Serial</label>
+                <input type="text" class="form-control" id="@tokenSerial" name="@tokenSerial" value="@token.serial.stringForUI()" readonly />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 mb-3">
+                <label for="@tokenPurpose">Purpose</label>
+                <input type="text" class="form-control" id="@tokenPurpose" name="@tokenPurpose" value="@modifyTokenForm(tokenPurpose).value" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <label for="@tokenOwnerId">Owner ID</label>
+                <input type="text" class="form-control" id="@tokenOwnerId" name="@tokenOwnerId" value="@owner.id" readonly />
+            </div>
+            <div class="col-md-8 mb-3">
+                <label for="@tokenOwnerName">Owner Name</label>
+                <input type="text" class="form-control" id="@tokenOwnerName" name="@tokenOwnerName" value="@owner.name" readonly />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 mb-3">
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="@tokenIsActive" name="@tokenIsActive" value="true" @if(modifyTokenForm(tokenIsActive).value.contains("true")) {checked="checked"} />
+                    <label class="form-check-label" for="@tokenIsActive">Token Active?</label>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-11">
+                <button class="btn btn-primary btn-lg btn-block" type="submit">Modify Token</button>
+            </div>
+            <div class="col-md-1">
+                <button type="button" class="btn btn-danger btn-lg btn-block" data-toggle="modal" data-target="#confirmDeleteToken@token.id">
+                    <span data-feather="trash-2"></span>
+                </button>
+            </div>
+        </div>
+
+    </div>
+    }
+</div>
+
+@confirm_delete_token_dialog(token, "token")
+
+}

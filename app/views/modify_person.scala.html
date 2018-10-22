@@ -1,0 +1,86 @@
+@import PersonController.PersonFormData
+@import PersonController.FormID
+@import utils.navigation.NavigationComponent
+@import security.LoginState.User
+@import utils.ByteOps.RichByte
+@import helper.CSRF
+@import forms.inputText
+@import forms.inputNumber
+@import forms.inputEmail
+@import forms.checkBox
+
+
+@(
+    modifyPersonForm: Form[PersonFormData],
+    tokens: Seq[Token]
+)(
+    implicit navigation: NavigationComponent,
+    user: User,
+    request: RequestHeader,
+    messagesProvider: MessagesProvider,
+    flash: Flash
+)
+
+@main(userOpt = Some(user), title = "Modify Person Details") {
+    <div class="mb-3">
+        @helper.form(action = controllers.routes.PersonController.modifyPersonPost()) {
+        @for(tid <- flash.get(FlashKey.TokenAdded)) {
+        <div class="alert alert-success" role="alert">New Token with ID #@tid added.</div>
+        }
+        @if(flash.get("error").isDefined) {
+        <div class="alert alert-danger" role="alert">@flash.get("error")</div>
+        }
+
+        @CSRF.formField
+        <div class="col-md-12 order-md-1">
+            <div class="form-row">
+                <div class="col-md-8 mb-3">
+                    @inputNumber(modifyPersonForm(FormID.memberId), "Member ID (optional)")
+                </div>
+                <div class="col-md-4 mb-3">
+                    @inputText(modifyPersonForm(FormID.id), "Database ID", onEmptyValue = "Automatically assigned", prependSymbol = Some("#"), readonly = true)
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col-md-12 mb-3">
+                    @inputText(modifyPersonForm(FormID.fullName), "Full name", required = true)
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col-md-12 mb-3">
+                    @inputEmail(modifyPersonForm(FormID.email), "E-Mail address", required = true)
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col-md-6 mb-3">
+                    @checkBox(modifyPersonForm(FormID.isActive), "Active")
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col-md-11 mb-3">
+                    <button class="btn btn-primary btn-lg btn-block" type="submit">Modify Person Details</button>
+                </div>
+                <div class="col-md-1 mb-3">
+                    <button type="button" class="btn btn-danger btn-lg btn-block" data-toggle="modal" data-target="#confirmDeletePerson@modifyPersonForm(FormID.id).value.get.toInt">
+                        <span data-feather="trash-2"></span>
+                    </button>
+                </div>
+        </div>
+        @confirm_delete_person_dialog(modifyPersonForm(FormID.id).value.get.toInt, modifyPersonForm(FormID.fullName).value)
+        }
+    </div>
+
+    <div class="col-md-12">
+        @for(tokensGrouped <- tokens.grouped(4)) {
+            <div class="row">
+            @for(token <- tokensGrouped) {
+                <div class="col-sm-3">@card_token(token)</div>
+            }
+            </div>
+        }
+    </div>
+
+    @for(token <- tokens) {
+        @confirm_delete_token_dialog(token, "persons")
+    }
+}

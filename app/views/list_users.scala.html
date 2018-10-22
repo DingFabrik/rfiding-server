@@ -1,0 +1,33 @@
+@import utils.navigation.NavigationComponent
+@import security.LoginState.User
+
+@(
+    user: User,
+    person: Person,
+    token: Option[Token]
+)(
+    implicit navigation: NavigationComponent,
+    request: RequestHeader
+)
+
+@main(userOpt = Some(user), title = "List assignments") {
+  <p>This table lists assigments of Persons to Tokens.</p>
+  <div class="table-responsive">
+    <table class="table table-striped table-sm">
+      <thead>
+      <tr>
+            <th>@person</th>
+      </tr>
+      </thead>
+      <tbody>
+  @* for(user <- users) {
+      <tr>
+          <td>@user.id</td>
+          <td>@user.name</td>
+          <td>@user.age</td>
+      </tr>
+  } *@
+      </tbody>
+    </table>
+  </div>
+}

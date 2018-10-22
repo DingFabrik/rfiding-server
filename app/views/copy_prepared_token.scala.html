@@ -1,0 +1,80 @@
+@import utils.navigation.NavigationComponent
+@import security.LoginState.User
+@import TokenController.FindPersonData
+@import TokenController.FormKey
+@import utils.ByteOps.RichByte
+@import helper._
+
+@(
+    token: PreparedToken,
+    findPersonForm: Form[FindPersonData]
+)(
+    implicit navigation: NavigationComponent,
+    user: User,
+    request: RequestHeader,
+    flash: Flash
+)
+
+@scripts = {
+    <script type="text/javascript" src="@routes.HomeController.autocompleteJs()"></script>
+}
+
+@main(userOpt = Some(user), title = "Assign Prepared Token #" + token.id.get, scripts = scripts) {
+<div class="mb-3">
+    <div class="col-md-12 order-md-1">
+        <div class="row justify-content-md-center">
+            <div class="col-md-3 mb-3">
+                <div class="card">
+                    <div class="card-header bg-success text-white">
+                        <span data-feather="radio"></span>
+                        Token #@token.id &bull; [@token.serial.stringForUI()]
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">
+                            @token.purpose
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row justify-content-md-center">
+            <div class="col-md-3">
+                <p class="text-center">
+                    <b data-feather="arrow-down-circle"></b>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="mb-3">
+    @helper.form(action = controllers.routes.TokenController.copyPreparedTokenPost(token.id.get)) {
+
+    @CSRF.formField
+    <div class="col-md-12 order-md-1">
+        <div class="row">
+            <div class="col-md-8 mb-3">
+                <label for="find-person">Person</label>
+                <input type="text" class="form-control autocomplete-person" id="find-person" name="find-person" placeholder="Select person" />
+                <div class="invalid-feedback">You need to select a valid person</div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <label for="@FormKey.findPersonId">Person's DB-ID</label>
+                <input type="text" class="form-control" id="@FormKey.findPersonId" name="@FormKey.findPersonId" required readonly />
+                <div class="invalid-feedback">You need to select a valid person</div>
+            </div>
+        </div>
+        @if(flash.get(FlashKey.CannotCopyToken).isDefined) {
+        <div class="row">
+            <div class="col-md-12">
+                    <div class="alert alert-danger" role="alert">
+                        Couldn't copy token.
+                    </div>
+            </div>
+        </div>
+        }
+        <button class="btn btn-primary btn-lg btn-block" type="submit">Assign Token</button>
+    </div>
+    }
+</div>
+}

@@ -1,0 +1,68 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# https://www.playframework.com/documentation/latest/ScalaRouting
+# ~~~~
+
+GET     /                        controllers.HomeController.index
+GET     /showstring              controllers.HomeController.showString
+
+# Javascript Routes
+GET     /js/autocomplete         controllers.HomeController.autocompleteJs
+GET     /js/addbuttons           controllers.MachineController.addButtonsJs
+
+GET     /machines                controllers.MachineController.listMachines
+GET     /machine/modify          controllers.MachineController.modifyMachine(id: Int)
+POST    /machine/modify          controllers.MachineController.modifyMachinePost
+GET     /machine/add             controllers.MachineController.addMachine
+POST    /machine/add             controllers.MachineController.addMachinePost
+GET     /machine/configure       controllers.MachineController.configureMachine(id: Int)
+POST    /machine/configure       controllers.MachineController.configureMachinePost
+
+
+GET     /persons                 controllers.PersonController.listPersons
+GET     /person/add              controllers.PersonController.addPerson
+POST    /person/add              controllers.PersonController.addPersonPost
+GET     /person/modify/:id       controllers.PersonController.modifyPerson(id: Int)
+POST    /person/modify           controllers.PersonController.modifyPersonPost
+GET     /person/find             controllers.PersonController.findPerson(term: Option[String])
+GET     /person/delete           controllers.PersonController.deletePerson(id: Int, returnTo: String)
+
+GET     /tokens/list             controllers.TokenController.listTokens
+GET     /tokens/assigned         controllers.TokenController.listAssignments
+GET     /tokens/prepared         controllers.TokenController.showPreparedToken
+GET     /tokens/copy/:id         controllers.TokenController.copyPreparedToken(id: Int)
+POST    /tokens/copy/:id         controllers.TokenController.copyPreparedTokenPost(id: Int)
+POST    /tokens/check            controllers.TokenController.checkTokenPost
+GET     /tokens/modify           controllers.TokenController.modifyToken(id: Int)
+POST    /tokens/modify           controllers.TokenController.modifyTokenPost(id: Int)
+GET     /tokens/delete           controllers.TokenController.deleteToken(id: Int, returnTo: String)
+
+GET     /login                   controllers.LoginController.login
+POST    /login                   controllers.LoginController.loginPost
+GET     /logout                  controllers.LoginController.logout
+
+GET     /examples/index          controllers.ExampleController.index
+POST    /examples/index          controllers.ExampleController.indexPost
+
+GET     /dev/schemas             controllers.Development.schemas
+GET     /dev/setup               controllers.Development.setup
+GET     /dev/evo                 controllers.Development.createSourceCode
+GET     /dev/dummy               controllers.Development.createDummyData
+GET     /dev/iterations          controllers.Development.calculateIteration(memory: Int, parallelism: Int)
+GET     /dev/apistuff            controllers.Development.apiStuff
+GET     /dev/log                 controllers.Development.showLog
+
+
+GET     /api/machine/config      controllers.ApiController.getMachineConfig(machine: String)
+GET     /api/machine/check       controllers.ApiController.checkMachineAccess(machine: String, tokenUid: String)
+GET     /api/status              controllers.ApiController.machineStatus(machine: String)
+
+# Swagger
+# (see https://github.com/swagger-api/swagger-play/tree/master/play-2.6/swagger-play2)
+GET     /swagger.json            controllers.ApiHelpController.getResources
+GET     /docs/                   controllers.SwaggerController.docs
+GET     /js/swagger_inline.js    controllers.SwaggerController.swaggerInlineJs
+
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
+->      /webjars                    webjars.Routes

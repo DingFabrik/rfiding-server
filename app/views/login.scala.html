@@ -1,0 +1,73 @@
+@import utils.navigation.NavigationComponent
+@import security.LoginState
+@import security.LoginState._
+@import security.SessionKeys.Email
+@import security.SessionKeys.Password
+@import controllers.LoginController.UserLoginData
+@import controllers.FlashKey.LoginError
+@import controllers.FlashKey.LoggedOut
+@import helper._
+
+@(
+    userLoginForm: Form[UserLoginData]
+)(
+    implicit navigation: NavigationComponent,
+    request: MessagesRequestHeader,
+    flash: Flash
+)
+
+@main(title = "Sign in") {
+
+<div class="col-md-8 order-md-1">
+  @helper.form(action = controllers.routes.LoginController.loginPost()) {
+
+    @CSRF.formField
+
+    @for(reason <- flash.get(LoginError)) {
+        <div class="row">
+            <div class="col-md-12">
+                <div class="alert alert-danger" role="alert">@reason</div>
+            </div>
+        </div>
+    }
+    @if(flash.get(LoggedOut).isDefined) {
+        <div class="row">
+            <div class="col-md-12">
+                <div class="alert alert-success" role="alert">Successfully logged out.</div>
+            </div>
+        </div>
+    }
+
+    <div class="row">
+        <div class="col-md-12 mb-3">
+            <label for="@userLoginForm(Email).id">E-Mail address</label>
+            <input type="text" id="@userLoginForm(Email).id" name="@userLoginForm(Email).id" class="form-control" placeholder="E-Mail address" required autofocus />
+        </div>
+    </div>
+    @if(userLoginForm(Email).hasErrors) {
+    <div class="row">
+        <div class="col-md-12">
+            <div class="alert alert-warning" role="alert">Error while entering E-Mail address.</div>
+        </div>
+    </div>
+    }
+
+    <div class="row">
+        <div class="col-md-12 mb-3">
+            <label for="@userLoginForm(Password).id">Password</label>
+            <input type="password" id="@userLoginForm(Password).id" name="@userLoginForm(Password).id" class="form-control" placeholder="Password" required value="@userLoginForm(Password).value" />
+        </div>
+
+        @if(userLoginForm(Password).hasErrors) {
+        <div class="row">
+            <div class="col-md-12">
+                <div class="alert alert-warning" role="alert">Error while entering password.</div>
+            </div>
+        </div>
+        }
+    </div>
+
+    <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+  }
+</div>
+}

@@ -1,0 +1,49 @@
+@import utils.navigation.NavigationComponent
+@import security.LoginState.User
+@import controllers.routes.MachineController
+@import helper.CSRF
+
+@(
+    machines: Seq[Machine],
+)(
+    implicit navigation: NavigationComponent,
+    user: User,
+    request: RequestHeader,
+    flash: Flash
+)
+
+@main(userOpt = Some(user), title = "List Machines") {
+<div class="table-responsive">
+    <table class="table table-striped table-sm">
+        <thead>
+        <tr>
+            <th>Database ID</th>
+            <th>Name</th>
+            <th>MAC-Address</th>
+            <th>Machine Active</th>
+            <th>Comment</th>
+            <th>Modify</th>
+            <th>Configure</th>
+        </tr>
+        </thead>
+        <tbody>
+        @for(machine <- machines) {
+        <tr>
+            <td>@machine.id</td>
+            <td>@machine.name</td>
+            <td><tt>@machine.macAddress</tt></td>
+            <td class="click-handler">
+                @CSRF.formField
+                <input type="checkbox" @if(machine.isActive) {checked="checked"} readonly disabled value="@machine.id" />
+                <span id="nok" class="gone text-danger" data-feather="alert-triangle"></span>
+                <span id="ok" class="gone text-success" data-feather="check-circle"></span>
+            </td>
+            <td>@machine.comment</td>
+            <td><a href="@MachineController.modifyMachine(machine.id.get)"><span data-feather="edit"></span></a></td>
+            <td><a href="@MachineController.configureMachine(machine.id.get)"><span data-feather="sliders"></span></a></td>
+        </tr>
+        }
+        </tbody>
+    </table>
+</div>
+}

@@ -1,0 +1,17 @@
+@import helper.CSRF
+@import ExampleController.FormData
+
+@(
+    form: Form[FormData]
+)(
+    implicit request: RequestHeader
+)
+
+@main("Welcome to Play") {
+    @helper.form(action = controllers.routes.ExampleController.indexPost) {
+        @CSRF.formField
+        <input type="time" name="timespan" value="" /><br />
+
+        <button type="submit">Configure Machine</button>
+    }
+}

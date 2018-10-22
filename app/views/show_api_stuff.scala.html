@@ -1,0 +1,26 @@
+@import utils.navigation.NavigationComponent
+
+@(
+)(
+    implicit navigation: NavigationComponent,
+    request: RequestHeader
+)
+
+@main(title = "Show API stuff") {
+  <ul>
+      <li><a href="@controllers.routes.ApiController.getMachineConfig("00:00:00:00:00:00")">getMachineConfig("00:00:00:00:00:00")</a></li>
+      <li><a href="@controllers.routes.ApiController.getMachineConfig("11:22:33:44:bb:22")">getMachineConfig("11:22:33:44:bb:22")</a></li>
+      <li><a href="@controllers.routes.ApiController.getMachineConfig("00:11:22:33:22:11")">getMachineConfig("00:11:22:33:22:11")</a></li>
+      <li><a href="@controllers.routes.ApiController.getMachineConfig("00:00:00:00:00:01")">getMachineConfig("00:00:00:00:00:01")</a></li>
+      <li><a href="@controllers.routes.ApiController.getMachineConfig("00:00:00:00:00:02")">getMachineConfig("00:00:00:00:00:02")</a></li>
+      <li><hr/></li>
+      <li><a href="@controllers.routes.ApiController.checkMachineAccess("00:00:00:00:00:00", "42A65C22")">checkMachineAccess("00:00:00:00:00:00", "42A65C22")</a></li>
+      <li><a href="@controllers.routes.ApiController.checkMachineAccess("11:22:33:44:bb:22", "42A65C22")">checkMachineAccess("11:22:33:44:bb:22", "42A65C22")</a></li>
+      <li><a href="@controllers.routes.ApiController.checkMachineAccess("00:11:22:33:22:11", "42A65C22")">checkMachineAccess("00:11:22:33:22:11", "42A65C22")</a></li>
+      <li><a href="@controllers.routes.ApiController.checkMachineAccess("00:00:00:00:00:00", "00000000")">checkMachineAccess("00:00:00:00:00:00", "00000000")</a></li>
+      <li><a href="@controllers.routes.ApiController.checkMachineAccess("11:22:33:44:bb:22", "00000000")">checkMachineAccess("11:22:33:44:bb:22", "00000000")</a></li>
+      <li><a href="@controllers.routes.ApiController.checkMachineAccess("00:11:22:33:22:11", "00000000")">checkMachineAccess("00:11:22:33:22:11", "00000000")</a></li>
+      <li><hr/></li>
+      <li><a href="@controllers.routes.ApiController.machineStatus("xxx")">@controllers.routes.ApiController.machineStatus("xxx")</a></li>
+  </ul>
+}

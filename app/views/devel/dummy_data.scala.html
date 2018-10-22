@@ -1,0 +1,19 @@
+@import utils.navigation.NavigationComponent
+@import utils.ByteOps.RichByte
+
+@(
+    dummyData: Seq[(Seq[Byte], Int)]
+)(
+    implicit navigation: NavigationComponent,
+    request: RequestHeader
+)
+
+@main(title = "Dummy data created") {
+    <dev class="row">
+        <dev class="col-md-12 mb-3">
+            <pre><code>@for((serial, index) <- dummyData) {
+                    @index -> @serial.stringForUI()
+            }</code></pre>
+        </dev>
+    </dev>
+}

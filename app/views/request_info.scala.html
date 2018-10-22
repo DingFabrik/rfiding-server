@@ -1,0 +1,11 @@
+@import utils.navigation.NavigationComponent
+
+@(
+)(
+    implicit navigation: NavigationComponent,
+    request: RequestHeader
+)
+
+@main(title = "Show content of Request") {
+<pre>URI = @request.uri</pre>
+}

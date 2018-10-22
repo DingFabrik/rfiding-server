@@ -1,0 +1,40 @@
+@import utils.navigation.NavigationComponent
+@import security.LoginState.User
+@import controllers.routes.TokenController
+@import utils.ByteOps.RichByte
+
+@(
+    tokens: Seq[((PreparedToken, Option[Token]), Option[Person])]
+)(
+    implicit navigation: NavigationComponent,
+    user: User,
+    request: RequestHeader
+)
+
+@main(userOpt = Some(user), title = "Show Prepared Token") {
+    <div class="col-md-12">
+    @for(token <- tokens.grouped(4)) {
+        <div class="row">
+            @for(((preparedToken, assignedTokenOpt), personOpt) <- token) {
+            <div class="col-sm-3 mb-3">
+                <div class="card @if(assignedTokenOpt.isDefined) {text-muted}">
+                    <div class="card-header @if(!assignedTokenOpt.isDefined) {bg-success text-white}">
+                        <span data-feather="radio"></span>
+                        Token #@preparedToken.id &bull; [@preparedToken.serial.stringForUI()]
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">
+                            @preparedToken.purpose
+                        </p>
+                        <p class="card-text">
+                            @for(person <- personOpt) { @person.name }
+                            @if(!assignedTokenOpt.isDefined) { <a href="@TokenController.copyPreparedToken(preparedToken.id.get)">Assign to a person</a> }
+                        </p>
+                    </div>
+                </div>
+            </div>
+            }
+        </div>
+    }
+    </div>
+}

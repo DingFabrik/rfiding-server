@@ -1,0 +1,19 @@
+@(
+    field: play.api.data.Field,
+    description: String,
+    onEmptyValue: String = "",
+    prependSymbol: Option[String] = None,
+    required: Boolean = false,
+    readonly: Boolean = false
+)(
+    implicit messagesProvider: MessagesProvider
+)
+@inputBase(
+    field         = field,
+    description   = description,
+    inputType     = "email",
+    onEmptyValue  = onEmptyValue,
+    prependSymbol = prependSymbol,
+    required      = required,
+    readonly      = readonly
+)

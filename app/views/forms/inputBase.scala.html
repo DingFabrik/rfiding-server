@@ -1,0 +1,34 @@
+@(
+    field: play.api.data.Field,
+    description: String,
+    inputType: String,
+    onEmptyValue: String = "",
+    prependSymbol: Option[String] = None,
+    required: Boolean = false,
+    readonly: Boolean = false,
+    hideLabel: Boolean = false
+)(
+    implicit messagesProvider: MessagesProvider
+)
+@if(!hideLabel) {
+<label for="@field.id">@description</label>
+}
+@prependSymbol.map { symbol =>
+<div class="input-group">
+    <div class="input-group-prepend">
+        <div class="input-group-text">@symbol</div>
+    </div>
+}
+<input type="@inputType"
+       class="form-control @field.error.map(e => "is-invalid")"
+       id="@field.id"
+       name="@field.id"
+       placeholder="@description"
+       value="@field.value.getOrElse(onEmptyValue)"
+       @if(required) {required}
+       @if(readonly) {readonly}
+/>
+@if(prependSymbol.isDefined) { </div> }
+@field.error.map { error =>
+    <div class="invalid-feedback">@error.format</div>
+}

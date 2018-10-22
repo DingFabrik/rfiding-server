@@ -1,0 +1,12 @@
+@import utils.navigation.NavigationComponent
+
+@(
+    string: String
+)(
+    implicit navigation: NavigationComponent,
+    request: RequestHeader
+)
+
+@main(title = "Show content of String") {
+  <pre>@string</pre>
+}
