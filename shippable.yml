@@ -4,5 +4,10 @@ scala:
   - 2.12.4
 
 jdk:
-  - openjdk8
+  #- openjdk8
   - oraclejdk8
+
+build:
+  ci:
+    - sbt ++$SHIPPABLE_SCALA_VERSION test
+    - sbt ++$SHIPPABLE_SCALA_VERSION universal:packageZipTarball
