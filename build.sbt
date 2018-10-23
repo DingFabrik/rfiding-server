@@ -2,9 +2,9 @@ name := "rfiding-server"
 
 organization := "de.dingfabrik.rfiding"
 
-version := "1.0-SNAPSHOT"
+//version := "1.0-SNAPSHOT"
 
-lazy val root = (project in file(".")).enablePlugins(PlayScala)
+lazy val root = (project in file(".")).enablePlugins(PlayScala, GitVersioning, BuildInfoPlugin)
 
 scalaVersion := "2.12.4"
 
@@ -40,3 +40,11 @@ libraryDependencies ++= Seq(
 
 // Adds additional packages into conf/routes
 // play.sbt.routes.RoutesKeys.routesImport += "de.dingfabrik.rfiding.binders._"
+
+git.useGitDescribe := true
+
+buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion)
+
+buildInfoPackage := "utils"
+
+buildInfoOptions += BuildInfoOption.BuildTime
