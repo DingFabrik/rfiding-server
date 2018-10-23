@@ -1,0 +1,64 @@
+@import utils.navigation.NavigationComponent
+@import security.LoginState.User
+@import utils.BuildInfo
+
+@(
+)(
+    implicit navigation: NavigationComponent,
+    user: User,
+    request: RequestHeader,
+    messagesProvider: MessagesProvider,
+    flash: Flash
+)
+
+@main(userOpt = Some(user), title = "About") {
+
+<div class="col-md-12 order-md-1">
+    <div class="form-row">
+        <div class="col-md-6 mb-3">
+            <label for="version">Version</label>
+            <input type="text"
+                   class="form-control"
+                   id="version"
+                   name="version"
+                   value="@BuildInfo.version"
+                   readonly
+            />
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="col-md-3 mb-3">
+            <label for="scalaVersion">Scala version</label>
+            <input type="text"
+                   class="form-control"
+                   id="scalaVersion"
+                   name="scalaVersion"
+                   value="@BuildInfo.scalaVersion"
+                   readonly
+            />
+        </div>
+        <div class="col-md-3 mb-3">
+            <label for="sbtVersion">SBT version</label>
+            <input type="text"
+                   class="form-control"
+                   id="sbtVersion"
+                   name="sbtVersion"
+                   value="@BuildInfo.sbtVersion"
+                   readonly
+            />
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="col-md-6 mb-3">
+            <label for="builtAtString">Build at</label>
+            <input type="text"
+                   class="form-control"
+                   id="builtAtString"
+                   name="builtAtString"
+                   value="@BuildInfo.builtAtString"
+                   readonly
+            />
+        </div>
+    </div>
+</div>
+}

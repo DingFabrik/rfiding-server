@@ -6,6 +6,8 @@
 GET     /                        controllers.HomeController.index
 GET     /showstring              controllers.HomeController.showString
 
+GET     /settings/about          controllers.SettingsController.about
+
 # Javascript Routes
 GET     /js/autocomplete         controllers.HomeController.autocompleteJs
 GET     /js/addbuttons           controllers.MachineController.addButtonsJs
