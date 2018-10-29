@@ -4,6 +4,8 @@ create table "tb_person" ("pk_id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"dt
 -- TABLE tb_token ----------------------------------------------------------------
 create table "tb_token" ("pk_id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"dt_serial" BLOB NOT NULL,"dt_purpose" VARCHAR(254) NOT NULL,"dt_active" INTEGER NOT NULL,"fk_owner_id" INTEGER NOT NULL,constraint "fk_owner" foreign key("fk_owner_id") references "tb_person"("pk_id") on update NO ACTION on delete RESTRICT);
 create unique index "index_serial_token" on "tb_token" ("dt_serial");
+-- TABLE tb_unknown_token --------------------------------------------------------
+create table "tb_unknown_token" ("dt_serial" BLOB NOT NULL,"fk_machine_id" INTEGER NOT NULL,"dt_read_stamp" INTEGER NOT NULL,constraint "fk_machine" foreign key("fk_machine_id") references "tb_machine"("pk_id") on update NO ACTION on delete NO ACTION);
 -- TABLE tb_prepared_token -------------------------------------------------------
 create table "tb_prepared_token" ("pk_id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"dt_serial" BLOB NOT NULL,"dt_purpose" VARCHAR(254) NOT NULL);
 create unique index "index_serial_prepared_token" on "tb_prepared_token" ("dt_serial");
@@ -30,6 +32,8 @@ drop table "tb_machine";
 drop table "tb_user";
 -- TABLE tb_prepared_token -------------------------------------------------------
 drop table "tb_prepared_token";
+-- TABLE tb_unknown_token --------------------------------------------------------
+drop table "tb_unknown_token";
 -- TABLE tb_token ----------------------------------------------------------------
 drop table "tb_token";
 -- TABLE tb_person ---------------------------------------------------------------

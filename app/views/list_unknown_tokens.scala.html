@@ -1,0 +1,51 @@
+@import utils.navigation.NavigationComponent
+@import security.LoginState.User
+@import controllers.routes.PersonController
+@import controllers.routes.TokenController
+@import utils.ByteOps.RichByte
+@import helper.CSRF
+@import java.time.LocalDateTime
+@import utils.time.RichLocalDateTime
+
+@(
+    unknownTokens: Seq[(UnknownToken, Machine)]
+)(
+    implicit navigation: NavigationComponent,
+    user: User,
+    request: RequestHeader,
+    flash: Flash
+)
+
+@scripts = {
+    <script type="text/javascript" src="@routes.Assets.versioned("javascripts/tooltips.js")"></script>
+}
+
+@main(userOpt = Some(user), title = "List unknown Tokens", scripts = scripts) {
+
+<div class="table-responsive">
+    @for(tid <- flash.get(FlashKey.ListEmptied)) {
+    <div class="alert alert-success" role="alert">List cleared.</div>
+    }
+    <table class="table table-striped table-sm">
+        <thead>
+        <tr>
+            <th>Serial</th>
+            <th>Machine</th>
+            <th>Seen</th>
+            <th>Add</th>
+        </tr>
+        </thead>
+        <tbody>
+        @for((unknownToken, machine) <- unknownTokens) {
+        <tr>
+            <td><tt>@unknownToken.serial.stringForUI()</tt></td>
+            <td>@machine.name (#@machine.id)</td>
+            <td data-toggle="tooltip" title="@unknownToken.readStamp">@unknownToken.readStamp.pretty()</td>
+            <td><a href="@routes.TokenController.addToken(unknownToken.serial.asString)"><span data-feather="plus-circle"></span></a></td>
+        </tr>
+        }
+        </tbody>
+    </table>
+    <a class="btn btn-primary btn-block" href="@routes.TokenController.clearUnknownTokenList">Clear list</a>
+</div>
+}

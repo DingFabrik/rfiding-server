@@ -1,6 +1,6 @@
 package utils
 
-import java.time.LocalTime
+import java.time.{LocalDateTime, LocalTime, ZoneOffset}
 
 import slick.lifted.Isomorphism
 import utils.time.Weekday
@@ -25,6 +25,14 @@ object CustomIsomorphisms {
   implicit val localTimeIsomorphism: Isomorphism[LocalTime, Long] = new Isomorphism(
     map   = _.toNanoOfDay,
     comap = LocalTime.ofNanoOfDay
+  )
+
+  /**
+    * Isomorphism between LocalDateTime and its representation as a Long value.
+    */
+  implicit val localDateTimeIsomorphism: Isomorphism[LocalDateTime, Long] = new Isomorphism(
+    map   = _.toEpochSecond(ZoneOffset.UTC),
+    comap = LocalDateTime.ofEpochSecond(_, 0, ZoneOffset.UTC)
   )
 
   /**

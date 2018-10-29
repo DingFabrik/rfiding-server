@@ -8,9 +8,12 @@ lazy val root = (project in file(".")).enablePlugins(PlayScala, GitVersioning, B
 
 scalaVersion := "2.12.4"
 
+// Needed to resolve doc & javadoc jars for some packages
+resolvers += Resolver.sbtPluginRepo("releases")
+
 libraryDependencies ++= Seq(
   guice,
-  "org.specs2"             %% "specs2-core"          % "4.3.4" % "test",
+  "org.specs2"             %% "specs2-core"           % "4.3.4" % "test",
   "org.scalatestplus.play" %% "scalatestplus-play"    % "3.1.2" % Test,
   // Slick, Evolutions & SQLite
   "com.typesafe.play"      %% "play-slick"            % "3.0.1",
@@ -24,15 +27,17 @@ libraryDependencies ++= Seq(
   "org.webjars"            %  "chartjs"               % "2.7.2",
   "org.webjars"            %  "highlightjs"           % "9.8.0",
 
+  "org.ocpsoft.prettytime" % "prettytime"             % "4.0.1.Final",
+
   // Secure password hashing
-  "de.mkammerer"           %  "argon2-jvm"           % "2.4",
+  "de.mkammerer"           %  "argon2-jvm"            % "2.4",
 
   // Slick code gen. Do we really want that?
   //"com.typesafe.slick" %% "slick-codegen" % "3.2.0"
 
   // Swagger REST API documentation:
-  "io.swagger"             %% "swagger-play2"        % "1.6.0",
-  "org.webjars"            %  "swagger-ui"           % "3.19.0",
+  "io.swagger"             %% "swagger-play2"         % "1.6.0",
+  "org.webjars"            %  "swagger-ui"            % "3.19.0",
 )
 
 // Adds additional packages into Twirl

@@ -1,0 +1,58 @@
+@import utils.navigation.NavigationComponent
+@import security.LoginState.User
+@import TokenController.AddTokenData
+@import TokenController.FormKey
+@import utils.ByteOps.RichByte
+@import helper.CSRF
+@import forms.inputText
+
+@(
+    token: Seq[Byte],
+    addTokenForm: Form[AddTokenData]
+)(
+    implicit navigation: NavigationComponent,
+    user: User,
+    request: RequestHeader,
+    messagesProvider: MessagesProvider,
+    flash: Flash
+)
+
+@scripts = {
+    <script type="text/javascript" src="@routes.HomeController.autocompleteJs()"></script>
+}
+
+@main(userOpt = Some(user), title = "Add Token", scripts = scripts) {
+<div class="mb-3">
+    @helper.form(action = controllers.routes.TokenController.addTokenPost) {
+
+    @CSRF.formField
+    <div class="col-md-12 order-md-1">
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <label for="@FormKey.tokenSerial">Token UUID</label>
+                <input type="hidden" class="form-control" id="@FormKey.tokenSerial" name="@FormKey.tokenSerial" value="@token.asString" required readonly />
+                <input type="text" class="form-control" value="@token.stringForUI()" required readonly />
+                <div class="invalid-feedback">You need to enter a valid serial</div>
+            </div>
+            <div class="col-md-8 mb-3">
+                @inputText(field = addTokenForm(FormKey.tokenPurpose), description = "Purpose", required = true)
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-8 mb-3">
+                <label for="find-person">Person</label>
+                <input type="text" class="form-control autocomplete-person" id="find-person" name="find-person" placeholder="Select person" />
+                <div class="invalid-feedback">You need to select a valid person</div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <label for="@FormKey.findPersonId">Person's DB-ID</label>
+                <input type="text" class="form-control" id="@FormKey.findPersonId" name="@FormKey.findPersonId" required readonly />
+                <div class="invalid-feedback">You need to select a valid person</div>
+            </div>
+        </div>
+
+        <button class="btn btn-primary btn-lg btn-block" type="submit">Add Token</button>
+    </div>
+    }
+</div>
+}
