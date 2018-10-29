@@ -1,14 +1,18 @@
 package controllers
 
+import controllers.ApiController.formatTokenSeq
+import controllers.TokenController.AddTokenData
 import controllers.TokenController.FindPersonData
 import controllers.TokenController.FormKey
 import controllers.TokenController.TokenData
 import controllers.security.Security
 import javax.inject.Inject
 import javax.inject.Singleton
+import models.Machine
 import models.Person
 import models.PreparedToken
 import models.Token
+import models.UnknownToken
 import play.api.Logger
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.db.slick.HasDatabaseConfigProvider
@@ -25,10 +29,13 @@ import play.api.mvc.MessagesControllerComponents
 import slick.jdbc.JdbcProfile
 import slick.jdbc.SQLiteProfile.api._
 import utils.database.TableProvider
+import utils.forms.seqByteFormatter
 import utils.navigation.NavigationComponent
+import views.html.add_token
 import views.html.copy_prepared_token
 import views.html.list_assignments
 import views.html.list_tokens
+import views.html.list_unknown_tokens
 import views.html.modify_token
 import views.html.show_prepared_token
 
@@ -40,6 +47,7 @@ import scala.concurrent.Future
  *
  * @note The term "assign a token" essentially means copy the data from the prepared token table to the token table.
  */
+//noinspection MutatorLikeMethodIsParameterless
 @Singleton
 class TokenController @Inject()(
   protected val dbConfigProvider: DatabaseConfigProvider,
@@ -65,10 +73,62 @@ class TokenController @Inject()(
     )(FindPersonData.apply)(FindPersonData.unapply)
   )
 
+  /** Form to assign a token to a person. */
+  private[this] val addTokenForm = Form(
+    mapping(
+      FormKey.tokenSerial  -> of[Seq[Byte]],
+      FormKey.tokenPurpose -> optional(text),
+      FormKey.findPersonId -> number,
+    )(AddTokenData.apply)(AddTokenData.unapply)
+  )
+
+  def addToken(token: String): EssentialAction = isAuthenticated { implicit userId => implicit request =>
+    // TODO: Check if token uid is valid. Currently one could add an arbitrary length.
+    val tokenSerial = formatTokenSeq(token)
+    Ok(add_token(tokenSerial, addTokenForm))
+  }
+
+  def addTokenPost: EssentialAction = isAuthenticatedAsync { implicit userId => implicit request =>
+  addTokenForm.bindFromRequest.fold(
+    formWithErrors => {
+      // TODO: Add error handling for this form.
+      Future.successful(Ok("error in form"))
+    },
+    addTokenData => {
+      // TODO: Check if token uid is valid. Currently one could add an arbitrary length.
+      val insertQuery = (tokenTable returning tokenTable.map(_.id)) += Token(
+          id       = None,
+          serial   = addTokenData.serial,
+          purpose  = addTokenData.purpose,
+          isActive = true,
+          ownerId  = addTokenData.personId
+        )
+        db.run(insertQuery).map { result: Int =>
+          Redirect(routes.TokenController.listTokens())
+            .flashing(FlashKey.TokenAdded -> result.toString)
+        }
+      }
+    )
+  }
+
+  def clearUnknownTokenList: EssentialAction =  isAuthenticatedAsync { implicit userId => implicit request =>
+    db.run(unknownTokenTable.delete).map { _ =>
+      Redirect(routes.TokenController.listUnknownTokens())
+        .flashing(FlashKey.ListEmptied -> "")
+    }
+  }
+
   def listTokens: EssentialAction = isAuthenticatedAsync { implicit userId => implicit request =>
     val query = tokenTable join personTable on (_.ownerId === _.id)
     db.run(query.result).map { result: Seq[(Token, Person)] =>
       Ok(list_tokens(result))
+    }
+  }
+
+  def listUnknownTokens: EssentialAction = isAuthenticatedAsync { implicit userId => implicit request =>
+    val query = unknownTokenTable join machineTable on (_.machineId === _.id)
+    db.run(query.result).map { result: Seq[(UnknownToken, Machine)] =>
+      Ok(list_unknown_tokens(result))
     }
   }
 
@@ -257,6 +317,11 @@ object TokenController {
    * @param id ID of the person a token should be assigned to.
    */
   case class FindPersonData(id: Int)
+  case class AddTokenData(
+    serial: Seq[Byte],
+    purpose: Option[String],
+    personId: Int
+  )
 
   case class TokenData(
     id: Int,

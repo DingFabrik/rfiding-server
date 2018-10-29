@@ -15,7 +15,6 @@ import models.MachineConfig
 import models.MachineTime
 import play.api.Logger
 import play.api.data.Form
-import play.api.data.FormError
 import play.api.data.Forms.boolean
 import play.api.data.Forms.list
 import play.api.data.Forms.localTime
@@ -26,8 +25,6 @@ import play.api.data.Forms.of
 import play.api.data.Forms.optional
 import play.api.data.Forms.text
 import play.api.data.Mapping
-import play.api.data.format.Formats.parsing
-import play.api.data.format.Formatter
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.db.slick.HasDatabaseConfigProvider
 import play.api.i18n.I18nSupport
@@ -179,7 +176,7 @@ class MachineController @Inject()(
   }
 
   private[this] val configureMachineForm: Form[ConfigureMachineData] = {
-    import controllers.MachineController.FormWeek.weekdayFormatter
+    import utils.forms.weekdayFormatter
 
     def formWeek: Mapping[FormWeek] = mapping(
       Monday.toString    -> optional(of[Weekday]),
@@ -308,16 +305,6 @@ object MachineController {
         sa = seq.find(_ == Saturday),
         su = seq.find(_ == Sunday)
       )
-    }
-
-    implicit def weekdayFormatter: Formatter[Weekday] = new Formatter[Weekday] {
-      override val format: Option[(String, Seq[Any])] = Some(("format.weekday", Seq.empty))
-      override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Weekday] = {
-        parsing(incoming => Weekday.week.find(day => day.toString == incoming).get, "error.weekday", Seq.empty)(key, data)
-      }
-      override def unbind(key: String, value: Weekday): Map[String, String] = {
-        Map(key -> value.toString)
-      }
     }
   }
 

@@ -31,6 +31,9 @@ object FlashKey {
   val LoggedOut = "loggedOut"
 
   /** When a machine was updated in the DB. Content: ID of updated machine. */
-  val MachineUpdated = "machineUpdated"
   val MachineTimesUpdated = "machineTimesUpdated"
+  val MachineUpdated = "machineUpdated"
+
+  /** When list of unknown tokens was emptied. Content: Nothing. */
+  val ListEmptied = "listEmptied"
 }

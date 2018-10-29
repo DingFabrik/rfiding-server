@@ -1,5 +1,6 @@
 package controllers
 
+import java.time.Clock
 import java.time.Duration
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -17,6 +18,7 @@ import io.swagger.annotations.ApiResponses
 import javax.inject.Inject
 import javax.inject.Singleton
 import models.MachineTime
+import models.UnknownToken
 import play.api.Logger
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.db.slick.HasDatabaseConfigProvider
@@ -107,9 +109,10 @@ class ApiController @Inject()(
       example = "ac:bc:32:b9:3f:13"
     ) machine: String
   ): EssentialAction = Action.async {
-    logger.info(s"Searching for machine config for machine $machine")
+    val formattedMachine = formatMachineString(machine)
+    logger.info(s"Searching for machine config for machine $formattedMachine")
 
-    val configQuery = machineTable.filter(_.macAddress === machine).joinLeft(machineConfigTable).on {
+    val configQuery = machineTable.filter(_.macAddress === formattedMachine).joinLeft(machineConfigTable).on {
       case (machines, machineConfig) => machines.id === machineConfig.machineId
     }
 
@@ -124,6 +127,15 @@ class ApiController @Inject()(
   /** Checks whether the given parameter is valid. */
   private[this] def hasValidTokenString(token: String)(invalid: Future[Result])(valid: Future[Result]): Future[Result] = {
     parameterCheck[String, Future[Result]](isParamValid = _.matches("([0-9a-fA-F]{8})"))(token)(invalid)(valid)
+  }
+
+  private[this] def rememberUnknownToken(serial: Seq[Byte], machineId: Int): Unit = {
+    val insertQuery = unknownTokenTable += UnknownToken(
+      serial    = serial,
+      machineId = machineId,
+      readStamp = LocalDateTime.now(Clock.systemUTC())
+    )
+    db.run(insertQuery)
   }
 
   @ApiOperation(
@@ -141,23 +153,24 @@ day of week does not match to the todays one."""
     @ApiParam(
       value = "MAC address of machine to fetch. Numbers, lowercase letters from a to f and colons are allowed.",
       required = true,
-      example = "ac:bc:32:b9:3f:13"
-    ) machine: String,
+      example = "acbc32b93f13"
+    ) machineString: String,
     @ApiParam(
-      value = "UID of token to verify. Numbers and uppercase letters from A to F are allowed. Exactly 8 chars.",
+      value = "UID of token to verify. Numbers and lowercase letters from a to f are allowed. Exactly 8 chars.",
       required = true,
       example = "42A65C22"
     ) tokenUid: String
   ): EssentialAction = Action.async { hasValidTokenString(tokenUid) {
     TokenStringInvalid.status.fut
   } {
-    logger.info(s"Checking machine access for machine $machine and token $tokenUid")
+    val formattedMachine = formatMachineString(machineString)
+    logger.info(s"Checking machine access for machine $formattedMachine and token $tokenUid")
 
-    val machineQuery = machineTable.filter(_.macAddress === machine).joinLeft(machineTimesTable).on {
+    val machineQuery = machineTable.filter(_.macAddress === formattedMachine).joinLeft(machineTimesTable).on {
       case (machines, times) => machines.id === times.machineId
     }
 
-    val uuid = tokenUid.grouped(2).map(Integer.parseInt(_, 16).toByte).toSeq
+    val uuid = formatTokenSeq(tokenUid)
     val tokenQuery = tokenTable.filter(_.serial === uuid).joinLeft(personTable).on {
       case (token, person) => token.ownerId === person.id
     }
@@ -178,6 +191,7 @@ day of week does not match to the todays one."""
         val remaining: Option[Long] = results.collectFirst {
           case (_, Some(time)) if isTimeValid(time) => remainingWorkingPeriod(time)
         }
+        val machineId: Int = results.collectFirst { case (machineResult, _) => machineResult.id.get }.get
 
         tokenQueryFuture.map {
           case Seq((token, Some(owner))) if !token.isActive =>
@@ -195,6 +209,7 @@ day of week does not match to the todays one."""
             JsonOK(AccessGrantedResult(access = 0))
           case _ =>
             logger.debug("Token not found.")
+            rememberUnknownToken(uuid, machineId)
             JsonOK(AccessGrantedResult(access = 0))
         }
     }.flatten
@@ -210,13 +225,23 @@ day of week does not match to the todays one."""
     @ApiParam(value = "MAC address of machine.", required = true,
       allowableValues = "Numbers, lowercase letters from a to f and colons.", example = "ac:bc:32:b9:3f:13")
     machine: String): EssentialAction = Action {
-    logger.info(s"Retrieving machine status for machine $machine")
+    val formattedMachine = formatMachineString(machine)
+    logger.info(s"Retrieving machine status for machine $formattedMachine")
     val stuff: Seq[String] = Seq("to be implemented")
     Ok(Json.toJson(stuff)).as(JSON)
   }
 }
 
 object ApiController {
+
+  def formatMachineString(machineBytes: String): String = {
+    machineBytes.toLowerCase.grouped(2).mkString(":")
+  }
+
+  def formatTokenSeq(serialString: String): Seq[Byte] = {
+    serialString.toLowerCase.grouped(2).map(Integer.parseInt(_, 16).toByte).toSeq
+  }
+
   trait ApiStatus {
     def code: Int = 400
     def msg: String

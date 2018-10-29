@@ -21,6 +21,11 @@ class DefaultNavigation extends NavigationComponent {
             icon   = "radio",
             target = controllers.routes.TokenController.showPreparedToken()
           ),
+          NavigationEntry(
+            title  = s"Unknown Tokens",
+            icon   = "radio",
+            target = controllers.routes.TokenController.listUnknownTokens()
+          ),
         )
       ),
       NavigationTitle(

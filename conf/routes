@@ -30,6 +30,8 @@ GET     /person/find             controllers.PersonController.findPerson(term: O
 GET     /person/delete           controllers.PersonController.deletePerson(id: Int, returnTo: String)
 
 GET     /tokens/list             controllers.TokenController.listTokens
+GET     /tokens/unknown          controllers.TokenController.listUnknownTokens
+GET     /tokens/unknown/clear    controllers.TokenController.clearUnknownTokenList
 GET     /tokens/assigned         controllers.TokenController.listAssignments
 GET     /tokens/prepared         controllers.TokenController.showPreparedToken
 GET     /tokens/copy/:id         controllers.TokenController.copyPreparedToken(id: Int)
@@ -38,6 +40,8 @@ POST    /tokens/check            controllers.TokenController.checkTokenPost
 GET     /tokens/modify           controllers.TokenController.modifyToken(id: Int)
 POST    /tokens/modify           controllers.TokenController.modifyTokenPost(id: Int)
 GET     /tokens/delete           controllers.TokenController.deleteToken(id: Int, returnTo: String)
+GET     /tokens/add/:token       controllers.TokenController.addToken(token: String)
+POST    /tokens/add              controllers.TokenController.addTokenPost
 
 GET     /login                   controllers.LoginController.login
 POST    /login                   controllers.LoginController.loginPost
