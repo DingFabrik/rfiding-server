@@ -190,11 +190,13 @@ class MachineController @Inject()(
 
     Form(
       mapping = mapping(
-        "machineID" -> number,
-        "runtimer" -> optional(longNumber),
-        "weekdays" -> list(formWeek),
-        "start"    -> list(optional(localTime("HH:mm"))),
-        "end"      -> list(optional(localTime("HH:mm"))),
+        "machineID"        -> number,
+        "runtimer"         -> optional(longNumber),
+        "minPower"         -> optional(longNumber),
+        "controlParameter" -> optional(text),
+        "weekdays"         -> list(formWeek),
+        "start"            -> list(optional(localTime("HH:mm"))),
+        "end"              -> list(optional(localTime("HH:mm"))),
       )(ConfigureMachineData.apply)(ConfigureMachineData.unapply)
     )
   }
@@ -211,11 +213,13 @@ class MachineController @Inject()(
       }.unzip3
 
       val conMachData = ConfigureMachineData(
-        machineID = id,
-        runtimer  = config.headOption.map(_.runtimer),
-        weekdays  = formWeeks.toList,
-        starts    = starts.toList,
-        ends      = ends.toList
+        machineID        = id,
+        runtimer         = config.headOption.flatMap(_.runtimer),
+        minPower         = config.headOption.flatMap(_.minPower),
+        controlParameter = config.headOption.flatMap(_.controlParameter),
+        weekdays         = formWeeks.toList,
+        starts           = starts.toList,
+        ends             = ends.toList
       )
 
       val form = configureMachineForm.fill(conMachData)
@@ -239,14 +243,15 @@ class MachineController @Inject()(
           case (weekdays, Some(start), Some(end)) if weekdays.isSet =>
             MachineTime(None, formData.machineID, weekdays.toWeekdaySeq, start, end)
         }
-        val configActions = formData.runtimer.fold(DBIO.seq(
-            machineConfigTable.filter(_.machineId === formData.machineID).delete,
-        )) { runtimer =>
-          DBIO.seq(
-            machineConfigTable.filter(_.machineId === formData.machineID).delete,
-            machineConfigTable += MachineConfig(formData.machineID, runtimer)
+        val configActions = DBIO.seq(
+          machineConfigTable.filter(_.machineId === formData.machineID).delete,
+          machineConfigTable += MachineConfig(
+            machineId        = formData.machineID,
+            runtimer         = formData.runtimer,
+            minPower         = formData.minPower,
+            controlParameter = formData.controlParameter
           )
-        }
+        ).transactionally
         val actions = DBIO.seq(
           machineTimesTable.filter(_.machineId === formData.machineID).delete,
           machineTimesTable ++= times
@@ -311,6 +316,8 @@ object MachineController {
   case class ConfigureMachineData(
     machineID: Int,
     runtimer: Option[Long],
+    minPower: Option[Long],
+    controlParameter: Option[String],
     weekdays: List[FormWeek],
     starts: List[Option[LocalTime]],
     ends: List[Option[LocalTime]],

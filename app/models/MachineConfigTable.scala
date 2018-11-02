@@ -13,17 +13,21 @@ import models.Index.machineConfigTableIndex
  */
 case class MachineConfig(
   machineId: Int,
-  runtimer: Long
+  runtimer: Option[Long],
+  minPower: Option[Long],
+  controlParameter: Option[String],
 )
 
 class MachineConfigTable(tag: Tag) extends Table[MachineConfig](tag, "tb_machine_config") {
   val machineTable = TableQuery[MachineTable]
 
   def machineId: Rep[Int] = column[Int]("fk_machine_id")
-  def runtimer: Rep[Long] = column[Long]("dt_runtimer")
+  def runtimer: Rep[Option[Long]] = column[Option[Long]]("dt_runtimer")
+  def minPower: Rep[Option[Long]] = column[Option[Long]]("dt_min_power")
+  def controlPararamer: Rep[Option[String]] = column[Option[String]]("dt_ctrl_parameter")
 
   def * : ProvenShape[MachineConfig] = {
-    (machineId, runtimer) <> (MachineConfig.tupled, MachineConfig.unapply)
+    (machineId, runtimer, minPower, controlPararamer) <> (MachineConfig.tupled, MachineConfig.unapply)
   }
 
   def machine = {
@@ -31,6 +35,6 @@ class MachineConfigTable(tag: Tag) extends Table[MachineConfig](tag, "tb_machine
   }
 
   def idx = {
-    index(machineConfigTableIndex, (machineId, runtimer), unique = true)
+    index(machineConfigTableIndex, (machineId, runtimer, minPower, controlPararamer), unique = true)
   }
 }

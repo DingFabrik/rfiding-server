@@ -37,8 +37,16 @@
         @CSRF.formField
         <input type="hidden" name="machineID" id="machineID" value="@machine.id" />
         <div class="form-row">
-            <div class="col-md-12 mb-3">
+            <div class="col-md-6 mb-3">
                 @inputNumber(form("runtimer"), "Runtimer")
+            </div>
+            <div class="col-md-6 mb-3">
+                @inputNumber(form("minPower"), "Minimal power")
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="col-md-12 mb-3">
+                @inputText(form("controlParameter"), "Additional control parameter")
             </div>
         </div>
         <div class="form-row">

@@ -101,12 +101,12 @@ class ApiController @Inject()(
   )
   @ApiResponses(Array(
     new ApiResponse(code = 400, message = "Machine not found."),
-    new ApiResponse(code = 401, message = "No value for runtimer found."),
+    new ApiResponse(code = 400, message = "No config found."),
   ))
   def getMachineConfig(
-    @ApiParam(value = "MAC address of machine to fetch. Numbers, lowercase letters from a to f and colons are allowed.",
+    @ApiParam(value = "MAC address of machine to fetch. Numbers and letters from a to f are allowed.",
       required = true,
-      example = "ac:bc:32:b9:3f:13"
+      example = "acbc32b93f13"
     ) machine: String
   ): EssentialAction = Action.async {
     val formattedMachine = formatMachineString(machine)
@@ -117,16 +117,21 @@ class ApiController @Inject()(
     }
 
     db.run(configQuery.result).map {
-      case Seq((_, Some(config))) => Ok(Json.toJson(MachineConfigResult(config.runtimer))).as(JSON)
-      case Seq((_, None))         => NoRuntimerFound.status
-      case _                      => MachineNotFound.status
+      case Seq((_, config)) =>
+        Ok(Json.toJson(MachineConfigResult(
+          runtimer         = config.flatMap(_.runtimer),
+          minPower         = config.flatMap(_.minPower),
+          controlParameter = config.flatMap(_.controlParameter)
+        ))).as(JSON)
+      case _ =>
+        MachineNotFound.status
     }
   }
 
   /* **************************************************************************************************************** */
   /** Checks whether the given parameter is valid. */
   private[this] def hasValidTokenString(token: String)(invalid: Future[Result])(valid: Future[Result]): Future[Result] = {
-    parameterCheck[String, Future[Result]](isParamValid = _.matches("([0-9a-fA-F]{8})"))(token)(invalid)(valid)
+    parameterCheck[String, Future[Result]](isParamValid = _.toLowerCase.matches("([0-9a-fA-F]{8})"))(token)(invalid)(valid)
   }
 
   private[this] def rememberUnknownToken(serial: Seq[Byte], machineId: Int): Unit = {
@@ -151,14 +156,14 @@ day of week does not match to the todays one."""
   ))
   def checkMachineAccess(
     @ApiParam(
-      value = "MAC address of machine to fetch. Numbers, lowercase letters from a to f and colons are allowed.",
+      value = "MAC address of machine to fetch. Numbers and letters from a to f are allowed.",
       required = true,
       example = "acbc32b93f13"
     ) machineString: String,
     @ApiParam(
-      value = "UID of token to verify. Numbers and lowercase letters from a to f are allowed. Exactly 8 chars.",
+      value = "UID of token to verify. Numbers and letters from a to f are allowed. Exactly 8 chars.",
       required = true,
-      example = "42A65C22"
+      example = "42a65c22"
     ) tokenUid: String
   ): EssentialAction = Action.async { hasValidTokenString(tokenUid) {
     TokenStringInvalid.status.fut
@@ -196,7 +201,6 @@ day of week does not match to the todays one."""
         tokenQueryFuture.map {
           case Seq((token, Some(owner))) if !token.isActive =>
             logger.debug(s"Token for ${owner.name} restricted.")
-            val x: JsValue =Json.toJson(AccessGrantedResult(access = 0))
             JsonOK(AccessGrantedResult(access = 0))
           case Seq((_, Some(owner))) if !owner.isActive =>
             logger.debug(s"Owner (${owner.name}) restricted.")
@@ -223,7 +227,7 @@ day of week does not match to the todays one."""
   )
   def machineStatus(
     @ApiParam(value = "MAC address of machine.", required = true,
-      allowableValues = "Numbers, lowercase letters from a to f and colons.", example = "ac:bc:32:b9:3f:13")
+      allowableValues = "Numbers and letters from a to f.", example = "acbc32b93f13")
     machine: String): EssentialAction = Action {
     val formattedMachine = formatMachineString(machine)
     logger.info(s"Retrieving machine status for machine $formattedMachine")
@@ -250,16 +254,19 @@ object ApiController {
   object MachineNotFound extends ApiStatus {
     val msg: String = "Machine not found."
   }
-  object NoRuntimerFound extends ApiStatus {
-    val msg: String = "No value for runtimer found."
+  object NoConfigFound extends ApiStatus {
+    val msg: String = "No config found."
   }
   object TokenStringInvalid extends ApiStatus {
     val msg: String = "Tokenstring invalid."
   }
 
+  // TODO: Check if this can be merged with models.MachineConfig !!
   case class MachineConfigResult(
     @ApiModelProperty(value = "Maximum time of the Idle run timer. Unit: Seconds.")
-    runtimer: Long
+    runtimer: Option[Long],
+    minPower: Option[Long],
+    controlParameter: Option[String]
   )
 
   case class AccessGrantedResult(
