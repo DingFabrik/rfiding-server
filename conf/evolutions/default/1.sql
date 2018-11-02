@@ -15,8 +15,19 @@ create table "tb_user" ("pk_id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"dt_e
 create table "tb_machine" ("pk_id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"dt_name" VARCHAR(254) NOT NULL,"dt_mac_address" VARCHAR(254) NOT NULL,"dt_comment" VARCHAR(254),"dt_active" INTEGER NOT NULL);
 create unique index "index_machines_mac_address" on "tb_machine" ("dt_mac_address");
 -- TABLE tb_machine_config -------------------------------------------------------
-create table "tb_machine_config" ("fk_machine_id" INTEGER NOT NULL,"dt_runtimer" INTEGER NOT NULL,constraint "fk_machine" foreign key("fk_machine_id") references "tb_machine"("pk_id") on update NO ACTION on delete RESTRICT);
-create unique index "index_machines_config" on "tb_machine_config" ("fk_machine_id","dt_runtimer");
+create table "tb_machine_config" (
+    "fk_machine_id" INTEGER NOT NULL,
+    "dt_runtimer" INTEGER,
+    "dt_min_power" INTEGER,
+    "dt_ctrl_parameter" VARCHAR(254),
+    constraint "fk_machine" foreign key("fk_machine_id") references "tb_machine"("pk_id") on update NO ACTION on delete RESTRICT
+);
+create unique index "index_machines_config" on "tb_machine_config" (
+    "fk_machine_id",
+    "dt_runtimer",
+    "dt_min_power",
+    "dt_ctrl_parameter"
+);
 -- TABLE tb_machine_times --------------------------------------------------------
 create table "tb_machine_times" ("pk_id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"fk_machine_id" INTEGER NOT NULL,"dt_weekdays" VARCHAR(254) NOT NULL,"dt_starttime" INTEGER NOT NULL,"dt_endtime" INTEGER NOT NULL);
 create unique index "index_machines_times" on "tb_machine_times" ("pk_id");
