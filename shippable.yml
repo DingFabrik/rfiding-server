@@ -7,7 +7,14 @@ jdk:
   #- openjdk8
   - oraclejdk8
 
+env:
+  # Provides "GITHUB_API_TOKEN" via https://github.com/settings/tokens
+  - secure: uxlH9G/kqZ/RGG8DYQrtnsmDf45E3ff4QCdNSQrQJUpiAtrtuDvauNiOroxLwjFRM4wrOyOyN3wOtNqVnBbOkdhYUH1B0VckczNFQli6SKOkAmYnLJYRxzs/IBsIPhiqwqnmjy1tHJ2WADnulMze5XrK0Kbi9QJ+5y+6FFJ8nW1/ggD9jeNb5d2d0GCvX/jpFJqT+SaGXLgApYJYZ6F0Jwry+79ADwjMEWcEsszFBybSTnHzAdTJOxpA//+swLzSO08sJhTTx0do2OvYee80rJh0yBXGvi+PgPPGCz1HBGJM06eUPHyBU+cCxEdJcE0BUGs5NTKn/9QQ9taxp2EJDg==
+
 build:
   ci:
     - sbt ++$SHIPPABLE_SCALA_VERSION test
     - sbt ++$SHIPPABLE_SCALA_VERSION universal:packageZipTarball
+  on_success:
+    - ./upload_to_github.sh $GITHUB_API_TOKEN
+
