@@ -1,12 +1,12 @@
 #!/bin/bash
 
-#set -x
+set -x
 
-# The calling environment must provide a variable named
-# `GITHUB_API_TOKEN` which grants access to the github API.
+# The first parameter of this script must be the API token.
 
 ###### Configuration ######
-
+# Token grants access to the github API
+GITHUB_API_TOKEN=$1
 # Commit ID
 TAG="v0.1"
 # Files to use as asset
