@@ -2,9 +2,7 @@ name := "rfiding-server"
 
 organization := "de.dingfabrik.rfiding"
 
-//version := "1.0-SNAPSHOT"
-
-lazy val root = (project in file(".")).enablePlugins(PlayScala, GitVersioning, BuildInfoPlugin)
+lazy val root = (project in file(".")).enablePlugins(PlayScala, GitVersioning, BuildInfoPlugin, GitBranchPrompt)
 
 scalaVersion := "2.12.4"
 
