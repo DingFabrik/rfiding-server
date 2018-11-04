@@ -11,3 +11,6 @@ db.sqlite
 
 # Backup folder
 bkp/
+
+# Test script
+test_upload_to_github.sh
