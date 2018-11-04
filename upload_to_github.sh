@@ -2,10 +2,11 @@
 
 #set -x
 
+# The calling environment must provide a variable named
+# `GITHUB_API_TOKEN` which grants access to the github API.
+
 ###### Configuration ######
 
-# First script parameter
-GITHUB_API_TOKEN=$1
 # Commit ID
 TAG="v0.1"
 # Files to use as asset
@@ -23,15 +24,18 @@ REPO="rfiding-server"
 GITHUB_REPO="${GITHUB_API}/repos/${OWNER}/${REPO}"
 AUTH_SUFFIX="access_token=${GITHUB_API_TOKEN}"
 
+# Determine files for release
+UPLOAD_FILES=( ${FILES} )
+HASH=$(md5sum ${UPLOAD_FILES[0]} | awk '{ print $1 }')
+
 # Create Github release:
 GITHUB_RELEASES_URL="${GITHUB_REPO}/releases?${AUTH_SUFFIX}"
-BODY="Build URL: ${BUILD_URL}\nCommit ID: ${COMMIT}"
+BODY="Build URL: ${BUILD_URL}\nCommit ID: ${COMMIT}\nORG_NAME: ${ORG_NAME}\PROJECT_ID: ${PROJECT_ID}\nMD5 Hash: ${HASH}"
 RELEASE_JSON=$(printf '{"tag_name": "%s", "target_commitish": "master", "name": "%s", "body": "%s", "draft": true, "prerelease": false}' "${TAG}" "${TAG}" "${BODY}")
 # Python is one way to parse the JSON data returned by the previous curl request.
 RELEASE_ID="$(curl --data "${RELEASE_JSON}" ${GITHUB_RELEASES_URL} | python -c "import sys, json; print json.load(sys.stdin)['id']")"
 
-# Create tarball:
-UPLOAD_FILES=( ${FILES} )
+
 
 # Upload tarball
 CONTENT_TYPE="Content-Type: application/x-bzip2"
