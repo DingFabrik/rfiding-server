@@ -33,6 +33,8 @@ object FlashKey {
   /** When a machine was updated in the DB. Content: ID of updated machine. */
   val MachineTimesUpdated = "machineTimesUpdated"
   val MachineUpdated = "machineUpdated"
+  /** When a machine was deleted. Content: ID of deleted machine. */
+  val DeletedMachine = "deletedMachine"
 
   /** When list of unknown tokens was emptied. Content: Nothing. */
   val ListEmptied = "listEmptied"

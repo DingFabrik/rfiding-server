@@ -20,14 +20,9 @@
     flash: Flash
 )
 
-@scripts = {
-    <script type="text/javascript" src="@routes.MachineController.addButtonsJs()"></script>
-}
-
 @main(
     userOpt = Some(user),
-    title   = "Configure machine #" + machine.id.get + " (" + machine.name + ")",
-    scripts = scripts
+    title   = "Configure machine #" + machine.id.get + " (" + machine.name + ")"
 ) {
 
 <div>
@@ -60,6 +55,10 @@
                 <label for="end[0]">End time</label>
             </div>
         </div>
+        @*
+         * Currently we display 7 entries for machine times. This can be increased in the line below.
+         * In the long run, these should be dynamically added.
+         *@
         @for(index <- 0 until 7) {
         <div class="form-row">
             <div class="col mb-3">

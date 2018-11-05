@@ -3,6 +3,11 @@
 @import views.html.forms.checkBox
 @import MachineController.FormID
 
+@*
+ * This script is intended to dynamically add a form field for entering machine times.
+ * Currently this is not in use.
+ *@
+
 @()
 $( document ).ready(function() {
     var timeElements = 0;
@@ -37,8 +42,5 @@ $( document ).ready(function() {
     $('button#update_runtimer').click(function() {
         alert("Hello")
     });
-
-
-
 });
 

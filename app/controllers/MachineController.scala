@@ -57,7 +57,7 @@ import scala.concurrent.Future
 /**
  * Actions related to machines.
  *
- * == MAC-Addresses ==
+ * == Format of MAC-Addresses ==
  * An MAC may look like ac:bc:32:b9:3f:13
  * Six hex values from 00 to ff, separated by colons.
  */
@@ -121,6 +121,18 @@ class MachineController @Inject()(
     )
   }
 
+  /** Deletes a machine from database. Machine times and configuration will also be deleted. */
+  def deleteMachine(machineId: Int): EssentialAction = isAuthenticatedAsync { implicit user => implicit request =>
+    val deleteQuery = DBIO.seq(
+      machineTimesTable.filter(_.machineId === machineId).delete,
+      machineConfigTable.filter(_.machineId === machineId).delete,
+      machineTable.filter(_.id === machineId).delete,
+    ).transactionally
+    db.run(deleteQuery).map { _ =>
+      Redirect(routes.MachineController.listMachines()).flashing(FlashKey.DeletedMachine -> machineId.toString)
+    }
+  }
+
   /** Form is used to add a new machine. */
   private[this] val modifyMachineForm = Form(
     mapping(
@@ -150,6 +162,7 @@ class MachineController @Inject()(
     }
   }
 
+  /** Modify existing machines. Endpoint for form post. */
   def modifyMachinePost: EssentialAction = isAuthenticatedAsync { implicit user => implicit request =>
     modifyMachineForm.bindFromRequest.fold(
       formWithErrors => {
@@ -171,10 +184,7 @@ class MachineController @Inject()(
     )
   }
 
-  def addButtonsJs: EssentialAction = Action {
-    Ok(views.js.javascript.add_buttons()).as(JAVASCRIPT)
-  }
-
+  /** Form is used to enter configuration for a machine. */
   private[this] val configureMachineForm: Form[ConfigureMachineData] = {
     import utils.forms.weekdayFormatter
 
@@ -227,6 +237,7 @@ class MachineController @Inject()(
     }
   }
 
+  /** Modify machine config. Form post endpoint. */
   def configureMachinePost: EssentialAction = isAuthenticatedAsync { implicit user => implicit request =>
     Logger.debug(s"request = $request")
     Logger.debug(s"request.body = ${request.body}")
