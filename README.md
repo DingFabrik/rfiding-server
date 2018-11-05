@@ -1,4 +1,6 @@
 [![Run Status](https://api.shippable.com/projects/5bce419856f6dd0700fa2a7e/badge?branch=master)]()
+[![Play Framework](https://img.shields.io/badge/play%20framework-2.6.13-green.svg)](https://www.playframework.com/)
+[![Scala](https://img.shields.io/badge/scala-2.12-green.svg)](https://www.scala-lang.org/)
 
 ## Rfiding
 Rfiding is a project to restrict access to machines and doors in our hackerspace.
@@ -6,6 +8,8 @@ Rfiding is a project to restrict access to machines and doors in our hackerspace
 This project is the server part to communicate with rfiding clients.
 
 One implementation for a client can be found at [rfiding](https://github.com/DingFabrik/rfiding).
+
+This project is written in Scala and relies on the [Play Framework](https://www.playframework.com/). 
 
 ## Installation
  * Download a release from the [releases page](https://github.com/DingFabrik/rfiding-server/releases/).
@@ -20,7 +24,7 @@ One implementation for a client can be found at [rfiding](https://github.com/Din
 ```
 
 ### Allowed hosts
-Th
+
 Remember to set the allowed hosts for the allowed hosts filter.
 See [Play: AllowedHostsFilter](https://www.playframework.com/documentation/2.6.x/AllowedHostsFilter).
 This variable represents all IPs and DNS names the app is available at.
@@ -32,4 +36,4 @@ This variable represents all IPs and DNS names the app is available at.
  * Replace the content from the previous installation with the 
    content from the release archive.
  * Move the backup copy of `db.sqlite` into the updated folder.
- * The database gets updated with the next access to the app.
+ * The database gets updated with the next access to the app. Data should be preserved.
