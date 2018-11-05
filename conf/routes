@@ -10,7 +10,7 @@ GET     /settings/about          controllers.SettingsController.about
 
 # Javascript Routes
 GET     /js/autocomplete         controllers.HomeController.autocompleteJs
-GET     /js/addbuttons           controllers.MachineController.addButtonsJs
+
 
 GET     /machines                controllers.MachineController.listMachines
 GET     /machine/modify          controllers.MachineController.modifyMachine(id: Int)
@@ -19,6 +19,7 @@ GET     /machine/add             controllers.MachineController.addMachine
 POST    /machine/add             controllers.MachineController.addMachinePost
 GET     /machine/configure       controllers.MachineController.configureMachine(id: Int)
 POST    /machine/configure       controllers.MachineController.configureMachinePost
+GET     /machine/delete/:id      controllers.MachineController.deleteMachine(id: Int)
 
 
 GET     /persons                 controllers.PersonController.listPersons
