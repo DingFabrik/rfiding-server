@@ -6,7 +6,9 @@
     prependSymbol: Option[String] = None,
     required: Boolean = false,
     readonly: Boolean = false,
-    hideLabel: Boolean = false
+    hideLabel: Boolean = false,
+    classEx: String = "",
+    errorText: Option[String] = None
 )(
     implicit messagesProvider: MessagesProvider
 )
@@ -20,7 +22,7 @@
     </div>
 }
 <input type="@inputType"
-       class="form-control @field.error.map(e => "is-invalid")"
+       class="form-control @field.error.map(e => "is-invalid") @classEx"
        id="@field.id"
        name="@field.id"
        placeholder="@description"
@@ -30,5 +32,5 @@
 />
 @if(prependSymbol.isDefined) { </div> }
 @field.error.map { error =>
-    <div class="invalid-feedback">@error.format</div>
+    <div class="invalid-feedback">@errorText.getOrElse(error.format)</div>
 }

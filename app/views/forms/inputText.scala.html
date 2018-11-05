@@ -5,7 +5,9 @@
     prependSymbol: Option[String] = None,
     required: Boolean = false,
     readonly: Boolean = false,
-    hideLabel: Boolean = false
+    hideLabel: Boolean = false,
+    classEx: String = "",
+    errorText: Option[String] = None
 )(
     implicit messagesProvider: MessagesProvider
 )
@@ -17,5 +19,7 @@
     prependSymbol = prependSymbol,
     required      = required,
     readonly      = readonly,
-    hideLabel     = hideLabel
+    hideLabel     = hideLabel,
+    classEx       = classEx,
+    errorText     = errorText
 )

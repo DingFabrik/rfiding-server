@@ -4,7 +4,10 @@
     onEmptyValue: String = "",
     prependSymbol: Option[String] = None,
     required: Boolean = false,
-    readonly: Boolean = false
+    readonly: Boolean = false,
+    hideLabel: Boolean = false,
+    classEx: String = "",
+    errorText: Option[String] = None
 )(
     implicit messagesProvider: MessagesProvider
 )
@@ -15,5 +18,8 @@
     onEmptyValue  = onEmptyValue,
     prependSymbol = prependSymbol,
     required      = required,
-    readonly      = readonly
+    readonly      = readonly,
+    hideLabel     = hideLabel,
+    classEx       = classEx,
+    errorText     = errorText
 )
