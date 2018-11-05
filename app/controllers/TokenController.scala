@@ -14,6 +14,14 @@ import models.PreparedToken
 import models.Token
 import models.UnknownToken
 import play.api.Logger
+import play.api.data.Form
+import play.api.data.Forms.boolean
+import play.api.data.Forms.ignored
+import play.api.data.Forms.mapping
+import play.api.data.Forms.number
+import play.api.data.Forms.of
+import play.api.data.Forms.optional
+import play.api.data.Forms.text
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.db.slick.HasDatabaseConfigProvider
 import play.api.i18n.I18nSupport
@@ -62,8 +70,6 @@ class TokenController @Inject()(
   with TableProvider
   with Security { controller =>
 
-  import play.api.data.Form
-  import play.api.data.Forms._
   import utils.CustomIsomorphisms.seqByteIsomorphism
 
   /** Form to assign a token to a person. */
@@ -76,26 +82,26 @@ class TokenController @Inject()(
   /** Form to assign a token to a person. */
   private[this] val addTokenForm = Form(
     mapping(
-      FormKey.tokenSerial  -> of[Seq[Byte]],
-      FormKey.tokenPurpose -> optional(text),
-      FormKey.findPersonId -> number,
+      FormKey.tokenSerial    -> of[Seq[Byte]].verifying("Invalid token length. (4 Bytes)", _.length == 4),
+      FormKey.tokenPurpose   -> optional(text),
+      FormKey.findPersonId   -> number,
+      FormKey.findPersonName -> ignored(""),
     )(AddTokenData.apply)(AddTokenData.unapply)
   )
 
   def addToken(token: String): EssentialAction = isAuthenticated { implicit userId => implicit request =>
-    // TODO: Check if token uid is valid. Currently one could add an arbitrary length.
-    val tokenSerial = formatTokenSeq(token)
+    val tokenSerial: Seq[Byte] = formatTokenSeq(token)
     Ok(add_token(tokenSerial, addTokenForm))
   }
 
   def addTokenPost: EssentialAction = isAuthenticatedAsync { implicit userId => implicit request =>
   addTokenForm.bindFromRequest.fold(
     formWithErrors => {
-      // TODO: Add error handling for this form.
-      Future.successful(Ok("error in form"))
+      val tokenAsString = formWithErrors.apply(FormKey.tokenSerial).value.get
+      val tokenSerial = formatTokenSeq(tokenAsString)
+      Future.successful(BadRequest(add_token(tokenSerial, formWithErrors)))
     },
     addTokenData => {
-      // TODO: Check if token uid is valid. Currently one could add an arbitrary length.
       val insertQuery = (tokenTable returning tokenTable.map(_.id)) += Token(
           id       = None,
           serial   = addTokenData.serial,
@@ -320,7 +326,8 @@ object TokenController {
   case class AddTokenData(
     serial: Seq[Byte],
     purpose: Option[String],
-    personId: Int
+    personId: Int,
+    name: String
   )
 
   case class TokenData(
@@ -331,6 +338,7 @@ object TokenController {
 
   object FormKey {
     val findPersonId   = "find-person-id"
+    val findPersonName = "find-person"
     val tokenId        = "token-id"
     val tokenSerial    = "token-serial"
     val tokenPurpose   = "token-purpose"
