@@ -4,7 +4,7 @@ import slick.jdbc.SQLiteProfile.api._
 import slick.lifted.ProvenShape
 import models.Index.qualificationTableIndex
 import slick.lifted.ForeignKeyQuery
-import slick.lifted.Index
+import slick.lifted.{Index => SlickIndex}
 import slick.model.ForeignKeyAction.Restrict
 
 /**
@@ -38,7 +38,7 @@ class QualificationTable(tag: Tag) extends Table[Qualification](tag, "tb_qualifi
     foreignKey("fk_person", personId, personTable)(_.id, onDelete = Restrict)
   }
 
-  def idx: Index = {
+  def idx: SlickIndex = {
     index(qualificationTableIndex, (machineId, personId), unique = true)
   }
 }
