@@ -38,7 +38,7 @@
                     @inputNumber(modifyPersonForm(FormID.memberId), "Member ID (optional)")
                 </div>
                 <div class="col-md-4 mb-3">
-                    @inputText(modifyPersonForm(FormID.id), "Database ID", onEmptyValue = "Automatically assigned", prependSymbol = Some("#"), readonly = true)
+                    @inputText(modifyPersonForm(FormID.personId), "Database ID", onEmptyValue = "Automatically assigned", prependSymbol = Some("#"), readonly = true)
                 </div>
             </div>
             <div class="form-row">
@@ -61,12 +61,12 @@
                     <button class="btn btn-primary btn-lg btn-block" type="submit">Modify Person Details</button>
                 </div>
                 <div class="col-md-1 mb-3">
-                    <button type="button" class="btn btn-danger btn-lg btn-block" data-toggle="modal" data-target="#confirmDeletePerson@modifyPersonForm(FormID.id).value.get.toInt">
+                    <button type="button" class="btn btn-danger btn-lg btn-block" data-toggle="modal" data-target="#confirmDeletePerson@modifyPersonForm(FormID.personId).value.get.toInt">
                         <span data-feather="trash-2"></span>
                     </button>
                 </div>
         </div>
-        @confirm_delete_person_dialog(modifyPersonForm(FormID.id).value.get.toInt, modifyPersonForm(FormID.fullName).value)
+        @confirm_delete_person_dialog(modifyPersonForm(FormID.personId).value.get.toInt, modifyPersonForm(FormID.fullName).value)
         }
     </div>
 

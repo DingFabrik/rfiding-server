@@ -2,16 +2,19 @@ package controllers
 
 import controllers.PersonController.FormID
 import controllers.PersonController.PersonFormData
+import controllers.PersonController.PersonQualification
 import controllers.PersonController.SimplifiedPerson
 import controllers.security.Security
 import javax.inject.Inject
 import javax.inject.Singleton
+import models.Machine
 import models.Person
+import models.Qualification
 import play.api.Logger
 import play.api.data.Form
 import play.api.data.Forms.boolean
-import play.api.data.Forms.email
 import play.api.data.Forms.default
+import play.api.data.Forms.email
 import play.api.data.Forms.mapping
 import play.api.data.Forms.number
 import play.api.data.Forms.optional
@@ -30,6 +33,7 @@ import slick.jdbc.SQLiteProfile.api._
 import utils.database.TableProvider
 import utils.navigation.NavigationComponent
 import views.html.add_person
+import views.html.add_qualification
 import views.html.list_persons
 import views.html.modify_person
 
@@ -55,7 +59,7 @@ class PersonController @Inject()(
   /** Form for managing a Persons details. */
   private[this] val personDetailsForm = Form(
     mapping(
-      FormID.id       -> optional(number),
+      FormID.personId -> optional(number),
       FormID.memberId -> optional(number),
       FormID.fullName -> text,
       FormID.email    -> optional(email),
@@ -112,7 +116,7 @@ class PersonController @Inject()(
           Logger.debug(s"person => $person")
           Logger.debug(s"token  => $token")
           val form = personDetailsForm.bind(Map(
-            FormID.id       -> person.id.get.toString,
+            FormID.personId -> person.id.get.toString,
             FormID.memberId -> person.memberId.getOrElse(""),
             FormID.fullName -> person.name,
             FormID.email    -> person.email.getOrElse(""),
@@ -178,9 +182,61 @@ class PersonController @Inject()(
       Redirect(backRoute).flashing(FlashKey.DeletedPerson -> id.toString)
     }
   }
+
+  private[this] val addQualificationForm = Form(
+    mapping(
+      FormID.personId    -> number,
+      FormID.machineId   -> number
+    )(PersonQualification.apply)(PersonQualification.unapply)
+  )
+
+  def addQualification(id: Int): EssentialAction = isAuthenticatedAsync { implicit userId => implicit request =>
+    val qualiQuery = machineTable.join(qualificationTable).on(_.id === _.machineId)
+      .joinRight(personTable.filter(_.id === id)).on{ case ((_, q), p) => q.personId === p.id }
+
+    db.run(qualiQuery.result).map { result: Seq[(Option[(Machine, Qualification)], Person)] =>
+      Ok(add_qualification(result, addQualificationForm))
+    }
+  }
+
+  def addQualificationPost: EssentialAction = isAuthenticatedAsync { implicit user => implicit request =>
+    addQualificationForm.bindFromRequest.fold(
+      formWithErrors => {
+        val personId = formWithErrors.apply(FormID.personId).value.get.toInt
+        Future.successful(Redirect(routes.PersonController.addQualification(personId)))
+      },
+      addQualificationData => {
+        val upQu = Qualification(
+          machineId = addQualificationData.machineId,
+          personId  = addQualificationData.personId
+        )
+        val updateQuery = qualificationTable.insertOrUpdate(upQu)
+        db.run(updateQuery).map { _ =>
+          Redirect(routes.PersonController.addQualification(addQualificationData.personId))
+            .flashing(FlashKey.QualificationUpdated -> addQualificationData.personId.toString)
+        }
+      }
+    )
+  }
+
+  def revokeQualification(personId: Int, machineId: Int): EssentialAction = isAuthenticatedAsync { implicit user => implicit request =>
+    val deleteQualificationQuery = qualificationTable.filter(
+      quali => quali.personId === personId && quali.machineId === machineId
+    ).delete
+    db.run(deleteQualificationQuery).map { _ =>
+      Redirect(routes.PersonController.addQualification(personId))
+        .flashing(FlashKey.QualificationDeleted -> machineId.toString)
+    }
+  }
+
 }
 
 object PersonController {
+
+  case class PersonQualification(
+    personId: Int,
+    machineId: Int
+  )
 
   case class PersonFormData(
     id: Option[Int],
@@ -192,11 +248,13 @@ object PersonController {
 
   /** IDs used by forms. */
   object FormID {
-    val id       = "id"
-    val memberId = "memberId"
-    val fullName = "fullName"
-    val email    = "email"
-    val isActive = "isActive"
+    val personId    = "personId"
+    val memberId    = "memberId"
+    val fullName    = "fullName"
+    val email       = "email"
+    val isActive    = "isActive"
+    val machineId   = "machineId"
+    val machineName = "machineName"
   }
 
   /** Simple data holder to return specific person data used by a javascript autocomplete function. */

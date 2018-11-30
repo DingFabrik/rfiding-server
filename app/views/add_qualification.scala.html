@@ -1,0 +1,87 @@
+@import controllers.PersonController.PersonQualification
+@import PersonController.FormID
+@import utils.navigation.NavigationComponent
+@import security.LoginState.User
+@import helper.CSRF
+@import forms.inputNumber
+@import forms.inputText
+@import FlashKey.QualificationDeleted
+
+@(
+    result: Seq[(Option[(Machine, Qualification)], Person)],
+    qualificationForm: Form[PersonQualification],
+)(
+    implicit navigation: NavigationComponent,
+    user: User,
+    request: RequestHeader,
+    messagesProvider: MessagesProvider,
+    flash: Flash
+)
+
+@personOfInterest = @{val (_, p) = result.head; p}
+@machineQualiOpt = @{val (m, _) = result.head; m}
+
+@scripts = {
+    <script type="text/javascript" src="@routes.HomeController.autocompleteMachineJs(personOfInterest.id.get)"></script>
+}
+
+
+@main(
+    userOpt = Some(user),
+    title = "Qualify " + personOfInterest.name + " (#" + personOfInterest.id.get + ")",
+    scripts = scripts
+) {
+
+    @helper.form(action = controllers.routes.PersonController.addQualificationPost()) {
+        @CSRF.formField
+        <input type="hidden" name="@FormID.personId" id="@FormID.personId" value="@personOfInterest.id.get" />
+        <div class="form-row align-items-end">
+            <div class="col-md-3 mb-3">
+                @inputNumber(qualificationForm(FormID.machineId), "Machine ID", readonly = true)
+            </div>
+            <div class="col-md-8 mb-3">
+                @inputText(qualificationForm(FormID.machineName), "Machine Name", classEx = "autocomplete-machine")
+            </div>
+            <div class="col-md-1 mb-3">
+                <button type="submit" class="btn btn-primary btn-block"><span data-feather="plus"></span></button>
+            </div>
+        </div>
+    }
+
+    <div>
+        @for(mid <- flash.get(QualificationDeleted)) {
+        <div class="alert alert-success" role="alert">Qualification for machine #@mid revoked.</div>
+        }
+        @if(machineQualiOpt.isDefined) {
+            <p>@personOfInterest.name is qualified for the following machines:</p>
+            <div class="table-responsive">
+                <table class="table table-striped table-sm">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Revoke</th>
+                    </tr>
+                    </thead>
+                    @for(
+                        (mqOpt, _) <- result;
+                        (machine, _) <- mqOpt
+                    ) {
+                    <tr>
+                        <td>@machine.id</td>
+                        <td>@machine.name</td>
+                        <td>
+                            <a href="@controllers.routes.PersonController.revokeQualification(personOfInterest.id.get, machine.id.get)"
+                               class="text-danger"><span data-feather="x-circle"></span></a></td>
+                    </tr>
+                    }
+                </table>
+            </div>
+        } else {
+            <div class="alert alert-info" role="alert">
+                @personOfInterest.name isn't qualified for any machines.
+            </div>
+        }
+    </div>
+}
+

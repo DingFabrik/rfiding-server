@@ -38,4 +38,9 @@ object FlashKey {
 
   /** When list of unknown tokens was emptied. Content: Nothing. */
   val ListEmptied = "listEmptied"
+
+  /** When qualification data was updated or inserted. Content: don't care. */
+  val QualificationUpdated = "qualificationUpdated"
+  /** When qualification data has been removed. Content: revoked Machine ID. */
+  val QualificationDeleted = "qualificationDeleted"
 }
