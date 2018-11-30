@@ -5,6 +5,7 @@ import models.MachineTable
 import models.MachineTimesTable
 import models.PersonTable
 import models.PreparedTokenTable
+import models.QualificationTable
 import models.TokenTable
 import models.UnknownTokenTable
 import models.UserTable
@@ -19,6 +20,7 @@ trait TableProvider {
   protected[this] val machineTable       = TableQuery[MachineTable]
   protected[this] val machineConfigTable = TableQuery[MachineConfigTable]
   protected[this] val machineTimesTable  = TableQuery[MachineTimesTable]
+  protected[this] val qualificationTable = TableQuery[QualificationTable]
 
   protected[this] val allTables = Seq(
     personTable,
@@ -28,6 +30,7 @@ trait TableProvider {
     userTable,
     machineTable,
     machineConfigTable,
-    machineTimesTable
+    machineTimesTable,
+    qualificationTable
   )
 }
