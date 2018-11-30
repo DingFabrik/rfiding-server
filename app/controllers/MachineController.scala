@@ -28,6 +28,9 @@ import play.api.data.Mapping
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.db.slick.HasDatabaseConfigProvider
 import play.api.i18n.I18nSupport
+import play.api.libs.json.JsArray
+import play.api.libs.json.JsObject
+import play.api.libs.json.JsString
 import play.api.mvc.AbstractController
 import play.api.mvc.EssentialAction
 import play.api.mvc.MessagesActionBuilder
@@ -84,10 +87,10 @@ class MachineController @Inject()(
   /** Form is used to add a new machine. */
   private[this] val addMachineForm = Form(
     mapping(
-      FormID.name       -> text,
+      FormID.machineName       -> text,
       FormID.macAddress -> text.verifying(
                               error = "MAC address has invalid format.",
-                              constraint = _.matches(macAddressRegexString)
+                              constraint = _.matches(MacAddressRegexString)
       ),
       FormID.comment    -> optional(text),
       FormID.isActive   -> boolean,
@@ -136,11 +139,11 @@ class MachineController @Inject()(
   /** Form is used to add a new machine. */
   private[this] val modifyMachineForm = Form(
     mapping(
-      FormID.id         -> optional(number),
-      FormID.name       -> text,
+      FormID.machineId         -> optional(number),
+      FormID.machineName       -> text,
       FormID.macAddress -> text.verifying(
         error = "MAC address has an invalid format. Only numbers and lowercase letters a to f are allowed.",
-        constraint = _.matches(macAddressRegexString)
+        constraint = _.matches(MacAddressRegexString)
       ),
       FormID.comment    -> optional(text),
       FormID.isActive   -> boolean,
@@ -152,11 +155,11 @@ class MachineController @Inject()(
     val findMachineQuery = machineTable.filter(_.id === id)
     db.run(findMachineQuery.result).map { case Seq(machine) =>
       val form = modifyMachineForm.bind(Map(
-        FormID.id         -> machine.id.get.toString,
-        FormID.name       -> machine.name,
-        FormID.macAddress -> machine.macAddress,
-        FormID.comment    -> machine.comment.getOrElse(""),
-        FormID.isActive   -> machine.isActive.toString
+        FormID.machineId   -> machine.id.get.toString,
+        FormID.machineName -> machine.name,
+        FormID.macAddress  -> machine.macAddress,
+        FormID.comment     -> machine.comment.getOrElse(""),
+        FormID.isActive    -> machine.isActive.toString
       ))
       Ok(modify_machine(form))
     }
@@ -273,6 +276,66 @@ class MachineController @Inject()(
       }
     )
   }
+
+
+  /**
+   * Looks up a string in the machine table.
+   *
+   * @return The result is returned as a JSON object. jQuery's autocomplete widget requires the JSON data to consist of
+   *         a list of JSON-objects containing two key-value pairs. The keys must be named "label" and "value".
+   *         "label" is used for the name and "value" contains the database ID. Although this could be handled on the
+   *         client side, we enforce this server-side by using the 'SimplifiedPerson' data object, which results in a
+   *         much more compact and easier to write code than in the client-side javascript.
+   */
+  def findMachine(term: Option[String]): EssentialAction = isAuthenticatedAsync { implicit userId => implicit request =>
+    term.fold(Future.successful(Ok(""))) { needle: String =>
+      val query = machineTable.filter(_.name like s"%$needle%").take(5)
+      db.run(query.result).map { machines: Seq[Machine] =>
+        val mj: Seq[JsObject] = machines.map { machine =>
+          JsObject(Seq(
+            "label" -> JsString(machine.name),
+            "value" -> JsString(machine.id.get.toString)
+          ))
+        }
+        val jsonMachines = JsArray(mj)
+        Ok(jsonMachines).as(JSON)
+      }
+    }
+  }
+
+  /**
+   * Looks up a string in the machine table.
+   *
+   * @return The result is returned as a JSON object. jQuery's autocomplete widget requires the JSON data to consist of
+   *         a list of JSON-objects containing two key-value pairs. The keys must be named "label" and "value".
+   *         "label" is used for the name and "value" contains the database ID. Although this could be handled on the
+   *         client side, we enforce this server-side by using the 'SimplifiedPerson' data object, which results in a
+   *         much more compact and easier to write code than in the client-side javascript.
+   */
+  def findQualificableMachine(user: Int, term: Option[String]): EssentialAction = isAuthenticatedAsync { implicit userId => implicit request =>
+    term.fold(Future.successful(Ok(""))) { needle: String =>
+      val query = machineTable.filter(_.name like s"%$needle%").joinLeft(qualificationTable.filter(_.personId === user)).on {
+        case (machine, qualification) => machine.id === qualification.machineId
+      }.filterNot {
+        case (_, qualificationColumn) => qualificationColumn.map(_.machineId).isDefined
+      }.map {
+        case (machine, _) => machine
+      }
+
+      db.run(query.result).map { machines: Seq[Machine] =>
+        val jsonMachines: Seq[JsObject] = machines.map { machine =>
+          Logger.debug(s"Machine = $machine")
+          JsObject(Seq(
+            "label" -> JsString(machine.name),
+            "value" -> JsString(machine.id.get.toString)
+          ))
+        }
+        Ok(JsArray(jsonMachines)).as(JSON)
+      }
+    }
+  }
+
+
 }
 
 object MachineController {
@@ -335,10 +398,10 @@ object MachineController {
   )
 
   object FormID {
-    val id = "id"
-    val name = "name"
-    val macAddress = "macAddress"
-    val comment = "comment"
-    val isActive = "isActive"
+    val machineId   = "machineId"
+    val machineName = "machineName"
+    val macAddress  = "macAddress"
+    val comment     = "comment"
+    val isActive    = "isActive"
   }
 }

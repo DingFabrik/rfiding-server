@@ -45,6 +45,7 @@
                 <th>E-Mail</th>
                 <th>Active</th>
                 <th>Modify</th>
+                <th>Qualifications</th>
             </tr>
             </thead>
             <tbody>@for(person <- persons) {
@@ -54,7 +55,8 @@
                     <td>@person.name</td>
                     <td>@person.email</td>
                     <td><input type="checkbox" disabled @if(person.isActive) {checked="checked"}></td>
-                <td><a href="@PersonController.modifyPerson(person.id.get)"><span data-feather="edit"></span></a></td>
+                    <td><a href="@PersonController.modifyPerson(person.id.get)"><span data-feather="edit"></span></a></td>
+                    <td><a href="@PersonController.addQualification(person.id.get)"><span data-feather="layers"></span></a></td>
                 </tr>
             }</tbody>
         </table>

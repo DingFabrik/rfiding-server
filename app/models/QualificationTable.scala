@@ -1,0 +1,44 @@
+package models
+
+import slick.jdbc.SQLiteProfile.api._
+import slick.lifted.ProvenShape
+import models.Index.qualificationTableIndex
+import slick.lifted.ForeignKeyQuery
+import slick.lifted.Index
+import slick.model.ForeignKeyAction.Restrict
+
+/**
+ * Qualification representation.
+ *
+ * A person must be qualified to use a machine. Otherwise the access is denies.
+ *
+ * @param machineId The machine ID
+ * @param personId  The person ID
+ */
+case class Qualification(
+  machineId: Int,
+  personId: Int,
+)
+
+class QualificationTable(tag: Tag) extends Table[Qualification](tag, "tb_qualification") {
+  val machineTable = TableQuery[MachineTable]
+  val personTable = TableQuery[PersonTable]
+
+  def machineId: Rep[Int] = column[Int]("fk_machine_id")
+  def personId: Rep[Int] = column[Int]("fk_person_id")
+
+  def * : ProvenShape[Qualification] = {
+    (machineId, personId) <> (Qualification.tupled, Qualification.unapply)
+  }
+
+  def machine: ForeignKeyQuery[MachineTable, Machine] = {
+    foreignKey("fk_machine", machineId, machineTable)(_.id, onDelete = Restrict)
+  }
+  def person: ForeignKeyQuery[PersonTable, Person] = {
+    foreignKey("fk_person", personId, personTable)(_.id, onDelete = Restrict)
+  }
+
+  def idx: Index = {
+    index(qualificationTableIndex, (machineId, personId), unique = true)
+  }
+}

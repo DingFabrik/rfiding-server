@@ -5,9 +5,15 @@ import java.time.Duration
 import java.time.LocalDateTime
 import java.time.LocalTime
 
+import controllers.ApiController.AccessDeniedException
+import controllers.ApiController.AccessGrantedResult
 import controllers.ApiController.MachineConfigResult
-import controllers.ApiController.ResultExtender
-import controllers.ApiController._
+import controllers.ApiController.MachineNotFound
+import controllers.ApiController.PossibleMachine
+import controllers.ApiController.TokenStringInvalid
+import controllers.ApiController.ValidToken
+import controllers.ApiController.formatMachineString
+import controllers.ApiController.formatTokenSeq
 import controllers.security.Security
 import io.swagger.annotations.Api
 import io.swagger.annotations.ApiModelProperty
@@ -17,14 +23,16 @@ import io.swagger.annotations.ApiResponse
 import io.swagger.annotations.ApiResponses
 import javax.inject.Inject
 import javax.inject.Singleton
+import models.Machine
 import models.MachineTime
+import models.Person
+import models.Token
 import models.UnknownToken
 import play.api.Logger
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.db.slick.HasDatabaseConfigProvider
 import play.api.http.ContentTypes.JSON
 import play.api.i18n.I18nSupport
-import play.api.libs.json.JsValue
 import play.api.libs.json.Json
 import play.api.libs.json.Writes
 import play.api.mvc.AbstractController
@@ -89,9 +97,6 @@ class ApiController @Inject()(
     }
   }
 
-  /** Convenience method to return an AccessGrantedResult as JSON. */
-  private[this] def JsonOK(result: AccessGrantedResult): Result = Ok(Json.toJson(result)).as(JSON)
-
   /* **************************************************************************************************************** */
 
   @ApiOperation(
@@ -131,7 +136,7 @@ class ApiController @Inject()(
   /* **************************************************************************************************************** */
   /** Checks whether the given parameter is valid. */
   private[this] def hasValidTokenString(token: String)(invalid: Future[Result])(valid: Future[Result]): Future[Result] = {
-    parameterCheck[String, Future[Result]](isParamValid = _.toLowerCase.matches("([0-9a-fA-F]{8})"))(token)(invalid)(valid)
+    parameterCheck[String, Future[Result]](isParamValid = _.toLowerCase.matches(TokenRegexString))(token)(invalid)(valid)
   }
 
   private[this] def rememberUnknownToken(serial: Seq[Byte], machineId: Int): Unit = {
@@ -148,7 +153,8 @@ class ApiController @Inject()(
     notes = """Check if access to a machine is allowed.
 Access will be denied if owner, token or machine is set to inactive.
 Access will further be denied if token is not found or the current time is not in a valid interval or the
-day of week does not match to the todays one."""
+day of week does not match to the todays one.
+And finally the access will be denied if the user is not qualified for that machine."""
   )
   @ApiResponses(Array(
     new ApiResponse(code = 400, message = "Machine not found."),
@@ -166,57 +172,83 @@ day of week does not match to the todays one."""
       example = "42a65c22"
     ) tokenUid: String
   ): EssentialAction = Action.async { hasValidTokenString(tokenUid) {
-    TokenStringInvalid.status.fut
+    Future.successful(TokenStringInvalid.status)
   } {
     val formattedMachine = formatMachineString(machineString)
-    logger.info(s"Checking machine access for machine $formattedMachine and token $tokenUid")
-
-    val machineQuery = machineTable.filter(_.macAddress === formattedMachine).joinLeft(machineTimesTable).on {
-      case (machines, times) => machines.id === times.machineId
-    }
-
     val uuid = formatTokenSeq(tokenUid)
-    val tokenQuery = tokenTable.filter(_.serial === uuid).joinLeft(personTable).on {
-      case (token, person) => token.ownerId === person.id
+
+    def machineTimesFut = {
+      val machineQuery = machineTable.filter(_.macAddress === formattedMachine).joinLeft(machineTimesTable).on {
+        case (machines, times) => machines.id === times.machineId
+      }
+      db.run(machineQuery.result)
     }
 
-    val tokenQueryFuture = db.run(tokenQuery.result)
+    def tokenQueryFut: Future[Seq[(Token, Option[Person])]] = {
+      val tokenQuery = tokenTable.filter(_.serial === uuid).joinLeft(personTable).on {
+        case (token, person) => token.ownerId === person.id
+      }
+      db.run(tokenQuery.result)
+    }
 
-    // We handle more cases then necessary to get more debug information.
-    db.run(machineQuery.result).map {
+    def checkQualificationFut(owner: Person, inputMachine: Machine) = {
+      logger.debug(s"Checking ${owner.name} against ${inputMachine.name}")
+      // TODO: Optimize query (use machine directly instead of joining it)
+      val query = machineTable.filter(_.id === inputMachine.id.get).joinLeft(qualificationTable.filter(_.personId === owner.id)).on {
+        case (machine, qualification) => machine.id === qualification.machineId
+      }.map {
+        case (_, qualiOpt) => qualiOpt
+      }
+      db.run(query.result)
+    }
+
+    def fail(reason: String): Nothing = {
+      logger.debug(reason)
+      throw new AccessDeniedException(reason)
+    }
+
+    val f1: Future[PossibleMachine] = machineTimesFut.map {
       case Seq() =>
-        logger.debug("Machine not found.")
-        JsonOK(AccessGrantedResult(access = 0)).fut
+        fail("Machine not found.")
       case (machineResult, _) +: _ if !machineResult.isActive =>
-        logger.debug(s"Machine '${machineResult.name}' restricted.")
-        JsonOK(AccessGrantedResult(access = 0)).fut
+        fail(s"Machine '${machineResult.name}' restricted.")
       case results =>
         logger.debug("Machine with possible working periods found")
-
-        val remaining: Option[Long] = results.collectFirst {
+        val remainingOpt: Option[Long] = results.collectFirst {
           case (_, Some(time)) if isTimeValid(time) => remainingWorkingPeriod(time)
         }
-        val machineId: Int = results.collectFirst { case (machineResult, _) => machineResult.id.get }.get
-
-        tokenQueryFuture.map {
-          case Seq((token, Some(owner))) if !token.isActive =>
-            logger.debug(s"Token for ${owner.name} restricted.")
-            JsonOK(AccessGrantedResult(access = 0))
-          case Seq((_, Some(owner))) if !owner.isActive =>
-            logger.debug(s"Owner (${owner.name}) restricted.")
-            JsonOK(AccessGrantedResult(access = 0))
-          case Seq((_, Some(owner))) =>
-            logger.debug(s"Token found. It belongs to ${owner.name}.")
-            JsonOK(AccessGrantedResult(access = 1, workingtime = remaining.getOrElse(0L)))
-          case Seq((_, None)) =>
-            logger.error("Token without owner found. Token probably not removed from DB.")
-            JsonOK(AccessGrantedResult(access = 0))
-          case _ =>
-            logger.debug("Token not found.")
-            rememberUnknownToken(uuid, machineId)
-            JsonOK(AccessGrantedResult(access = 0))
-        }
-    }.flatten
+        val (machine: Machine, _) = results.head
+        PossibleMachine(machine, remainingOpt)
+    }
+    val f2: Future[ValidToken] = f1.flatMap { case PossibleMachine(machine, remainingOpt) => tokenQueryFut.map {
+      case Seq((token, Some(owner))) if !token.isActive =>
+        fail(s"Token for ${owner.name} restricted.")
+      case Seq((_, Some(owner))) if !owner.isActive =>
+        fail(s"Owner (${owner.name}) restricted.")
+      case Seq((_, Some(owner))) =>
+        logger.debug(s"Token found. It belongs to ${owner.name}.")
+        ValidToken(owner, machine, remainingOpt)
+      case Seq((_, None)) =>
+        fail("Token without owner found. Token probably not removed from DB.")
+      case _ =>
+        rememberUnknownToken(uuid, machine.id.get)
+        fail("Token not found.")
+    }}
+    val f3: Future[AccessGrantedResult] = f2.flatMap {
+      case ValidToken(owner, machine, remainingOpt) => checkQualificationFut(owner, machine).map {
+        case Seq(Some(_)) =>
+          logger.debug(s"Quali OK.")
+          AccessGrantedResult(access = 1, remainingOpt.getOrElse(0L))
+        case _ =>
+          fail(s"'${owner.name}' has no qualification for '${machine.name}'.")
+      }
+    }
+    val f4 = f3.recover { case _: AccessDeniedException =>
+      AccessGrantedResult(access = 0)
+    }
+    f4.map { result =>
+      Ok(Json.toJson(result)).as(JSON)
+    }
   }}
 
   /* **************************************************************************************************************** */
@@ -238,6 +270,7 @@ day of week does not match to the todays one."""
 
 object ApiController {
 
+  /** Creates a MAC address divided by colons from a string already containing the MAC address out of hex chars. */
   def formatMachineString(machineBytes: String): String = {
     machineBytes.toLowerCase.grouped(2).mkString(":")
   }
@@ -274,7 +307,9 @@ object ApiController {
     workingtime: Long = 0L
   )
 
-  implicit class ResultExtender(val underlying: Result) extends AnyVal {
-    def fut: Future[Result] = Future.successful(underlying)
-  }
+  trait AccessResult
+  case class ValidToken(owner: Person, machine: Machine, workingtimeOpt: Option[Long]) extends AccessResult
+  case class PossibleMachine(machine: Machine, workingtimeOpt: Option[Long]) extends AccessResult
+
+  class AccessDeniedException(reason: String) extends RuntimeException
 }

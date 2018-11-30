@@ -9,26 +9,32 @@ GET     /showstring              controllers.HomeController.showString
 GET     /settings/about          controllers.SettingsController.about
 
 # Javascript Routes
-GET     /js/autocomplete         controllers.HomeController.autocompleteJs
+GET     /js/autocomplete-person           controllers.HomeController.autocompletePersonJs
+GET     /js/autocomplete-machine/:userId  controllers.HomeController.autocompleteMachineJs(userId: Int)
 
 
-GET     /machines                controllers.MachineController.listMachines
-GET     /machine/modify          controllers.MachineController.modifyMachine(id: Int)
-POST    /machine/modify          controllers.MachineController.modifyMachinePost
-GET     /machine/add             controllers.MachineController.addMachine
-POST    /machine/add             controllers.MachineController.addMachinePost
-GET     /machine/configure       controllers.MachineController.configureMachine(id: Int)
-POST    /machine/configure       controllers.MachineController.configureMachinePost
-GET     /machine/delete/:id      controllers.MachineController.deleteMachine(id: Int)
+GET     /machines                   controllers.MachineController.listMachines
+GET     /machine/modify             controllers.MachineController.modifyMachine(id: Int)
+POST    /machine/modify             controllers.MachineController.modifyMachinePost
+GET     /machine/add                controllers.MachineController.addMachine
+POST    /machine/add                controllers.MachineController.addMachinePost
+GET     /machine/configure          controllers.MachineController.configureMachine(id: Int)
+POST    /machine/configure          controllers.MachineController.configureMachinePost
+GET     /machine/delete/:id         controllers.MachineController.deleteMachine(id: Int)
+GET     /machine/find               controllers.MachineController.findMachine(term: Option[String])
+GET     /machine/find-qualificable  controllers.MachineController.findQualificableMachine(user: Int, term: Option[String])
 
 
-GET     /persons                 controllers.PersonController.listPersons
-GET     /person/add              controllers.PersonController.addPerson
-POST    /person/add              controllers.PersonController.addPersonPost
-GET     /person/modify/:id       controllers.PersonController.modifyPerson(id: Int)
-POST    /person/modify           controllers.PersonController.modifyPersonPost
-GET     /person/find             controllers.PersonController.findPerson(term: Option[String])
-GET     /person/delete           controllers.PersonController.deletePerson(id: Int, returnTo: String)
+GET     /persons                      controllers.PersonController.listPersons
+GET     /person/add                   controllers.PersonController.addPerson
+POST    /person/add                   controllers.PersonController.addPersonPost
+GET     /person/modify/:id            controllers.PersonController.modifyPerson(id: Int)
+POST    /person/modify                controllers.PersonController.modifyPersonPost
+GET     /person/find                  controllers.PersonController.findPerson(term: Option[String])
+GET     /person/delete                controllers.PersonController.deletePerson(id: Int, returnTo: String)
+GET     /person/add-qualification/:id controllers.PersonController.addQualification(id: Int)
+POST    /person/add-qualification     controllers.PersonController.addQualificationPost
+GET     /person/revoke-qualification/:personId/:machineId  controllers.PersonController.revokeQualification(personId: Int, machineId: Int)
 
 GET     /tokens/list             controllers.TokenController.listTokens
 GET     /tokens/unknown          controllers.TokenController.listUnknownTokens

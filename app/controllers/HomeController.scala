@@ -57,9 +57,14 @@ class HomeController @Inject()(
     }
   }
 
-  /** Displays autocomplete javascript. */
-  def autocompleteJs: EssentialAction = Action {
-    Ok(views.js.javascript.autocomplete()).as(JAVASCRIPT)
+  /** Displays autocomplete javascript for persons. */
+  def autocompletePersonJs: EssentialAction = Action {
+    Ok(views.js.javascript.autocomplete_person()).as(JAVASCRIPT)
+  }
+
+  /** Displays autocomplete javascript for machines. */
+  def autocompleteMachineJs(userId: Int): EssentialAction = Action {
+    Ok(views.js.javascript.autocomplete_machine(userId)).as(JAVASCRIPT)
   }
 
 }
