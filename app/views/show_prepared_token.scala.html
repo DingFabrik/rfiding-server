@@ -19,7 +19,7 @@
             <div class="col-sm-3 mb-3">
                 <div class="card @if(assignedTokenOpt.isDefined) {text-muted}">
                     <div class="card-header @if(!assignedTokenOpt.isDefined) {bg-success text-white}">
-                        <span data-feather="radio"></span>
+                        <span data-feather="radio"><!-- radio --></span>
                         Token #@preparedToken.id &bull; [@preparedToken.serial.stringForUI()]
                     </div>
                     <div class="card-body">

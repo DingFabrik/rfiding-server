@@ -16,7 +16,7 @@
 )
 
 @scripts = {
-    <script type="text/javascript" src="@routes.HomeController.autocompletePersonJs()"></script>
+    <script src="@routes.HomeController.autocompletePersonJs()"></script>
 }
 
 @main(userOpt = Some(user), title = "Assign Prepared Token #" + token.id.get, scripts = scripts) {
@@ -26,7 +26,7 @@
             <div class="col-md-3 mb-3">
                 <div class="card">
                     <div class="card-header bg-success text-white">
-                        <span data-feather="radio"></span>
+                        <span data-feather="radio"><!-- radio --></span>
                         Token #@token.id &bull; [@token.serial.stringForUI()]
                     </div>
                     <div class="card-body">

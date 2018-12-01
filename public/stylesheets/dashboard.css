@@ -22,3 +22,7 @@ body {
 .gone {
   display: none;
 }
+
+.monospace {
+  font-family: monospace;
+}

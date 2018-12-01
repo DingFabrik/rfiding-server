@@ -13,11 +13,10 @@ function checkBox() {
     });
 
     var box = $(this);
-    var ok  = box.siblings("#ok");
-    var nok = box.siblings("#nok");
+    var bId = box.val();
 
     // prepare data to send
-    var dataToSend = JSON.stringify({ id: box.val()});
+    var dataToSend = JSON.stringify({ id: parseInt(bId, 10) });
 
     $.ajax( {
         type: 'POST',
@@ -26,12 +25,14 @@ function checkBox() {
         dataType: 'text',
         contentType: 'application/json',
         success: function(data) {
+            var ok = box.siblings("#ok-" + bId);
             ok.css("display", "inline");
             setTimeout(function () {
                 ok.css("display", "none");
             }, 1000);
         },
         error: function(data) {
+            var nok = box.siblings("#nok-" + bId);
             console.log("Error: " + data);
             nok.css("display", "inline");
             setTimeout(function () {

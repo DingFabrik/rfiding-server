@@ -225,14 +225,13 @@ class TokenController @Inject()(
   case class JsonResult(result: String)
   private[this] implicit val jsonResultWrites: OWrites[JsonResult] = Json.writes[JsonResult]
 
-  def checkTokenPost(): EssentialAction = Action { implicit request =>
-    val jsonBody = request.body.asJson
-    Logger.debug(s"Input = $jsonBody")
-    val x2 = jsonBody.map { jsValue =>
+  // TODO: This method is WIP and does not work!
+  def checkTokenPost(): EssentialAction =  isAuthenticated { implicit userId => implicit request =>
+    val jsonBodyOpt = request.body.asJson
+    Logger.debug(s"Input = $jsonBodyOpt")
+    val x2 = jsonBodyOpt.map { jsValue =>
       (jsValue \ "id").validate[Int]
     }
-
-    //val x3 = x2.collect{ case value: JsSuccess[Int] => value.get }
     val x3 = x2 match {
       case Some(value: JsSuccess[Int]) =>
         Some(value.get)
