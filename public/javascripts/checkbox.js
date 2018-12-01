@@ -3,6 +3,8 @@ $('.click-handler input[type=checkbox]').click(checkBox);
 
 // Toggle token activated state
 function checkBox() {
+
+    // Do not confuse the csrfToken with the RFID-Tokens. ;-)
     // retrieve CSRF token
     var token = $('input[name="csrfToken"]').attr('value')
     // put CSRF token in ajax header
@@ -14,9 +16,10 @@ function checkBox() {
 
     var box = $(this);
     var bId = box.val();
+    var checked = box.is(':checked');
 
     // prepare data to send
-    var dataToSend = JSON.stringify({ id: parseInt(bId, 10) });
+    var dataToSend = JSON.stringify({ id: parseInt(bId, 10), checked: checked });
 
     $.ajax( {
         type: 'POST',

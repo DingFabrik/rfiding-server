@@ -25,11 +25,8 @@ import play.api.data.Forms.text
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.db.slick.HasDatabaseConfigProvider
 import play.api.i18n.I18nSupport
-import play.api.libs.json.JsError
 import play.api.libs.json.JsSuccess
-import play.api.libs.json.Json
 import play.api.libs.json.Json.toJson
-import play.api.libs.json.OWrites
 import play.api.mvc.AbstractController
 import play.api.mvc.EssentialAction
 import play.api.mvc.MessagesActionBuilder
@@ -222,35 +219,16 @@ class TokenController @Inject()(
     )
   }
 
-  case class JsonResult(result: String)
-  private[this] implicit val jsonResultWrites: OWrites[JsonResult] = Json.writes[JsonResult]
-
-  // TODO: This method is WIP and does not work!
-  def checkTokenPost(): EssentialAction =  isAuthenticated { implicit userId => implicit request =>
-    val jsonBodyOpt = request.body.asJson
-    Logger.debug(s"Input = $jsonBodyOpt")
-    val x2 = jsonBodyOpt.map { jsValue =>
-      (jsValue \ "id").validate[Int]
-    }
-    val x3 = x2 match {
-      case Some(value: JsSuccess[Int]) =>
-        Some(value.get)
-      case Some(error: JsError) =>
-        Logger.debug(s"Error: ${JsError.toJson(error).toString()}")
-        None
-    }
-    x3 match {
-      case Some(id) =>
-        Logger.debug(s"ID = $id")
-        Logger.debug(s"ID = ${id.getClass.getSimpleName}")
-
-        val result = JsonResult(s"Got 1")
-        Logger.debug(s"Answering with: ${toJson(result)}}")
-        Ok(toJson(result))
-      case None =>
-        val msg = "Couldn't parse body for JSON data"
-        Logger.debug(msg)
-        BadRequest(toJson(JsonResult(msg)))
+  /** Method is called via javascript and toggles activation state of a token. */
+  def checkTokenPost(): EssentialAction =  isAuthenticatedAsync { implicit userId => implicit request =>
+    request.body.asJson.map { jsValue =>
+      ((jsValue \ "id").validate[Int], (jsValue \ "checked").validate[Boolean])
+    } match {
+      case Some((tokenValue: JsSuccess[Int], checkedValue: JsSuccess[Boolean])) =>
+        val query = tokenTable.filter(_.id === tokenValue.get).map(_.isActive).update(checkedValue.get)
+        db.run(query).map { _ => Ok(toJson("")) }
+      case _ =>
+        Future.successful(BadRequest(toJson("")))
     }
   }
 
