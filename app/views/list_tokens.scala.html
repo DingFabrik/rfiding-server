@@ -17,7 +17,7 @@
 )
 
 @scripts = {
-    <script type="text/javascript" src="/assets/javascripts/checkbox.js"></script>
+    <script src="/assets/javascripts/checkbox.js"></script>
 }
 
 @main(userOpt = Some(user), title = "List Persons and their Tokens", scripts = scripts) {
@@ -44,16 +44,16 @@
         @for((token, owner) <- tokensAndOwner) {
         <tr>
             <td>@token.id</td>
-            <td><tt>@token.serial.stringForUI()</tt></td>
+            <td><span class="monospace">@token.serial.stringForUI()</span></td>
             <td>@token.purpose</td>
             <td class="click-handler">
                 @CSRF.formField
                 <input type="checkbox" @if(token.isActive) {checked="checked"} value="@token.id" />
-                <span id="nok" class="gone text-danger" data-feather="alert-triangle"></span>
-                <span id="ok" class="gone text-success" data-feather="check-circle"></span>
+                <span id="nok-@token.id" class="gone text-danger" data-feather="alert-triangle"><!-- alert-triangle --></span>
+                <span id="ok-@token.id" class="gone text-success" data-feather="check-circle"><!-- check circle --></span>
             </td>
             <td><a href="@PersonController.modifyPerson(owner.id.get)">@owner.name (#@owner.id)</a></td>
-            <td><a href="@TokenController.modifyToken(token.id.get)"><span data-feather="edit"></span></a></td>
+            <td><a href="@TokenController.modifyToken(token.id.get)"><span data-feather="edit"><!-- edit --></span></a></td>
         </tr>
         }
         </tbody>

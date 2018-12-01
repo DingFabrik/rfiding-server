@@ -62,9 +62,10 @@
                 </div>
                 <div class="col-md-1 mb-3">
                     <button type="button" class="btn btn-danger btn-lg btn-block" data-toggle="modal" data-target="#confirmDeletePerson@modifyPersonForm(FormID.personId).value.get.toInt">
-                        <span data-feather="trash-2"></span>
+                        <span data-feather="trash-2"><!-- trash-2 --></span>
                     </button>
                 </div>
+            </div>
         </div>
         @confirm_delete_person_dialog(modifyPersonForm(FormID.personId).value.get.toInt, modifyPersonForm(FormID.fullName).value)
         }

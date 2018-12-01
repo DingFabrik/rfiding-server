@@ -17,7 +17,7 @@
 )
 
 @scripts = {
-    <script type="text/javascript" src="@routes.Assets.versioned("javascripts/tooltips.js")"></script>
+    <script src="@routes.Assets.versioned("javascripts/tooltips.js")"></script>
 }
 
 @main(userOpt = Some(user), title = "List unknown Tokens", scripts = scripts) {
@@ -38,10 +38,10 @@
         <tbody>
         @for((unknownToken, machine) <- unknownTokens) {
         <tr>
-            <td><tt>@unknownToken.serial.stringForUI()</tt></td>
+            <td><span class="monospace">@unknownToken.serial.stringForUI()</span></td>
             <td>@machine.name (#@machine.id)</td>
             <td data-toggle="tooltip" title="@unknownToken.readStamp">@unknownToken.readStamp.pretty()</td>
-            <td><a href="@routes.TokenController.addToken(unknownToken.serial.asString)"><span data-feather="plus-circle"></span></a></td>
+            <td><a href="@routes.TokenController.addToken(unknownToken.serial.asString)"><span data-feather="plus-circle"><!-- plus-circle --></span></a></td>
         </tr>
         }
         </tbody>

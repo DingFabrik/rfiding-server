@@ -35,16 +35,16 @@
         <tr>
             <td>@machine.id</td>
             <td>@machine.name</td>
-            <td><tt>@machine.macAddress</tt></td>
+            <td><span class="monospace">@machine.macAddress</span></td>
             <td class="click-handler">
                 @CSRF.formField
                 <input type="checkbox" @if(machine.isActive) {checked="checked"} readonly disabled value="@machine.id" />
-                <span id="nok" class="gone text-danger" data-feather="alert-triangle"></span>
-                <span id="ok" class="gone text-success" data-feather="check-circle"></span>
+                <span id="nok-@machine.id" class="gone text-danger" data-feather="alert-triangle"></span>
+                <span id="ok-@machine.id" class="gone text-success" data-feather="check-circle"></span>
             </td>
             <td>@machine.comment</td>
-            <td><a href="@MachineController.modifyMachine(machine.id.get)"><span data-feather="edit"></span></a></td>
-            <td><a href="@MachineController.configureMachine(machine.id.get)"><span data-feather="sliders"></span></a></td>
+            <td><a href="@MachineController.modifyMachine(machine.id.get)"><span data-feather="edit"><!-- edit --></span></a></td>
+            <td><a href="@MachineController.configureMachine(machine.id.get)"><span data-feather="sliders"><!-- sliders --></span></a></td>
         </tr>
         }
         </tbody>

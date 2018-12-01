@@ -55,8 +55,8 @@
                     <td>@person.name</td>
                     <td>@person.email</td>
                     <td><input type="checkbox" disabled @if(person.isActive) {checked="checked"}></td>
-                    <td><a href="@PersonController.modifyPerson(person.id.get)"><span data-feather="edit"></span></a></td>
-                    <td><a href="@PersonController.addQualification(person.id.get)"><span data-feather="layers"></span></a></td>
+                    <td><a href="@PersonController.modifyPerson(person.id.get)"><span data-feather="edit"><!-- edit --></span></a></td>
+                    <td><a href="@PersonController.addQualification(person.id.get)"><span data-feather="layers"><!-- layers --></span></a></td>
                 </tr>
             }</tbody>
         </table>

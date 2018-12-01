@@ -22,7 +22,7 @@
 @machineQualiOpt = @{val (m, _) = result.head; m}
 
 @scripts = {
-    <script type="text/javascript" src="@routes.HomeController.autocompleteMachineJs(personOfInterest.id.get)"></script>
+    <script src="@routes.HomeController.autocompleteMachineJs(personOfInterest.id.get)"></script>
 }
 
 
@@ -43,7 +43,7 @@
                 @inputText(qualificationForm(FormID.machineName), "Machine Name", classEx = "autocomplete-machine")
             </div>
             <div class="col-md-1 mb-3">
-                <button type="submit" class="btn btn-primary btn-block"><span data-feather="plus"></span></button>
+                <button type="submit" class="btn btn-primary btn-block"><span data-feather="plus"><!-- plus --></span></button>
             </div>
         </div>
     }
@@ -72,7 +72,7 @@
                         <td>@machine.name</td>
                         <td>
                             <a href="@controllers.routes.PersonController.revokeQualification(personOfInterest.id.get, machine.id.get)"
-                               class="text-danger"><span data-feather="x-circle"></span></a></td>
+                               class="text-danger"><span data-feather="x-circle"><!-- x-circle --></span></a></td>
                     </tr>
                     }
                 </table>
