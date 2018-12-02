@@ -16,11 +16,9 @@
     flash: Flash
 )
 
-@scripts = {
-    <script src="/assets/javascripts/checkbox.js"></script>
-}
+@scripts = {<script src="@routes.HomeController.toggleTokenActive"></script>}
 
-@main(userOpt = Some(user), title = "List Persons and their Tokens", scripts = scripts) {
+@main(userOpt = Some(user), title = "List Tokens", scripts = scripts) {
 @for(tid <- flash.get(UpdatedToken)) {
 <div class="alert alert-success" role="alert">Updated Token ID #@tid</div>
 }
@@ -28,6 +26,7 @@
 <div class="alert alert-success" role="alert">Token ID #@tid deleted.</div>
 }
 <div class="table-responsive">
+    @CSRF.formField
     <table class="table table-striped table-sm">
         <thead>
         <tr>
@@ -46,7 +45,6 @@
             <td><span class="monospace">@token.serial.stringForUI()</span></td>
             <td>@token.purpose</td>
             <td class="click-handler">
-                @CSRF.formField
                 <input type="checkbox" @if(token.isActive) {checked="checked"} value="@token.id" />
                 <span id="nok-@token.id" class="gone text-danger" data-feather="alert-triangle"><!-- alert-triangle --></span>
                 <span id="ok-@token.id" class="gone text-success" data-feather="check-circle"><!-- check circle --></span>

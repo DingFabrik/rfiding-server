@@ -31,6 +31,8 @@ import play.api.i18n.I18nSupport
 import play.api.libs.json.JsArray
 import play.api.libs.json.JsObject
 import play.api.libs.json.JsString
+import play.api.libs.json.JsSuccess
+import play.api.libs.json.Json.toJson
 import play.api.mvc.AbstractController
 import play.api.mvc.EssentialAction
 import play.api.mvc.MessagesActionBuilder
@@ -185,6 +187,19 @@ class MachineController @Inject()(
         }
       }
     )
+  }
+
+  /** Method is called via javascript and toggles activation state of a token. */
+  def toggleMachineActivePost(): EssentialAction =  isAuthenticatedAsync { implicit userId => implicit request =>
+    request.body.asJson.map { jsValue =>
+      ((jsValue \ "id").validate[Int], (jsValue \ "checked").validate[Boolean])
+    } match {
+      case Some((machineIdValue: JsSuccess[Int], checkedValue: JsSuccess[Boolean])) =>
+        val query = machineTable.filter(_.id === machineIdValue.get).map(_.isActive).update(checkedValue.get)
+        db.run(query).map { _ => Ok(toJson("")) }
+      case _ =>
+        Future.successful(BadRequest(toJson("")))
+    }
   }
 
   /** Form is used to enter configuration for a machine. */

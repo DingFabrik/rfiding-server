@@ -220,7 +220,7 @@ class TokenController @Inject()(
   }
 
   /** Method is called via javascript and toggles activation state of a token. */
-  def checkTokenPost(): EssentialAction =  isAuthenticatedAsync { implicit userId => implicit request =>
+  def toggleTokenActivePost(): EssentialAction =  isAuthenticatedAsync { implicit userId => implicit request =>
     request.body.asJson.map { jsValue =>
       ((jsValue \ "id").validate[Int], (jsValue \ "checked").validate[Boolean])
     } match {

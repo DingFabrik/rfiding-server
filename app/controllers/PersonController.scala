@@ -22,7 +22,9 @@ import play.api.data.Forms.text
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.db.slick.HasDatabaseConfigProvider
 import play.api.i18n.I18nSupport
+import play.api.libs.json.JsSuccess
 import play.api.libs.json.Json
+import play.api.libs.json.Json.toJson
 import play.api.libs.json.Writes
 import play.api.mvc.AbstractController
 import play.api.mvc.EssentialAction
@@ -148,6 +150,19 @@ class PersonController @Inject()(
         }
       }
     )
+  }
+
+  /** Method is called via javascript and toggles activation state of a person. */
+  def togglePersonActivePost(): EssentialAction =  isAuthenticatedAsync { implicit userId => implicit request =>
+    request.body.asJson.map { jsValue =>
+      ((jsValue \ "id").validate[Int], (jsValue \ "checked").validate[Boolean])
+    } match {
+      case Some((personIdValue: JsSuccess[Int], checkedValue: JsSuccess[Boolean])) =>
+        val query = personTable.filter(_.id === personIdValue.get).map(_.isActive).update(checkedValue.get)
+        db.run(query).map { _ => Ok(toJson("")) }
+      case _ =>
+        Future.successful(BadRequest(toJson("")))
+    }
   }
 
   /** Implicit writer for a SimplifiedPerson instance. Needed by Json.toJson. */

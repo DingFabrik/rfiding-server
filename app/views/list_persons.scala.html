@@ -6,6 +6,7 @@
 @import controllers.FlashKey.PersonNotFound
 @import controllers.FlashKey.PersonAdded
 @import controllers.FlashKey.PersonUpdated
+@import helper.CSRF
 
 @(
     persons: Seq[Person]
@@ -16,9 +17,10 @@
     flash: Flash
 )
 
+@scripts = {<script src="@routes.HomeController.togglePersonActive"></script>}
 @keys = @{ Seq(PersonAdded, PersonUpdated).map(flash.get(_).getOrElse("").toString) }
 
-@main(userOpt = Some(user), title = "List persons") {
+@main(userOpt = Some(user), title = "List persons", scripts = scripts) {
     <p>This table lists all Persons.</p>
     @for(pid <- flash.get(PersonAdded)) {
         <div class="alert alert-success" role="alert">Inserted new Person with ID @pid</div>
@@ -36,6 +38,7 @@
         <div class="alert alert-success" role="alert">Token ID #@tid deleted.</div>
     }
     <div class="table-responsive">
+        @CSRF.formField
         <table class="table table-striped table-sm">
             <thead>
             <tr>
@@ -54,7 +57,11 @@
                     <td>@person.memberId</td>
                     <td>@person.name</td>
                     <td>@person.email</td>
-                    <td><input type="checkbox" disabled @if(person.isActive) {checked="checked"}></td>
+                    <td class="click-handler">
+                        <input type="checkbox" @if(person.isActive) {checked="checked"} value="@person.id">
+                        <span id="nok-@person.id" class="gone text-danger" data-feather="alert-triangle"><!-- alert-triangle --></span>
+                        <span id="ok-@person.id" class="gone text-success" data-feather="check-circle"><!-- check circle --></span>
+                    </td>
                     <td><a href="@PersonController.modifyPerson(person.id.get)"><span data-feather="edit"><!-- edit --></span></a></td>
                     <td><a href="@PersonController.addQualification(person.id.get)"><span data-feather="layers"><!-- layers --></span></a></td>
                 </tr>
