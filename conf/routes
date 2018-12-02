@@ -11,6 +11,9 @@ GET     /settings/about          controllers.SettingsController.about
 # Javascript Routes
 GET     /js/autocomplete-person           controllers.HomeController.autocompletePersonJs
 GET     /js/autocomplete-machine/:userId  controllers.HomeController.autocompleteMachineJs(userId: Int)
+GET     /js/toggle-token-active           controllers.HomeController.toggleTokenActive
+GET     /js/toggle-person-active          controllers.HomeController.togglePersonActive
+GET     /js/toggle-machine-active         controllers.HomeController.toggleMachineActive
 
 
 GET     /machines                   controllers.MachineController.listMachines
@@ -20,6 +23,7 @@ GET     /machine/add                controllers.MachineController.addMachine
 POST    /machine/add                controllers.MachineController.addMachinePost
 GET     /machine/configure          controllers.MachineController.configureMachine(id: Int)
 POST    /machine/configure          controllers.MachineController.configureMachinePost
+POST    /machine/toggle-active      controllers.MachineController.toggleMachineActivePost
 GET     /machine/delete/:id         controllers.MachineController.deleteMachine(id: Int)
 GET     /machine/find               controllers.MachineController.findMachine(term: Option[String])
 GET     /machine/find-qualificable  controllers.MachineController.findQualificableMachine(user: Int, term: Option[String])
@@ -30,6 +34,7 @@ GET     /person/add                   controllers.PersonController.addPerson
 POST    /person/add                   controllers.PersonController.addPersonPost
 GET     /person/modify/:id            controllers.PersonController.modifyPerson(id: Int)
 POST    /person/modify                controllers.PersonController.modifyPersonPost
+POST    /person/toggle-active         controllers.PersonController.togglePersonActivePost
 GET     /person/find                  controllers.PersonController.findPerson(term: Option[String])
 GET     /person/delete                controllers.PersonController.deletePerson(id: Int, returnTo: String)
 GET     /person/add-qualification/:id controllers.PersonController.addQualification(id: Int)
@@ -43,7 +48,7 @@ GET     /tokens/assigned         controllers.TokenController.listAssignments
 GET     /tokens/prepared         controllers.TokenController.showPreparedToken
 GET     /tokens/copy/:id         controllers.TokenController.copyPreparedToken(id: Int)
 POST    /tokens/copy/:id         controllers.TokenController.copyPreparedTokenPost(id: Int)
-POST    /tokens/check            controllers.TokenController.checkTokenPost
+POST    /tokens/toggle-active    controllers.TokenController.toggleTokenActivePost
 GET     /tokens/modify           controllers.TokenController.modifyToken(id: Int)
 POST    /tokens/modify           controllers.TokenController.modifyTokenPost(id: Int)
 GET     /tokens/delete           controllers.TokenController.deleteToken(id: Int, returnTo: String)

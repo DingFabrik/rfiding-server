@@ -67,4 +67,19 @@ class HomeController @Inject()(
     Ok(views.js.javascript.autocomplete_machine(userId)).as(JAVASCRIPT)
   }
 
+  /** Loads javascript to toggle active state for tokens. */
+  def toggleTokenActive(): EssentialAction = Action {
+    Ok(views.js.javascript.toggle_checkbox(routes.TokenController.toggleTokenActivePost())).as(JAVASCRIPT)
+  }
+
+  /** Loads javascript to toggle active state for persons. */
+  def togglePersonActive(): EssentialAction = Action {
+    Ok(views.js.javascript.toggle_checkbox(routes.PersonController.togglePersonActivePost())).as(JAVASCRIPT)
+  }
+
+  /** Loads javascript to toggle active state for machines. */
+  def toggleMachineActive(): EssentialAction = Action {
+    Ok(views.js.javascript.toggle_checkbox(routes.MachineController.toggleMachineActivePost())).as(JAVASCRIPT)
+  }
+
 }
