@@ -6,62 +6,77 @@ class DefaultNavigation extends NavigationComponent {
 
   def navigationItems(implicit request: RequestHeader): Seq[NavigationItem] = {
     Seq(
-      NavigationTitle(
+      NavigationEntry(
         title  = s"Tokens",
         icon   = "radio",
-        target = controllers.routes.TokenController.listTokens(),
-        subItems = Seq(
-          NavigationEntry(
-            title  = s"List Tokens",
-            icon   = "radio",
-            target = controllers.routes.TokenController.listTokens()
-          ),
-          NavigationEntry(
-            title  = s"Prepared Tokens",
-            icon   = "radio",
-            target = controllers.routes.TokenController.showPreparedToken()
-          ),
-          NavigationEntry(
-            title  = s"Unknown Tokens",
-            icon   = "radio",
-            target = controllers.routes.TokenController.listUnknownTokens()
-          ),
-        )
+        target = controllers.routes.TokenController.listTokens()
       ),
-      NavigationTitle(
+//      NavigationTitle(
+//        title  = s"Tokens",
+//        icon   = "radio",
+//        target = controllers.routes.TokenController.listTokens(),
+//        subItems = Seq(
+//          NavigationEntry(
+//            title  = s"List Tokens",
+//            icon   = "radio",
+//            target = controllers.routes.TokenController.listTokens()
+//          ),
+//          NavigationEntry(
+//            title  = s"Prepared Tokens",
+//            icon   = "radio",
+//            target = controllers.routes.TokenController.showPreparedToken()
+//          ),
+//          NavigationEntry(
+//            title  = s"Unknown Tokens",
+//            icon   = "radio",
+//            target = controllers.routes.TokenController.listUnknownTokens()
+//          ),
+//        )
+//      ),
+      NavigationEntry(
         title  = "Persons",
         icon   = "users",
         target = controllers.routes.PersonController.listPersons(),
-        subItems = Seq(
-          NavigationEntry(
-            title  = s"List Persons",
-            icon   = "user",
-            target = controllers.routes.PersonController.listPersons()
-          ),
-          NavigationEntry(
-            title  = s"Add Person",
-            icon   = "user-plus",
-            target = controllers.routes.PersonController.addPerson()
-          ),
-        )
       ),
-      NavigationTitle(
-        title  = "Machines",
-        icon   = "hard-drive",
-        target = controllers.routes.MachineController.listMachines(),
-        subItems = Seq(
-          NavigationEntry(
-            title  = s"List Machines",
-            icon   = "user",
-            target = controllers.routes.MachineController.listMachines()
-          ),
-          NavigationEntry(
-            title  = s"Add Machine",
-            icon   = "user",
-            target = controllers.routes.MachineController.addMachine()
-          ),
-        )
+//      NavigationTitle(
+//        title  = "Persons",
+//        icon   = "users",
+//        target = controllers.routes.PersonController.listPersons(),
+//        subItems = Seq(
+//          NavigationEntry(
+//            title  = s"List Persons",
+//            icon   = "user",
+//            target = controllers.routes.PersonController.listPersons()
+//          ),
+//          NavigationEntry(
+//            title  = s"Add Person",
+//            icon   = "user-plus",
+//            target = controllers.routes.PersonController.addPerson()
+//          ),
+//        )
+//      ),
+      NavigationEntry(
+        title  = s"Machines",
+        icon   = "user",
+        target = controllers.routes.MachineController.listMachines()
       ),
+//      NavigationTitle(
+//        title  = "Machines",
+//        icon   = "hard-drive",
+//        target = controllers.routes.MachineController.listMachines(),
+//        subItems = Seq(
+//          NavigationEntry(
+//            title  = s"List Machines",
+//            icon   = "user",
+//            target = controllers.routes.MachineController.listMachines()
+//          ),
+//          NavigationEntry(
+//            title  = s"Add Machine",
+//            icon   = "user",
+//            target = controllers.routes.MachineController.addMachine()
+//          ),
+//        )
+//      ),
       NavigationTitle(
         title    = "Devel",
         icon     = "settings",
@@ -71,6 +86,11 @@ class DefaultNavigation extends NavigationComponent {
             title   = "Create dummy prepared tokens",
             icon    = "settings",
             target  = controllers.routes.Development.createDummyData()
+          ),
+          NavigationEntry(
+            title  = s"Prepared Tokens",
+            icon   = "radio",
+            target = controllers.routes.TokenController.showPreparedToken()
           ),
           NavigationEntry(
             title   = "Show API urls",

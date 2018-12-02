@@ -21,7 +21,12 @@
 }
 
 @main(userOpt = Some(user), title = "List unknown Tokens", scripts = scripts) {
-
+<div>
+    <p>
+        Just put a new token in front of any registered machine and it will show up here.
+        Make sure, you fetch the right token by cleaning this list before reading. This avoids mistakes.
+    </p>
+</div>
 <div class="table-responsive">
     @for(tid <- flash.get(FlashKey.ListEmptied)) {
     <div class="alert alert-success" role="alert">List cleared.</div>
