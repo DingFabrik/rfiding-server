@@ -1,0 +1,66 @@
+@import SettingsController.UserFormData
+@import SettingsController.FormID
+@import utils.navigation.NavigationComponent
+@import security.LoginState.User
+@import helper.CSRF
+@import forms.inputPassword
+@import forms.inputEmail
+@import forms.inputText
+@import controllers.FlashKey.UserProfileUpdated
+
+@(
+    userModifyForm: Form[UserFormData]
+)(
+    implicit navigation: NavigationComponent,
+    user: User,
+    request: RequestHeader,
+    messagesProvider: MessagesProvider,
+    flash: Flash
+)
+
+@main(userOpt = Some(user), title = "Profile Settings") {
+    <div>
+        <p>
+            Change your profile here. There is currently no check whether the e-mail address exists, so make sure,
+            your address is valid.
+            The password will only be updated when you enter a new password in the password field.
+        </p>
+    </div>
+    @for(error <- userModifyForm.globalErrors; message <- error.messages) {
+    <div class="alert alert-warning" role="alert">
+        @message match {
+            case "error.password.minlength" => {The chosen password is too short.}
+            case "error.password.match"     => {The passwords do not match.}
+        }
+    </div>
+    }
+
+    @if(flash.get(UserProfileUpdated).isDefined) {
+        <div class="alert alert-success" role="alert">Profile updated.</div>
+    }
+
+    @helper.form(action = controllers.routes.SettingsController.userProfilePost()) {
+        @CSRF.formField
+        <div class="col-md-12 order-md-1">
+            <div class="form-row">
+                <div class="col-md-12 mb-3">
+                    @inputText(userModifyForm(FormID.userMail), "E-Mail address")
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col-md-6 mb-3">
+                    @inputPassword(userModifyForm(FormID.userPassword), "Password")
+                </div>
+                <div class="col-md-6 mb-3">
+                    @inputPassword(userModifyForm(FormID.userPasswordConfirm), "Password confirmation")
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col-md-12 mb-3">
+                    <button class="btn btn-primary btn-lg btn-block" type="submit">Change Profile</button>
+                </div>
+            </div>
+        </div>
+    }
+
+}

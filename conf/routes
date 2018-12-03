@@ -7,6 +7,8 @@ GET     /                        controllers.HomeController.index
 GET     /showstring              controllers.HomeController.showString
 
 GET     /settings/about          controllers.SettingsController.about
+GET     /settings/profile        controllers.SettingsController.userProfile
+POST    /settings/profile        controllers.SettingsController.userProfilePost
 
 # Javascript Routes
 GET     /js/autocomplete-person           controllers.HomeController.autocompletePersonJs

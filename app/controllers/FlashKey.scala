@@ -43,4 +43,7 @@ object FlashKey {
   val QualificationUpdated = "qualificationUpdated"
   /** When qualification data has been removed. Content: revoked Machine ID. */
   val QualificationDeleted = "qualificationDeleted"
+
+  /** When the users profile data has been updated. Content: don't care. */
+  val UserProfileUpdated = "userProfileUpdated"
 }
