@@ -52,8 +52,18 @@
 
         <ul class="navbar-nav ml-auto">
             @if(userOpt.isDefined) {
-            <li class="nav-item">
-                <a class="nav-link" href="@controllers.routes.SettingsController.about"><span data-feather="settings"><!-- Settings Icon --></span></a>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="@controllers.routes.SettingsController.about" id="dropdown-right" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span data-feather="settings"><!-- Settings Icon --></span>
+                </a>
+                <div class="dropdown-menu" aria-labelledby="dropdown-right">
+                    <a class="dropdown-item" href="@controllers.routes.SettingsController.userProfile">
+                        Profile
+                    </a>
+                    <a class="dropdown-item" href="@controllers.routes.SettingsController.about">
+                        About
+                    </a>
+                </div>
             </li>
             }
             <li class="nav-item">
