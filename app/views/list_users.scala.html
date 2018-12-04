@@ -1,33 +1,40 @@
 @import utils.navigation.NavigationComponent
-@import security.LoginState.User
+@import controllers.FlashKey.UserAdded
 
 @(
-    user: User,
-    person: Person,
-    token: Option[Token]
+    users: Seq[models.User]
 )(
     implicit navigation: NavigationComponent,
-    request: RequestHeader
+    implicitUser: security.LoginState.User,
+    request: RequestHeader,
+    flash: Flash
 )
 
-@main(userOpt = Some(user), title = "List assignments") {
-  <p>This table lists assigments of Persons to Tokens.</p>
+@main(userOpt = Some(implicitUser), title = "Show users") {
+    @for(uid <- flash.get(UserAdded)) {
+        <div class="alert alert-success" role="alert">User with ID #@uid added.</div>
+    }
   <div class="table-responsive">
     <table class="table table-striped table-sm">
       <thead>
       <tr>
-            <th>@person</th>
+            <th>ID</th>
+            <th>Name</th>
+            <th>E-Mail</th>
       </tr>
       </thead>
       <tbody>
-  @* for(user <- users) {
-      <tr>
-          <td>@user.id</td>
-          <td>@user.name</td>
-          <td>@user.age</td>
-      </tr>
-  } *@
+        @for(user <- users) {
+          <tr>
+              <td>@user.id</td>
+              <td>@user.name</td>
+              <td>@user.email</td>
+          </tr>
+        }
       </tbody>
     </table>
+  </div>
+  <div>
+    <a class="btn btn-primary btn-lg btn-block" href="@routes.SettingsController.addUser">Add user</a>
   </div>
 }

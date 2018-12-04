@@ -46,4 +46,6 @@ object FlashKey {
 
   /** When the users profile data has been updated. Content: don't care. */
   val UserProfileUpdated = "userProfileUpdated"
+  /** When a user has been added. Content: ID of inserted user. */
+  val UserAdded = "userAdded"
 }

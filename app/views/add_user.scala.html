@@ -1,0 +1,59 @@
+@import SettingsController.AddUserFormData
+@import SettingsController.FormID
+@import utils.navigation.NavigationComponent
+@import helper.CSRF
+@import forms.inputPassword
+@import forms.inputEmail
+@import forms.inputText
+@import controllers.FlashKey.UserProfileUpdated
+
+@(
+    userForm: Form[AddUserFormData]
+)(
+    implicit navigation: NavigationComponent,
+    user: security.LoginState.User,
+    request: RequestHeader,
+    messagesProvider: MessagesProvider,
+    flash: Flash
+)
+
+@main(userOpt = Some(user), title = "Create user") {
+    @for(error <- userForm.globalErrors; message <- error.messages) {
+        <div class="alert alert-warning" role="alert">
+            @message match {
+                case "error.password.minlength" => {The chosen password is too short.}
+                case "error.password.match"     => {The passwords do not match.}
+                case "error.password.empty"     => {The passwords may not be empty.}
+            }
+        </div>
+    }
+    @helper.form(action = controllers.routes.SettingsController.addUserPost()) {
+        @CSRF.formField
+        <div class="col-md-12 order-md-1">
+            <div class="form-row">
+                <div class="col-md-12 mb-3">
+                    @inputText(userForm(FormID.userName), "Name")
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col-md-12 mb-3">
+                    @inputEmail(userForm(FormID.userMail), "E-Mail address")
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col-md-6 mb-3">
+                    @inputPassword(userForm(FormID.userPassword), "Password")
+                </div>
+                <div class="col-md-6 mb-3">
+                    @inputPassword(userForm(FormID.userPasswordConfirm), "Password confirmation")
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col-md-12 mb-3">
+                    <button class="btn btn-primary btn-lg btn-block" type="submit">Create user</button>
+                </div>
+            </div>
+        </div>
+    }
+
+}
