@@ -57,6 +57,9 @@
                     <span data-feather="settings"><!-- Settings Icon --></span>
                 </a>
                 <div class="dropdown-menu" aria-labelledby="dropdown-right">
+                    <a class="dropdown-item" href="@controllers.routes.SettingsController.listUsers">
+                        User
+                    </a>
                     <a class="dropdown-item" href="@controllers.routes.SettingsController.userProfile">
                         Profile
                     </a>
@@ -74,22 +77,6 @@
                 }
             </li>
         </ul>
-
-
-        @*
-        <div class="my-2 my-lg-0">
-            @if(userOpt.isDefined) {
-            <a class="mr-sm-2" href="@controllers.routes.LoginController.logout" aria-label="Logout">Sign out</a>
-            } else {
-            <a class="mr-sm-2" href="@controllers.routes.LoginController.login" aria-label="Login">Sign in</a>
-            }
-        </div>
-
-        <form class="form-inline my-2 my-lg-0">
-            <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
-            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-        </form>
-        *@
     </div>
 </nav>
 

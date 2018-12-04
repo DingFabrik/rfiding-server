@@ -9,6 +9,9 @@ GET     /showstring              controllers.HomeController.showString
 GET     /settings/about          controllers.SettingsController.about
 GET     /settings/profile        controllers.SettingsController.userProfile
 POST    /settings/profile        controllers.SettingsController.userProfilePost
+GET     /settings/users          controllers.SettingsController.listUsers
+GET     /settings/user/add       controllers.SettingsController.addUser
+POST    /settings/user/add       controllers.SettingsController.addUserPost
 
 # Javascript Routes
 GET     /js/autocomplete-person           controllers.HomeController.autocompletePersonJs

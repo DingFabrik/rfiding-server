@@ -1,4 +1,4 @@
-@import SettingsController.UserFormData
+@import SettingsController.ModifyUserFormData
 @import SettingsController.FormID
 @import utils.navigation.NavigationComponent
 @import security.LoginState.User
@@ -9,7 +9,7 @@
 @import controllers.FlashKey.UserProfileUpdated
 
 @(
-    userModifyForm: Form[UserFormData]
+    userModifyForm: Form[ModifyUserFormData]
 )(
     implicit navigation: NavigationComponent,
     user: User,
@@ -44,7 +44,12 @@
         <div class="col-md-12 order-md-1">
             <div class="form-row">
                 <div class="col-md-12 mb-3">
-                    @inputText(userModifyForm(FormID.userMail), "E-Mail address")
+                    @inputText(userModifyForm(FormID.userName), "Name")
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col-md-12 mb-3">
+                    @inputEmail(userModifyForm(FormID.userMail), "E-Mail address")
                 </div>
             </div>
             <div class="form-row">
