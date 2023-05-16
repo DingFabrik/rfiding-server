@@ -1,0 +1,33 @@
+{% extends 'base_content.html' %}
+{% load i18n %}
+{% block header %}{% trans "Tokens" %}{% endblock header %}
+
+{% block actions %}
+<a href="#" class="btn btn-primary" role="button">
+    <span class="bi-plus" />
+    {% trans "Add Token" %}</a>
+{% endblock actions %}
+
+{% block content %}
+
+<div class="card">
+    <div class="card-body p-0">
+<table class="table mb-0">
+    <tr>
+        <th>{% trans "Serial" %}</th>
+        <th>{% trans "Purpose" %}</th>
+        <th>{% trans "Owner" %}</th>
+        <th>{% trans "Active" %}</th>
+    </tr>
+    {% for token in object_list %}
+    <tr>
+        <td>{{ token.serial }}</td>
+        <td>{{ token.purpose }}</td>
+        <td><a href="{% url 'people:detail' token.owner.pk %}">{{ token.owner }}</a></td>
+        <td>{% if token.is_active %}<i class="bi-check-square-fill text-success" />{% else %}<i class="bi-times-square text-danger" />{% endif %} </td>
+    </tr>
+    {% endfor %}
+</table>
+</div>
+</div>
+{% endblock content %}
