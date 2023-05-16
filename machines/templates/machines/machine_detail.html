@@ -14,13 +14,16 @@
         <div class="card">
             <div class="card-body p-0">
                 <h5 class="card-title ms-3 mt-2">{% trans "Qualified Users" %}</h5>
-        <ul class="list-group list-group-flush">
-            {% for qualification in object.qualified_people.all %}
-            <li class="list-group-item"><a href="{% url 'people:detail' qualification.person.pk %}">{{ qualification.person }}</a></li>
-            {% endfor %}
-        </ul>
-    </div>
-</div>
+                <ul class="list-group list-group-flush">
+                    {% for qualification in object.qualified_people.all %}
+                    <li class="list-group-item d-flex">
+                        <a href="{% url 'people:detail' qualification.person.pk %}" class="me-auto">{{ qualification.person }}</a>
+                        <a type="button" class="btn btn-outline-danger btn-sm ms-auto" href="{% url 'people:unassign_qualification' qualification.person.pk qualification.machine.pk %}"><i class="bi-x"></i></a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}

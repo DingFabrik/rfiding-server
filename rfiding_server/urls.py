@@ -16,6 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 from machines.views import MachineListView
+from machines.viewsets import RetrieveMachineConfigAPIView
 from people.views import PersonListView
 from tokens.views import TokenListView
 
@@ -29,4 +30,6 @@ urlpatterns = [
     path("machines/", include("machines.urls", namespace="machines")),
     path("people/", include("people.urls", namespace="people")),
     path("tokens/", include("tokens.urls", namespace="tokens")),
+
+    path("api/machine/config", RetrieveMachineConfigAPIView.as_view())
 ]
