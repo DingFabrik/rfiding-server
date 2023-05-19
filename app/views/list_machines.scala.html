@@ -25,10 +25,10 @@
         <thead>
         <tr>
             <th>Database ID</th>
-            <th>Name</th>
+            <th>Hostname</th>
             <th>MAC-Address</th>
             <th>Machine Active</th>
-            <th>Comment</th>
+            <th>Name</th>
             <th>Modify</th>
             <th>Configure</th>
         </tr>
@@ -37,14 +37,14 @@
         @for(machine <- machines) {
         <tr>
             <td>@machine.id</td>
-            <td>@machine.name</td>
+            <td>@machine.hostname</td>
             <td><span class="monospace">@machine.macAddress</span></td>
             <td class="click-handler">
                 <input type="checkbox" @if(machine.isActive) {checked="checked"} value="@machine.id" />
                 <span id="nok-@machine.id" class="gone text-danger" data-feather="alert-triangle"></span>
                 <span id="ok-@machine.id" class="gone text-success" data-feather="check-circle"></span>
             </td>
-            <td>@machine.comment</td>
+            <td>@machine.name</td>
             <td><a href="@MachineController.modifyMachine(machine.id.get)"><span data-feather="edit"><!-- edit --></span></a></td>
             <td><a href="@MachineController.configureMachine(machine.id.get)"><span data-feather="sliders"><!-- sliders --></span></a></td>
         </tr>
