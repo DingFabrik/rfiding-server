@@ -306,11 +306,11 @@ class MachineController @Inject()(
    */
   def findMachine(term: Option[String]): EssentialAction = isAuthenticatedAsync { implicit userId => implicit request =>
     term.fold(Future.successful(Ok(""))) { needle: String =>
-      val query = machineTable.filter(_.name like s"%$needle%").take(5)
+      val query = machineTable.filter { m => (m.hostname like s"%$needle%") || (m.name like s"%$needle%") }.take(5)
       db.run(query.result).map { machines: Seq[Machine] =>
         val mj: Seq[JsObject] = machines.map { machine =>
           JsObject(Seq(
-            "label" -> JsString(machine.name),
+            "label" -> JsString(machine.name.getOrElse(machine.hostname)),
             "value" -> JsString(machine.id.get.toString)
           ))
         }
@@ -331,7 +331,9 @@ class MachineController @Inject()(
    */
   def findQualificableMachine(user: Int, term: Option[String]): EssentialAction = isAuthenticatedAsync { implicit userId => implicit request =>
     term.fold(Future.successful(Ok(""))) { needle: String =>
-      val query = machineTable.filter(_.name like s"%$needle%").joinLeft(qualificationTable.filter(_.personId === user)).on {
+      val query = machineTable.filter { m => 
+        (m.hostname like s"%$needle%") || (m.name like s"%$needle%")
+      }.joinLeft(qualificationTable.filter(_.personId === user)).on {
         case (machine, qualification) => machine.id === qualification.machineId
       }.filterNot {
         case (_, qualificationColumn) => qualificationColumn.map(_.machineId).isDefined
@@ -343,7 +345,7 @@ class MachineController @Inject()(
         val jsonMachines: Seq[JsObject] = machines.map { machine =>
           logger.debug(s"Machine = $machine")
           JsObject(Seq(
-            "label" -> JsString(machine.name),
+            "label" -> JsString(machine.name.getOrElse(machine.hostname)),
             "value" -> JsString(machine.id.get.toString)
           ))
         }
@@ -357,17 +359,17 @@ class MachineController @Inject()(
 
 object MachineController {
   case class AddMachineData(
-    name: String,
+    hostname: String,
     macAddress: String,
-    comment: Option[String],
+    name: Option[String],
     isActive: Boolean
   )
 
   case class ModifyMachineData(
     id: Option[Int],
-    name: String,
+    hostname: String,
     macAddress: String,
-    comment: Option[String],
+    name: Option[String],
     isActive: Boolean
   )
 
