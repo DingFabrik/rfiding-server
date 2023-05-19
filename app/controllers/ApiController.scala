@@ -15,12 +15,6 @@ import controllers.ApiController.ValidToken
 import controllers.ApiController.formatMachineString
 import controllers.ApiController.formatTokenSeq
 import controllers.security.Security
-import io.swagger.annotations.Api
-import io.swagger.annotations.ApiModelProperty
-import io.swagger.annotations.ApiOperation
-import io.swagger.annotations.ApiParam
-import io.swagger.annotations.ApiResponse
-import io.swagger.annotations.ApiResponses
 import javax.inject.Inject
 import javax.inject.Singleton
 import models.Machine
@@ -51,7 +45,6 @@ import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
 
 @Singleton
-@Api
 class ApiController @Inject()(
   protected val dbConfigProvider: DatabaseConfigProvider,
   messagesAction: MessagesActionBuilder,
@@ -99,20 +92,7 @@ class ApiController @Inject()(
 
   /* **************************************************************************************************************** */
 
-  @ApiOperation(
-    value = "Get Machine Configuration",
-    notes = "Returns the configuration parameters for a machine.",
-    response = classOf[MachineConfigResult]
-  )
-  @ApiResponses(Array(
-    new ApiResponse(code = 400, message = "Machine not found."),
-    new ApiResponse(code = 400, message = "No config found."),
-  ))
-  def getMachineConfig(
-    @ApiParam(value = "MAC address of machine to fetch. Numbers and letters from a to f are allowed.",
-      required = true,
-      example = "acbc32b93f13"
-    ) machine: String
+  def getMachineConfig(machine: String
   ): EssentialAction = Action.async {
     val formattedMachine = formatMachineString(machine)
     logger.info(s"Searching for machine config for machine $formattedMachine")
@@ -148,29 +128,7 @@ class ApiController @Inject()(
     db.run(insertQuery)
   }
 
-  @ApiOperation(
-    value = "Check machine access rights",
-    notes = """Check if access to a machine is allowed.
-Access will be denied if owner, token or machine is set to inactive.
-Access will further be denied if token is not found or the current time is not in a valid interval or the
-day of week does not match to the todays one.
-And finally the access will be denied if the user is not qualified for that machine."""
-  )
-  @ApiResponses(Array(
-    new ApiResponse(code = 400, message = "Machine not found."),
-    new ApiResponse(code = 400, message = "Tokenstring invalid."),
-  ))
-  def checkMachineAccess(
-    @ApiParam(
-      value = "MAC address of machine to fetch. Numbers and letters from a to f are allowed.",
-      required = true,
-      example = "acbc32b93f13"
-    ) machineString: String,
-    @ApiParam(
-      value = "UID of token to verify. Numbers and letters from a to f are allowed. Exactly 8 chars.",
-      required = true,
-      example = "42a65c22"
-    ) tokenUid: String
+  def checkMachineAccess(machineString: String, tokenUid: String
   ): EssentialAction = Action.async { hasValidTokenString(tokenUid) {
     Future.successful(TokenStringInvalid.status)
   } {
@@ -253,14 +211,7 @@ And finally the access will be denied if the user is not qualified for that mach
 
   /* **************************************************************************************************************** */
 
-  @ApiOperation(
-    value = "Transmit machine status",
-    notes = "Endpoint is used to transmit the actual machine status."
-  )
-  def machineStatus(
-    @ApiParam(value = "MAC address of machine.", required = true,
-      allowableValues = "Numbers and letters from a to f.", example = "acbc32b93f13")
-    machine: String): EssentialAction = Action {
+  def machineStatus(machine: String): EssentialAction = Action {
     val formattedMachine = formatMachineString(machine)
     logger.info(s"Retrieving machine status for machine $formattedMachine")
     val stuff: Seq[String] = Seq("to be implemented")
@@ -296,7 +247,6 @@ object ApiController {
 
   // TODO: Check if this can be merged with models.MachineConfig !!
   case class MachineConfigResult(
-    @ApiModelProperty(value = "Maximum time of the Idle run timer. Unit: Seconds.")
     runtimer: Option[Long],
     minPower: Option[Long],
     controlParameter: Option[String]

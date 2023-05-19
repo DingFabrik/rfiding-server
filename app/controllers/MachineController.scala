@@ -79,6 +79,8 @@ class MachineController @Inject()(
   with TableProvider
   with Security { controller =>
 
+  private[this] val logger: Logger = Logger("api")
+
   /** Show a list of known machines. */
   def listMachines: EssentialAction = isAuthenticatedAsync { implicit userId => implicit request =>
     db.run(machineTable.result).map { machines: Seq[Machine] =>
@@ -108,7 +110,7 @@ class MachineController @Inject()(
   def addMachinePost: EssentialAction = isAuthenticatedAsync { implicit user => implicit request =>
     addMachineForm.bindFromRequest.fold(
       formWithErrors => {
-        Logger.debug(s"Something is wrong: $formWithErrors")
+        logger.debug(s"Something is wrong: $formWithErrors")
         Future.successful(BadRequest(add_machine(formWithErrors)))
       },
       addMachineData => {
@@ -120,7 +122,7 @@ class MachineController @Inject()(
           comment    = addMachineData.comment
         )
         db.run((machineTable returning machineTable.map(_.id)) += newMachine).map { insertId =>
-          Redirect(routes.MachineController.listMachines()).flashing("newMachines" -> insertId.toString)
+          Redirect(routes.MachineController.listMachines).flashing("newMachines" -> insertId.toString)
         }
       }
     )
@@ -134,7 +136,7 @@ class MachineController @Inject()(
       machineTable.filter(_.id === machineId).delete,
     ).transactionally
     db.run(deleteQuery).map { _ =>
-      Redirect(routes.MachineController.listMachines()).flashing(FlashKey.DeletedMachine -> machineId.toString)
+      Redirect(routes.MachineController.listMachines).flashing(FlashKey.DeletedMachine -> machineId.toString)
     }
   }
 
@@ -183,7 +185,7 @@ class MachineController @Inject()(
         )
         val updateQuery = machineTable.filter(_.id === updateMachine.id).update(updateMachine)
         db.run(updateQuery).map { _ =>
-          Redirect(routes.MachineController.listMachines()).flashing(FlashKey.MachineUpdated -> modifyMachineData.id.get.toString)
+          Redirect(routes.MachineController.listMachines).flashing(FlashKey.MachineUpdated -> modifyMachineData.id.get.toString)
         }
       }
     )
@@ -257,11 +259,11 @@ class MachineController @Inject()(
 
   /** Modify machine config. Form post endpoint. */
   def configureMachinePost: EssentialAction = isAuthenticatedAsync { implicit user => implicit request =>
-    Logger.debug(s"request = $request")
-    Logger.debug(s"request.body = ${request.body}")
+    logger.debug(s"request = $request")
+    logger.debug(s"request.body = ${request.body}")
     configureMachineForm.bindFromRequest.fold(
       formWithErrors => {
-        Logger.debug(s"formWithErrors = $formWithErrors")
+        logger.debug(s"formWithErrors = $formWithErrors")
         val machineID = formWithErrors.apply("machineID").value.get.toInt
         db.run(machineTable.filter(_.id === machineID).result).map { case Seq(machine) =>
           BadRequest(configure_machine(machine, formWithErrors))
@@ -286,7 +288,7 @@ class MachineController @Inject()(
           machineTimesTable ++= times
         ).transactionally
         db.run(configActions).zip(db.run(actions)).map { _ =>
-          Redirect(routes.MachineController.listMachines()).flashing(FlashKey.MachineTimesUpdated -> "OK")
+          Redirect(routes.MachineController.listMachines).flashing(FlashKey.MachineTimesUpdated -> "OK")
         }
       }
     )
@@ -339,7 +341,7 @@ class MachineController @Inject()(
 
       db.run(query.result).map { machines: Seq[Machine] =>
         val jsonMachines: Seq[JsObject] = machines.map { machine =>
-          Logger.debug(s"Machine = $machine")
+          logger.debug(s"Machine = $machine")
           JsObject(Seq(
             "label" -> JsString(machine.name),
             "value" -> JsString(machine.id.get.toString)

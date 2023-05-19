@@ -52,6 +52,8 @@ class SettingsController @Inject()(
   import SettingsController.FormID
   import SettingsController.ModifyUserFormData
 
+  private[this] val logger: Logger = Logger("api")
+
   /** The minimum length for passwords. */
   // TODO: Make this a configuration setting.
   private[this] val minPasswordLength = 6
@@ -95,7 +97,7 @@ class SettingsController @Inject()(
   def userProfilePost: EssentialAction = isAuthenticatedAsync { implicit user => implicit request =>
     modifyUserForm.bindFromRequest.fold(
       formWithErrors => {
-        Logger.debug(s"Sending back $formWithErrors")
+        logger.debug(s"Sending back $formWithErrors")
         Future.successful(BadRequest(user_profile(formWithErrors)))
       },
       modifyUserData => {
@@ -109,7 +111,7 @@ class SettingsController @Inject()(
               .update((modifyUserData.userName, modifyUserData.userMail))
         }
         db.run(updateQuery).map { _ =>
-          Redirect(routes.SettingsController.userProfile()).flashing(FlashKey.UserProfileUpdated -> "")
+          Redirect(routes.SettingsController.userProfile).flashing(FlashKey.UserProfileUpdated -> "")
         }
       }
     )
@@ -151,7 +153,7 @@ class SettingsController @Inject()(
   def addUserPost: EssentialAction = isAuthenticatedAsync { implicit user => implicit request =>
     addUserForm.bindFromRequest.fold(
       formWithErrors => {
-        Logger.debug(s"Sending back $formWithErrors")
+        logger.debug(s"Sending back $formWithErrors")
         Future.successful(BadRequest(add_user(formWithErrors)))
       },
       addUserData => {
@@ -162,7 +164,7 @@ class SettingsController @Inject()(
           hash  = passwordUtil.hash(addUserData.userPassword)
         )
         db.run(query).map { newUserId: Int =>
-          Redirect(routes.SettingsController.listUsers()).flashing(FlashKey.UserAdded -> newUserId.toString)
+          Redirect(routes.SettingsController.listUsers).flashing(FlashKey.UserAdded -> newUserId.toString)
         }
       }
     )
