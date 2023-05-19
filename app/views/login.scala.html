@@ -19,7 +19,7 @@
 @main(title = "Sign in") {
 
 <div class="col-md-8 order-md-1">
-  @helper.form(action = controllers.routes.LoginController.loginPost()) {
+  @helper.form(action = controllers.routes.LoginController.loginPost) {
 
     @CSRF.formField
 

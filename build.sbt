@@ -2,23 +2,23 @@ name := "rfiding-server"
 
 organization := "de.dingfabrik.rfiding"
 
-lazy val root = (project in file(".")).enablePlugins(PlayScala, GitVersioning, BuildInfoPlugin, GitBranchPrompt)
+lazy val root = (project in file(".")).enablePlugins(PlayScala, BuildInfoPlugin)
 
-scalaVersion := "2.12.4"
+scalaVersion := "2.13.10"
 
 // Needed to resolve doc & javadoc jars for some packages
 resolvers += Resolver.sbtPluginRepo("releases")
 
 libraryDependencies ++= Seq(
   guice,
-  "org.specs2"             %% "specs2-core"           % "4.3.4" % "test",
-  "org.scalatestplus.play" %% "scalatestplus-play"    % "3.1.2" % Test,
+  "org.specs2"             %% "specs2-core"           % "4.20.0" % "test",
+  "org.scalatestplus.play" %% "scalatestplus-play"    % "5.1.0" % Test,
   // Slick, Evolutions & SQLite
-  "com.typesafe.play"      %% "play-slick"            % "3.0.1",
-  "com.typesafe.play"      %% "play-slick-evolutions" % "3.0.1",
-  "org.xerial"             %  "sqlite-jdbc"           % "3.21.0",
+  "com.typesafe.play"      %% "play-slick"            % "5.1.0",
+  "com.typesafe.play"      %% "play-slick-evolutions" % "5.1.0",
+  "org.xerial"             %  "sqlite-jdbc"           % "3.41.2.1",
   // Webjars
-  "org.webjars"            %% "webjars-play"          % "2.6.3",
+  "org.webjars"            %% "webjars-play"          % "2.8.18",
   "org.webjars"            %  "bootstrap"             % "4.1.3",
   "org.webjars"            %  "jquery-ui"             % "1.12.1",
   "org.webjars.npm"        %  "feather-icons"         % "4.7.3",
@@ -34,7 +34,6 @@ libraryDependencies ++= Seq(
   //"com.typesafe.slick" %% "slick-codegen" % "3.2.0"
 
   // Swagger REST API documentation:
-  "io.swagger"             %% "swagger-play2"         % "1.6.0",
   "org.webjars"            %  "swagger-ui"            % "3.19.0",
 )
 
@@ -43,8 +42,6 @@ libraryDependencies ++= Seq(
 
 // Adds additional packages into conf/routes
 // play.sbt.routes.RoutesKeys.routesImport += "de.dingfabrik.rfiding.binders._"
-
-git.useGitDescribe := true
 
 buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion)
 

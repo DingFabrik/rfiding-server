@@ -58,6 +58,8 @@ class PersonController @Inject()(
   with Security {
   controller =>
 
+  private[this] val logger: Logger = Logger("api")
+
   /** Form for managing a Persons details. */
   private[this] val personDetailsForm = Form(
     mapping(
@@ -87,10 +89,10 @@ class PersonController @Inject()(
 
   /** Retrieves the person data and writes it to the database. */
   def addPersonPost: EssentialAction = isAuthenticatedAsync { implicit user => implicit request =>
-    Logger.debug(request.toString())
+    logger.debug(request.toString())
     personDetailsForm.bindFromRequest.fold(
       formWithErrors => {
-        Logger.debug(s"Something is wrong: $formWithErrors")
+        logger.debug(s"Something is wrong: $formWithErrors")
         Future.successful(BadRequest(add_person(formWithErrors)))
       },
       addUserData => {
@@ -102,7 +104,7 @@ class PersonController @Inject()(
           isActive = addUserData.isActive
         )
         db.run((personTable returning personTable.map(_.id)) += newPerson).map { insertId =>
-          Redirect(routes.PersonController.listPersons()).flashing(FlashKey.PersonAdded -> insertId.toString)
+          Redirect(routes.PersonController.listPersons).flashing(FlashKey.PersonAdded -> insertId.toString)
         }
       }
     )
@@ -115,8 +117,8 @@ class PersonController @Inject()(
       db.run(queries).map {
         //case Some(person, token)) =>
         case (Seq(person: Person), token) =>
-          Logger.debug(s"person => $person")
-          Logger.debug(s"token  => $token")
+          logger.debug(s"person => $person")
+          logger.debug(s"token  => $token")
           val form = personDetailsForm.bind(Map(
             FormID.personId -> person.id.get.toString,
             FormID.memberId -> person.memberId.getOrElse(""),
@@ -146,7 +148,7 @@ class PersonController @Inject()(
         )
         val updateQuery = personTable.filter(_.id === updatePerson.id).update(updatePerson)
         db.run(updateQuery).map { _ =>
-          Redirect(routes.PersonController.listPersons()).flashing(FlashKey.PersonUpdated -> modifyPersonData.id.get.toString)
+          Redirect(routes.PersonController.listPersons).flashing(FlashKey.PersonUpdated -> modifyPersonData.id.get.toString)
         }
       }
     )
@@ -191,8 +193,8 @@ class PersonController @Inject()(
     val deletePersonQuery = personTable.filter(_.id === id).delete
     db.run(deletePersonQuery).map { _ =>
       val backRoute = returnTo match {
-        case "persons" => routes.PersonController.listPersons()
-        case _         => routes.TokenController.listTokens()
+        case "persons" => routes.PersonController.listPersons
+        case _         => routes.TokenController.listTokens
       }
       Redirect(backRoute).flashing(FlashKey.DeletedPerson -> id.toString)
     }

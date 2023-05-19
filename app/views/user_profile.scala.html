@@ -39,7 +39,7 @@
         <div class="alert alert-success" role="alert">Profile updated.</div>
     }
 
-    @helper.form(action = controllers.routes.SettingsController.userProfilePost()) {
+    @helper.form(action = controllers.routes.SettingsController.userProfilePost) {
         @CSRF.formField
         <div class="col-md-12 order-md-1">
             <div class="form-row">

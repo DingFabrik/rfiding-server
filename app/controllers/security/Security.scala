@@ -9,6 +9,7 @@ import play.api.mvc.MessagesRequest
 import play.api.mvc.Request
 import play.api.mvc.RequestHeader
 import play.api.mvc.Result
+import play.api.mvc.Results
 import play.api.mvc.Security.Authenticated
 import play.api.mvc.Security.WithAuthentication
 
@@ -21,9 +22,8 @@ trait Security {
     request.session.get(SessionKeys.UserID).map(_.toInt)
   }
 
-  def onUnauthorized(request: RequestHeader): Result = {
-    Unauthorized(views.html.defaultpages.unauthorized())
-  }
+  def onUnauthorized(request: RequestHeader) = Results.Redirect(controllers.routes.LoginController.login)
+
 
   def isAuthenticated(f: => User => Request[AnyContent] => Result): EssentialAction = {
     Authenticated[Int](userID, onUnauthorized) { userInt: Int =>
