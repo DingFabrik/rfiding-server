@@ -1,5 +1,5 @@
 [![Run Status](https://api.shippable.com/projects/5bce419856f6dd0700fa2a7e/badge?branch=master)]()
-[![Play Framework](https://img.shields.io/badge/play%20framework-2.6.13-green.svg)](https://www.playframework.com/)
+[![Play Framework](https://img.shields.io/badge/play%20framework-2.8.19-green.svg)](https://www.playframework.com/)
 [![Scala](https://img.shields.io/badge/scala-2.12-green.svg)](https://www.scala-lang.org/)
 
 ## Rfiding

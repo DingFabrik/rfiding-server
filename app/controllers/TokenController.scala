@@ -66,6 +66,8 @@ class TokenController @Inject()(
   with HasDatabaseConfigProvider[JdbcProfile]
   with TableProvider
   with Security { controller =>
+  
+  private[this] val logger: Logger = Logger("api")
 
   import utils.CustomIsomorphisms.seqByteIsomorphism
 
@@ -107,7 +109,7 @@ class TokenController @Inject()(
           ownerId  = addTokenData.personId
         )
         db.run(insertQuery).map { result: Int =>
-          Redirect(routes.TokenController.listTokens())
+          Redirect(routes.TokenController.listTokens)
             .flashing(FlashKey.TokenAdded -> result.toString)
         }
       }
@@ -116,7 +118,7 @@ class TokenController @Inject()(
 
   def clearUnknownTokenList: EssentialAction =  isAuthenticatedAsync { implicit userId => implicit request =>
     db.run(unknownTokenTable.delete).map { _ =>
-      Redirect(routes.TokenController.listUnknownTokens())
+      Redirect(routes.TokenController.listUnknownTokens)
         .flashing(FlashKey.ListEmptied -> "")
     }
   }
@@ -190,7 +192,7 @@ class TokenController @Inject()(
   def copyPreparedTokenPost(id: Int): EssentialAction = isAuthenticatedAsync { implicit userId => implicit request =>
     findPersonForm.bindFromRequest.fold(
       formWithErrors => {
-        Logger.debug(s"formWithErrors: $formWithErrors")
+        logger.debug(s"formWithErrors: $formWithErrors")
 
         Future.successful(
           Redirect(routes.TokenController.copyPreparedToken(id)).flashing(FlashKey.CannotCopyToken -> "error")
@@ -245,7 +247,7 @@ class TokenController @Inject()(
     val token = tokenTable.filter(_.id === id).joinLeft(personTable).on(_.ownerId === _.id)
     db.run(token.result).map {
       case result @ Seq((token: Token, Some(owner: Person))) =>
-        Logger.debug(s"Result -> $result")
+        logger.debug(s"Result -> $result")
         val form = modifyTokenForm.bind(Map(
           FormKey.tokenId       -> token.id.get.toString,
           FormKey.tokenPurpose  -> token.purpose.getOrElse(""),
@@ -272,9 +274,9 @@ class TokenController @Inject()(
           .filter(_.id === id)
           .map(token => (token.purpose, token.isActive))
           .update((modifyTokenForm.purpose.getOrElse(""), modifyTokenForm.isActive))
-        Logger.debug(s"Query = ${updateQuery.statements.mkString(" | ")}")
+        logger.debug(s"Query = ${updateQuery.statements.mkString(" | ")}")
         db.run(updateQuery).map { _ =>
-          Redirect(routes.TokenController.listTokens()).flashing(FlashKey.UpdatedToken -> id.toString)
+          Redirect(routes.TokenController.listTokens).flashing(FlashKey.UpdatedToken -> id.toString)
         }
       }
     )
@@ -284,8 +286,8 @@ class TokenController @Inject()(
     val deleteTokenQuery = tokenTable.filter(_.id === id).delete
     db.run(deleteTokenQuery).map { _ =>
       val backRoute = returnTo match {
-        case "persons" => routes.PersonController.listPersons()
-        case _         => routes.TokenController.listTokens()
+        case "persons" => routes.PersonController.listPersons
+        case _         => routes.TokenController.listTokens
       }
       Redirect(backRoute).flashing(FlashKey.DeletedToken -> id.toString)
     }

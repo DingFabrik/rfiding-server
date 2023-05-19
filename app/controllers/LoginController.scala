@@ -65,9 +65,9 @@ class LoginController @Inject()(
         db.run(userQuery.result).map { user: Seq[User] =>
           if (user.nonEmpty && passwordUtil.verify(user.head.hash, userLoginData.password)) {
             val userID = user.head.id.get.toString
-            Redirect(routes.HomeController.showString()).withSession(SessionKeys.UserID -> userID)
+            Redirect(routes.HomeController.showString).withSession(SessionKeys.UserID -> userID)
           } else {
-            Redirect(routes.LoginController.login()).withNewSession.flashing(FlashKey.LoginError -> "Username/Password incorrect.")
+            Redirect(routes.LoginController.login).withNewSession.flashing(FlashKey.LoginError -> "Username/Password incorrect.")
           }
         }
 
@@ -77,7 +77,7 @@ class LoginController @Inject()(
 
   /** Log out user and kill session data. */
   def logout: EssentialAction = Action { implicit request =>
-    Redirect(routes.LoginController.login()).withNewSession.flashing(FlashKey.LoggedOut -> "loggedOut")
+    Redirect(routes.LoginController.login).withNewSession.flashing(FlashKey.LoggedOut -> "loggedOut")
   }
 }
 

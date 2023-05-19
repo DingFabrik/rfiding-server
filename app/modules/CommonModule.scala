@@ -10,7 +10,7 @@ import utils.navigation.NavigationComponent
 
 /** Default components to be used by DI. */
 class CommonModule extends AbstractModule {
-  def configure(): Unit = {
+  override def configure(): Unit = {
 
     bind(classOf[Summarizer])
       .to(classOf[DefaultSummarizer])

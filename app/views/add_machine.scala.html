@@ -23,7 +23,7 @@
     <div class="alert alert-danger" role="alert">@flash.get("error")</div>
     }
 
-    @helper.form(action = controllers.routes.MachineController.addMachinePost()) {
+    @helper.form(action = controllers.routes.MachineController.addMachinePost) {
 
     @CSRF.formField
     <div class="col-md-12 order-md-1">

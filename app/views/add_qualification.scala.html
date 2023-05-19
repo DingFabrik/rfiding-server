@@ -32,7 +32,7 @@
     scripts = scripts
 ) {
 
-    @helper.form(action = controllers.routes.PersonController.addQualificationPost()) {
+    @helper.form(action = controllers.routes.PersonController.addQualificationPost) {
         @CSRF.formField
         <input type="hidden" name="@FormID.personId" id="@FormID.personId" value="@personOfInterest.id.get" />
         <div class="form-row align-items-end">

@@ -21,7 +21,7 @@
 @main(userOpt = Some(user), title = "Add a Person") {
 
 <div>
-    @helper.form(action = controllers.routes.PersonController.addPersonPost()) {
+    @helper.form(action = controllers.routes.PersonController.addPersonPost) {
     @if(flash.get("error").isDefined) {
         <div class="alert alert-danger" role="alert">@flash.get("error")</div>
     }

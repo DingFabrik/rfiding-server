@@ -9,7 +9,7 @@ class DefaultNavigation extends NavigationComponent {
       NavigationEntry(
         title  = s"Tokens",
         icon   = "radio",
-        target = controllers.routes.TokenController.listTokens()
+        target = controllers.routes.TokenController.listTokens
       ),
 //      NavigationTitle(
 //        title  = s"Tokens",
@@ -36,7 +36,7 @@ class DefaultNavigation extends NavigationComponent {
       NavigationEntry(
         title  = "Persons",
         icon   = "users",
-        target = controllers.routes.PersonController.listPersons(),
+        target = controllers.routes.PersonController.listPersons,
       ),
 //      NavigationTitle(
 //        title  = "Persons",
@@ -58,7 +58,7 @@ class DefaultNavigation extends NavigationComponent {
       NavigationEntry(
         title  = s"Machines",
         icon   = "user",
-        target = controllers.routes.MachineController.listMachines()
+        target = controllers.routes.MachineController.listMachines
       ),
 //      NavigationTitle(
 //        title  = "Machines",
@@ -80,48 +80,35 @@ class DefaultNavigation extends NavigationComponent {
       NavigationTitle(
         title    = "Devel",
         icon     = "settings",
-        target   = controllers.routes.Development.apiStuff(),
+        target   = controllers.routes.Development.apiStuff,
         subItems = Seq(
           NavigationEntry(
             title   = "Create dummy prepared tokens",
             icon    = "settings",
-            target  = controllers.routes.Development.createDummyData()
+            target  = controllers.routes.Development.createDummyData
           ),
           NavigationEntry(
             title  = s"Prepared Tokens",
             icon   = "radio",
-            target = controllers.routes.TokenController.showPreparedToken()
+            target = controllers.routes.TokenController.showPreparedToken
           ),
           NavigationEntry(
             title   = "Show API urls",
             icon    = "settings",
-            target  = controllers.routes.Development.apiStuff()
+            target  = controllers.routes.Development.apiStuff
           ),
           NavigationEntry(
             title   = "Database schemas",
             icon    = "settings",
-            target  = controllers.routes.Development.schemas()
+            target  = controllers.routes.Development.schemas
           ),
           NavigationEntry(
             title   = "API Logs",
             icon    = "settings",
-            target  = controllers.routes.Development.showLog()
+            target  = controllers.routes.Development.showLog
           ),
         )
       ),
-      NavigationTitle(
-        title    = "API Doc",
-        icon     = "settings",
-        target   = controllers.routes.SwaggerController.docs(),
-        subItems = Seq(
-          NavigationEntry(
-            title   = "Show Swagger API docs",
-            icon    = "settings",
-            target  = controllers.routes.SwaggerController.docs()
-          ),
-        )
-      ),
-
     )
   }
 }

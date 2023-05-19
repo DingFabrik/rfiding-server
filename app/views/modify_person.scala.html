@@ -23,7 +23,7 @@
 
 @main(userOpt = Some(user), title = "Modify Person Details") {
     <div class="mb-3">
-        @helper.form(action = controllers.routes.PersonController.modifyPersonPost()) {
+        @helper.form(action = controllers.routes.PersonController.modifyPersonPost) {
         @for(tid <- flash.get(FlashKey.TokenAdded)) {
         <div class="alert alert-success" role="alert">New Token with ID #@tid added.</div>
         }

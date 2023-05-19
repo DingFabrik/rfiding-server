@@ -16,7 +16,7 @@
 )
 
 @scripts = {
-    <script src="@routes.HomeController.autocompletePersonJs()"></script>
+    <script src="@routes.HomeController.autocompletePersonJs"></script>
 }
 
 @main(userOpt = Some(user), title = "Assign Prepared Token #" + token.id.get, scripts = scripts) {
