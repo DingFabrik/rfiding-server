@@ -29,7 +29,7 @@
 @CSRF.formField
     <div class="row">
         <div class="col-md-8 mb-3">
-            @inputText(modifyMachineForm(FormID.machineName), "Machine name", required = true)
+            @inputText(modifyMachineForm(FormID.hostname), "Hostname", required = true)
         </div>
         <div class="col-md-4 mb-3">
             @inputNumber(modifyMachineForm(FormID.machineId), "Database ID",
@@ -45,7 +45,7 @@
     </div>
     <div class="row">
         <div class="col-md-12 mb-3">
-            @inputText(modifyMachineForm(FormID.comment), "Comment")
+            @inputText(modifyMachineForm(FormID.machineName), "Name")
         </div>
     </div>
     <div class="row">
