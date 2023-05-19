@@ -91,12 +91,12 @@ class MachineController @Inject()(
   /** Form is used to add a new machine. */
   private[this] val addMachineForm = Form(
     mapping(
-      FormID.machineName       -> text,
+      FormID.hostname       -> text,
       FormID.macAddress -> text.verifying(
                               error = "MAC address has invalid format.",
                               constraint = _.matches(MacAddressRegexString)
       ),
-      FormID.comment    -> optional(text),
+      FormID.machineName    -> optional(text),
       FormID.isActive   -> boolean,
     )(AddMachineData.apply)(AddMachineData.unapply)
   )
@@ -116,10 +116,10 @@ class MachineController @Inject()(
       addMachineData => {
         val newMachine = Machine(
           id         = None,
-          name       = addMachineData.name,
+          hostname       = addMachineData.hostname,
           macAddress = addMachineData.macAddress,
           isActive   = addMachineData.isActive,
-          comment    = addMachineData.comment
+          name    = addMachineData.name
         )
         db.run((machineTable returning machineTable.map(_.id)) += newMachine).map { insertId =>
           Redirect(routes.MachineController.listMachines).flashing("newMachines" -> insertId.toString)
@@ -144,12 +144,12 @@ class MachineController @Inject()(
   private[this] val modifyMachineForm = Form(
     mapping(
       FormID.machineId         -> optional(number),
-      FormID.machineName       -> text,
+      FormID.hostname       -> text,
       FormID.macAddress -> text.verifying(
         error = "MAC address has an invalid format. Only numbers and lowercase letters a to f are allowed.",
         constraint = _.matches(MacAddressRegexString)
       ),
-      FormID.comment    -> optional(text),
+      FormID.machineName    -> optional(text),
       FormID.isActive   -> boolean,
     )(ModifyMachineData.apply)(ModifyMachineData.unapply)
   )
@@ -160,9 +160,9 @@ class MachineController @Inject()(
     db.run(findMachineQuery.result).map { case Seq(machine) =>
       val form = modifyMachineForm.bind(Map(
         FormID.machineId   -> machine.id.get.toString,
-        FormID.machineName -> machine.name,
+        FormID.hostname -> machine.hostname,
         FormID.macAddress  -> machine.macAddress,
-        FormID.comment     -> machine.comment.getOrElse(""),
+        FormID.machineName     -> machine.name.getOrElse(""),
         FormID.isActive    -> machine.isActive.toString
       ))
       Ok(modify_machine(form))
@@ -178,9 +178,9 @@ class MachineController @Inject()(
       modifyMachineData => {
         val updateMachine = Machine(
           id         = modifyMachineData.id,
-          name       = modifyMachineData.name,
+          hostname       = modifyMachineData.hostname,
           macAddress = modifyMachineData.macAddress,
-          comment    = modifyMachineData.comment,
+          name    = modifyMachineData.name,
           isActive   = modifyMachineData.isActive
         )
         val updateQuery = machineTable.filter(_.id === updateMachine.id).update(updateMachine)
@@ -416,9 +416,9 @@ object MachineController {
 
   object FormID {
     val machineId   = "machineId"
-    val machineName = "machineName"
+    val hostname = "hostname"
     val macAddress  = "macAddress"
-    val comment     = "comment"
+    val machineName     = "machineName"
     val isActive    = "isActive"
   }
 }
