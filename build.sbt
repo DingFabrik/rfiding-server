@@ -28,7 +28,7 @@ libraryDependencies ++= Seq(
   "org.ocpsoft.prettytime" % "prettytime"             % "4.0.1.Final",
 
   // Secure password hashing
-  "de.mkammerer"           %  "argon2-jvm"            % "2.4",
+  "de.mkammerer"           %  "argon2-jvm"            % "2.11",
 
   // Slick code gen. Do we really want that?
   //"com.typesafe.slick" %% "slick-codegen" % "3.2.0"
