@@ -203,7 +203,8 @@ class PersonController @Inject()(
   private[this] val addQualificationForm = Form(
     mapping(
       FormID.personId    -> number,
-      FormID.machineId   -> number
+      FormID.machineId   -> number,
+      FormID.comment   -> optional(text),
     )(PersonQualification.apply)(PersonQualification.unapply)
   )
 
@@ -225,10 +226,10 @@ class PersonController @Inject()(
       addQualificationData => {
         val upQu = Qualification(
           machineId = addQualificationData.machineId,
-          personId  = addQualificationData.personId
+          personId  = addQualificationData.personId,
+          comment   = addQualificationData.comment
         )
-        val updateQuery = qualificationTable.insertOrUpdate(upQu)
-        db.run(updateQuery).map { _ =>
+        db.run(qualificationTable += upQu).map { _ =>
           Redirect(routes.PersonController.addQualification(addQualificationData.personId))
             .flashing(FlashKey.QualificationUpdated -> addQualificationData.personId.toString)
         }
@@ -252,7 +253,8 @@ object PersonController {
 
   case class PersonQualification(
     personId: Int,
-    machineId: Int
+    machineId: Int,
+    comment: Option[String]
   )
 
   case class PersonFormData(
@@ -272,6 +274,7 @@ object PersonController {
     val isActive    = "isActive"
     val machineId   = "machineId"
     val machineName = "machineName"
+    val comment = "comment"
   }
 
   /** Simple data holder to return specific person data used by a javascript autocomplete function. */

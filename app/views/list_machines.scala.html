@@ -31,6 +31,7 @@
             <th>Name</th>
             <th>Modify</th>
             <th>Configure</th>
+            <th>Qualified People</th>
         </tr>
         </thead>
         <tbody>
@@ -47,6 +48,7 @@
             <td>@machine.name</td>
             <td><a href="@MachineController.modifyMachine(machine.id.get)"><span data-feather="edit"><!-- edit --></span></a></td>
             <td><a href="@MachineController.configureMachine(machine.id.get)"><span data-feather="sliders"><!-- sliders --></span></a></td>
+            <td><a href="@MachineController.listQualifiedPersons(machine.id.get)"><span data-feather="users"><!-- sliders --></span></a></td>
         </tr>
         }
         </tbody>
