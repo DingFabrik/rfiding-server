@@ -13,6 +13,8 @@ import javax.inject.Singleton
 import models.Machine
 import models.MachineConfig
 import models.MachineTime
+import models.Qualification
+import models.Person
 import play.api.Logger
 import play.api.data.Form
 import play.api.data.Forms.boolean
@@ -53,9 +55,11 @@ import views.html.add_machine
 import views.html.configure_machine
 import views.html.list_machines
 import views.html.modify_machine
+import views.html.list_qualified_persons
 
 import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
+import scala.util.Success
 
 //noinspection MutatorLikeMethodIsParameterless
 @Singleton
@@ -352,7 +356,22 @@ class MachineController @Inject()(
     }
   }
 
-
+  /** Show a list of qualified people for a machine. */
+  def listQualifiedPersons(id: Int): EssentialAction = isAuthenticatedAsync { implicit userId => implicit request =>
+    val findQualificationsQuery = qualificationTable.filter(_.machineId === id).joinLeft(personTable).on {
+      case (qualification, person) => qualification.personId === person.id
+    }
+    val machineQuery = db.run(machineTable.filter(_.id === id).result)
+    val qualificationQuery = db.run(findQualificationsQuery.result)
+      
+    val future = for {
+        r1 <- machineQuery
+        r2 <- qualificationQuery
+    } yield (Tuple2(r1, r2))
+    future.map { result: Tuple2[Seq[Machine], Seq[(Qualification, Option[Person])]] =>
+        Ok(list_qualified_persons(result._1(0), result._2))
+      }
+  }
 }
 
 object MachineController {

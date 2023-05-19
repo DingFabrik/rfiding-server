@@ -32,6 +32,7 @@ POST    /machine/toggle-active      controllers.MachineController.toggleMachineA
 GET     /machine/delete/:id         controllers.MachineController.deleteMachine(id: Int)
 GET     /machine/find               controllers.MachineController.findMachine(term: Option[String])
 GET     /machine/find-qualificable  controllers.MachineController.findQualificableMachine(user: Int, term: Option[String])
+GET     /machine/qualified          controllers.MachineController.listQualifiedPersons(id: Int)
 
 
 GET     /persons                      controllers.PersonController.listPersons
