@@ -14,10 +14,12 @@ import slick.model.ForeignKeyAction.Restrict
  *
  * @param machineId The machine ID
  * @param personId  The person ID
+ * @param comment   Optional comment about how the qualification was obtained
  */
 case class Qualification(
   machineId: Int,
   personId: Int,
+  comment: Option[String],
 )
 
 class QualificationTable(tag: Tag) extends Table[Qualification](tag, "tb_qualification") {
@@ -26,9 +28,10 @@ class QualificationTable(tag: Tag) extends Table[Qualification](tag, "tb_qualifi
 
   def machineId: Rep[Int] = column[Int]("fk_machine_id")
   def personId: Rep[Int] = column[Int]("fk_person_id")
+  def comment: Rep[Option[String]] = column[Option[String]]("dt_comment")
 
   def * : ProvenShape[Qualification] = {
-    (machineId, personId) <> (Qualification.tupled, Qualification.unapply)
+    (machineId, personId, comment) <> (Qualification.tupled, Qualification.unapply)
   }
 
   def machine: ForeignKeyQuery[MachineTable, Machine] = {

@@ -35,6 +35,7 @@
     @helper.form(action = controllers.routes.PersonController.addQualificationPost) {
         @CSRF.formField
         <input type="hidden" name="@FormID.personId" id="@FormID.personId" value="@personOfInterest.id.get" />
+        @inputText(qualificationForm(FormID.comment), "Comment")
         <div class="form-row align-items-end">
             <div class="col-md-3 mb-3">
                 @inputNumber(qualificationForm(FormID.machineId), "Machine ID", readonly = true)
@@ -60,16 +61,20 @@
                     <tr>
                         <th>ID</th>
                         <th>Name</th>
+                        <th>Comment</th>
+                        <th>Qualification Comment</th>
                         <th>Revoke</th>
                     </tr>
                     </thead>
                     @for(
                         (mqOpt, _) <- result;
-                        (machine, _) <- mqOpt
+                        (machine, qualification) <- mqOpt
                     ) {
                     <tr>
                         <td>@machine.id</td>
                         <td>@machine.name</td>
+                        <td>@machine.comment</td>
+                        <td>@qualification.comment</td>
                         <td>
                             <a href="@controllers.routes.PersonController.revokeQualification(personOfInterest.id.get, machine.id.get)"
                                class="text-danger"><span data-feather="x-circle"><!-- x-circle --></span></a></td>
