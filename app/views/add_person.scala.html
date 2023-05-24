@@ -28,27 +28,27 @@
 
     @CSRF.formField
     <div class="col-md-12 order-md-1">
-        <div class="form-row">
+        <div class="row">
             <div class="col-md-12 mb-3">
                 @inputNumber(addPersonForm(FormID.memberId), "Member ID (optional)")
             </div>
         </div>
-        <div class="form-row">
+        <div class="row">
             <div class="col-md-12 mb-3">
                 @inputText(addPersonForm(FormID.fullName), "Full name", required = true)
             </div>
         </div>
-        <div class="form-row">
+        <div class="row">
             <div class="col-md-12 mb-3">
                 @inputEmail(addPersonForm(FormID.email), "E-Mail address", required = true)
             </div>
         </div>
-        <div class="form-row">
+        <div class="row">
             <div class="col-md-6 mb-3">
                 @checkBox(addPersonForm(FormID.isActive), "Active")
             </div>
         </div>
-        <div class="form-row">
+        <div class="row">
             <div class="col-md-12 mb-3">
                 <button class="btn btn-primary btn-lg btn-block" type="submit">Add Person</button>
             </div>

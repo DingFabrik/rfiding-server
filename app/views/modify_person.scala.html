@@ -33,7 +33,7 @@
 
         @CSRF.formField
         <div class="col-md-12 order-md-1">
-            <div class="form-row">
+            <div class="row">
                 <div class="col-md-8 mb-3">
                     @inputNumber(modifyPersonForm(FormID.memberId), "Member ID (optional)")
                 </div>
@@ -41,27 +41,27 @@
                     @inputText(modifyPersonForm(FormID.personId), "Database ID", onEmptyValue = "Automatically assigned", prependSymbol = Some("#"), readonly = true)
                 </div>
             </div>
-            <div class="form-row">
+            <div class="row">
                 <div class="col-md-12 mb-3">
                     @inputText(modifyPersonForm(FormID.fullName), "Full name", required = true)
                 </div>
             </div>
-            <div class="form-row">
+            <div class="row">
                 <div class="col-md-12 mb-3">
                     @inputEmail(modifyPersonForm(FormID.email), "E-Mail address", required = true)
                 </div>
             </div>
-            <div class="form-row">
+            <div class="row">
                 <div class="col-md-6 mb-3">
                     @checkBox(modifyPersonForm(FormID.isActive), "Active")
                 </div>
             </div>
-            <div class="form-row">
+            <div class="row">
                 <div class="col-md-11 mb-3">
                     <button class="btn btn-primary btn-lg btn-block" type="submit">Modify Person Details</button>
                 </div>
                 <div class="col-md-1 mb-3">
-                    <button type="button" class="btn btn-danger btn-lg btn-block" data-toggle="modal" data-target="#confirmDeletePerson@modifyPersonForm(FormID.personId).value.get.toInt">
+                    <button type="button" class="btn btn-danger btn-lg btn-block float-end" data-toggle="modal" data-target="#confirmDeletePerson@modifyPersonForm(FormID.personId).value.get.toInt">
                         <span data-feather="trash-2"><!-- trash-2 --></span>
                     </button>
                 </div>

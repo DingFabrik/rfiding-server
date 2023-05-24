@@ -17,9 +17,7 @@
 }
 @prependSymbol.map { symbol =>
 <div class="input-group">
-    <div class="input-group-prepend">
         <div class="input-group-text">@symbol</div>
-    </div>
 }
 <input type="@inputType"
        class="form-control @field.error.map(e => "is-invalid") @classEx"

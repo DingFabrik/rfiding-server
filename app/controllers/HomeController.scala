@@ -50,9 +50,9 @@ class HomeController @Inject()(
 
   def index: EssentialAction = Action.async { implicit request =>
     userID(request).fold(Future.successful(Ok(index_logged_out()))) { userId =>
-      val query = personTable.length zip tokenTable.length zip tokenTable.filter(_.isActive === true).length
-      db.run(query.result).map { case ((personLength, tokenLength), activeToken) =>
-        Ok(index_logged_in(User(userId), personLength, tokenLength, activeToken))
+      val query = (personTable.length zip personTable.filter(_.isActive === true).length) zip (tokenTable.length zip tokenTable.filter(_.isActive === true).length) zip (machineTable.length zip machineTable.filter(_.isActive === true).length)
+      db.run(query.result).map { case (((personLength, activePerson), (tokenLength, activeToken)), (machineLength, activeMachine)) =>
+        Ok(index_logged_in(User(userId), personLength, activePerson, tokenLength, activeToken, machineLength, activeMachine))
       }
     }
   }

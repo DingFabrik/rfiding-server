@@ -30,17 +30,17 @@
     @helper.form(action = controllers.routes.SettingsController.addUserPost) {
         @CSRF.formField
         <div class="col-md-12 order-md-1">
-            <div class="form-row">
+            <div class="row">
                 <div class="col-md-12 mb-3">
                     @inputText(userForm(FormID.userName), "Name")
                 </div>
             </div>
-            <div class="form-row">
+            <div class="row">
                 <div class="col-md-12 mb-3">
                     @inputEmail(userForm(FormID.userMail), "E-Mail address")
                 </div>
             </div>
-            <div class="form-row">
+            <div class="row">
                 <div class="col-md-6 mb-3">
                     @inputPassword(userForm(FormID.userPassword), "Password")
                 </div>
@@ -48,7 +48,7 @@
                     @inputPassword(userForm(FormID.userPasswordConfirm), "Password confirmation")
                 </div>
             </div>
-            <div class="form-row">
+            <div class="row">
                 <div class="col-md-12 mb-3">
                     <button class="btn btn-primary btn-lg btn-block" type="submit">Create user</button>
                 </div>

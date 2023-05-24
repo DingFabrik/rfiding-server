@@ -20,7 +20,7 @@
     <script src="@routes.Assets.versioned("javascripts/tooltips.js")"></script>
 }
 
-@main(userOpt = Some(user), title = "List unknown Tokens", scripts = scripts) {
+@main(userOpt = Some(user), title = "List unknown Tokens", action=Some((routes.TokenController.clearUnknownTokenList, "Clear list")), scripts = scripts) {
 <div>
     <p>
         Just put a new token in front of any registered machine and it will show up here.
@@ -31,7 +31,7 @@
     @for(tid <- flash.get(FlashKey.ListEmptied)) {
     <div class="alert alert-success" role="alert">List cleared.</div>
     }
-    <table class="table table-striped table-sm">
+    <table class="table table-striped table-bordered">
         <thead>
         <tr>
             <th>Serial</th>
@@ -51,6 +51,5 @@
         }
         </tbody>
     </table>
-    <a class="btn btn-primary btn-lg btn-block" href="@routes.TokenController.clearUnknownTokenList">Clear list</a>
 </div>
 }

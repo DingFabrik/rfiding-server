@@ -27,27 +27,27 @@
 
     @CSRF.formField
     <div class="col-md-12 order-md-1">
-        <div class="form-row">
+        <div class="row">
             <div class="col-md-12 mb-3">
                 @inputText(addMachineForm(FormID.machineName), "Machine name", required = true)
             </div>
         </div>
-        <div class="form-row">
+        <div class="row">
             <div class="col-md-12 mb-3">
                 @inputText(addMachineForm(FormID.macAddress), "MAC-Address", required = true)
             </div>
         </div>
-        <div class="form-row">
+        <div class="row">
             <div class="col-md-12 mb-3">
                 @inputText(addMachineForm(FormID.comment), "Comment")
             </div>
         </div>
-        <div class="form-row">
+        <div class="row">
             <div class="col-md-6 mb-3">
                 @checkBox(addMachineForm(FormID.isActive), "Active")
             </div>
         </div>
-        <div class="form-row">
+        <div class="row">
             <div class="col-md-12 mb-3">
                 <button class="btn btn-primary btn-lg btn-block" type="submit">Add Machine</button>
             </div>

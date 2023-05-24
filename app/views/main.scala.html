@@ -5,6 +5,7 @@
 @(
     userOpt: Option[User] = None,
     title: String,
+    action: Option[(Call, String)] = None,
     scripts: Html = Html("")
 )(content: Html)(
     implicit navigationComponent: NavigationComponent,
@@ -34,39 +35,40 @@
 
     <!-- Custom styles for this template -->
     <link href="@routes.Assets.versioned("stylesheets/dashboard.css")" rel="stylesheet" />
-    <link href="@routes.Assets.versioned("lib/highlightjs/styles/androidstudio.css")" rel="stylesheet" />
+    <link href="@routes.Assets.versioned("lib/highlightjs/styles/androidstudio.min.css")" rel="stylesheet" />
 </head>
 
 <body>
 
 <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+    <div class="container-fluid">
     <a class="navbar-brand" href="/">RfiDing</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsDefault" aria-controls="navbarsDefault" aria-expanded="false" aria-label="Toggle navigation">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsDefault" aria-controls="navbarsDefault" aria-expanded="false" aria-label="Toggle navigation">
         <span data-feather="menu"><!-- Menu Icon --></span>
     </button>
 
     <div class="collapse navbar-collapse" id="navbarsDefault">
-        <ul class="navbar-nav mr-auto">
+        <ul class="navbar-nav me-auto">
             @navigation(navigationComponent)
         </ul>
 
-        <ul class="navbar-nav ml-auto">
+        <ul class="navbar-nav ms-auto">
             @if(userOpt.isDefined) {
             <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="@controllers.routes.SettingsController.about" id="dropdown-right" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <a class="nav-link dropdown-toggle" href="#" id="dropdown-right" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <span data-feather="settings"><!-- Settings Icon --></span>
                 </a>
-                <div class="dropdown-menu" aria-labelledby="dropdown-right">
-                    <a class="dropdown-item" href="@controllers.routes.SettingsController.listUsers">
+                <ul class="dropdown-menu" aria-labelledby="dropdown-right">
+                    <li><a class="dropdown-item" href="@controllers.routes.SettingsController.listUsers">
                         User
-                    </a>
-                    <a class="dropdown-item" href="@controllers.routes.SettingsController.userProfile">
+                    </a></li>
+                    <li><a class="dropdown-item" href="@controllers.routes.SettingsController.userProfile">
                         Profile
-                    </a>
-                    <a class="dropdown-item" href="@controllers.routes.SettingsController.about">
+                    </a></li>
+                    <li><a class="dropdown-item" href="@controllers.routes.SettingsController.about">
                         About
-                    </a>
-                </div>
+                    </a></li>
+                </ul>
             </li>
             }
             <li class="nav-item">
@@ -78,12 +80,18 @@
             </li>
         </ul>
     </div>
+    </div>
 </nav>
 
 <main role="main" class="container">
-    <div class="mb-3">
-        <h1 class="h2">@title</h1>
-    </div>
+    <div class="col-md-12 d-flex mb-4">
+        <h1 class="me-auto">@title</h1>
+        @if(action.isDefined) {
+        <div class="ms-auto mt-2">
+            <a href="@action.get._1" class="btn btn-primary">@action.get._2</a>
+        </div>
+        }
+        </div>
     @content
 </main><!-- /.container -->
 
@@ -91,8 +99,7 @@
 <!-- Placed at the end of the document so the pages load faster              -->
 <script src="@routes.Assets.versioned("lib/jquery/jquery.min.js")"></script>
 <script src="@routes.Assets.versioned("javascripts/jquery-loader.js")"></script>
-<script src="@routes.Assets.versioned("lib/popper.js/umd/popper.min.js")"></script>
-<script src="@routes.Assets.versioned("lib/bootstrap/js/bootstrap.min.js")"></script>
+<script src="@routes.Assets.versioned("lib/bootstrap/js/bootstrap.bundle.min.js")"></script>
 
 <!-- Icons -->
 <script src="@routes.Assets.versioned("lib/feather-icons/dist/feather.min.js")"></script>

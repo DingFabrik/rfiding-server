@@ -42,17 +42,17 @@
     @helper.form(action = controllers.routes.SettingsController.userProfilePost) {
         @CSRF.formField
         <div class="col-md-12 order-md-1">
-            <div class="form-row">
+            <div class="row">
                 <div class="col-md-12 mb-3">
                     @inputText(userModifyForm(FormID.userName), "Name")
                 </div>
             </div>
-            <div class="form-row">
+            <div class="row">
                 <div class="col-md-12 mb-3">
                     @inputEmail(userModifyForm(FormID.userMail), "E-Mail address")
                 </div>
             </div>
-            <div class="form-row">
+            <div class="row">
                 <div class="col-md-6 mb-3">
                     @inputPassword(userModifyForm(FormID.userPassword), "Password")
                 </div>
@@ -60,7 +60,7 @@
                     @inputPassword(userModifyForm(FormID.userPasswordConfirm), "Password confirmation")
                 </div>
             </div>
-            <div class="form-row">
+            <div class="row">
                 <div class="col-md-12 mb-3">
                     <button class="btn btn-primary btn-lg btn-block" type="submit">Change Profile</button>
                 </div>

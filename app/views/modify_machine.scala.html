@@ -27,7 +27,7 @@
 }
 
 @CSRF.formField
-    <div class="form-row">
+    <div class="row">
         <div class="col-md-8 mb-3">
             @inputText(modifyMachineForm(FormID.machineName), "Machine name", required = true)
         </div>
@@ -38,27 +38,27 @@
                           readonly = true)
         </div>
     </div>
-    <div class="form-row">
+    <div class="row">
         <div class="col-md-12 mb-3">
             @inputText(modifyMachineForm(FormID.macAddress), "MAC-Address", required = true)
         </div>
     </div>
-    <div class="form-row">
+    <div class="row">
         <div class="col-md-12 mb-3">
             @inputText(modifyMachineForm(FormID.comment), "Comment")
         </div>
     </div>
-    <div class="form-row">
+    <div class="row">
         <div class="col-md-12 mb-3">
             @checkBox(modifyMachineForm(FormID.isActive), "Active")
         </div>
     </div>
-    <div class="form-row">
+    <div class="row">
         <div class="col-md-11 mb-3">
             <button class="btn btn-primary btn-lg btn-block" type="submit">Modify Machine</button>
         </div>
         <div class="col-md-1 mb-3">
-            <button type="button" class="btn btn-danger btn-lg btn-block" data-toggle="modal" data-target="#confirmDeleteMachine@modifyMachineForm(FormID.machineId).value.get.toInt">
+            <button type="button" class="btn btn-danger btn-lg btn-block float-end" data-toggle="modal" data-target="#confirmDeleteMachine@modifyMachineForm(FormID.machineId).value.get.toInt">
                 <span data-feather="trash-2"><!-- trash-2 --></span>
             </button>
         </div>

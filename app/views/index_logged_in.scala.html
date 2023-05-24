@@ -4,8 +4,11 @@
 @(
     user: User,
     personLength: Int,
+    activePerson: Int,
     tokenLength: Int,
-    activeToken: Int
+    activeToken: Int,
+    machineLength: Int,
+    activeMachine: Int
 )(
     implicit navigation: NavigationComponent,
     request: RequestHeader,
@@ -13,22 +16,61 @@
 )
 
 @main(userOpt = Some(user), title = "Welcome to RfiDing") {
-<div class="mb-3">
-    <div class="col-md-12 order-md-1">
-        <div class="row justify-content-md-center">
-            <div class="col-md-10 mb-3">
-                <p>
-                    This is the DingFabrik's RfiDing. RfiDing is used to control access to machines and doors at
-                    our hackerspace.
-                </p>
+<div class="row">
+    <div class="col-sm mb-3">
+        <div class="card text-center">
+            <div class="card-header">
+                Tokens
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col">
+                        <h4 class="card-title">@activeToken</h4>
+                        <p class="card-text text-secondary">Active</p>
+                    </div>
+                    <div class="col">
+                        <h4 class="card-title">@tokenLength</h4>
+                        <p class="card-text text-secondary">Total</p>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="row justify-content-md-center">
-            <div class="col-md-10 mb-3">
-                <ul>
-                    <li>@personLength Persons</li>
-                    <li>@tokenLength Tokens from which are @activeToken active.</li>
-                </ul>
+    </div>
+    <div class="col-sm mb-3">
+        <div class="card text-center">
+            <div class="card-header">
+                People
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col">
+                        <h4 class="card-title">@activePerson</h4>
+                        <p class="card-text text-secondary">Active</p>
+                    </div>
+                    <div class="col">
+                        <h4 class="card-title">@personLength</h4>
+                        <p class="card-text text-secondary">Total</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm mb-3">
+        <div class="card text-center">
+            <div class="card-header">
+                Machines
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col">
+                        <h4 class="card-title">@activeMachine</h4>
+                        <p class="card-text text-secondary">Active</p>
+                    </div>
+                    <div class="col">
+                        <h4 class="card-title">@machineLength</h4>
+                        <p class="card-text text-secondary">Total</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

@@ -35,7 +35,7 @@
     @helper.form(action = controllers.routes.PersonController.addQualificationPost) {
         @CSRF.formField
         <input type="hidden" name="@FormID.personId" id="@FormID.personId" value="@personOfInterest.id.get" />
-        <div class="form-row align-items-end">
+        <div class="row align-items-end">
             <div class="col-md-3 mb-3">
                 @inputNumber(qualificationForm(FormID.machineId), "Machine ID", readonly = true)
             </div>
@@ -55,7 +55,7 @@
         @if(machineQualiOpt.isDefined) {
             <p>@personOfInterest.name is qualified for the following machines:</p>
             <div class="table-responsive">
-                <table class="table table-striped table-sm">
+                <table class="table table-striped table-bordered">
                     <thead>
                     <tr>
                         <th>ID</th>

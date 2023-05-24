@@ -1,7 +1,7 @@
 @import utils.ByteOps.RichByte
 
 @(token: Token)
-<div class="card">
+<div class="card @if(token.isActive) {border-success} else {border-danger}">
     <div class="card-header">
         <span class="@if(token.isActive) {text-success} else {text-danger}" data-feather="radio"></span>
         Token #@token.id &bull; [@token.serial.stringForUI()]
@@ -9,10 +9,6 @@
     <div class="card-body">
         <p class="card-text">
             @token.purpose
-        </p>
-        <hr />
-        <p class="card-text">
-            Active: <input type="checkbox" class="" @if(token.isActive) {checked="checked"} readonly disabled />
         </p>
     </div>
     <div class="card-footer text-right">

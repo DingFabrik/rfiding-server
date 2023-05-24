@@ -31,7 +31,7 @@
         @helper.form(action = controllers.routes.MachineController.configureMachinePost) {
         @CSRF.formField
         <input type="hidden" name="machineID" id="machineID" value="@machine.id" />
-        <div class="form-row">
+        <div class="row">
             <div class="col-md-6 mb-3">
                 @inputNumber(form("runtimer"), "Runtimer")
             </div>
@@ -39,12 +39,12 @@
                 @inputNumber(form("minPower"), "Minimal power")
             </div>
         </div>
-        <div class="form-row">
+        <div class="row">
             <div class="col-md-12 mb-3">
                 @inputText(form("controlParameter"), "Additional control parameter")
             </div>
         </div>
-        <div class="form-row">
+        <div class="row">
             <div class="col">
                 <label for="weekdays[0]">Weekdays</label>
             </div>
@@ -60,19 +60,21 @@
          * In the long run, these should be dynamically added.
          *@
         @for(index <- 0 until 7) {
-        <div class="form-row">
+        <div class="row">
             <div class="col mb-3">
                 <input type="hidden" name="weekdays[@index].idx" value="@index" />
-                <div class="btn-block btn-group btn-group-toggle" data-toggle="buttons">
+                <div class="btn-group" role="group" data-toggle="buttons">
                     @for(day <- week) {
-                    <label class="btn btn-secondary @form("weekdays["+index+"]."+day).value.map(_=>"active")">
                         <input type="checkbox"
                                name="weekdays[@index].@day"
-                               id="@day"
+                               id="weekdays[@index].@day"
                                value="@day"
+                               class="btn-check"
                                @form("weekdays["+index+"]."+day).value.map(_=>"checked")
                                autocomplete="off"
-                        />@day
+                        />
+                    <label class="btn btn-outline-primary" for="weekdays[@index].@day">
+                        @day
                     </label>
                     }
                 </div>
@@ -97,7 +99,7 @@
             </div>
         </div>
         }
-        <div class="form-row">
+        <div class="row">
             <div class="col-md-12 mb-3">
                 <button class="btn btn-primary btn-lg btn-block" type="submit">Configure Machine</button>
             </div>
