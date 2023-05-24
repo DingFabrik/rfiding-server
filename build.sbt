@@ -19,11 +19,11 @@ libraryDependencies ++= Seq(
   "org.xerial"             %  "sqlite-jdbc"           % "3.41.2.1",
   // Webjars
   "org.webjars"            %% "webjars-play"          % "2.8.18",
-  "org.webjars"            %  "bootstrap"             % "4.1.3",
-  "org.webjars"            %  "jquery-ui"             % "1.12.1",
-  "org.webjars.npm"        %  "feather-icons"         % "4.7.3",
-  "org.webjars"            %  "chartjs"               % "2.7.2",
-  "org.webjars"            %  "highlightjs"           % "9.8.0",
+  "org.webjars"            %  "bootstrap"             % "5.2.3",
+  "org.webjars"            %  "jquery-ui"             % "1.13.2",
+  "org.webjars.npm"        %  "feather-icons"         % "4.29.0",
+  "org.webjars"            %  "chartjs"               % "4.1.1",
+  "org.webjars"            %  "highlightjs"           % "11.5.0",
 
   "org.ocpsoft.prettytime" % "prettytime"             % "4.0.1.Final",
 
@@ -42,6 +42,8 @@ libraryDependencies ++= Seq(
 
 // Adds additional packages into conf/routes
 // play.sbt.routes.RoutesKeys.routesImport += "de.dingfabrik.rfiding.binders._"
+
+version := "0.5.0"
 
 buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion)
 
