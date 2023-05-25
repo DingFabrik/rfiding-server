@@ -113,12 +113,10 @@ class PersonController @Inject()(
   def modifyPerson(personId: Int): EssentialAction = isAuthenticatedAsync { implicit userId => implicit request =>
       val findPersonQuery = personTable.filter(_.id === personId)
       val tokenForPersonQuery = tokenTable.filter(_.ownerId === personId)
-      val queries = findPersonQuery.result zip tokenForPersonQuery.result
+      val qualiQuery = machineTable.join(qualificationTable.filter(_.personId === personId)).on(_.id === _.machineId)
+      val queries = (findPersonQuery.result zip tokenForPersonQuery.result) zip qualiQuery.result
       db.run(queries).map {
-        //case Some(person, token)) =>
-        case (Seq(person: Person), token) =>
-          logger.debug(s"person => $person")
-          logger.debug(s"token  => $token")
+        case ((Seq(person: Person), tokens), qualifications) =>
           val form = personDetailsForm.bind(Map(
             FormID.personId -> person.id.get.toString,
             FormID.memberId -> person.memberId.getOrElse(""),
@@ -126,17 +124,16 @@ class PersonController @Inject()(
             FormID.email    -> person.email.getOrElse(""),
             FormID.isActive -> person.isActive.toString
           ))
-          Ok(modify_person(form, token))
+          Ok(modify_person(form, tokens, qualifications))
         case other =>
           Ok(s"$other")
-        //Redirect(routes.PersonController.listPersons()).flashing("error" -> "Person not found")
       }
   }
 
   def modifyPersonPost: EssentialAction = isAuthenticatedAsync { implicit user => implicit request =>
     personDetailsForm.bindFromRequest.fold(
       formWithErrors => {
-        Future.successful(BadRequest(modify_person(formWithErrors, Seq.empty)))
+        Future.successful(BadRequest(modify_person(formWithErrors, Seq.empty, Seq.empty)))
       },
       modifyPersonData => {
         val updatePerson = Person(

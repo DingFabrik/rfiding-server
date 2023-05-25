@@ -9,10 +9,10 @@
 @import forms.inputEmail
 @import forms.checkBox
 
-
 @(
     modifyPersonForm: Form[PersonFormData],
-    tokens: Seq[Token]
+    tokens: Seq[Token],
+    qualifications: Seq[(Machine, Qualification)]
 )(
     implicit navigation: NavigationComponent,
     user: User,
@@ -20,6 +20,8 @@
     messagesProvider: MessagesProvider,
     flash: Flash
 )
+
+@personId = @{ modifyPersonForm(FormID.personId).value.get.toInt }
 
 @main(userOpt = Some(user), title = "Modify Person Details") {
     <div class="mb-3">
@@ -61,27 +63,34 @@
                     <button class="btn btn-primary btn-lg btn-block" type="submit">Modify Person Details</button>
                 </div>
                 <div class="col-md-1 mb-3">
-                    <button type="button" class="btn btn-danger btn-lg btn-block float-end" data-toggle="modal" data-target="#confirmDeletePerson@modifyPersonForm(FormID.personId).value.get.toInt">
+                    <button type="button" class="btn btn-danger btn-lg btn-block float-end" data-toggle="modal" data-target="#confirmDeletePerson@personId">
                         <span data-feather="trash-2"><!-- trash-2 --></span>
                     </button>
                 </div>
             </div>
         </div>
-        @confirm_delete_person_dialog(modifyPersonForm(FormID.personId).value.get.toInt, modifyPersonForm(FormID.fullName).value)
+        @confirm_delete_person_dialog(personId, modifyPersonForm(FormID.fullName).value)
         }
     </div>
 
-    <div class="col-md-12">
-        @for(tokensGrouped <- tokens.grouped(4)) {
-            <div class="row">
-            @for(token <- tokensGrouped) {
-                <div class="col-sm-3">@card_token(token)</div>
-            }
+    <h4>Tokens</h4>
+    <div class="row row-cols-4 mb-5">
+        @if(tokens.isEmpty) {
+            <div class="alert alert-info" role="alert">
+                @modifyPersonForm(FormID.fullName).value.get does not have any tokens
             </div>
+        } else {
+            @for(token <- tokens) {
+                <div class="col">@card_token(token)</div>
+            }
         }
     </div>
 
     @for(token <- tokens) {
         @confirm_delete_token_dialog(token, "persons")
     }
+
+    <h4>Qualifications</h4>
+    @table_qualifications(Some(personId), modifyPersonForm(FormID.fullName).value.get, qualifications)
+    <a class="btn btn-primary" href="@controllers.routes.PersonController.addQualification(personId)">Add Qualification</a>
 }
