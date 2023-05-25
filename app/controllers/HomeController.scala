@@ -19,7 +19,6 @@ import utils.database.TableProvider
 import utils.navigation.NavigationComponent
 import views.html.index_logged_in
 import views.html.index_logged_out
-import views.html.show_string
 
 import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
@@ -41,12 +40,6 @@ class HomeController @Inject()(
     with HasDatabaseConfigProvider[JdbcProfile]
     with TableProvider
     with Security {
-
-  def showString: EssentialAction = isAuthenticated { userId => implicit request: Request[AnyContent] =>
-    val email = request.session.get(SessionKeys.Email).getOrElse("-- No Mail --")
-
-    Ok(show_string(s"Hello $email"))
-  }
 
   def index: EssentialAction = Action.async { implicit request =>
     userID(request).fold(Future.successful(Ok(index_logged_out()))) { userId =>

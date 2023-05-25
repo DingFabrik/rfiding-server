@@ -4,7 +4,6 @@
 # ~~~~
 
 GET     /                        controllers.HomeController.index
-GET     /showstring              controllers.HomeController.showString
 
 GET     /settings/about          controllers.SettingsController.about
 GET     /settings/profile        controllers.SettingsController.userProfile

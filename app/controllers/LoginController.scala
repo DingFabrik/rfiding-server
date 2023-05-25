@@ -65,7 +65,7 @@ class LoginController @Inject()(
         db.run(userQuery.result).map { user: Seq[User] =>
           if (user.nonEmpty && passwordUtil.verify(user.head.hash, userLoginData.password)) {
             val userID = user.head.id.get.toString
-            Redirect(routes.HomeController.showString).withSession(SessionKeys.UserID -> userID)
+            Redirect(routes.HomeController.index).withSession(SessionKeys.UserID -> userID)
           } else {
             Redirect(routes.LoginController.login).withNewSession.flashing(FlashKey.LoginError -> "Username/Password incorrect.")
           }
