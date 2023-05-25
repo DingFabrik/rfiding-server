@@ -20,9 +20,9 @@
 
 @keys = @{ Seq(PersonAdded, PersonUpdated).map(flash.get(_).getOrElse("").toString) }
 
-@main(userOpt = Some(user), title = "List qualified people for \"" + machine.comment.get + "\"") {
+@main(userOpt = Some(user), title = "List qualified people for \"" + machine.name.get + "\"") {
     <div class="table-responsive">
-        <table class="table table-striped table-sm">
+        <table class="table table-striped table-bordered">
             <thead>
             <tr>
                 <th>Database ID</th>
