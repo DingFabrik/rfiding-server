@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 
 class Machine(models.Model):
     hostname = models.CharField(max_length=200)
@@ -13,6 +14,13 @@ class Machine(models.Model):
         
     def __str__(self):
         return self.name
+    
+    def get_absolute_url(self):
+        return reverse("machines:detail", kwargs={"pk": self.pk})
+    
+    def can_be_used(self):
+        if not self.is_active:
+            return False
 
 
 class MachineTimes(models.Model):
@@ -20,3 +28,9 @@ class MachineTimes(models.Model):
     
     start_time = models.TimeField()
     end_time = models.TimeField()
+
+class AccessLogEntry(models.Model):
+    machine = models.ForeignKey(Machine, on_delete=models.SET_NULL, null=True)
+    person = models.ForeignKey("people.Person", on_delete=models.CASCADE)
+    timestamp = models.DateTimeField(auto_now=True)
+    was_allowed = models.BooleanField()

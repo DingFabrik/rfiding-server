@@ -15,21 +15,24 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
+from base.views import InitialSetupView
 from machines.views import MachineListView
 from machines.viewsets import RetrieveMachineConfigAPIView
 from people.views import PersonListView
 from tokens.views import TokenListView
 
-from users.views import HomeView
+from users.views import HomeView, RfiDingLoginView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('setup', InitialSetupView.as_view(), name='initial-setup'),
     path('', HomeView.as_view(), name='home_view'),
-    path("auth/", include("django.contrib.auth.urls")),
+    path("auth/login/", RfiDingLoginView.as_view(), name='login'),
 
     path("machines/", include("machines.urls", namespace="machines")),
     path("people/", include("people.urls", namespace="people")),
     path("tokens/", include("tokens.urls", namespace="tokens")),
 
-    path("api/machine/config", RetrieveMachineConfigAPIView.as_view())
+    path("api/machine/config", RetrieveMachineConfigAPIView.as_view(), name="api-machine-config"),
+    path("api/machine/check", RetrieveMachineConfigAPIView.as_view(), name="api-machine-check")
 ]

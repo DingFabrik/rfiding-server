@@ -1,15 +1,40 @@
 {% extends 'base_content.html' %}
 {% load i18n %}
+{% block title %}{{ object.name }}{% endblock title %}
 {% block header %}{{ object.name }}{% endblock header %}
 
 {% block actions %}
-<a href="#" class="btn btn-secondary" role="button">
+<a href="{% url 'machines:update' object.pk %}" class="btn btn-secondary" role="button">
     <span class="bi-pencil" />
     {% trans "Edit" %}</a>
 {% endblock actions %}
 
 {% block content%}
 <div class="row">
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-body p-0">
+                <table class="table mb-0">
+                    <tr>
+                        <th>{% trans "Hostname" %}</th>
+                        <td>{{ object.hostname }}</td>
+                    </tr>
+                    <tr>
+                        <th>{% trans "MAC Address" %}</th>
+                        <td>{{ object.mac_address }}</td>
+                    </tr>
+                    <tr>
+                        <th>{% trans "Name" %}</th>
+                        <td>{{ object.name }}</td>
+                    </tr>
+                    <tr>
+                        <th>{% trans "Comment" %}</th>
+                        <td>{{ object.comment }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
     <div class="col-lg-6">
         <div class="card">
             <div class="card-body p-0">

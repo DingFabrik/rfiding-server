@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load static %}
+{% load django_bootstrap5 %}
+
+{% block css_extra %}
+html,
+body {
+  height: 100%;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  padding-top: 40px;
+  padding-bottom: 40px;
+  background-color: #f5f5f5;
+}
+
+.form-signin {
+    width: 100%;
+    max-width: 430px;
+    padding: 15px;
+    margin: auto;
+  }
+  
+  .form-signin .checkbox {
+    font-weight: 400;
+  }
+  
+  .form-signin .form-floating:focus-within {
+    z-index: 2;
+  }
+{% endblock css_extra %}
+
+{% block body %}
+<main class="form-signin">
+    <form method="post" class="form">
+        {% csrf_token %}
+        <div class="text-center">
+        <img class="mb-4" src="{% static 'logo.png' %}" alt="" width="72" height="57">
+        <h2>{% trans "Welcome" %}
+        </div>
+
+        <div class="card mb-3">
+            <div class="card-body">
+                {% bootstrap_field form.admin_username %}
+                {% bootstrap_field form.admin_password %}
+            </div>
+        </div>
+
+  {% bootstrap_button button_type="submit" content="Save" %}
+    </form>
+    </main>
+{% endblock body %}

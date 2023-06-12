@@ -1,9 +1,10 @@
 {% extends 'base_content.html' %}
 {% load i18n %}
+{% block title %}{% trans "Machines" %}{% endblock title %}
 {% block header %}{% trans "Machines" %}{% endblock header %}
 
 {% block actions %}
-<a href="#" class="btn btn-primary" role="button">
+<a href="{% url 'machines:create' %}" class="btn btn-primary" role="button">
     <span class="bi-plus" />
     {% trans "Add Machine" %}</a>
 {% endblock actions %}
