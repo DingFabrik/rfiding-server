@@ -370,8 +370,8 @@ class MachineController @Inject()(
         r1 <- machineQuery
         r2 <- qualificationQuery
     } yield (Tuple2(r1, r2))
-    future.map { result: Tuple2[Seq[Machine], Seq[(Qualification, Option[Person])]] =>
-        Ok(list_qualified_persons(result._1(0), result._2))
+    future.map { case (machines, people) =>
+        Ok(list_qualified_persons(machines(0), people))
       }
   }
 }
