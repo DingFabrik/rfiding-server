@@ -22,7 +22,7 @@
 
 @main(
     userOpt = Some(user),
-    title   = "Configure machine #" + machine.id.get + " (" + machine.name + ")"
+    title   = "Configure machine #" + machine.id.get + " (" + machine.name.getOrElse("") + ")"
 ) {
 
 <div>
