@@ -16,9 +16,10 @@
     flash: Flash
 )
 
-@main(title = "Sign in") {
+@main(title = "Sign in", header = Some("")) {
 
-<div class="col-md-8 order-md-1">
+<div class="col-md-6 offset-md-3 order-md-1">
+    <h1>Sign in</h1>
   @helper.form(action = controllers.routes.LoginController.loginPost) {
 
     @CSRF.formField
@@ -41,7 +42,7 @@
     <div class="row">
         <div class="col-md-12 mb-3">
             <label for="@userLoginForm(Email).id">E-Mail address</label>
-            <input type="text" id="@userLoginForm(Email).id" name="@userLoginForm(Email).id" class="form-control" placeholder="E-Mail address" required autofocus />
+            <input type="text" id="@userLoginForm(Email).id" name="@userLoginForm(Email).id" class="form-control" placeholder="E-Mail address" required autofocus value="@userLoginForm(Email).value" />
         </div>
     </div>
     @if(userLoginForm(Email).hasErrors) {
