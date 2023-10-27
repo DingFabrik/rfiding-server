@@ -5,6 +5,7 @@
 @(
     userOpt: Option[User] = None,
     title: String,
+    header: Option[String] = None,
     action: Option[(Call, String)] = None,
     scripts: Html = Html("")
 )(content: Html)(
@@ -27,7 +28,7 @@
     <meta name="msapplication-TileColor" content="#da532c" />
     <meta name="theme-color" content="#ffffff" />
 
-    <title>@title</title>
+    <title>@title - RFIDing</title>
 
     <!-- Bootstrap core CSS -->
     <link href="@routes.Assets.versioned("lib/bootstrap/css/bootstrap.min.css")" rel="stylesheet" />
@@ -49,8 +50,8 @@
 
     <div class="collapse navbar-collapse" id="navbarsDefault">
         @if(userOpt.isDefined) {
-        <ul class="navbar-nav me-auto">
-            @navigation(navigationComponent)
+            <ul class="navbar-nav mr-auto">
+                @navigation(navigationComponent)
         </ul>
         }
 
@@ -86,14 +87,9 @@
 </nav>
 
 <main role="main" class="container">
-    <div class="col-md-12 d-flex mb-4">
-        <h1 class="me-auto">@title</h1>
-        @if(action.isDefined) {
-        <div class="ms-auto mt-2">
-            <a href="@action.get._1" class="btn btn-primary">@action.get._2</a>
-        </div>
-        }
-        </div>
+    <div class="mb-3">
+        <h1 class="h2">@if(header.isDefined){ @header } else { @title }</h1>
+    </div>
     @content
 </main><!-- /.container -->
 
