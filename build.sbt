@@ -19,13 +19,12 @@ libraryDependencies ++= Seq(
   "org.xerial"             %  "sqlite-jdbc"           % "3.41.2.1",
   // Webjars
   "org.webjars"            %% "webjars-play"          % "2.8.18",
-  "org.webjars"            %  "bootstrap"             % "5.2.3",
+  "org.webjars"            %  "bootstrap"             % "5.3.2",
   "org.webjars"            %  "jquery-ui"             % "1.13.2",
   "org.webjars.npm"        %  "feather-icons"         % "4.29.0",
-  "org.webjars"            %  "chartjs"               % "4.1.1",
   "org.webjars"            %  "highlightjs"           % "11.5.0",
 
-  "org.ocpsoft.prettytime" % "prettytime"             % "4.0.1.Final",
+  "org.ocpsoft.prettytime" % "prettytime"             % "5.0.8",
 
   // Secure password hashing
   "de.mkammerer"           %  "argon2-jvm"            % "2.11",

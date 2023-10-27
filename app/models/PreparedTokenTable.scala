@@ -1,7 +1,7 @@
 package models
 
 import models.Index.preparedTokenTableIndex
-import slick.jdbc.SQLiteProfile.api._
+import slick.jdbc.JdbcProfile
 import utils.CustomIsomorphisms.seqByteIsomorphism
 
 /**
@@ -20,7 +20,9 @@ case class PreparedToken(
 /**
  * Table stores all the available tokens.
  */
-class PreparedTokenTable(tag: Tag) extends Table[PreparedToken](tag, "tb_prepared_token") {
+class PreparedTokenTableBuilder(val profile: JdbcProfile) {
+  import profile.api._
+  class PreparedTokenTable(tag: Tag) extends Table[PreparedToken](tag, "tb_prepared_token") {
 
   def id: Rep[Int] = column[Int]("pk_id", O.PrimaryKey, O.AutoInc)
   def serial: Rep[Seq[Byte]] = column[Seq[Byte]]("dt_serial")
@@ -34,4 +36,5 @@ class PreparedTokenTable(tag: Tag) extends Table[PreparedToken](tag, "tb_prepare
   def idx = {
     index(preparedTokenTableIndex, serial, unique = true)
   }
+}
 }

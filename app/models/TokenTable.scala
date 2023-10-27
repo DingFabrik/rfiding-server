@@ -1,7 +1,7 @@
 package models
 
 import models.Index.tokenTableIndex
-import slick.jdbc.SQLiteProfile.api._
+import slick.jdbc.JdbcProfile
 import slick.lifted.ProvenShape
 import slick.model.ForeignKeyAction.Restrict
 import utils.CustomIsomorphisms.seqByteIsomorphism
@@ -26,8 +26,12 @@ case class Token(
 /**
  * Table stores all the available tokens and their owners.
  */
-class TokenTable(tag: Tag) extends Table[Token](tag, "tb_token") {
-  val personTable = TableQuery[PersonTable]
+class TokenTableBuilder(val profile: JdbcProfile) {
+  import profile.api._
+  val personBuilder = new PersonTableBuilder(profile)
+
+  class TokenTable(tag: Tag) extends Table[Token](tag, "tb_token") {
+  val personTable = TableQuery[personBuilder.PersonTable]
 
   def id: Rep[Int] = column[Int]("pk_id", O.PrimaryKey, O.AutoInc)
   def serial: Rep[Seq[Byte]] = column[Seq[Byte]]("dt_serial")
@@ -47,4 +51,5 @@ class TokenTable(tag: Tag) extends Table[Token](tag, "tb_token") {
   def idx = {
     index(tokenTableIndex, serial, unique = true)
   }
+}
 }

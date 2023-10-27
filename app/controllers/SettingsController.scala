@@ -23,7 +23,7 @@ import play.api.mvc.EssentialAction
 import play.api.mvc.MessagesActionBuilder
 import play.api.mvc.MessagesControllerComponents
 import slick.jdbc.JdbcProfile
-import slick.jdbc.SQLiteProfile.api._
+import slick.basic.DatabaseConfig
 import utils.database.TableProvider
 import utils.navigation.NavigationComponent
 import views.html.add_user
@@ -45,9 +45,10 @@ class SettingsController @Inject()(
   navigation: NavigationComponent,
 ) extends AbstractController(mc)
   with I18nSupport
-  with HasDatabaseConfigProvider[JdbcProfile]
   with TableProvider
   with Security { controller =>
+  import profile.api._
+
   import SettingsController.AddUserFormData
   import SettingsController.FormID
   import SettingsController.ModifyUserFormData

@@ -20,7 +20,7 @@ import play.api.mvc.EssentialAction
 import play.api.mvc.MessagesActionBuilder
 import play.api.mvc.MessagesRequest
 import slick.jdbc.JdbcProfile
-import slick.jdbc.SQLiteProfile.api._
+import slick.basic.DatabaseConfig
 import utils.database.TableProvider
 import utils.navigation.NavigationComponent
 
@@ -35,9 +35,9 @@ class LoginController @Inject()(
   passwordUtil: PasswordUtil
 )(implicit ec: ExecutionContext, navigation: NavigationComponent)
   extends AbstractController(components)
-    with HasDatabaseConfigProvider[JdbcProfile]
     with TableProvider {
-
+  import profile.api._
+  
   private[this] val userLoginForm = Form(
     mapping(
       SessionKeys.Email    -> email,

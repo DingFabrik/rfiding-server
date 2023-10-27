@@ -1,6 +1,6 @@
 package models
 
-import slick.jdbc.SQLiteProfile.api._
+import slick.jdbc.JdbcProfile
 import slick.lifted.ProvenShape
 import models.Index.qualificationTableIndex
 import slick.lifted.ForeignKeyQuery
@@ -22,9 +22,13 @@ case class Qualification(
   comment: Option[String],
 )
 
+class QualificationTableBuilder(val profile: JdbcProfile) {
+  import profile.api._
+  val machineBuilder = new MachineTableBuilder(profile)
+  val personBuilder = new PersonTableBuilder(profile)
 class QualificationTable(tag: Tag) extends Table[Qualification](tag, "tb_qualification") {
-  val machineTable = TableQuery[MachineTable]
-  val personTable = TableQuery[PersonTable]
+  val machineTable = TableQuery[machineBuilder.MachineTable]
+  val personTable = TableQuery[personBuilder.PersonTable]
 
   def machineId: Rep[Int] = column[Int]("fk_machine_id")
   def personId: Rep[Int] = column[Int]("fk_person_id")
@@ -34,14 +38,15 @@ class QualificationTable(tag: Tag) extends Table[Qualification](tag, "tb_qualifi
     (machineId, personId, comment) <> (Qualification.tupled, Qualification.unapply)
   }
 
-  def machine: ForeignKeyQuery[MachineTable, Machine] = {
+  def machine: ForeignKeyQuery[machineBuilder.MachineTable, Machine] = {
     foreignKey("fk_machine", machineId, machineTable)(_.id, onDelete = Restrict)
   }
-  def person: ForeignKeyQuery[PersonTable, Person] = {
+  def person: ForeignKeyQuery[personBuilder.PersonTable, Person] = {
     foreignKey("fk_person", personId, personTable)(_.id, onDelete = Restrict)
   }
 
   def idx: SlickIndex = {
     index(qualificationTableIndex, (machineId, personId), unique = true)
   }
+}
 }

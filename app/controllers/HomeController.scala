@@ -14,7 +14,7 @@ import play.api.mvc.EssentialAction
 import play.api.mvc.MessagesActionBuilder
 import play.api.mvc.Request
 import slick.jdbc.JdbcProfile
-import slick.jdbc.SQLiteProfile.api._
+import slick.basic.DatabaseConfig
 import utils.database.TableProvider
 import utils.navigation.NavigationComponent
 import views.html.index_logged_in
@@ -37,9 +37,10 @@ class HomeController @Inject()(
   implicit ec: ExecutionContext,
   navigation: NavigationComponent,
 ) extends AbstractController(cc)
-    with HasDatabaseConfigProvider[JdbcProfile]
     with TableProvider
     with Security {
+
+  import profile.api._
 
   def index: EssentialAction = Action.async { implicit request =>
     userID(request).fold(Future.successful(Ok(index_logged_out()))) { userId =>

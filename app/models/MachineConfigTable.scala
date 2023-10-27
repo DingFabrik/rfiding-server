@@ -1,6 +1,6 @@
 package models
 
-import slick.jdbc.SQLiteProfile.api._
+import slick.jdbc.JdbcProfile
 import slick.lifted.ProvenShape
 import slick.model.ForeignKeyAction.Restrict
 import models.Index.machineConfigTableIndex
@@ -18,23 +18,28 @@ case class MachineConfig(
   controlParameter: Option[String],
 )
 
-class MachineConfigTable(tag: Tag) extends Table[MachineConfig](tag, "tb_machine_config") {
-  val machineTable = TableQuery[MachineTable]
+class MachineConfigTableBuilder(val profile: JdbcProfile) {
+  import profile.api._
+  val machineBuilder = new MachineTableBuilder(profile)
 
-  def machineId: Rep[Int] = column[Int]("fk_machine_id")
-  def runtimer: Rep[Option[Long]] = column[Option[Long]]("dt_runtimer")
-  def minPower: Rep[Option[Long]] = column[Option[Long]]("dt_min_power")
-  def controlPararamer: Rep[Option[String]] = column[Option[String]]("dt_ctrl_parameter")
+  class MachineConfigTable(tag: Tag) extends Table[MachineConfig](tag, "tb_machine_config") {
+    val machineTable = TableQuery[machineBuilder.MachineTable]
 
-  def * : ProvenShape[MachineConfig] = {
-    (machineId, runtimer, minPower, controlPararamer) <> (MachineConfig.tupled, MachineConfig.unapply)
-  }
+    def machineId: Rep[Int] = column[Int]("fk_machine_id")
+    def runtimer: Rep[Option[Long]] = column[Option[Long]]("dt_runtimer")
+    def minPower: Rep[Option[Long]] = column[Option[Long]]("dt_min_power")
+    def controlPararamer: Rep[Option[String]] = column[Option[String]]("dt_ctrl_parameter")
 
-  def machine = {
-    foreignKey("fk_machine", machineId, machineTable)(_.id, onDelete = Restrict)
-  }
+    def * : ProvenShape[MachineConfig] = {
+      (machineId, runtimer, minPower, controlPararamer) <> (MachineConfig.tupled, MachineConfig.unapply)
+    }
 
-  def idx = {
-    index(machineConfigTableIndex, (machineId, runtimer, minPower, controlPararamer), unique = true)
+    def machine = {
+      foreignKey("fk_machine", machineId, machineTable)(_.id, onDelete = Restrict)
+    }
+
+    def idx = {
+      index(machineConfigTableIndex, (machineId, runtimer, minPower, controlPararamer), unique = true)
+    }
   }
 }

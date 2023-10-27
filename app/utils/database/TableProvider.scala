@@ -1,26 +1,39 @@
 package utils.database
 
-import models.MachineConfigTable
-import models.MachineTable
-import models.MachineTimesTable
-import models.PersonTable
-import models.PreparedTokenTable
-import models.QualificationTable
-import models.TokenTable
-import models.UnknownTokenTable
-import models.UserTable
+import play.api.db.slick.HasDatabaseConfigProvider
+import slick.basic.DatabaseConfig
+import slick.jdbc.JdbcProfile
+import models.MachineConfigTableBuilder
+import models.MachineTableBuilder
+import models.MachineTimesTableBuilder
+import models.PersonTableBuilder
+import models.PreparedTokenTableBuilder
+import models.QualificationTableBuilder
+import models.TokenTableBuilder
+import models.UnknownTokenTableBuilder
+import models.UserTableBuilder
 import slick.lifted.TableQuery
 
-trait TableProvider {
-  protected[this] val personTable        = TableQuery[PersonTable]
-  protected[this] val tokenTable         = TableQuery[TokenTable]
-  protected[this] val unknownTokenTable  = TableQuery[UnknownTokenTable]
-  protected[this] val preparedTokenTable = TableQuery[PreparedTokenTable]
-  protected[this] val userTable          = TableQuery[UserTable]
-  protected[this] val machineTable       = TableQuery[MachineTable]
-  protected[this] val machineConfigTable = TableQuery[MachineConfigTable]
-  protected[this] val machineTimesTable  = TableQuery[MachineTimesTable]
-  protected[this] val qualificationTable = TableQuery[QualificationTable]
+trait TableProvider extends HasDatabaseConfigProvider[JdbcProfile] {
+
+  val personBuilder = new PersonTableBuilder(profile)
+  protected[this] val personTable        = TableQuery[personBuilder.PersonTable]
+  val tokenBuilder = new TokenTableBuilder(profile)
+  protected[this] val tokenTable         = TableQuery[tokenBuilder.TokenTable]
+  val unknownTokenBuilder = new UnknownTokenTableBuilder(profile)
+  protected[this] val unknownTokenTable  = TableQuery[unknownTokenBuilder.UnknownTokenTable]
+  val preparedTokenBuilder = new PreparedTokenTableBuilder(profile)
+  protected[this] val preparedTokenTable = TableQuery[preparedTokenBuilder.PreparedTokenTable]
+  val userBuilder = new UserTableBuilder(profile)
+  protected[this] val userTable          = TableQuery[userBuilder.UserTable]
+  val machineBuilder = new MachineTableBuilder(profile)
+  protected[this] val machineTable       = TableQuery[machineBuilder.MachineTable]
+  val machineConfigBuilder = new MachineConfigTableBuilder(profile)
+  protected[this] val machineConfigTable = TableQuery[machineConfigBuilder.MachineConfigTable]
+  val machineTimesBuilder = new MachineTimesTableBuilder(profile)
+  protected[this] val machineTimesTable  = TableQuery[machineTimesBuilder.MachineTimesTable]
+  val qualificationBuilder = new QualificationTableBuilder(profile)
+  protected[this] val qualificationTable = TableQuery[qualificationBuilder.QualificationTable]
 
   protected[this] val allTables = Seq(
     personTable,

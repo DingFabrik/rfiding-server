@@ -36,7 +36,7 @@ import play.api.mvc.MessagesControllerComponents
 import play.api.mvc.Result
 import play.api.mvc.Results
 import slick.jdbc.JdbcProfile
-import slick.jdbc.SQLiteProfile.api._
+import slick.basic.DatabaseConfig
 import utils.CustomIsomorphisms.seqByteIsomorphism
 import utils.database.TableProvider
 import utils.navigation.NavigationComponent
@@ -54,7 +54,6 @@ class ApiController @Inject()(
   navigation: NavigationComponent,
 ) extends AbstractController(mc)
   with I18nSupport
-  with HasDatabaseConfigProvider[JdbcProfile]
   with TableProvider
   with Security { controller =>
 
@@ -72,6 +71,7 @@ class ApiController @Inject()(
     times.weekdays.map(_.toDayOfWeek).contains(today) &&
       now.compareTo(times.startTime) >= 0 && now.compareTo(times.endTime) <= 0
   }
+  import profile.api._
 
   /**
    * Calculates the remaining working period for a given machine time.

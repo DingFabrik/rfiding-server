@@ -1,6 +1,6 @@
 package models
 
-import slick.jdbc.SQLiteProfile.api._
+import slick.jdbc.JdbcProfile
 
 /** Convenience class for a Person. */
 case class Person(
@@ -14,7 +14,9 @@ case class Person(
 /**
  * Table is used to store persons that may hold a token.
  */
-class PersonTable(tag: Tag) extends Table[Person](tag, "tb_person") {
+class PersonTableBuilder(val profile: JdbcProfile) {
+  import profile.api._
+  class PersonTable(tag: Tag) extends Table[Person](tag, "tb_person") {
 
   def id: Rep[Int] = column[Int]("pk_id", O.PrimaryKey, O.AutoInc)
   def memberId: Rep[Option[String]] = column[Option[String]]("dt_member_id")
@@ -26,4 +28,5 @@ class PersonTable(tag: Tag) extends Table[Person](tag, "tb_person") {
   def * = {
     (id.?, memberId, name, email, isActive) <> (Person.tupled, Person.unapply)
   }
+}
 }

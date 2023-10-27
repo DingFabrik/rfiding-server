@@ -1,6 +1,6 @@
 package models
 
-import slick.jdbc.SQLiteProfile.api._
+import slick.jdbc.JdbcProfile
 
 case class User(
   id: Option[Int],
@@ -12,6 +12,8 @@ case class User(
 /**
  * Table is used to store users that have access to this system.
  */
+ class UserTableBuilder(val profile: JdbcProfile) {
+  import profile.api._
 class UserTable(tag: Tag) extends Table[User](tag, "tb_user") {
 
   def id: Rep[Int] = column[Int]("pk_id", O.PrimaryKey, O.AutoInc)
@@ -23,3 +25,4 @@ class UserTable(tag: Tag) extends Table[User](tag, "tb_user") {
     (id.?, name, email, hash) <> (User.tupled, User.unapply)
   }
 }
+ }

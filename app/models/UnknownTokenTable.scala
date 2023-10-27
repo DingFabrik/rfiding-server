@@ -2,7 +2,7 @@ package models
 
 import java.time.LocalDateTime
 
-import slick.jdbc.SQLiteProfile.api._
+import slick.jdbc.JdbcProfile
 import slick.lifted.ProvenShape
 import utils.CustomIsomorphisms.localDateTimeIsomorphism
 import utils.CustomIsomorphisms.seqByteIsomorphism
@@ -13,8 +13,12 @@ case class UnknownToken(
   readStamp: LocalDateTime
 )
 
+class UnknownTokenTableBuilder(val profile: JdbcProfile) {
+  import profile.api._
+  val machineBuilder = new MachineTableBuilder(profile)
+
 class UnknownTokenTable(tag: Tag) extends Table[UnknownToken](tag, "tb_unknown_token") {
-  val machineTable = TableQuery[MachineTable]
+  val machineTable = TableQuery[machineBuilder.MachineTable]
 
   def serial: Rep[Seq[Byte]] = column[Seq[Byte]]("dt_serial")
   def machineId: Rep[Int] = column[Int]("fk_machine_id")
@@ -27,4 +31,5 @@ class UnknownTokenTable(tag: Tag) extends Table[UnknownToken](tag, "tb_unknown_t
   def machine = {
     foreignKey("fk_machine", machineId, machineTable)(_.id)
   }
+}
 }

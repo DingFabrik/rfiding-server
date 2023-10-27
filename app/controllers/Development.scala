@@ -6,28 +6,19 @@ import javax.inject.Inject
 import javax.inject.Singleton
 import models.Machine
 import models.MachineConfig
-import models.MachineConfigTable
-import models.MachineTable
 import models.MachineTime
-import models.MachineTimesTable
 import models.Person
-import models.PersonTable
 import models.PreparedToken
-import models.PreparedTokenTable
 import models.Token
-import models.TokenTable
 import models.User
-import models.UserTable
 import play.api.Configuration
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.db.slick.HasDatabaseConfigProvider
 import play.api.mvc.AbstractController
 import play.api.mvc.ControllerComponents
 import play.api.mvc.EssentialAction
-import slick.dbio.DBIO
 import slick.jdbc.JdbcProfile
-import slick.jdbc.SQLiteProfile
-import slick.jdbc.SQLiteProfile.api._
+import slick.basic.DatabaseConfig
 import utils.database.TableProvider
 import utils.navigation.NavigationComponent
 import utils.reader.ReaderUtils
@@ -43,8 +34,8 @@ class Development @Inject()(
   config: Configuration
 )(implicit ec: ExecutionContext, navigation: NavigationComponent)
   extends AbstractController(cc)
-    with HasDatabaseConfigProvider[JdbcProfile]
     with TableProvider {
+  import profile.api._
 
   /** Helper to create some tables in the db. */
   def setup: EssentialAction = Action.async { implicit request =>
@@ -80,22 +71,6 @@ class Development @Inject()(
     }
 
     Ok(views.html.devel.show(builder.toString))
-  }
-
-  /** Keeping this for future reference. */
-  def createSourceCode: EssentialAction = Action { implicit request =>
-    val slickDriver = "slick.jdbc.SQLiteProfile"
-    val jdbcDriver = "org.sqlite.JDBC"
-    val url = "jdbc:sqlite:db.sqlite"
-    val outputFolder = "conf/evolutions/default"
-    val pkg = "de.dingfabrik.example"
-
-    // Slick source code generator
-//    SourceCodeGenerator.main(
-//      Array(slickDriver, jdbcDriver, url, outputFolder, pkg)
-//    )
-
-    Ok("Done.")
   }
 
   /** Fill the prepared token table with dummy data. */

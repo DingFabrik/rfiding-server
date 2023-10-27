@@ -1,6 +1,6 @@
 package models
 
-import slick.jdbc.SQLiteProfile.api._
+import slick.jdbc.JdbcProfile
 import Index.machineTableIndex
 
 /** Convenience class for a Machine. */
@@ -11,7 +11,8 @@ case class Machine(
   name: Option[String],
   isActive: Boolean
 )
-
+class MachineTableBuilder(val profile: JdbcProfile) {
+  import profile.api._
 class MachineTable(tag: Tag) extends Table[Machine](tag, "tb_machine") {
 
   def id: Rep[Int] = column[Int]("pk_id", O.PrimaryKey, O.AutoInc)
@@ -27,4 +28,5 @@ class MachineTable(tag: Tag) extends Table[Machine](tag, "tb_machine") {
   def idx = {
     index(machineTableIndex, macAddress, unique = true)
   }
+}
 }

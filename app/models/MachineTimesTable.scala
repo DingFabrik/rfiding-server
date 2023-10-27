@@ -2,7 +2,7 @@ package models
 
 import java.time.LocalTime
 
-import slick.jdbc.SQLiteProfile.api._
+import slick.jdbc.JdbcProfile
 import utils.CustomIsomorphisms.seqWeekdayIsomorphism
 import utils.CustomIsomorphisms.localTimeIsomorphism
 import utils.time.Weekday
@@ -19,7 +19,11 @@ case class MachineTime(
 /**
  * Representation of possible times when a device may or may not be usable
  */
-class MachineTimesTable(tag: Tag) extends Table[MachineTime](tag, "tb_machine_times") {
+class MachineTimesTableBuilder(val profile: JdbcProfile) {
+  import profile.api._
+  val machineBuilder = new MachineTableBuilder(profile)
+
+  class MachineTimesTable(tag: Tag) extends Table[MachineTime](tag, "tb_machine_times") {
 
   // For convenience we add an ID column to properly identify allowed times.
   def id: Rep[Int] = column[Int]("pk_id", O.PrimaryKey, O.AutoInc)
@@ -36,5 +40,6 @@ class MachineTimesTable(tag: Tag) extends Table[MachineTime](tag, "tb_machine_ti
   def idx = {
     index(machineTimesTableIndex, id, unique = true)
   }
+}
 }
 
