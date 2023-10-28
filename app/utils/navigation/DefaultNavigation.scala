@@ -80,7 +80,7 @@ class DefaultNavigation extends NavigationComponent {
       NavigationTitle(
         title    = "Devel",
         icon     = "settings",
-        target   = controllers.routes.Development.apiStuff,
+        target   = controllers.routes.Development.showLog,
         subItems = Seq(
           NavigationEntry(
             title   = "Create dummy prepared tokens",
@@ -91,16 +91,6 @@ class DefaultNavigation extends NavigationComponent {
             title  = s"Prepared Tokens",
             icon   = "radio",
             target = controllers.routes.TokenController.showPreparedToken
-          ),
-          NavigationEntry(
-            title   = "Show API urls",
-            icon    = "settings",
-            target  = controllers.routes.Development.apiStuff
-          ),
-          NavigationEntry(
-            title   = "Database schemas",
-            icon    = "settings",
-            target  = controllers.routes.Development.schemas
           ),
           NavigationEntry(
             title   = "API Logs",

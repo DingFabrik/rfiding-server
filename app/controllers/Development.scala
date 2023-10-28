@@ -52,27 +52,6 @@ class Development @Inject()(
     content + " " + "-" * (72 - content.length)
   }
 
-  /** Display table schemas. Uses highlight.js to highlight sql syntax. */
-  def schemas: EssentialAction =  Action { implicit request =>
-    val creation = allTables.map { table => (table.baseTableRow.tableName, table.schema.createStatements) }
-    val destruction = allTables.reverse.map { table => (table.baseTableRow.tableName, table.schema.dropStatements) }
-
-    val builder = new StringBuilder()
-    builder.append("# --- !Ups\n")
-    creation.foreach { case (name, statements) =>
-      builder.append(s"-- TABLE ${padTable(name)}\n")
-      statements.foreach(s => builder.append(s + ";\n"))
-    }
-    builder.append("\n")
-    builder.append("# --- !Downs\n")
-    destruction.foreach { case (name, statements) =>
-      builder.append(s"-- TABLE ${padTable(name)}\n")
-      statements.foreach(s => builder.append(s + ";\n"))
-    }
-
-    Ok(views.html.devel.show(builder.toString))
-  }
-
   /** Fill the prepared token table with dummy data. */
   def createDummyData: EssentialAction = Action.async { implicit request =>
     val dummyData = continually(ReaderUtils.createDummyData(4)).zipWithIndex.take(10).toSeq
@@ -85,19 +64,6 @@ class Development @Inject()(
     }
   }
 
-  /** Calculate the optimal number of iterations for the Argon2 algorithm. */
-  // TODO: Make this method a little more restricted.
-  def calculateIteration(memory: Int, parallelism: Int): EssentialAction = Action { implicit request =>
-    // Create instance
-    val argon2 = Argon2Factory.create()
-    val iterations = Argon2Helper.findIterations(argon2, 1000, memory, parallelism)
-
-    Ok(s"Recommended no. of iterations: $iterations")
-  }
-
-  def apiStuff: EssentialAction = Action { implicit request =>
-    Ok(views.html.show_api_stuff())
-  }
 
   def showLog: EssentialAction = Action { implicit request =>
     val lines: String = Source.fromFile("logs/application.log")

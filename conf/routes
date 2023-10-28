@@ -64,11 +64,8 @@ GET     /login                   controllers.LoginController.login
 POST    /login                   controllers.LoginController.loginPost
 GET     /logout                  controllers.LoginController.logout
 
-GET     /dev/schemas             controllers.Development.schemas
 GET     /dev/setup               controllers.Development.setup
 GET     /dev/dummy               controllers.Development.createDummyData
-GET     /dev/iterations          controllers.Development.calculateIteration(memory: Int, parallelism: Int)
-GET     /dev/apistuff            controllers.Development.apiStuff
 GET     /dev/log                 controllers.Development.showLog
 
 

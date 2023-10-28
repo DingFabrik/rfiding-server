@@ -40,9 +40,8 @@
 </head>
 
 <body>
-
-<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
-    <div class="container-fluid">
+<nav class="navbar navbar-expand-md navbar-dark bg-dark border-bottom border-2 border-primary fixed-top">
+    <div class="container-xxl">
     <a class="navbar-brand" href="/">RfiDing</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsDefault" aria-controls="navbarsDefault" aria-expanded="false" aria-label="Toggle navigation">
         <span data-feather="menu"><!-- Menu Icon --></span>
@@ -52,7 +51,7 @@
         @if(userOpt.isDefined) {
             <ul class="navbar-nav mr-auto">
                 @navigation(navigationComponent)
-        </ul>
+            </ul>
         }
 
         <ul class="navbar-nav ms-auto">
@@ -65,6 +64,8 @@
                     <li><a class="dropdown-item" href="@controllers.routes.SettingsController.listUsers">User</a></li>
                     <li><a class="dropdown-item" href="@controllers.routes.SettingsController.userProfile">Profile</a></li>
                     <li><a class="dropdown-item" href="@controllers.routes.SettingsController.about">About</a></li>
+                    <li><a class="dropdown-item" class="nav-link" href="@controllers.routes.LoginController.logout" aria-label="Logout">Sign out</a></li>
+
                     <li><hr class="dropdown-divider"></li>
                     <li><h6 class="dropdown-header">Theme</h6></li>
                     <li>
@@ -89,9 +90,7 @@
             </li>
             }
             <li class="nav-item">
-                @if(userOpt.isDefined) {
-                <a class="nav-link" href="@controllers.routes.LoginController.logout" aria-label="Logout">Sign out</a>
-                } else {
+                @if(!userOpt.isDefined) {
                 <a class="nav-link" href="@controllers.routes.LoginController.login" aria-label="Login">Sign in</a>
                 }
             </li>
