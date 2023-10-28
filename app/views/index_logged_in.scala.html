@@ -18,9 +18,9 @@
 @main(userOpt = Some(user), title = "Welcome to RfiDing") {
 <div class="row">
     <div class="col-sm mb-3">
-        <div class="card text-center">
+        <div class="card border-primary text-center">
             <div class="card-header">
-                Tokens
+                <a href="@controllers.routes.TokenController.listTokens">Tokens</a>
             </div>
             <div class="card-body">
                 <div class="row">
@@ -37,9 +37,9 @@
         </div>
     </div>
     <div class="col-sm mb-3">
-        <div class="card text-center">
+        <div class="card border-primary text-center">
             <div class="card-header">
-                People
+                <a href="@controllers.routes.PersonController.listPersons">People</a>
             </div>
             <div class="card-body">
                 <div class="row">
@@ -56,9 +56,9 @@
         </div>
     </div>
     <div class="col-sm mb-3">
-        <div class="card text-center">
+        <div class="card border-primary text-center">
             <div class="card-header">
-                Machines
+                <a href="@controllers.routes.MachineController.listMachines">Machines</a>
             </div>
             <div class="card-body">
                 <div class="row">

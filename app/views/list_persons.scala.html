@@ -21,7 +21,6 @@
 @keys = @{ Seq(PersonAdded, PersonUpdated).map(flash.get(_).getOrElse("").toString) }
 
 @main(userOpt = Some(user), title = "List persons", action= Some((routes.PersonController.addPerson, "Add person")), scripts = scripts) {
-    <p>This table lists all People.</p>
     @for(pid <- flash.get(PersonAdded)) {
         <div class="alert alert-success" role="alert">Inserted new Person with ID @pid</div>
     }

@@ -61,16 +61,30 @@
                 <a class="nav-link dropdown-toggle" href="#" id="dropdown-right" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <span data-feather="settings"><!-- Settings Icon --></span>
                 </a>
-                <ul class="dropdown-menu" aria-labelledby="dropdown-right">
-                    <li><a class="dropdown-item" href="@controllers.routes.SettingsController.listUsers">
-                        User
-                    </a></li>
-                    <li><a class="dropdown-item" href="@controllers.routes.SettingsController.userProfile">
-                        Profile
-                    </a></li>
-                    <li><a class="dropdown-item" href="@controllers.routes.SettingsController.about">
-                        About
-                    </a></li>
+                <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="dropdown-right">
+                    <li><a class="dropdown-item" href="@controllers.routes.SettingsController.listUsers">User</a></li>
+                    <li><a class="dropdown-item" href="@controllers.routes.SettingsController.userProfile">Profile</a></li>
+                    <li><a class="dropdown-item" href="@controllers.routes.SettingsController.about">About</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><h6 class="dropdown-header">Theme</h6></li>
+                    <li>
+                        <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="light" aria-pressed="false">
+                            <span data-feather="sun" class="me-1"></span>
+                          Light
+                        </button>
+                      </li>
+                      <li>
+                        <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="dark" aria-pressed="false">
+                            <span data-feather="moon" class="me-1"></span>
+                          Dark
+                        </button>
+                      </li>
+                      <li>
+                        <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="auto" aria-pressed="true">
+                            <span data-feather="circle" class="me-1"></span>
+                          Auto
+                        </button>
+                      </li>
                 </ul>
             </li>
             }
@@ -86,7 +100,7 @@
     </div>
 </nav>
 
-<main role="main" class="container">
+<main role="main" class="container mb-5">
     <div class="mb-3">
         <h1 class="h2">@if(header.isDefined){ @header } else { @title }</h1>
     </div>
@@ -98,6 +112,7 @@
 <script src="@routes.Assets.versioned("lib/jquery/jquery.min.js")"></script>
 <script src="@routes.Assets.versioned("javascripts/jquery-loader.js")"></script>
 <script src="@routes.Assets.versioned("lib/bootstrap/js/bootstrap.bundle.min.js")"></script>
+<script src="@routes.Assets.versioned("javascripts/bootstrap.js")"></script>
 
 <!-- Icons -->
 <script src="@routes.Assets.versioned("lib/feather-icons/dist/feather.min.js")"></script>
@@ -108,12 +123,7 @@
 <!-- Rfiding -->
 @scripts
 
-@*
-<!-- Graphs -->
-<script src="@routes.Assets.versioned("/lib/chartjs/Chart.min.js")"></script>
-<script src="@routes.Assets.versioned("javascripts/charts.js")"></script>
 
-*@
 
 </body>
 </html>
