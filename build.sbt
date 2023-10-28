@@ -17,6 +17,7 @@ libraryDependencies ++= Seq(
   "com.typesafe.play"      %% "play-slick"            % "5.1.0",
   "com.typesafe.play"      %% "play-slick-evolutions" % "5.1.0",
   "org.xerial"             %  "sqlite-jdbc"           % "3.41.2.1",
+    "org.postgresql" % "postgresql" % "42.3.4",
   // Webjars
   "org.webjars"            %% "webjars-play"          % "2.8.18",
   "org.webjars"            %  "bootstrap"             % "5.3.2",
@@ -24,7 +25,7 @@ libraryDependencies ++= Seq(
   "org.webjars.npm"        %  "feather-icons"         % "4.29.0",
   "org.webjars"            %  "highlightjs"           % "11.5.0",
 
-  "org.ocpsoft.prettytime" % "prettytime"             % "5.0.8",
+  "org.ocpsoft.prettytime" % "prettytime"             % "5.0.4.Final",
 
   // Secure password hashing
   "de.mkammerer"           %  "argon2-jvm"            % "2.11",

@@ -37,6 +37,7 @@ class HomeController @Inject()(
   implicit ec: ExecutionContext,
   navigation: NavigationComponent,
 ) extends AbstractController(cc)
+    with HasDatabaseConfigProvider[JdbcProfile]
     with TableProvider
     with Security {
 
