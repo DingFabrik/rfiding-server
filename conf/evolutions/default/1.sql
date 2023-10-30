@@ -8,7 +8,7 @@ create unique index "index_serial_token" on "tb_token" ("dt_serial");
 create table "tb_machine" ("pk_id" SERIAL PRIMARY KEY NOT NULL,"dt_name" VARCHAR(254) NOT NULL,"dt_mac_address" VARCHAR(254) NOT NULL,"dt_comment" VARCHAR(254),"dt_active" BOOLEAN NOT NULL);
 create unique index "index_machines_mac_address" on "tb_machine" ("dt_mac_address");
 -- TABLE tb_unknown_token --------------------------------------------------------
-create table "tb_unknown_token" ("dt_serial" bytea NOT NULL,"fk_machine_id" INTEGER NOT NULL,"dt_read_stamp" INTEGER NOT NULL,constraint "fk_machine" foreign key("fk_machine_id") references "tb_machine"("pk_id") on update NO ACTION on delete NO ACTION);
+create table "tb_unknown_token" ("dt_serial" bytea NOT NULL,"fk_machine_id" INTEGER NOT NULL,"dt_read_stamp" STRING NOT NULL,constraint "fk_machine" foreign key("fk_machine_id") references "tb_machine"("pk_id") on update NO ACTION on delete NO ACTION);
 -- TABLE tb_prepared_token -------------------------------------------------------
 create table "tb_prepared_token" ("pk_id" SERIAL PRIMARY KEY NOT NULL,"dt_serial" bytea NOT NULL,"dt_purpose" VARCHAR(254) NOT NULL);
 create unique index "index_serial_prepared_token" on "tb_prepared_token" ("dt_serial");

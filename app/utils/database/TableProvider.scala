@@ -3,6 +3,7 @@ package utils.database
 import play.api.db.slick.HasDatabaseConfigProvider
 import slick.basic.DatabaseConfig
 import slick.jdbc.JdbcProfile
+import models.LogEntryTableBuilder
 import models.MachineConfigTableBuilder
 import models.MachineTableBuilder
 import models.MachineTimesTableBuilder
@@ -16,6 +17,8 @@ import slick.lifted.TableQuery
 
 trait TableProvider extends HasDatabaseConfigProvider[JdbcProfile] {
 
+  val logEntryBuilder = new LogEntryTableBuilder(profile)
+  protected[this] val logEntryTable      = TableQuery[logEntryBuilder.LogEntryTable]
   val personBuilder = new PersonTableBuilder(profile)
   protected[this] val personTable        = TableQuery[personBuilder.PersonTable]
   val tokenBuilder = new TokenTableBuilder(profile)

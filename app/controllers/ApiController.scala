@@ -20,6 +20,7 @@ import javax.inject.Singleton
 import models.Machine
 import models.MachineTime
 import models.Person
+import models.LogEntry
 import models.Token
 import models.UnknownToken
 import play.api.Logger
@@ -119,13 +120,22 @@ class ApiController @Inject()(
     parameterCheck[String, Future[Result]](isParamValid = _.toLowerCase.matches(TokenRegexString))(token)(invalid)(valid)
   }
 
-  private[this] def rememberUnknownToken(serial: Seq[Byte], machineId: Int): Unit = {
+  private[this] def rememberUnknownToken(serial: Seq[Byte], machineId: Int): Future[Int] = {
     val insertQuery = unknownTokenTable += UnknownToken(
       serial    = serial,
       machineId = machineId,
       readStamp = LocalDateTime.now(Clock.systemUTC())
     )
-    db.run(insertQuery)
+    return db.run(insertQuery)
+  }
+
+  private[this] def logAccess(token: Token, machine: Machine): Future[Int] = {
+    val insertQuery = logEntryTable += LogEntry(
+      tokenId    = token.id.get,
+      machineId = machine.id.get,
+      access_at = LocalDateTime.now(Clock.systemUTC())
+    )
+    return db.run(insertQuery)
   }
 
   def checkMachineAccess(machineString: String, tokenUid: String
@@ -178,25 +188,28 @@ class ApiController @Inject()(
         val (machine: Machine, _) = results.head
         PossibleMachine(machine, remainingOpt)
     }
-    val f2: Future[ValidToken] = f1.flatMap { case PossibleMachine(machine, remainingOpt) => tokenQueryFut.map {
+    val f2: Future[ValidToken] = f1.flatMap { case PossibleMachine(machine, remainingOpt) => tokenQueryFut.flatMap {
       case Seq((token, Some(owner))) if !token.isActive =>
         fail(s"Token for ${owner.name} restricted.")
       case Seq((_, Some(owner))) if !owner.isActive =>
         fail(s"Owner (${owner.name}) restricted.")
-      case Seq((_, Some(owner))) =>
+      case Seq((token, Some(owner))) =>
         logger.debug(s"Token found. It belongs to ${owner.name}.")
-        ValidToken(owner, machine, remainingOpt)
+        Future { ValidToken(token, owner, machine, remainingOpt) }
       case Seq((_, None)) =>
         fail("Token without owner found. Token probably not removed from DB.")
       case _ =>
-        rememberUnknownToken(uuid, machine.id.get)
-        fail("Token not found.")
+        rememberUnknownToken(uuid, machine.id.get).map { case id =>
+          fail("Token not found.")
+        }
     }}
     val f3: Future[AccessGrantedResult] = f2.flatMap {
-      case ValidToken(owner, machine, remainingOpt) => checkQualificationFut(owner, machine).map {
+      case ValidToken(token, owner, machine, remainingOpt) => checkQualificationFut(owner, machine).flatMap {
         case Seq(Some(_)) =>
           logger.debug(s"Quali OK.")
-          AccessGrantedResult(access = 1, remainingOpt.getOrElse(0L))
+          logAccess(token, machine).map { case id =>
+            AccessGrantedResult(access = 1, remainingOpt.getOrElse(0L))
+          }
         case _ =>
           fail(s"'${owner.name}' has no qualification for '${machine.name}'.")
       }
@@ -258,7 +271,7 @@ object ApiController {
   )
 
   trait AccessResult
-  case class ValidToken(owner: Person, machine: Machine, workingtimeOpt: Option[Long]) extends AccessResult
+  case class ValidToken(token: Token, owner: Person, machine: Machine, workingtimeOpt: Option[Long]) extends AccessResult
   case class PossibleMachine(machine: Machine, workingtimeOpt: Option[Long]) extends AccessResult
 
   class AccessDeniedException(reason: String) extends RuntimeException
