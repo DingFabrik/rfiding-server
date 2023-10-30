@@ -101,7 +101,11 @@
 
 <main role="main" class="container mb-5">
     <div class="mb-3">
-        <h1 class="h2">@if(header.isDefined){ @header } else { @title }</h1>
+        <h1 class="h2">@if(header.isDefined){ @header.get } else { @title }
+        @if(action.isDefined) {
+        <a class="btn btn-primary float-end" href="@action.get._1">@action.get._2</a>
+        }
+    </h1>
     </div>
     @content
 </main><!-- /.container -->
