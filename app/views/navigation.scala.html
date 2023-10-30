@@ -9,10 +9,13 @@
     @item match {
         case item: NavigationTitle => {
             <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle @if(item.active) {active}" id="dropdown@index" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">@item.title</a>
+                <a class="nav-link dropdown-toggle @if(item.active) {active}" id="dropdown@index" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span data-feather="@item.icon" class="me-1"></span>
+                    @item.title</a>
                 <ul class="dropdown-menu" aria-labelledby="dropdown@index">
                     @for(subItem <- item.subItems) {
                         <li><a class="dropdown-item" href="@subItem.target">
+                            <span data-feather="@subItem.icon" class="me-1"></span>
                             @subItem.title @if(item.active) {<span class="visually-hidden">(current)</span>}
                         </a></li>
                     }
@@ -22,6 +25,7 @@
         case item: NavigationEntry => {
             <li class="nav-item">
                 <a class="nav-link @if(item.active) {active}" href="@item.target">
+                    <span data-feather="@item.icon" class="me-1"></span>
                     @item.title @if(item.active) {<span class="visually-hidden">(current)</span>}
                 </a>
             </li>

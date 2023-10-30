@@ -16,7 +16,7 @@
     flash: Flash
 )
 
-@main(userOpt = Some(user), title = "Add new machine") {
+@main(userOpt = Some(user), title = "Add machine") {
 
 <div>
     @if(flash.get("error").isDefined) {
@@ -49,7 +49,7 @@
         </div>
         <div class="row">
             <div class="col-md-12 mb-3">
-                <button class="btn btn-primary btn-lg btn-block" type="submit">Add Machine</button>
+                <button class="btn btn-primary btn-block" type="submit">Add machine</button>
             </div>
         </div>
     </div>

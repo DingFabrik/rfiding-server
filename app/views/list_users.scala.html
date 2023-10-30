@@ -10,7 +10,7 @@
     flash: Flash
 )
 
-@main(userOpt = Some(implicitUser), title = "Show users") {
+@main(userOpt = Some(implicitUser), title = "List users", action= Some((routes.SettingsController.addUser, "Add user"))) {
     @for(uid <- flash.get(UserAdded)) {
         <div class="alert alert-success" role="alert">User with ID #@uid added.</div>
     }
@@ -35,6 +35,6 @@
     </table>
   </div>
   <div>
-    <a class="btn btn-primary btn-lg btn-block" href="@routes.SettingsController.addUser">Add user</a>
+    <a class="btn btn-primary float-end" href="@routes.SettingsController.addUser">Add user</a>
   </div>
 }

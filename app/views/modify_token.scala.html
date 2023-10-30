@@ -22,7 +22,7 @@
     flash: Flash
 )
 
-@main(userOpt = Some(user), title = "Modify Token #" + token.id.get) {
+@main(userOpt = Some(user), title = "Modify token #" + token.id.get) {
 <div class="mb-3">
     @helper.form(action = controllers.routes.TokenController.modifyTokenPost(token.id.get)) {
 
@@ -64,10 +64,10 @@
         </div>
         <div class="row">
             <div class="col-md-11">
-                <button class="btn btn-primary btn-lg btn-block" type="submit">Modify Token</button>
+                <button class="btn btn-primary btn-block" type="submit">Modify token</button>
             </div>
             <div class="col-md-1">
-                <button type="button" class="btn btn-danger btn-lg btn-block float-end" data-toggle="modal" data-target="#confirmDeleteToken@token.id">
+                <button type="button" class="btn btn-danger btn-block float-end" data-toggle="modal" data-target="#confirmDeleteToken@token.id">
                     <span data-feather="trash-2"><!-- trash-2 --></span>
                 </button>
             </div>

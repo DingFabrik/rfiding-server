@@ -20,7 +20,7 @@
 @scripts = {<script src="@routes.HomeController.togglePersonActive"></script>}
 @keys = @{ Seq(PersonAdded, PersonUpdated).map(flash.get(_).getOrElse("").toString) }
 
-@main(userOpt = Some(user), title = "List persons", action= Some((routes.PersonController.addPerson, "Add person")), scripts = scripts) {
+@main(userOpt = Some(user), title = "List people", action= Some((routes.PersonController.addPerson, "Add person")), scripts = scripts) {
     @for(pid <- flash.get(PersonAdded)) {
         <div class="alert alert-success" role="alert">Inserted new Person with ID @pid</div>
     }

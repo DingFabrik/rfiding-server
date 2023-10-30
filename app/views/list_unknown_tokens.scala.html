@@ -20,7 +20,7 @@
     <script src="@routes.Assets.versioned("javascripts/tooltips.js")"></script>
 }
 
-@main(userOpt = Some(user), title = "List unknown Tokens", action=Some((routes.TokenController.clearUnknownTokenList, "Clear list")), scripts = scripts) {
+@main(userOpt = Some(user), title = "List unknown tokens", action=Some((routes.TokenController.clearUnknownTokenList, "Clear list")), scripts = scripts) {
 <div>
     <p>
         Just put a new token in front of any registered machine and it will show up here.

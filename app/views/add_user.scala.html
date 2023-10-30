@@ -17,7 +17,7 @@
     flash: Flash
 )
 
-@main(userOpt = Some(user), title = "Create user") {
+@main(userOpt = Some(user), title = "Add user") {
     @for(error <- userForm.globalErrors; message <- error.messages) {
         <div class="alert alert-warning" role="alert">
             @message match {
@@ -50,7 +50,7 @@
             </div>
             <div class="row">
                 <div class="col-md-12 mb-3">
-                    <button class="btn btn-primary btn-lg btn-block" type="submit">Create user</button>
+                    <button class="btn btn-primary btn-block" type="submit">Create user</button>
                 </div>
             </div>
         </div>

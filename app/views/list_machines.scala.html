@@ -15,7 +15,7 @@
 
 @scripts = {<script src="@routes.HomeController.toggleMachineActive"></script>}
 
-@main(userOpt = Some(user), title = "List Machines", action= Some((routes.MachineController.addMachine, "Add machine")), scripts = scripts) {
+@main(userOpt = Some(user), title = "List machines", action= Some((routes.MachineController.addMachine, "Add machine")), scripts = scripts) {
 @for(mid <- flash.get(DeletedMachine)) {
     <div class="alert alert-success" role="alert">Deleted machine with ID @mid</div>
 }

@@ -18,7 +18,7 @@
     flash: Flash
 )
 
-@main(userOpt = Some(user), title = "Add a Person") {
+@main(userOpt = Some(user), title = "Add person") {
 
 <div>
     @helper.form(action = controllers.routes.PersonController.addPersonPost) {
@@ -50,7 +50,7 @@
         </div>
         <div class="row">
             <div class="col-md-12 mb-3">
-                <button class="btn btn-primary btn-lg btn-block" type="submit">Add Person</button>
+                <button class="btn btn-primary btn-block" type="submit">Add person</button>
             </div>
         </div>
     </div>

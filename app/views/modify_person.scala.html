@@ -23,7 +23,7 @@
 
 @personId = @{ modifyPersonForm(FormID.personId).value.get.toInt }
 
-@main(userOpt = Some(user), title = "Modify Person Details") {
+@main(userOpt = Some(user), title = "Modify person details") {
     <div class="mb-3">
         @helper.form(action = controllers.routes.PersonController.modifyPersonPost) {
         @for(tid <- flash.get(FlashKey.TokenAdded)) {
@@ -60,10 +60,10 @@
             </div>
             <div class="row">
                 <div class="col-md-11 mb-3">
-                    <button class="btn btn-primary btn-lg btn-block" type="submit">Modify Person Details</button>
+                    <button class="btn btn-primary btn-block" type="submit">Modify Person Details</button>
                 </div>
                 <div class="col-md-1 mb-3">
-                    <button type="button" class="btn btn-danger btn-lg btn-block float-end" data-toggle="modal" data-target="#confirmDeletePerson@personId">
+                    <button type="button" class="btn btn-danger btn-block float-end" data-toggle="modal" data-target="#confirmDeletePerson@personId">
                         <span data-feather="trash-2"><!-- trash-2 --></span>
                     </button>
                 </div>

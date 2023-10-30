@@ -18,7 +18,7 @@
 
 @scripts = {<script src="@routes.HomeController.toggleTokenActive"></script>}
 
-@main(userOpt = Some(user), title = "List Tokens", action= Some((routes.TokenController.listUnknownTokens, "Add token")), scripts = scripts) {
+@main(userOpt = Some(user), title = "List tokens", action= Some((routes.TokenController.listUnknownTokens, "Add token")), scripts = scripts) {
 @for(tid <- flash.get(UpdatedToken)) {
 <div class="alert alert-success" role="alert">Updated Token ID #@tid</div>
 }
