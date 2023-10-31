@@ -20,7 +20,7 @@
 
 <div>
     @if(flash.get("error").isDefined) {
-    <div class="alert alert-danger" role="alert">@flash.get("error")</div>
+    <div class="alert alert-danger" role="alert"><span data-feather="alert-octagon" class="me-2" stroke-width="3"></span>@flash.get("error")</div>
     }
 
     @helper.form(action = controllers.routes.MachineController.addMachinePost) {

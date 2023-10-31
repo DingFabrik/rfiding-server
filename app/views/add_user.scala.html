@@ -20,6 +20,7 @@
 @main(userOpt = Some(user), title = "Add user") {
     @for(error <- userForm.globalErrors; message <- error.messages) {
         <div class="alert alert-warning" role="alert">
+            <span data-feather="alert-triangle" class="me-2" stroke-width="3"></span>
             @message match {
                 case "error.password.minlength" => {The chosen password is too short.}
                 case "error.password.match"     => {The passwords do not match.}

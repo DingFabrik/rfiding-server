@@ -18,8 +18,11 @@
 
 @main(title = "Sign in", header = Some("")) {
 
-<div class="col-md-6 offset-md-3 order-md-1">
-    <h1>Sign in</h1>
+<div class="col-md-3 mx-auto">
+    <div class="mx-auto mb-3" style="width: 140px;">
+        <img src="@routes.Assets.versioned("images/logo-dark.svg")" alt="Logo" width="140">
+    </div>
+    <h3>Sign in</h3>
   @helper.form(action = controllers.routes.LoginController.loginPost) {
 
     @CSRF.formField
@@ -27,48 +30,45 @@
     @for(reason <- flash.get(LoginError)) {
         <div class="row">
             <div class="col-md-12">
-                <div class="alert alert-danger" role="alert">@reason</div>
+                <div class="alert alert-danger" role="alert"><span data-feather="alert-octagon" class="me-2" stroke-width="3"></span>@reason</div>
             </div>
         </div>
     }
     @if(flash.get(LoggedOut).isDefined) {
         <div class="row">
             <div class="col-md-12">
-                <div class="alert alert-success" role="alert">Successfully logged out.</div>
+                <div class="alert alert-success" role="alert"><span data-feather="check-circle" class="me-2" stroke-width="3"></span>Successfully logged out.</div>
             </div>
         </div>
     }
 
-    <div class="row">
-        <div class="col-md-12 mb-3">
-            <label for="@userLoginForm(Email).id">E-Mail address</label>
-            <input type="text" id="@userLoginForm(Email).id" name="@userLoginForm(Email).id" class="form-control" placeholder="E-Mail address" required autofocus value="@userLoginForm(Email).value" />
-        </div>
+    <div class="form-floating">
+        <input type="email" class="form-control" id="@userLoginForm(Email).id" name="@userLoginForm(Email).id" required value="@userLoginForm(Email).value" placeholder="name@@example.com" style="margin-bottom: -1px;border-bottom-right-radius: 0;border-bottom-left-radius: 0;">
+        <label for="@userLoginForm(Email).id">Email address</label>
     </div>
+    <div class="form-floating">
+        <input type="password" class="form-control" id="@userLoginForm(Password).id" name="@userLoginForm(Password).id" placeholder="Password" style="margin-top: -1px;border-top-right-radius: 0;border-top-left-radius: 0;">
+        <label for="@userLoginForm(Password).id">Password</label>
+    </div>
+
     @if(userLoginForm(Email).hasErrors) {
-    <div class="row">
+    <div class="row mt-2">
         <div class="col-md-12">
-            <div class="alert alert-warning" role="alert">Error while entering E-Mail address.</div>
+            <div class="alert alert-warning" role="alert"><span data-feather="alert-triangle" class="me-2" stroke-width="3"></span>Error while entering E-Mail address.</div>
         </div>
     </div>
     }
 
-    <div class="row">
-        <div class="col-md-12 mb-3">
-            <label for="@userLoginForm(Password).id">Password</label>
-            <input type="password" id="@userLoginForm(Password).id" name="@userLoginForm(Password).id" class="form-control" placeholder="Password" required value="@userLoginForm(Password).value" />
-        </div>
-
         @if(userLoginForm(Password).hasErrors) {
-        <div class="row">
+        <div class="row mt-2">
             <div class="col-md-12">
-                <div class="alert alert-warning" role="alert">Error while entering password.</div>
+                <div class="alert alert-warning" role="alert"><span data-feather="alert-triangle" class="me-2" stroke-width="3"></span>Error while entering password.</div>
             </div>
         </div>
         }
-    </div>
-
+    <div class="d-grid gap-2 mt-3">
     <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+    </div>
   }
 </div>
 }

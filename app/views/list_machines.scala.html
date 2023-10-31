@@ -17,7 +17,7 @@
 
 @main(userOpt = Some(user), title = "List machines", action= Some((routes.MachineController.addMachine, "Add machine")), scripts = scripts) {
 @for(mid <- flash.get(DeletedMachine)) {
-    <div class="alert alert-success" role="alert">Deleted machine with ID @mid</div>
+    <div class="alert alert-success" role="alert"><span data-feather="check-circle" class="me-2" stroke-width="3"></span>Deleted machine with ID @mid</div>
 }
 <div class="table-responsive">
     @CSRF.formField

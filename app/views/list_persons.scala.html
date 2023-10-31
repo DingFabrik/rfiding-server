@@ -22,19 +22,19 @@
 
 @main(userOpt = Some(user), title = "List people", action= Some((routes.PersonController.addPerson, "Add person")), scripts = scripts) {
     @for(pid <- flash.get(PersonAdded)) {
-        <div class="alert alert-success" role="alert">Inserted new Person with ID @pid</div>
+        <div class="alert alert-success" role="alert"><span data-feather="check-circle" class="me-2" stroke-width="3"></span>Inserted new Person with ID @pid</div>
     }
     @for(pid <- flash.get(PersonUpdated)) {
-        <div class="alert alert-success" role="alert">Updated Person with ID @pid</div>
+        <div class="alert alert-success" role="alert"><span data-feather="check-circle" class="me-2" stroke-width="3"></span>Updated Person with ID @pid</div>
     }
     @for(_ <- flash.get(PersonNotFound)) {
-        <div class="alert alert-danger" role="alert">No Person found.</div>
+        <div class="alert alert-danger" role="alert"><span data-feather="alert-octagon" class="me-2" stroke-width="3"></span>No Person found.</div>
     }
     @for(pid <- flash.get(DeletedPerson)) {
-        <div class="alert alert-success" role="alert">Person ID #@pid deleted.</div>
+        <div class="alert alert-success" role="alert"><span data-feather="check-circle" class="me-2" stroke-width="3"></span>Person ID #@pid deleted.</div>
     }
     @for(tid <- flash.get(DeletedToken)) {
-        <div class="alert alert-success" role="alert">Token ID #@tid deleted.</div>
+        <div class="alert alert-success" role="alert"><span data-feather="check-circle" class="me-2" stroke-width="3"></span>Token ID #@tid deleted.</div>
     }
     <div class="table-responsive">
         @CSRF.formField

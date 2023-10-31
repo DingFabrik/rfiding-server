@@ -39,20 +39,21 @@
     <link href="@routes.Assets.versioned("lib/highlightjs/styles/androidstudio.min.css")" rel="stylesheet" />
 </head>
 
-<body>
+<body class="bg-body-tertiary">
+@if(userOpt.isDefined) {
 <nav class="navbar navbar-expand-md navbar-dark bg-dark border-bottom border-1 border-primary fixed-top">
     <div class="container-xxl">
-    <a class="navbar-brand" href="/">RfiDing</a>
+    <a class="navbar-brand" href="/">
+        <img src="@routes.Assets.versioned("images/logo.svg")" alt="Logo" width="30" height="26" class="d-inline-block align-text-top">
+        RfiDing</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsDefault" aria-controls="navbarsDefault" aria-expanded="false" aria-label="Toggle navigation">
         <span data-feather="menu"><!-- Menu Icon --></span>
     </button>
 
     <div class="collapse navbar-collapse" id="navbarsDefault">
-        @if(userOpt.isDefined) {
             <ul class="navbar-nav mr-auto">
                 @navigation(navigationComponent)
             </ul>
-        }
 
         <ul class="navbar-nav ms-auto">
             @if(userOpt.isDefined) {
@@ -70,19 +71,19 @@
                     <li><h6 class="dropdown-header">Theme</h6></li>
                     <li>
                         <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="light" aria-pressed="false">
-                            <span data-feather="sun" class="me-1"></span>
+                            <span data-feather="sun" class="me-2"></span>
                           Light
                         </button>
                       </li>
                       <li>
                         <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="dark" aria-pressed="false">
-                            <span data-feather="moon" class="me-1"></span>
+                            <span data-feather="moon" class="me-2"></span>
                           Dark
                         </button>
                       </li>
                       <li>
                         <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="auto" aria-pressed="true">
-                            <span data-feather="circle" class="me-1"></span>
+                            <span data-feather="circle" class="me-2"></span>
                           Auto
                         </button>
                       </li>
@@ -98,6 +99,7 @@
     </div>
     </div>
 </nav>
+}
 
 <main role="main" class="container mb-5">
     <div class="mb-3">

@@ -28,6 +28,7 @@
     </div>
     @for(error <- userModifyForm.globalErrors; message <- error.messages) {
     <div class="alert alert-warning" role="alert">
+        <span data-feather="alert-triangle" class="me-2" stroke-width="3"></span>
         @message match {
             case "error.password.minlength" => {The chosen password is too short.}
             case "error.password.match"     => {The passwords do not match.}
@@ -36,7 +37,7 @@
     }
 
     @if(flash.get(UserProfileUpdated).isDefined) {
-        <div class="alert alert-success" role="alert">Profile updated.</div>
+        <div class="alert alert-success" role="alert"><span data-feather="check-circle" class="me-2" stroke-width="3"></span>Profile updated.</div>
     }
 
     @helper.form(action = controllers.routes.SettingsController.userProfilePost) {

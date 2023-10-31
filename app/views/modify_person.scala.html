@@ -27,10 +27,10 @@
     <div class="mb-3">
         @helper.form(action = controllers.routes.PersonController.modifyPersonPost) {
         @for(tid <- flash.get(FlashKey.TokenAdded)) {
-        <div class="alert alert-success" role="alert">New Token with ID #@tid added.</div>
+        <div class="alert alert-success" role="alert"><span data-feather="check-circle" class="me-2" stroke-width="3"></span>New Token with ID #@tid added.</div>
         }
         @if(flash.get("error").isDefined) {
-        <div class="alert alert-danger" role="alert">@flash.get("error")</div>
+        <div class="alert alert-danger" role="alert"><span data-feather="alert-octagon" class="me-2" stroke-width="3"></span>@flash.get("error")</div>
         }
 
         @CSRF.formField
