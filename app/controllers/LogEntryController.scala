@@ -35,6 +35,7 @@ import slick.basic.DatabaseConfig
 import utils.database.TableProvider
 import utils.navigation.NavigationComponent
 import views.html.list_log_entries
+import play.api.Configuration
 
 import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
@@ -44,7 +45,8 @@ import scala.concurrent.Future
 class LogEntryController @Inject()(
   protected val dbConfigProvider: DatabaseConfigProvider,
   messagesAction: MessagesActionBuilder,
-  mc: MessagesControllerComponents
+  mc: MessagesControllerComponents,
+  config: Configuration
 )(
   implicit ec: ExecutionContext,
   navigation: NavigationComponent,
@@ -80,8 +82,13 @@ class LogEntryController @Inject()(
 
   /** Returns all persons in the database. */
   def listLogEntries(offset: Option[Int], machineId: Option[Int] = None): EssentialAction = isAuthenticatedAsync { implicit userId => implicit request =>
-    findAll(15, offset.getOrElse(0), machineId).map { entries =>
-      Ok(list_log_entries(entries))
+    val future = for {
+        entries <- findAll(config.get[Int]("app.pageSize"), offset.getOrElse(0), machineId)
+        machines <- db.run(machineTable.result)
+    } yield Tuple2(entries, machines)
+    
+    future.map { case (entries, machines) =>
+      Ok(list_log_entries(entries, machines, machineId))
     }
   }
 }

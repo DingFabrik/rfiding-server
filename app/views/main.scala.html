@@ -7,7 +7,8 @@
     title: String,
     header: Option[String] = None,
     action: Option[(Call, String)] = None,
-    scripts: Html = Html("")
+    scripts: Html = Html(""),
+    form: Html = Html("")
 )(content: Html)(
     implicit navigationComponent: NavigationComponent,
     request: RequestHeader
@@ -104,9 +105,10 @@
 <main role="main" class="container mb-5">
     <div class="mb-3">
         <h1 class="h2">@if(header.isDefined){ @header.get } else { @title }
-        @if(action.isDefined) {
-        <a class="btn btn-primary float-end" href="@action.get._1">@action.get._2</a>
+        @for((call, title) <- action) {
+        <a class="btn btn-primary float-end" href="@call">@title</a>
         }
+        <div class="float-end">@form</div>
     </h1>
     </div>
     @content

@@ -77,4 +77,7 @@ class HomeController @Inject()(
     Ok(views.js.javascript.toggle_checkbox(routes.MachineController.toggleMachineActivePost)).as(JAVASCRIPT)
   }
 
+  def filterLogEntry(): EssentialAction = Action {
+    Ok(views.js.javascript.filter_log_entry()).as(JAVASCRIPT)
+  }
 }

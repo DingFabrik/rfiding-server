@@ -3,7 +3,9 @@
 @import utils.time.RichLocalDateTime
 
 @(
-    results: PaginatedResult[(LogEntry, Option[Machine])]
+    results: PaginatedResult[(LogEntry, Option[Machine])],
+    machines: Seq[Machine],
+    filteredMachineId: Option[Int] = None
 )(
     implicit navigation: NavigationComponent,
     implicitUser: security.LoginState.User,
@@ -11,9 +13,16 @@
     flash: Flash
 )
 
-@main(userOpt = Some(implicitUser), title = "Access Log") {
+@scripts = {<script src="@routes.HomeController.filterLogEntry"></script>}
+@form = {<select class="form-select" id="filter-machine">
+  <option value="" @if(!filteredMachineId.isDefined){selected}>---</option>
+  @for(machine <- machines) {
+    <option value="@machine.id.get" @if(filteredMachineId == machine.id){selected}>@machine.name</option>
+  }
+</select>}
+@main(userOpt = Some(implicitUser), title = "Access Log", scripts=scripts, form=form) {
   <div class="table-responsive">
-    <table class="table table-striped table-bordered">
+    <table class="table table-striped table-bordered table-sm">
       <thead>
       <tr>
         <th>Access At</th>
@@ -21,12 +30,12 @@
       </tr>
       </thead>
       <tbody>
-        @for(result <- results.entities) {
+        @for((entry, machine) <- results.entities) {
           <tr>
-            <td data-toggle="tooltip" title="@result._1.accessAt">@result._1.accessAt.pretty()</td>
+            <td data-toggle="tooltip" title="@entry.accessAt">@entry.accessAt.pretty()</td>
               <td>
-                @if(result._2.isDefined) {
-                    <a href="@routes.MachineController.modifyMachine(result._2.get.id.get)">@result._2.get.name</a>
+                @if(machine.isDefined) {
+                    <a href="@routes.MachineController.modifyMachine(machine.get.id.get)">@machine.get.name</a>
                 }
               </td>
           </tr>

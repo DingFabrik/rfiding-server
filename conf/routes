@@ -18,6 +18,7 @@ GET     /js/autocomplete-machine/:userId  controllers.HomeController.autocomplet
 GET     /js/toggle-token-active           controllers.HomeController.toggleTokenActive
 GET     /js/toggle-person-active          controllers.HomeController.togglePersonActive
 GET     /js/toggle-machine-active         controllers.HomeController.toggleMachineActive
+GET     /js/filter-log-entry              controllers.HomeController.filterLogEntry
 
 
 GET     /machines                   controllers.MachineController.listMachines
