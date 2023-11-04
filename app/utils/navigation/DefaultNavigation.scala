@@ -1,11 +1,15 @@
 package utils.navigation
 
 import play.api.mvc.RequestHeader
+import com.typesafe.config.ConfigFactory
+import play.api.Configuration
 
 class DefaultNavigation extends NavigationComponent {
 
+  val isDev = ConfigFactory.load("application").getBoolean("app.dev")
+
   def navigationItems(implicit request: RequestHeader): Seq[NavigationItem] = {
-    Seq(
+    var menu: Seq[NavigationItem] = Seq(
       NavigationEntry(
         title  = "Tokens",
         icon   = "radio",
@@ -26,7 +30,10 @@ class DefaultNavigation extends NavigationComponent {
         icon   = "list",
         target = controllers.routes.LogEntryController.listLogEntries(None, None)
       ),
-      NavigationTitle(
+    )
+    println(isDev)
+    if (isDev) {
+      menu = menu :+ NavigationTitle(
         title    = "Devel",
         icon     = "settings",
         target   = controllers.routes.Development.showLog,
@@ -46,9 +53,9 @@ class DefaultNavigation extends NavigationComponent {
             icon    = "list",
             target  = controllers.routes.Development.showLog
           ),
-        )
-      ),
-    )
+      ))
+    }
+    menu
   }
 }
 
