@@ -9,7 +9,7 @@ import utils.CustomIsomorphisms.localDateTimeIsomorphism
 case class LogEntry(
   machineId: Int,
   tokenId: Int,
-  access_at: LocalDateTime
+  accessAt: LocalDateTime
 )
 class LogEntryTableBuilder(val profile: JdbcProfile) {
   import profile.api._
@@ -20,10 +20,10 @@ class LogEntryTable(tag: Tag) extends Table[LogEntry](tag, "tb_log_entry") {
 
     def machineId: Rep[Int] = column[Int]("fk_machine_id")
     def tokenId: Rep[Int] = column[Int]("fk_token_id")
-    def access_at: Rep[LocalDateTime] = column[LocalDateTime]("dt_access_at")
+    def accessAt: Rep[LocalDateTime] = column[LocalDateTime]("dt_access_at")
 
   def * = {
-    (machineId, tokenId, access_at) <> (LogEntry.tupled, LogEntry.unapply)
+    (machineId, tokenId, accessAt) <> (LogEntry.tupled, LogEntry.unapply)
   }
 
   def machine = {

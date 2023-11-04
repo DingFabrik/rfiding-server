@@ -21,6 +21,11 @@ class DefaultNavigation extends NavigationComponent {
         icon   = "hard-drive",
         target = controllers.routes.MachineController.listMachines
       ),
+      NavigationEntry(
+        title  = "Access Log",
+        icon   = "list",
+        target = controllers.routes.LogEntryController.listLogEntries(None, None)
+      ),
       NavigationTitle(
         title    = "Devel",
         icon     = "settings",

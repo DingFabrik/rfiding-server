@@ -133,7 +133,7 @@ class ApiController @Inject()(
     val insertQuery = logEntryTable += LogEntry(
       tokenId    = token.id.get,
       machineId = machine.id.get,
-      access_at = LocalDateTime.now(Clock.systemUTC())
+      accessAt = LocalDateTime.now(Clock.systemUTC())
     )
     return db.run(insertQuery)
   }

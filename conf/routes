@@ -68,6 +68,7 @@ GET     /dev/setup               controllers.Development.setup
 GET     /dev/dummy               controllers.Development.createDummyData
 GET     /dev/log                 controllers.Development.showLog
 
+GET     /access_log              controllers.LogEntryController.listLogEntries(offset: Option[Int], machineId: Option[Int])
 
 GET     /api/machine/config      controllers.ApiController.getMachineConfig(machine: String)
 GET     /api/machine/check       controllers.ApiController.checkMachineAccess(machine: String, tokenUid: String)

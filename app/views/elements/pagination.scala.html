@@ -1,0 +1,37 @@
+@import utils.PaginatedResult
+
+@(
+    offset: Int,
+    totalCount: Int,
+    pageSize: Int
+)()
+
+@currentPage = @{offset / pageSize}
+
+<nav aria-label="Page navigation">
+    <ul class="pagination">
+        <li class="page-item @if(offset == 0){disabled}">
+        <a class="page-link" href="@routes.LogEntryController.listLogEntries(Some(offset - pageSize), None)" aria-label="Previous">
+            <span aria-hidden="true">&laquo;</span>
+        </a>
+        </li>
+        @if(currentPage > 0) {
+            @for(page <- 0.max(currentPage - 3) to currentPage-1) {
+                <li class="page-item"><a class="page-link" href="@routes.LogEntryController.listLogEntries(Some(page * pageSize), None)">@(page + 1)</a></li>
+            }
+        }
+        <li class="page-item active"><a class="page-link" href="#">@(currentPage + 1)</a></li>
+        @if(offset + pageSize < totalCount) {
+            @for(page <- (currentPage+1) to (totalCount / pageSize).min(currentPage + 3)) {
+                <li class="page-item"><a class="page-link" href="@routes.LogEntryController.listLogEntries(Some(page * pageSize), None)">@(page + 1)</a></li>
+            }
+        }
+        <li class="page-item @if(offset + pageSize > totalCount){disabled}">
+        <a class="page-link" href="@routes.LogEntryController.listLogEntries(Some(offset + pageSize), None)" aria-label="Next">
+            <span aria-hidden="true">&raquo;</span>
+        </a>
+        </li>
+    </ul>
+</nav>
+
+
