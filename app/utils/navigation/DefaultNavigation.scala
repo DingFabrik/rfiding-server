@@ -31,7 +31,6 @@ class DefaultNavigation extends NavigationComponent {
         target = controllers.routes.LogEntryController.listLogEntries(None, None)
       ),
     )
-    println(isDev)
     if (isDev) {
       menu = menu :+ NavigationTitle(
         title    = "Devel",
