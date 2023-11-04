@@ -34,5 +34,7 @@
       </tbody>
     </table>
   </div>
-  @elements.pagination(results.currentOffset, results.totalCount, results.pageSize)
+  @elements.pagination(results.currentOffset, results.totalCount, results.pageSize, { offset =>
+    routes.LogEntryController.listLogEntries(Some(offset), filteredMachineId)
+  })
 }
