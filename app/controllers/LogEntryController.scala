@@ -84,7 +84,7 @@ class LogEntryController @Inject()(
   def listLogEntries(offset: Option[Int], machineId: Option[Int] = None): EssentialAction = isAuthenticatedAsync { implicit userId => implicit request =>
     val future = for {
         entries <- findAll(config.get[Int]("app.pageSize"), offset.getOrElse(0), machineId)
-        machines <- db.run(machineTable.result)
+        machines <- db.run(machineTable.sortBy(_.name).result)
     } yield Tuple2(entries, machines)
     
     future.map { case (entries, machines) =>

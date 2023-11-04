@@ -103,15 +103,17 @@
 }
 
 <main role="main" class="container mb-5">
-    <div class="mb-3">
-        <h1 class="h2">@if(header.isDefined){ @header.get } else { @title }
+    <div class="mb-3 clearfix">
         @for((call, title) <- action) {
         <a class="btn btn-primary float-end" href="@call">@title</a>
         }
         <div class="float-end">@form</div>
-    </h1>
+        <h1 class="h2">@if(header.isDefined){ @header.get } else { @title }
+        </h1>
     </div>
+    <div>
     @content
+</div>
 </main><!-- /.container -->
 
 <!-- Bootstrap core JavaScript -->
