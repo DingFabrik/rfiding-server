@@ -19,7 +19,7 @@ libraryDependencies ++= Seq(
   "org.xerial"             %  "sqlite-jdbc"           % "3.41.2.1",
     "org.postgresql" % "postgresql" % "42.3.4",
   // Webjars
-  "org.webjars"            %% "webjars-play"          % "3.0.0",
+  "org.webjars"            %% "webjars-play"          % "2.9.0",
   "org.webjars"            %  "bootstrap"             % "5.3.2",
   "org.webjars"            %  "jquery-ui"             % "1.13.2",
   "org.webjars.npm"        %  "feather-icons"         % "4.29.0",
