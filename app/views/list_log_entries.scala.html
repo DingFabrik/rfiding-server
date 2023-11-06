@@ -39,7 +39,7 @@
       <tbody>
         @for((entry, machine) <- results.entities) {
           <tr>
-            <td data-toggle="tooltip" title="@entry.accessAt">@entry.accessAt.pretty()</td>
+            <td data-bs-toggle="tooltip" title="@entry.accessAt">@entry.accessAt.pretty()</td>
               <td>
                 @if(machine.isDefined) {
                     <a href="@routes.MachineController.modifyMachine(machine.get.id.get)">@machine.get.name</a>

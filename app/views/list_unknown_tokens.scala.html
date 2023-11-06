@@ -45,7 +45,7 @@
         <tr>
             <td><span class="monospace">@unknownToken.serial.stringForUI()</span></td>
             <td>@machine.name (#@machine.id)</td>
-            <td data-toggle="tooltip" title="@unknownToken.readStamp">@unknownToken.readStamp.pretty()</td>
+            <td data-bs-toggle="tooltip" title="@unknownToken.readStamp">@unknownToken.readStamp.pretty()</td>
             <td><a href="@routes.TokenController.addToken(unknownToken.serial.asString)"><span data-feather="plus-circle"><!-- plus-circle --></span></a></td>
         </tr>
         }
