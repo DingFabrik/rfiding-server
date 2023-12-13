@@ -31,25 +31,25 @@ class TokenTableBuilder(val profile: JdbcProfile) {
   val personBuilder = new PersonTableBuilder(profile)
 
   class TokenTable(tag: Tag) extends Table[Token](tag, "tb_token") {
-  val personTable = TableQuery[personBuilder.PersonTable]
+    val personTable = TableQuery[personBuilder.PersonTable]
 
-  def id: Rep[Int] = column[Int]("pk_id", O.PrimaryKey, O.AutoInc)
-  def serial: Rep[Seq[Byte]] = column[Seq[Byte]]("dt_serial")
-  def purpose: Rep[String] = column[String]("dt_purpose")
-  def isActive: Rep[Boolean] = column[Boolean]("dt_active")
+    def id: Rep[Int] = column[Int]("pk_id", O.PrimaryKey, O.AutoInc)
+    def serial: Rep[Seq[Byte]] = column[Seq[Byte]]("dt_serial")
+    def purpose: Rep[String] = column[String]("dt_purpose")
+    def isActive: Rep[Boolean] = column[Boolean]("dt_active")
 
-  def ownerId: Rep[Int] = column[Int]("fk_owner_id")
+    def ownerId: Rep[Int] = column[Int]("fk_owner_id")
 
-  def * : ProvenShape[Token] = {
-    (id.?, serial, purpose.?, isActive, ownerId) <> ((Token.apply _).tupled, Token.unapply)
+    def * : ProvenShape[Token] = {
+      (id.?, serial, purpose.?, isActive, ownerId) <> ((Token.apply _).tupled, Token.unapply)
+    }
+
+    def owner = {
+      foreignKey("fk_owner", ownerId, personTable)(_.id, onDelete = Restrict)
+    }
+
+    def idx = {
+      index(tokenTableIndex, serial, unique = true)
+    }
   }
-
-  def owner = {
-    foreignKey("fk_owner", ownerId, personTable)(_.id, onDelete = Restrict)
-  }
-
-  def idx = {
-    index(tokenTableIndex, serial, unique = true)
-  }
-}
 }

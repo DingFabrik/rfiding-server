@@ -13,7 +13,7 @@
     implicit messagesProvider: MessagesProvider
 )
 @if(!hideLabel) {
-<label for="@field.id">@description</label>
+<label for="@field.id" class="form-label">@description@if(required){*}</label>
 }
 @prependSymbol.map { symbol =>
 <div class="input-group">

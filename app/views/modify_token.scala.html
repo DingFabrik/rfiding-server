@@ -8,6 +8,9 @@
 @import TokenController.FormKey.tokenIsActive
 @import TokenController.FormKey.tokenOwnerName
 @import TokenController.FormKey.tokenOwnerId
+@import forms.inputText
+@import forms.inputNumber
+@import forms.checkBox
 @import utils.ByteOps.RichByte
 @import helper._
 
@@ -19,6 +22,7 @@
     implicit navigation: NavigationComponent,
     user: User,
     request: RequestHeader,
+    messagesProvider: MessagesProvider,
     flash: Flash
 )
 
@@ -30,36 +34,28 @@
     <div class="col-md-12 order-md-1">
         <div class="row">
             <div class="col-md-6 mb-3">
-                <label for="@tokenId">DB-ID</label>
-                <input type="text" class="form-control" id="@tokenId" name="@tokenId" value="@token.id" readonly />
+                @inputText(modifyTokenForm(tokenId), "DB-ID", readonly = true)
             </div>
             <div class="col-md-6 mb-3">
-                <label for="@tokenSerial">Serial</label>
-                <input type="text" class="form-control" id="@tokenSerial" name="@tokenSerial" value="@token.serial.stringForUI()" readonly />
+                @inputText(modifyTokenForm(tokenSerial), "Serial", readonly = true)
             </div>
         </div>
         <div class="row">
             <div class="col-md-12 mb-3">
-                <label for="@tokenPurpose">Purpose</label>
-                <input type="text" class="form-control" id="@tokenPurpose" name="@tokenPurpose" value="@modifyTokenForm(tokenPurpose).value" />
+                @inputText(modifyTokenForm(tokenPurpose), "Purpose")
             </div>
         </div>
         <div class="row">
             <div class="col-md-4 mb-3">
-                <label for="@tokenOwnerId">Owner ID</label>
-                <input type="text" class="form-control" id="@tokenOwnerId" name="@tokenOwnerId" value="@owner.id" readonly />
+                @inputText(modifyTokenForm(tokenOwnerId), "Owner ID", readonly = true)
             </div>
             <div class="col-md-8 mb-3">
-                <label for="@tokenOwnerName">Owner Name</label>
-                <input type="text" class="form-control" id="@tokenOwnerName" name="@tokenOwnerName" value="@owner.name" readonly />
+                @inputText(modifyTokenForm(tokenOwnerName), "Owner Name", readonly = true)
             </div>
         </div>
         <div class="row">
             <div class="col-md-12 mb-3">
-                <div class="form-check">
-                    <input type="checkbox" class="form-check-input" id="@tokenIsActive" name="@tokenIsActive" value="true" @if(modifyTokenForm(tokenIsActive).value.contains("true")) {checked="checked"} />
-                    <label class="form-check-label" for="@tokenIsActive">Token Active?</label>
-                </div>
+                @checkBox(modifyTokenForm(tokenIsActive), "Active")
             </div>
         </div>
         <div class="row">

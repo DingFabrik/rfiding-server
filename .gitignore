@@ -16,3 +16,4 @@ bkp/
 test_upload_to_github.sh
 /.metals
 /.vscode
+/.bsp

@@ -3,8 +3,10 @@
 @(token: Token)
 <div class="card @if(token.isActive) {border-success} else {border-danger}">
     <div class="card-header">
-        <span class="@if(token.isActive) {text-success} else {text-danger}" data-feather="radio"></span>
-        Token #@token.id &bull; [@token.serial.stringForUI()]
+        <a href="@controllers.routes.TokenController.modifyToken(token.id.get)">
+            <span class="@if(token.isActive) {text-success} else {text-danger}" data-feather="radio"></span>
+            Token #@token.id &bull; [@token.serial.stringForUI()]
+        </a>
     </div>
     <div class="card-body">
         <p class="card-text">
@@ -17,7 +19,7 @@
             <span data-feather="trash-2"><!-- trash-2 --></span>
         </a>
         *@
-        <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-target="#confirmDeleteToken@token.id">
+        <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#confirmDeleteToken@token.id">
             <span data-feather="trash-2"><!-- trash-2 --></span>
         </button>
     </div>
