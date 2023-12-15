@@ -30,7 +30,7 @@ import play.api.http.ContentTypes.JSON
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.libs.json.Writes
-import play.api.mvc.AbstractController
+import play.api.mvc.MessagesAbstractController
 import play.api.mvc.EssentialAction
 import play.api.mvc.MessagesActionBuilder
 import play.api.mvc.MessagesControllerComponents
@@ -53,7 +53,7 @@ class ApiController @Inject()(
 )(
   implicit ec: ExecutionContext,
   navigation: NavigationComponent,
-) extends AbstractController(mc)
+) extends MessagesAbstractController(mc)
   with I18nSupport
   with TableProvider
   with Security { controller =>

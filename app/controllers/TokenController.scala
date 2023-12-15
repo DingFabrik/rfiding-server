@@ -27,7 +27,7 @@ import play.api.db.slick.HasDatabaseConfigProvider
 import play.api.i18n.I18nSupport
 import play.api.libs.json.JsSuccess
 import play.api.libs.json.Json.toJson
-import play.api.mvc.AbstractController
+import play.api.mvc.MessagesAbstractController
 import play.api.mvc.EssentialAction
 import play.api.mvc.MessagesActionBuilder
 import play.api.mvc.MessagesControllerComponents
@@ -61,8 +61,7 @@ class TokenController @Inject()(
 )(
   implicit ec: ExecutionContext,
   navigation: NavigationComponent,
-) extends AbstractController(mc)
-  with I18nSupport
+) extends MessagesAbstractController(mc)
   with TableProvider
   with Security { controller =>
   import profile.api._

@@ -26,7 +26,7 @@ import play.api.libs.json.JsSuccess
 import play.api.libs.json.Json
 import play.api.libs.json.Json.toJson
 import play.api.libs.json.Writes
-import play.api.mvc.AbstractController
+import play.api.mvc.MessagesAbstractController
 import play.api.mvc.EssentialAction
 import play.api.mvc.MessagesActionBuilder
 import play.api.mvc.MessagesControllerComponents
@@ -51,8 +51,7 @@ class PersonController @Inject()(
 )(
   implicit ec: ExecutionContext,
   navigation: NavigationComponent,
-) extends AbstractController(mc)
-  with I18nSupport
+) extends MessagesAbstractController(mc)
   with TableProvider
   with Security {
   controller =>

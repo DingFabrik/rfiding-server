@@ -5,6 +5,7 @@ import controllers.security.Security
 import javax.inject.Inject
 import javax.inject.Singleton
 import models.User
+import play.i18n.Langs;
 import play.api.Logger
 import play.api.data.Form
 import play.api.data.Forms.email
@@ -18,7 +19,7 @@ import play.api.data.validation.ValidationError
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.db.slick.HasDatabaseConfigProvider
 import play.api.i18n.I18nSupport
-import play.api.mvc.AbstractController
+import play.api.mvc.MessagesAbstractController
 import play.api.mvc.EssentialAction
 import play.api.mvc.MessagesActionBuilder
 import play.api.mvc.MessagesControllerComponents
@@ -39,12 +40,12 @@ class SettingsController @Inject()(
   protected val dbConfigProvider: DatabaseConfigProvider,
   messagesAction: MessagesActionBuilder,
   mc: MessagesControllerComponents,
-  passwordUtil: PasswordUtil
+  passwordUtil: PasswordUtil,
+  langs: Langs
 )(
   implicit ec: ExecutionContext,
   navigation: NavigationComponent,
-) extends AbstractController(mc)
-  with I18nSupport
+) extends MessagesAbstractController(mc)
   with TableProvider
   with Security { controller =>
   import profile.api._
@@ -62,9 +63,9 @@ class SettingsController @Inject()(
   /** Constraint to check that password has a minimum length and the confirmation is valid. */
   private[this] val modifyUserCheckPasswordEquality: Constraint[ModifyUserFormData] = {
     Constraint("constraints.passwordcheck")({
-      case ModifyUserFormData(_, _, Some(a), _) if a.length < minPasswordLength =>
+      case ModifyUserFormData(_, _, _, Some(a), _) if a.length < minPasswordLength =>
         Invalid(Seq(ValidationError("error.password.minlength")))
-      case ModifyUserFormData(_, _, a, b) if a != b =>
+      case ModifyUserFormData(_, _, _, a, b) if a != b =>
         Invalid(Seq(ValidationError("error.password.match")))
       case _ =>
         Valid
@@ -76,6 +77,7 @@ class SettingsController @Inject()(
     mapping(
       FormID.userName            -> text,
       FormID.userMail            -> email,
+      FormID.userLanguage        -> text,
       FormID.userPassword        -> optional(text),
       FormID.userPasswordConfirm -> optional(text),
     )(ModifyUserFormData.apply)(ModifyUserFormData.unapply).verifying(modifyUserCheckPasswordEquality)
@@ -88,7 +90,8 @@ class SettingsController @Inject()(
       case Seq(dbUser: User) =>
         val form = modifyUserForm.bind(Map(
           FormID.userName -> dbUser.name,
-          FormID.userMail -> dbUser.email
+          FormID.userMail -> dbUser.email,
+          FormID.userLanguage -> dbUser.language,
         ))
         Ok(user_profile(form))
     }
@@ -105,11 +108,11 @@ class SettingsController @Inject()(
         val filteredTable = userTable.filter(_.id === user.userID)
         val updateQuery = modifyUserData.userPassword match {
           case Some(newPassword) =>
-            filteredTable.map(u => (u.name, u.email, u.hash))
-              .update((modifyUserData.userName, modifyUserData.userMail, passwordUtil.hash(newPassword)))
+            filteredTable.map(u => (u.name, u.email, u.language, u.hash))
+              .update((modifyUserData.userName, modifyUserData.userMail, modifyUserData.userLanguage, passwordUtil.hash(newPassword)))
           case _ =>
-            filteredTable.map(u => (u.name, u.email))
-              .update((modifyUserData.userName, modifyUserData.userMail))
+            filteredTable.map(u => (u.name, u.email, u.language))
+              .update((modifyUserData.userName, modifyUserData.userMail, modifyUserData.userLanguage))
         }
         db.run(updateQuery).map { _ =>
           Redirect(routes.SettingsController.userProfile).flashing(FlashKey.UserProfileUpdated -> "")
@@ -181,6 +184,7 @@ object SettingsController {
   case class ModifyUserFormData(
     userName: String,
     userMail: String,
+    userLanguage: String,
     userPassword: Option[String],
     userPasswordConfirm: Option[String]
   )
@@ -195,6 +199,7 @@ object SettingsController {
   object FormID {
     val userMail = "userMail"
     val userName = "userName"
+    val userLanguage = "userLanguage"
     val userPassword = "userPassword"
     val userPasswordConfirm = "userPasswordConfirm"
   }

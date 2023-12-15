@@ -15,7 +15,9 @@
     user: User,
     request: RequestHeader,
     messagesProvider: MessagesProvider,
-    flash: Flash
+    flash: Flash,
+    langs: Langs,
+    messages: Messages
 )
 
 @main(userOpt = Some(user), title = "Profile Settings") {
@@ -45,20 +47,30 @@
         <div class="col-md-12 order-md-1">
             <div class="row">
                 <div class="col-md-12 mb-3">
-                    @inputText(userModifyForm(FormID.userName), "Name")
+                    @inputText(userModifyForm(FormID.userName), messages("settings.username"))
                 </div>
             </div>
             <div class="row">
                 <div class="col-md-12 mb-3">
-                    @inputEmail(userModifyForm(FormID.userMail), "E-Mail address")
+                    @inputEmail(userModifyForm(FormID.userMail), messages("settings.email"))
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 mb-3">
+                    <label for="@userModifyForm(FormID.userLanguage).id" class="form-label">@messages("settings.language")</label>
+                    <select class="form-select" name="language">
+                        @for(lang <- langs.availables) {
+                            <option value="@lang.code" @if(userModifyForm(FormID.userLanguage).value.get == lang.code) {selected}>@lang.code</option>
+                        }
+                    </select>
                 </div>
             </div>
             <div class="row">
                 <div class="col-md-6 mb-3">
-                    @inputPassword(userModifyForm(FormID.userPassword), "Password")
+                    @inputPassword(userModifyForm(FormID.userPassword), messages("settings.password"))
                 </div>
                 <div class="col-md-6 mb-3">
-                    @inputPassword(userModifyForm(FormID.userPasswordConfirm), "Password confirmation")
+                    @inputPassword(userModifyForm(FormID.userPasswordConfirm), messages("settings.confirmPassword"))
                 </div>
             </div>
             <div class="row">

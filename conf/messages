@@ -1,0 +1,5 @@
+settings.language=Language
+settings.username=Name
+settings.email=E-Mail Address
+settings.password=Password
+settings.confirmPassword=Confirm Password

@@ -13,9 +13,9 @@ import play.api.data.Forms.mapping
 import play.api.data.Forms.nonEmptyText
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.db.slick.HasDatabaseConfigProvider
-import play.api.mvc.AbstractController
+import play.api.mvc.MessagesAbstractController
 import play.api.mvc.AnyContent
-import play.api.mvc.ControllerComponents
+import play.api.mvc.MessagesControllerComponents
 import play.api.mvc.EssentialAction
 import play.api.mvc.MessagesActionBuilder
 import play.api.mvc.MessagesRequest
@@ -31,10 +31,10 @@ import scala.concurrent.Future
 class LoginController @Inject()(
   protected val dbConfigProvider: DatabaseConfigProvider,
   messagesAction: MessagesActionBuilder,
-  components: ControllerComponents,
+  components: MessagesControllerComponents,
   passwordUtil: PasswordUtil
 )(implicit ec: ExecutionContext, navigation: NavigationComponent)
-  extends AbstractController(components)
+  extends MessagesAbstractController(components)
     with TableProvider {
   import profile.api._
   

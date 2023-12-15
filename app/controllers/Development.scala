@@ -14,8 +14,8 @@ import models.User
 import play.api.Configuration
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.db.slick.HasDatabaseConfigProvider
-import play.api.mvc.AbstractController
-import play.api.mvc.ControllerComponents
+import play.api.mvc.MessagesAbstractController
+import play.api.mvc.MessagesControllerComponents
 import play.api.mvc.EssentialAction
 import slick.jdbc.JdbcProfile
 import slick.basic.DatabaseConfig
@@ -30,10 +30,10 @@ import scala.io.Source
 @Singleton
 class Development @Inject()(
   protected val dbConfigProvider: DatabaseConfigProvider,
-  cc: ControllerComponents,
+  cc: MessagesControllerComponents,
   config: Configuration
 )(implicit ec: ExecutionContext, navigation: NavigationComponent)
-  extends AbstractController(cc)
+  extends MessagesAbstractController(cc)
     with TableProvider {
   import profile.api._
 

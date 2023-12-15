@@ -7,9 +7,9 @@ import javax.inject.Inject
 import javax.inject.Singleton
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.db.slick.HasDatabaseConfigProvider
-import play.api.mvc.AbstractController
+import play.api.mvc.MessagesAbstractController
 import play.api.mvc.AnyContent
-import play.api.mvc.ControllerComponents
+import play.api.mvc.MessagesControllerComponents
 import play.api.mvc.EssentialAction
 import play.api.mvc.MessagesActionBuilder
 import play.api.mvc.Request
@@ -32,11 +32,11 @@ import scala.concurrent.Future
 class HomeController @Inject()(
   protected val dbConfigProvider: DatabaseConfigProvider,
   messagesAction: MessagesActionBuilder,
-  cc: ControllerComponents
+  cc: MessagesControllerComponents
 )(
   implicit ec: ExecutionContext,
   navigation: NavigationComponent,
-) extends AbstractController(cc)
+) extends MessagesAbstractController(cc)
     with HasDatabaseConfigProvider[JdbcProfile]
     with TableProvider
     with Security {
