@@ -85,6 +85,8 @@ class MachineController @Inject()(
 
   private[this] val logger: Logger = Logger("api")
 
+  private[this] val logger: Logger = Logger("api")
+
   /** Show a list of known machines. */
   def listMachines: EssentialAction = isAuthenticatedAsync { implicit userId => implicit request =>
     db.run(machineTable.result).map { machines: Seq[Machine] =>
