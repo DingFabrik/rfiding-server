@@ -1,0 +1,11 @@
+{% extends "base_form.html" %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+{% if person %}
+{% blocktrans %}Edit {{ person }}{% endblocktrans %}
+{% else %}
+{% blocktrans %}Add a new person{% endblocktrans %}
+{% endif %}
+{% endblock %}

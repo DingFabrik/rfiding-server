@@ -1,0 +1,43 @@
+{% extends "base_list.html" %}
+{% load i18n %}
+
+{% block top_actions %}
+{% if perms.tokens.create_token %}
+<a href="{% url 'tokens:unknown' %}" class="btn btn-primary"><i class="bi-plus-lg"></i> {% blocktrans %}Assign Token{% endblocktrans %}</a>
+{% endif %}
+{% endblock %}
+
+{% block bottom_actions %}
+{% if perms.tokens.create_token %}
+<a href="{% url 'tokens:unknown' %}" class="btn btn-primary"><i class="bi-plus-lg"></i> {% blocktrans %}Assign Token{% endblocktrans %}</a>
+{% endif %}
+{% endblock %}
+
+{% block table %}
+    <thead>
+        <tr>
+            <th>{% trans "Serial" %}</th>
+            <th>{% trans "Purpose" %}</th>
+            <th>{% trans "Active" %}</th>
+            <th>{% trans "Owner" %}</th>
+            {% if perms.tokens.modify_token %}
+            <th>{% trans "Modify" %}</th>
+            {% endif %}
+        </tr>
+        </thead>
+{% for object in tokens %}
+<tr>
+<td><a href="{% url 'tokens:detail' object.pk %}">{{ object.serial }}</a></td>
+<td>{{ object.purpose }}</td>
+<td>{% include "snippets/active_toggle.html" %}</td>
+{% if perms.people.view_person %}
+<td><a href="{% url "people:detail" object.person.pk %}">{{ object.person }}</a></td>
+{% else %}
+<td>{{ object.person }}</td>
+{% endif %}
+{% if perms.tokens.modify_token %}
+<td><a href="{% url "tokens:update" object.pk %}"><i class="bi-pencil-square"></i></a></td>
+{% endif %}
+</tr>
+{% endfor %}
+{% endblock %}

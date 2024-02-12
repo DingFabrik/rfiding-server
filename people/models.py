@@ -1,23 +1,60 @@
 from django.db import models
-from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
+from django.urls import reverse
+
+from base.models import TimestampedModel
 
 from machines.models import Machine
 
-class Person(models.Model):
-    member_id = models.CharField(max_length=8, verbose_name=_("Member ID"))
-    name = models.CharField(max_length=100, verbose_name=_("Full Name"))
-    email = models.CharField(max_length=100, blank=True, verbose_name=_("E-Mail"))
+class Person(TimestampedModel):
+    name = models.CharField(max_length=100)
+    email = models.EmailField(unique=True)
+    member_id = models.IntegerField(null=True, blank=True, unique=True)
     is_active = models.BooleanField(default=True)
     
-    def __str__(self):
-        return self.name
-    
+    class Meta:
+        verbose_name = _("Person")
+        verbose_name_plural = _("People")
+        ordering = ["pk"]
+        permissions = (
+            ("change_instructor", "Can manage instructors"),
+        )
+
     def get_absolute_url(self):
         return reverse("people:detail", kwargs={"pk": self.pk})
+
+    def get_update_url(self):
+        return reverse("people:update", kwargs={"pk": self.pk})
     
-class Qualification(models.Model):
-    machine = models.ForeignKey(Machine, on_delete=models.CASCADE, related_name="qualified_people")
-    person = models.ForeignKey(Person, on_delete=models.CASCADE, related_name="qualifications")
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    def __str__(self):
+        if self.member_id is None:
+            return f"{self.name}"
+        return f"{self.name} (#{self.member_id})"
+    
+class Qualification(TimestampedModel):
+    person = models.ForeignKey(Person, on_delete=models.CASCADE, related_name='qualifications')
+    machine = models.ForeignKey(Machine, on_delete=models.CASCADE, related_name='qualified_people')
+    comment = models.TextField(null=True, blank=True)
+    instructed_by = models.ForeignKey(Person, on_delete=models.CASCADE, null=True, blank=True, related_name='instructed_qualifications')
+    
+    def __str__(self):
+        return f"{self.person} qualified on {self.machine}"
+
+    class Meta:
+        verbose_name = _("Qualification")
+        verbose_name_plural = _("Qualifications")
+        permissions = (
+            ("qualify_person", "Can manage qualifications"),
+        )
+
+class Instructor(TimestampedModel):
+    person = models.ForeignKey(Person, on_delete=models.CASCADE, related_name='can_instruct')
+    machine = models.ForeignKey(Machine, on_delete=models.CASCADE, related_name='instructors')
+    comment = models.TextField(null=True, blank=True)
+    
+    def __str__(self):
+        return f"{self.person} is instructor on {self.machine}"
+
+    class Meta:
+        verbose_name = _("Instructor")
+        verbose_name_plural = _("Instructors")

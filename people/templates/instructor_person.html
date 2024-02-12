@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+{% blocktrans %}Add {{ person }} as instructor{% endblocktrans %}
+{% endblock %}
+
+{% block content %}
+<form action="" method="post">
+    {% csrf_token %}
+    {{ form.person }}
+    {{ form.machine }}
+    {{ form.machine_autocomplete|as_crispy_field }}
+    {{ form.machine.errors }}
+    <div class="row">
+        <div class="col-md-11 mb-3">
+            <button class="btn btn-primary btn-block" type="submit">{% trans "Save" %}</button>
+        </div>
+    </div>
+</form>
+{% endblock %}
+
+{% block js_extra %}
+{{form.media }}
+{% endblock %}
+
+{% block script_extra %}
+
+$( "#{{ form.machine_autocomplete.id_for_label}}" ).autocomplete({
+    source: "{% url 'machines:autocomplete-instructor' form.person.value %}",
+    minLength: 1,
+        select: function( event, ui ) {
+            event.preventDefault();
+            this.value = ui.item.label;
+            $("#{{ form.machine.id_for_label}}").val(ui.item.value);
+        },
+        focus: function( event, ui ) {
+            event.preventDefault();
+            this.value = ui.item.label;
+            $("#{{ form.machine.id_for_label}}").val(ui.item.value);
+        }
+  });
+{% endblock %}

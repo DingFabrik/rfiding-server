@@ -1,0 +1,10 @@
+<div class="clickable active_toggle" hx-get="{% url request.resolver_match.namespace|add:':toggle-active' pk=object.pk %}">
+  {% if object.is_active %}
+  <i class="bi-check-circle-fill text-success" aria-hidden="true"></i>
+  {% else %}
+  <i class="bi-x-circle-fill text-danger" aria-hidden="true"></i>
+  {% endif %}
+  <div class="htmx-indicator spinner-border spinner-border-sm" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+</div>

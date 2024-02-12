@@ -1,0 +1,24 @@
+{% extends "base_list.html" %}
+{% load i18n %}
+
+{% block top_actions %}
+{% endblock %}
+{% block bottom_actions %}
+{% endblock %}
+
+{% block table %}
+    <thead>
+        <tr>
+            <th>{% trans "Date" %}</th>
+            <th>{% trans "Machine" %}</th>
+            <th>{% trans "Token" %}</th>
+        </tr>
+        </thead>
+{% for object in object_list %}
+<tr>
+<td>{{ object.timestmap }}</td>
+<td>{{ object.machine }}</td>
+<td>{{ object.token }}</td>
+</tr>
+{% endfor %}
+{% endblock %}

@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}
+{% trans "Welcome to RfiDing" %}
+{% endblock title %}
+
+{% block content %}
+<div class="row pb-5">
+    <div class="col-sm pb-5">
+        <div class="card border-secondary text-center">
+            <div class="card-header">
+                <a href="@controllers.routes.TokenController.listTokens">{% trans "Tokens" %}</a>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col">
+                        <h4 class="card-title">{{ activeTokenCount }}</h4>
+                        <p class="card-text text-secondary">{% trans "Active" %}</p>
+                    </div>
+                    <div class="col">
+                        <h4 class="card-title">{{ tokenCount }}</h4>
+                        <p class="card-text text-secondary">{% trans "Total" %}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm mb-3">
+        <div class="card border-secondary text-center">
+            <div class="card-header">
+                <a href="@controllers.routes.PersonController.listPersons">{% trans "People" %}</a>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col">
+                        <h4 class="card-title">{{ activePeopleCount }}</h4>
+                        <p class="card-text text-secondary">{% trans "Active" %}</p>
+                    </div>
+                    <div class="col">
+                        <h4 class="card-title">{{ peopleCount }}</h4>
+                        <p class="card-text text-secondary">{% trans "Total" %}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm mb-3">
+        <div class="card border-secondary text-center">
+            <div class="card-header">
+                <a href="@controllers.routes.MachineController.listMachines">{% trans "Machines" %}</a>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col">
+                        <h4 class="card-title">{{ activeMachineCount }}</h4>
+                        <p class="card-text text-secondary">{% trans "Active" %}</p>
+                    </div>
+                    <div class="col">
+                        <h4 class="card-title">{{ machineCount }}</h4>
+                        <p class="card-text text-secondary">{% trans "Total" %}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

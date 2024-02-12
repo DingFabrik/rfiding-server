@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load base_extra %}
+
+{% block title%}
+{% get_verbose_name_plural model %}
+{% endblock %}
+
+{% block top_actions %}
+{% if can_create %}
+<a href="{% url request.resolver_match.namespace|add:':create' %}" class="btn btn-primary"><i class="bi-plus-lg"></i> {% with model|verbose_name as modelname %}{% blocktrans %}Add {{ modelname }}{% endblocktrans %}{% endwith %}</a>
+{% endif %}
+{% endblock %}
+
+{% block bottom_actions %}
+{% if can_create %}
+<a href="{% url request.resolver_match.namespace|add:':create' %}" class="btn btn-primary float-end"><i class="bi-plus-lg"></i> {% with model|verbose_name as modelname %}{% blocktrans %}Add {{ modelname }}{% endblocktrans %}{% endwith %}</a>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+<table class="table table-bordered table-hover">
+{% block table %}
+{% endblock %}
+</table>
+{% include "base_pagination.html" %}
+{% endblock %}

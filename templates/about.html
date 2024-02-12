@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}
+{% trans "About" %}
+{% endblock %}
+
+{% block content %}
+<div class="col-md-12 order-md-1">
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label for="version">{% trans "Version" %}</label>
+            <input type="text"
+                   class="form-control"
+                   value="{{ version }}"
+                   readonly
+            />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3 mb-3">
+            <label for="scalaVersion">{% trans "Python version" %}</label>
+            <input type="text"
+                   class="form-control"
+                   value="{{ python_version }}"
+                   readonly
+            />
+        </div>
+        <div class="col-md-3 mb-3">
+            <label for="sbtVersion">{% trans "Django version" %}</label>
+            <input type="text"
+                   class="form-control"
+                   value="{{ django_version }}"
+                   readonly
+            />
+        </div>
+    </div>
+</div>
+{% endblock %}

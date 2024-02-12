@@ -1,0 +1,10 @@
+{% extends "base_form.html" %}
+{% load i18n %}
+
+{% block title %}
+{% if user %}
+{% blocktrans %}Edit {{ user }}{% endblocktrans %}
+{% else %}
+{% blocktrans %}Add a new user{% endblocktrans %}
+{% endif %}
+{% endblock %}

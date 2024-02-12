@@ -1,0 +1,114 @@
+{% extends "base_detail.html" %}
+{% load i18n %}
+
+{% block content %}
+<h4>{% trans "Details" %}</h4>
+<ul class="mb-5 list-unstyled">
+    <li><span class="fw-bold text-secondary-emphasis">Member ID:</span> {{ person.member_id }}</li>
+    <li><span class="fw-bold text-secondary-emphasis">Name:</span> {{ person.name }}</li>
+    <li><span class="fw-bold text-secondary-emphasis">Email:</span> {{ person.email }}</li>
+    <li><span class="fw-bold text-secondary-emphasis">Is Active:</span> {% include "snippets/active_toggle.html" %}</li>
+</ul>
+
+<div class="mb-5">
+    <h4>{% trans "Tokens" %}</h4>
+    <div class="row">
+        {% with tokens=person.token_set.all %}
+            {% for token in tokens %}
+            <div class="col col-1 col-sm-2 col-md-4 mb-2">
+                {% include "token_card.html" %}
+            </div>
+            {% empty %}
+            <div class="col">
+
+            <div class="col alert alert-secondary">
+                {% with name=person.name %}{% blocktrans %}<b>{{ name }}</b> has no tokens.{% endblocktrans %}{% endwith %}
+            </div>
+            </div>
+        {% endfor %}
+        {% endwith %}
+    </div>
+</div>
+
+<div class="row">
+<div class="mb-5 col-12">
+    <h4>{% trans "Qualifications" %}
+        {% if perms.people.change_person %}
+            <a class="btn btn-primary btn-sm float-end" href="{% url "people:qualify" person.pk %}">{% trans "Add Qualification" %}</a>
+        {% endif %}
+    </h4>
+    {% if qualifications %}
+    <div>{% with name=person.name %}{% blocktrans %}<b>{{ name }}</b> is qualified for the following machines:{% endblocktrans %}{% endwith %}</div>
+    <table class="table table-striped table-bordered mb-4">
+        <thead>
+            <tr>
+                <th>{% trans "Hostname" %}</th>
+                <th>{% trans "Name" %}</th>
+                <th>{% trans "Instructed by" %}</th>
+                <th>{% trans "Comment" %}</th>
+                <th>{% trans "Date" %}</th>
+                <th>{% trans "Revoke" %}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for qualification in qualifications %}
+            <tr>
+                <td><a href="{% url "machines:detail" qualification.machine.id %}">{{ qualification.machine.hostname }}</a></td>
+                <td><a href="{% url "machines:detail" qualification.machine.id %}">{{ qualification.machine.name }}</a></td>
+                <td>{% if qualification.instructed_by %}
+                        <a href="{% url "people:detail" qualification.instructed_by.pk %}">{{ qualification.instructed_by }}</a>
+                    {% endif %}
+                </td>
+                <td>{{ qualification.comment }}</td>
+                <td>{{ qualification.created|date:"DATE_FORMAT" }}</td>
+                {% if perms.people.qualify_person %}
+                    <td><a href="{% url "people:revoke-qualification" person.pk qualification.pk %}">{% include "snippets/hoverable_revoke.html" %}</a></td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="alert alert-secondary">{% with name=person.name %}{% blocktrans %}<b>{{ name }}</b> is not qualified for any machines.{% endblocktrans %}{% endwith %}</div>
+    {% endif %}
+</div>
+
+<div class="mb-5 col-12">
+    <h4>{% trans "Instructor for" %}
+        {% if perms.people.change_person %}
+        <a class="btn btn-primary btn-sm float-end" href="{% url "people:add-instructor" person.pk %}">{% trans "Add as instructor" %}</a>
+        {% endif %}
+    </h4>
+    {% if can_instruct %}
+    <div>{% with name=person.name %}{% blocktrans %}<b>{{ name }}</b> can instruct people for the following machines:{% endblocktrans %}{% endwith %}</div>
+    <table class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <th>{% trans "Hostname" %}</th>
+                <th>{% trans "Name" %}</th>
+                <th>{% trans "Date" %}</th>
+                <th>{% trans "Revoke" %}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for instructor in can_instruct %}
+            <tr>
+                <td><a href="{% url "machines:detail" instructor.machine.pk %}">{{ instructor.machine.hostname }}</a></td>
+                <td><a href="{% url "machines:detail" instructor.machine.pk %}">{{ instructor.machine.name }}</a></td>
+                <td>{{ instructor.created|date:"DATE_FORMAT" }}</td>
+                {% if perms.people.change_instructor %}
+                    <td>
+                        <a href="{% url "people:revoke-instructor" person.pk instructor.pk %}">{% include "snippets/hoverable_revoke.html" %}</a>
+                    </td>
+                    {% endif %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+        <div class="alert alert-secondary">{% with name=person.name %}{% blocktrans %}<b>{{ name }}</b> can not instruct people for any machines.{% endblocktrans %}{% endwith %}</div>
+    {% endif %}
+    
+</div>
+</div>
+{% endblock %}

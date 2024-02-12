@@ -1,28 +1,31 @@
-from typing import Any
-from django.http import HttpRequest, HttpResponse
-from django.shortcuts import redirect
-from django.urls import reverse, reverse_lazy
-from django.views.generic.edit import FormView
-from django.contrib.auth import get_user_model
-from base.forms import InitialSetupForm
-from django.contrib.auth import login
+from django.shortcuts import render
+from django.views.generic import TemplateView
+import subprocess
+import platform
+import django
+from django.contrib.auth.mixins import PermissionRequiredMixin
 
+from rfiding import settings
 
-class InitialSetupView(FormView):
-    form_class = InitialSetupForm
-    template_name = "setup.html"
-    success_url = reverse_lazy('home_view')
+class AboutView(TemplateView):
+    template_name = 'about.html'
 
-    def get(self, request, *args, **kwargs):
-        if get_user_model().objects.all().count() > 0:
-            raise PermissionError()
-        return super().get(request, *args, **kwargs)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['version'] = settings.VERSION
+        context['python_version'] = platform.python_version()
+        context['django_version'] = django.get_version()
+        return context
     
-    def form_valid(self, form):
-        response = super().form_valid(form)
-        user = get_user_model()()
-        user.username = form.data['admin_username']
-        user.set_password(form.data['admin_password'])
-        user.save()
-        login(self.request, user)
-        return response
+    
+class BaseToggleActiveView(TemplateView, PermissionRequiredMixin):
+    template_name = 'snippets/active_toggle.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        object = self.model.objects.get(pk=self.kwargs['pk'])
+        object.is_active = not object.is_active
+        object.save()
+        context['object'] = object
+        return context

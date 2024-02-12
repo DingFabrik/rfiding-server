@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}
+{% trans "Unknown tokens" %}
+{% endblock %}
+
+{% block top_actions %}
+<a href="{% url 'tokens:clear-unknown' %}" class="btn btn-primary"><i class="bi-arrow-clockwise"></i> {% trans "Clear list" %}</a>
+{% endblock %}
+
+{% block content %}
+{% if tokens %}
+<table class="table">
+    <thead>
+        <tr>
+            <th>{% trans "Serial" %}</th>
+            <th>{% trans "Machine" %}</th>
+            <th>{% trans "Timestamp" %}</th>
+            {% if perms.tokens.create_token %}
+            <th>{% trans "Modify" %}</th>
+            {% endif %}
+        </tr>
+        </thead>
+{% for token in tokens %}
+<tr>
+<td>{{ token.serial }}</td>
+<td>{{ token.machine }}</td>
+<td>{{ token.created_at }}</td>
+{% if perms.tokens.create_token %}
+<td><a href="{% url "tokens:assign" token.serial %}"><i class="bi-pencil-square"></i></a></td>
+{% endif %}
+</tr>
+{% endfor %}
+</table>
+{% else %}
+<div class="card text-center">
+    <div class="card-body">
+        <i class="bi-broadcast display-3 text-body-tertiary"></i>
+        <h4 class="h5">{% trans "No Tokens found." %}</h4>
+        <p class="text-body-tertiary">{% trans "Any token that is tappen on a reader and now known to the database will show up here." %}</p>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

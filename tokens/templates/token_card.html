@@ -1,0 +1,13 @@
+<div class="card {% if token.is_active %}border-success{% else %}border-danger{% endif %}">
+    <div class="card-header">
+        <i class="{% if token.is_active %}text-success{% else %}text-danger{% endif %} bi-broadcast"></i>
+        <a href="{% url 'tokens:detail' token.id %}">
+            Token #{{ token.id }} &bull; [{{ token.serial }}]
+        </a>
+    </div>
+    <div class="card-body">
+        <p class="card-text">
+            {{ token.purpose }}
+        </p>
+    </div>
+</div>

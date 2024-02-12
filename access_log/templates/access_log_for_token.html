@@ -1,0 +1,26 @@
+{% extends "base_list.html" %}
+{% load i18n %}
+
+{% block title %}
+{% with name=token %}{% blocktrans %}Access Log for {{ name }}{% endblocktrans %}{% endwith %}
+{% endblock %}
+
+{% block top_actions %}
+{% endblock %}
+{% block bottom_actions %}
+{% endblock %}
+
+{% block table %}
+    <thead>
+        <tr>
+            <th>{% trans "Date" %}</th>
+            <th>{% trans "Machine" %}</th>
+        </tr>
+        </thead>
+{% for object in object_list %}
+<tr>
+<td>{{ object.timestmap }}</td>
+<td>{{ object.machine }}</td>
+</tr>
+{% endfor %}
+{% endblock %}
