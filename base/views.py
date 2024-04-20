@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, ListView
 import subprocess
 import platform
 import django
@@ -28,4 +28,14 @@ class BaseToggleActiveView(TemplateView, PermissionRequiredMixin):
         object.is_active = not object.is_active
         object.save()
         context['object'] = object
+        return context
+    
+
+class BaseListView(ListView, PermissionRequiredMixin):    
+    def get_paginate_by(self, queryset):
+        return self.request.user.page_length
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["model"] = self.model
         return context

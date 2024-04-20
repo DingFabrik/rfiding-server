@@ -20,7 +20,7 @@ class TokenListView(ListView, PermissionRequiredMixin):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["can_create"] = self.request.user.has_perm("tokens.create_token")
+        context["can_create"] = self.request.user.has_perm("tokens.add_token")
         context["model"] = self.model
         return context
     
@@ -39,7 +39,7 @@ class ClearUnknownTokensView(View, PermissionRequiredMixin):
         return redirect('tokens:unknown')
 
 class AssignTokenView(CreateView, PermissionRequiredMixin):
-    permission_required = 'tokens.create_token'
+    permission_required = 'tokens.add_token'
 
     model = Token
     template_name = 'token_form.html'

@@ -2,13 +2,13 @@
 {% load i18n %}
 
 {% block top_actions %}
-{% if perms.tokens.create_token %}
+{% if perms.tokens.add_token %}
 <a href="{% url 'tokens:unknown' %}" class="btn btn-primary"><i class="bi-plus-lg"></i> {% blocktrans %}Assign Token{% endblocktrans %}</a>
 {% endif %}
 {% endblock %}
 
 {% block bottom_actions %}
-{% if perms.tokens.create_token %}
+{% if perms.tokens.add_token %}
 <a href="{% url 'tokens:unknown' %}" class="btn btn-primary"><i class="bi-plus-lg"></i> {% blocktrans %}Assign Token{% endblocktrans %}</a>
 {% endif %}
 {% endblock %}
@@ -20,7 +20,7 @@
             <th>{% trans "Purpose" %}</th>
             <th>{% trans "Active" %}</th>
             <th>{% trans "Owner" %}</th>
-            {% if perms.tokens.modify_token %}
+            {% if perms.tokens.change_token %}
             <th>{% trans "Modify" %}</th>
             {% endif %}
         </tr>
@@ -35,7 +35,7 @@
 {% else %}
 <td>{{ object.person }}</td>
 {% endif %}
-{% if perms.tokens.modify_token %}
+{% if perms.tokens.change_token %}
 <td><a href="{% url "tokens:update" object.pk %}"><i class="bi-pencil-square"></i></a></td>
 {% endif %}
 </tr>

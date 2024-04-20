@@ -63,11 +63,11 @@ class CheckMachineAccessView(APIView):
         except Token.DoesNotExist:
             return Response({"error": "Token does not exist", "access": 0}, status=status.HTTP_404_NOT_FOUND)
         
-        if not token.is_active or not token.person.is_active:
-            return Response({"error": "Token/Person is not active", "access": 0}, status=status.HTTP_403_FORBIDDEN)
+        if not token.is_active or not token.user.is_active:
+            return Response({"error": "Token/User is not active", "access": 0}, status=status.HTTP_403_FORBIDDEN)
         
-        if not token.person.qualifications.filter(machine=machine).exists():
-            return Response({"error": "Person does not have access to machine", "access": 0}, status=status.HTTP_403_FORBIDDEN)
+        if not token.user.qualifications.filter(machine=machine).exists():
+            return Response({"error": "User does not have access to machine", "access": 0}, status=status.HTTP_403_FORBIDDEN)
         
         log = AccessLog.objects.create(machine=machine, token=token, type=LOG_TYPE_ENABLED)
         log.save()

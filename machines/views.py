@@ -2,11 +2,11 @@ from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 
-from base.views import BaseToggleActiveView
+from base.views import BaseToggleActiveView, BaseListView
 from .models import Machine
 from .forms import MachineForm
 
-class MachineListView(ListView, PermissionRequiredMixin):
+class MachineListView(BaseListView, PermissionRequiredMixin):
     permission_required = 'machines.view_machine'
 
     model = Machine
@@ -18,7 +18,7 @@ class MachineListView(ListView, PermissionRequiredMixin):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["can_create"] = self.request.user.has_perm("machines.create_machine")
+        context["can_create"] = self.request.user.has_perm("machines.add_machine")
         context["model"] = self.model
         return context
 
