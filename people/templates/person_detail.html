@@ -48,9 +48,9 @@
     <table class="table table-striped table-bordered mb-4 mt-1">
         <thead>
             <tr>
-                <th>{% trans "Hostname" %}</th>
                 <th>{% trans "Name" %}</th>
                 <th>{% trans "Instructed by" %}</th>
+                <th>{% trans "Permission Level" %}</th>
                 <th>{% trans "Comment" %}</th>
                 <th>{% trans "Date" %}</th>
                 {% if perms.people.qualify_person %}
@@ -61,12 +61,12 @@
         <tbody>
             {% for qualification in qualifications %}
             <tr>
-                <td><a href="{% url "machines:detail" qualification.machine.id %}">{{ qualification.machine.hostname }}</a></td>
                 <td><a href="{% url "machines:detail" qualification.machine.id %}">{{ qualification.machine.name }}</a></td>
                 <td>{% if qualification.instructed_by %}
                         <a href="{% url "people:detail" qualification.instructed_by.pk %}">{{ qualification.instructed_by }}</a>
                     {% endif %}
                 </td>
+                <td>{{ qualification.permission_level }}</td>
                 <td>{{ qualification.comment }}</td>
                 <td>{{ qualification.created|date:"DATE_FORMAT" }}</td>
                 {% if perms.people.qualify_person %}

@@ -1,3 +1,4 @@
+import datetime
 from people.models import PERMISSION_LEVELS, Qualification
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -71,6 +72,7 @@ class CheckMachineAccessView(APIView):
             space_state = SpaceState.objects.first()
             if space_state != None and not space_state.is_open:
                 return Response({"error": "Space is closed", "access": 0}, status=status.HTTP_403_FORBIDDEN)
-        
+        now = datetime.datetime.now()
+        time = self.times.filter(weekdays__contains=now.weekday()).filter(start_time__lte=now.time()).filter(end_time__gte=now.time())
         AccessLog.objects.create(machine=machine, token=token, type=LOG_TYPE_ENABLED)
-        return Response({"access": 1}, status=status.HTTP_200_OK)
+        return Response({"access": 1, "workingtime": (time - now).total_seconds()}, status=status.HTTP_200_OK)

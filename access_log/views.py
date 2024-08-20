@@ -6,7 +6,8 @@ from .models import AccessLog
 from tokens.models import Token
 
 class AccessLogListView(ListView):
-    queryset = AccessLog.objects.select_related('token').select_related('machine').all().order_by('id')
+    model = AccessLog
+    queryset = AccessLog.objects.select_related('token').all()
     template_name = 'access_log_list.html'
     context_object_name = 'access_logs'
     ordering = ['-timestamp']
