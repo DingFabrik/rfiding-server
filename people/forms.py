@@ -13,7 +13,7 @@ class QualifyPersonForm(forms.ModelForm):
     machine_autocomplete = forms.CharField(label=_('Machine'))
     class Meta:
         model = Qualification
-        fields = ['machine', 'person', 'instructed_by', 'comment']
+        fields = ['machine', 'person', 'instructed_by', 'permission_level', 'comment']
         widgets = {
             'person': forms.HiddenInput(),
             'machine': forms.HiddenInput(),

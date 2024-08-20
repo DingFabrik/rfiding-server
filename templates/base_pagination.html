@@ -18,7 +18,7 @@
         {% endfor %}
         <li class="page-item active"><a class="page-link" href="#">{{ page_obj.number}}</a></li>
         {% for page in page_obj.number|add:1|range:page_obj.paginator.num_pages|limit_to:3 %}
-            <li class="page-item"><a class="page-link" href="@changePage(page * pageSize)">{{ page }}</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{ page }}">{{ page }}</a></li>
         {% endfor %}
         {% if page_obj.has_next %}
         <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}"><i class="bi-chevron-right"></i></a></li>

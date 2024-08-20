@@ -9,6 +9,7 @@ from .models import Token, UnknownToken
 from .forms import TokenForm
 
 class TokenListView(ListView, PermissionRequiredMixin):
+    queryset = Token.objects.select_related('person').all().order_by('id')
     permission_required = 'tokens.view_token'
 
     model = Token

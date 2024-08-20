@@ -13,14 +13,14 @@
         }
         </style>
     </head>
-    <body bgcolor="<?=$color?>">
+    <body>
         <div>
             <h1>{% blocktrans %}Die Dingfabrik 3.0 ist {{ state_text }}.{% endblocktrans %}</h1>
             {% if warning != None %}
-            <p><?=$warning?></p>
+            <p>{{ warning }}</p>
             {% endif %}
             <p>{{ contact }}</p>
-            <p>{% blocktrans %}Dieser Status wurde vor <?=time_since(time()-$j->updated)?> gesetzt (<em>{{ status.updated_at }}</em>).{% endblocktrans %}</p>
+            <p>{% blocktrans %}Dieser Status wurde gesetzt (<em>{{ status.updated_at }}</em>).{% endblocktrans %}</p>
         </div>
     </body>
 </html>

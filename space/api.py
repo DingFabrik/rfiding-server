@@ -5,13 +5,6 @@ from django.conf import settings as SETTINGS
 
 from .models import SpaceState
 
-def formatted_mac(mac_address):
-    if mac_address is None:
-        return None
-    if not ":" in mac_address:
-        return ":".join(mac_address[i:i+2] for i in range(0, len(mac_address), 2))
-    return mac_address
-
 class APISpaceStatusView(APIView):
     permission_classes = [permissions.AllowAny]
 
