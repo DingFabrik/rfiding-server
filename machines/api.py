@@ -25,7 +25,7 @@ class MachineConfigView(APIView):
             return Response({"error": "Missing parameters"}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            machine = Machine.objects.get(mac_address=mac_address)
+            machine = Machine.objects.get(mac_address__iexact=mac_address)
         except Machine.DoesNotExist:
             return Response({"error": "Machine does not exist"}, status=status.HTTP_404_NOT_FOUND)
         
@@ -48,7 +48,7 @@ class CheckMachineAccessView(APIView):
             return Response({"error": "Missing parameters", "access": 0}, status=status.HTTP_400_BAD_REQUEST)
         
         try:
-            machine = Machine.objects.get(mac_address=mac_address)
+            machine = Machine.objects.prefetch_related('times').get(mac_address__iexact=mac_address)
         except Machine.DoesNotExist:
             return Response({"error": "Machine does not exist", "access": 0}, status=status.HTTP_404_NOT_FOUND)
         
@@ -56,7 +56,7 @@ class CheckMachineAccessView(APIView):
             return Response({"error": "Machine is restricted", "access": 0}, status=status.HTTP_403_FORBIDDEN)
         
         try:
-            token = Token.objects.get(serial=tokenID)
+            token = Token.objects.select_related('person').get(serial__iexact=tokenID)
         except Token.DoesNotExist:
             return Response({"error": "Token does not exist", "access": 0}, status=status.HTTP_404_NOT_FOUND)
         
@@ -72,6 +72,5 @@ class CheckMachineAccessView(APIView):
             if space_state != None and not space_state.is_open:
                 return Response({"error": "Space is closed", "access": 0}, status=status.HTTP_403_FORBIDDEN)
         
-        log = AccessLog.objects.create(machine=machine, token=token, type=LOG_TYPE_ENABLED)
-        log.save()
+        AccessLog.objects.create(machine=machine, token=token, type=LOG_TYPE_ENABLED)
         return Response({"access": 1}, status=status.HTTP_200_OK)
