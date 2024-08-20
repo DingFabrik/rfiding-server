@@ -75,4 +75,4 @@ class CheckMachineAccessView(APIView):
         now = datetime.datetime.now()
         time = machine.times.filter(weekdays__contains=now.weekday()).filter(start_time__lte=now.time()).filter(end_time__gte=now.time()).first()
         AccessLog.objects.create(machine=machine, token=token, type=LOG_TYPE_ENABLED)
-        return Response({"access": 1, "workingtime": (datetime.datetime.combine(datetime.now(), time.end_time) - now).total_seconds()}, status=status.HTTP_200_OK)
+        return Response({"access": 1, "workingtime": (datetime.datetime.combine(now, time.end_time) - now).total_seconds()}, status=status.HTTP_200_OK)
