@@ -11,6 +11,7 @@ urlpatterns = [
     path('<int:pk>', views.MachineDetailView.as_view(), name='detail'),
     path('add', views.MachineCreateView.as_view(), name='create'),
     path('<int:pk>/modify', views.MachineUpdateView.as_view(), name='update'),
+    path('<int:pk>/configure', views.MachineConfigureView.as_view(), name='configure'),
     path('<int:pk>/toggle_active', views.MachineToggleActiveView.as_view(), name='toggle-active'),
     path('<int:pk>/delete', views.MachineDeleteView.as_view(), name='delete'),
 

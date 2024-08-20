@@ -1,5 +1,3 @@
 from django.contrib import admin
 
-from .models import Firmware
-
-admin.site.register(Firmware)
+# Register your models here.

@@ -17,7 +17,7 @@
             <th>{% trans "Serial" %}</th>
             <th>{% trans "Machine" %}</th>
             <th>{% trans "Timestamp" %}</th>
-            {% if perms.tokens.add_token %}
+            {% if perms.tokens.create_token %}
             <th>{% trans "Modify" %}</th>
             {% endif %}
         </tr>
@@ -27,7 +27,7 @@
 <td>{{ token.serial }}</td>
 <td>{{ token.machine }}</td>
 <td>{{ token.created_at }}</td>
-{% if perms.tokens.add_token %}
+{% if perms.tokens.create_token %}
 <td><a href="{% url "tokens:assign" token.serial %}"><i class="bi-pencil-square"></i></a></td>
 {% endif %}
 </tr>

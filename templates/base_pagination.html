@@ -1,5 +1,7 @@
 {% load base_extra %}
 {% load i18n %}
+
+{% if page_obj.has_previous or page_obj.has_next %}
 <nav aria-label="Page navigation" class="float-start">
     <ul class="pagination">
         <li class="page-item {% if not page_obj.has_previous %}disabled{% endif %}">
@@ -31,3 +33,4 @@
     </li>
     </ul>
 </nav>
+{% endif %}

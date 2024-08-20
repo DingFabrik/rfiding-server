@@ -31,9 +31,16 @@ class Person(TimestampedModel):
             return f"{self.name}"
         return f"{self.name} (#{self.member_id})"
     
+PERMISSION_LEVELS = (
+    ('if_space_open', _('If space is open')),
+    ('always', _('Always')),
+    ('never', _('Never')),
+)
+    
 class Qualification(TimestampedModel):
     person = models.ForeignKey(Person, on_delete=models.CASCADE, related_name='qualifications')
     machine = models.ForeignKey(Machine, on_delete=models.CASCADE, related_name='qualified_people')
+    permission_level = models.CharField(max_length=20, choices=PERMISSION_LEVELS, default='if_space_open')
     comment = models.TextField(null=True, blank=True)
     instructed_by = models.ForeignKey(Person, on_delete=models.CASCADE, null=True, blank=True, related_name='instructed_qualifications')
     

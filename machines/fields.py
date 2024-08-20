@@ -1,5 +1,7 @@
 from django import forms
 
+from . import utils
+
 class WeekdayFormField(forms.TypedMultipleChoiceField):
     def __init__(self, *args, **kwargs):
         if 'choices' not in kwargs:

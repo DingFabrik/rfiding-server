@@ -13,12 +13,12 @@
     {% if form.errors %}
         <div class="row mt-2">
             <div class="col-md-12">
-                <div class="alert alert-danger" role="alert">{% trans "Username or password incorrect" %}</div>
+                <div class="alert alert-danger" role="alert">{% trans "E-Mail Address or password incorrect" %}</div>
             </div>
         </div>
     {% endif %}
     <div class="form-floating">
-        <input type="email" class="form-control" id="{{ form.username.id_for_label }}" name="{{ form.username.name }}" required value="{{ form.username.value }}" placeholder="{% trans "E-Mail Address" %}" style="margin-bottom: -1px;border-bottom-right-radius: 0;border-bottom-left-radius: 0;">
+        <input type="email" class="form-control" id="{{ form.username.id_for_label }}" name="{{ form.username.name }}" required value="{{ form.username.value|default:"" }}" placeholder="{% trans "E-Mail Address" %}" style="margin-bottom: -1px;border-bottom-right-radius: 0;border-bottom-left-radius: 0;">
         <label for="{{ form.username.id_for_label }}">{% trans "E-Mail Address" %}</label>
     </div>
     <div class="form-floating">

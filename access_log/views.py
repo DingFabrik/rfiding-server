@@ -16,7 +16,7 @@ class AccessLogListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["can_create"] = self.request.user.has_perm("access_log.add_accesslog")
+        context["can_create"] = self.request.user.has_perm("access_log.create_accesslog")
         context["model"] = self.model
         return context
     

@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'firmware',
     'machines',
     'people',
+    'space',
     'tokens',
     'users',
 
@@ -170,3 +171,5 @@ REST_FRAMEWORK = {
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 
 CRISPY_TEMPLATE_PACK = "bootstrap5"
+
+SPACE_STATE_SECRET = "CHANGEME"

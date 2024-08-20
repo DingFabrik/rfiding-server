@@ -27,6 +27,10 @@ class WeekdayField(models.CharField):
             else:
                 value = []
         return value
+    
+
+    def from_db_value(self, value, expression, connection):
+        return self.to_python(value)
 
     def get_db_prep_value(self, value, connection=None, prepared=False):
         return ",".join([str(x) for x in value or []])
@@ -37,6 +41,10 @@ class Machine(TimestampedModel):
     hostname = models.CharField(max_length=100)
     ip_address = models.GenericIPAddressField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
+
+    runtimer = models.IntegerField(default=0)
+    min_power = models.IntegerField(default=0)
+    control_parameter = models.CharField(max_length=100, null=True, blank=True)
 
     class Meta:
         verbose_name = _("Machine")
@@ -52,13 +60,9 @@ class Machine(TimestampedModel):
     def is_now_valid_time(self):
         if not self.times.all():
             return True
-        return self.times.filter(weekdays__contains=[datetime.datetime.today().weekday()]).filter(start_time__lte=datetime.datetime.now().time()).filter(end_time__gte=datetime.datetime.now().time()).exists()
+        now = datetime.datetime.now()
+        return self.times.filter(weekdays__contains=now.weekday()).filter(start_time__lte=now.time()).filter(end_time__gte=now.time()).exists()
 
-class MachineConfig(TimestampedModel):
-    machine = models.OneToOneField(Machine, on_delete=models.CASCADE, related_name='config')
-    runtimer = models.IntegerField(default=0)
-    min_power = models.IntegerField(default=0)
-    control_parameter = models.CharField(max_length=100)
 
 class MachineTimes(TimestampedModel):
     machine = models.ForeignKey(Machine, on_delete=models.CASCADE, related_name='times')

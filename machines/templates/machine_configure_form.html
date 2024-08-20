@@ -1,0 +1,70 @@
+{% extends "base_form.html" %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+
+{% block container_classes %}container{% endblock %}
+
+{% block title %}
+{% blocktrans %}Configure {{ machine.name }}{% endblocktrans %}
+{% endblock %}
+
+{% block content %}
+<form action="" method="post">
+    {% csrf_token %}
+    <div class="row">
+        <div class="col-md-6">
+            {{ form | crispy }}
+        </div>
+        <div class="col-md-6">
+
+            {{ formset.management_form }}
+            {% for timeform in formset %}
+            <div class="row g-3">
+                    {{ timeform.id | as_crispy_field }}
+                <div class="col-sm">
+                    <label for="id_times-{{ forloop.counter0 }}-weekdays-group" class="form-label">Weekdays</label>
+                    <div id="id_times-{{ forloop.counter0 }}-weekdays-group" class="btn-group" role="group" aria-label="Basic checkbox toggle button group">
+                        <input type="checkbox" class="btn-check" name="times-{{ forloop.counter0 }}-weekdays"{% if 0 in timeform.weekdays.value or '0' in timeform.weekdays.value %} checked{% endif %} value="0" id="id_times-{{ forloop.counter0 }}-weekdays_0">
+                        <label for="id_times-{{ forloop.counter0 }}-weekdays_0" class="btn btn-outline-primary">Mo</label>
+
+                        <input type="checkbox" class="btn-check" name="times-{{ forloop.counter0 }}-weekdays"{% if 1 in timeform.weekdays.value or '1' in timeform.weekdays.value %} checked{% endif %} value="1" id="id_times-{{ forloop.counter0 }}-weekdays_1">
+                        <label for="id_times-{{ forloop.counter0 }}-weekdays_1" class="btn btn-outline-primary">Tu</label>
+
+                        <input type="checkbox" class="btn-check" name="times-{{ forloop.counter0 }}-weekdays"{% if 2 in timeform.weekdays.value or '2' in timeform.weekdays.value %} checked{% endif %} value="2" id="id_times-{{ forloop.counter0 }}-weekdays_2">
+                        <label for="id_times-{{ forloop.counter0 }}-weekdays_2" class="btn btn-outline-primary">We</label>
+
+                        <input type="checkbox" class="btn-check" name="times-{{ forloop.counter0 }}-weekdays"{% if 3 in timeform.weekdays.value or '3' in timeform.weekdays.value %} checked{% endif %} value="3" id="id_times-{{ forloop.counter0 }}-weekdays_3">
+                        <label for="id_times-{{ forloop.counter0 }}-weekdays_3" class="btn btn-outline-primary">Th</label>
+
+                        <input type="checkbox" class="btn-check" name="times-{{ forloop.counter0 }}-weekdays"{% if 4 in timeform.weekdays.value or '4' in timeform.weekdays.value %} checked{% endif %} value="4" id="id_times-{{ forloop.counter0 }}-weekdays_4">
+                        <label for="id_times-{{ forloop.counter0 }}-weekdays_4" class="btn btn-outline-primary">Fr</label>
+
+                        <input type="checkbox" class="btn-check" name="times-{{ forloop.counter0 }}-weekdays"{% if 5 in timeform.weekdays.value or '5' in timeform.weekdays.value %} checked{% endif %} value="5" id="id_times-{{ forloop.counter0 }}-weekdays_5">
+                        <label for="id_times-{{ forloop.counter0 }}-weekdays_5" class="btn btn-outline-primary">Sa</label>
+
+                        <input type="checkbox" class="btn-check" name="times-{{ forloop.counter0 }}-weekdays"{% if 6 in timeform.weekdays.value or '6' in timeform.weekdays.value %} checked{% endif %} value="6" id="id_times-{{ forloop.counter0 }}-weekdays_6">
+                        <label for="id_times-{{ forloop.counter0 }}-weekdays_6" class="btn btn-outline-primary">Su</label>
+                    </div>
+                    {% if timeform.weekdays.errors %}
+                    <p id="error_1_id_times-0-start_time" class="invalid-feedback"><strong>{{ timeform.weekdays.errors }}</strong></p>
+                    {% endif %}
+                </div>
+                <div class="col-sm">
+                  {{ timeform.start_time | as_crispy_field }}
+                </div>
+                <div class="col-sm">
+                    {{ timeform.end_time | as_crispy_field }}
+                </div>
+              </div>
+            {% endfor %}
+        </div>
+    </div>
+
+            <button class="btn btn-primary" type="submit">{% trans "Save" %}</button>
+        {% if object and can_delete %}
+            <a class="btn btn-danger float-end" href="{% url request.resolver_match.namespace|add:':delete' object.pk %}">
+                <i class="bi-trash me-1"></i> {% trans 'Delete' %}
+            </a>
+        {% endif %}
+</form>
+{% endblock %}

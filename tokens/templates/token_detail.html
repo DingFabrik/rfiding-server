@@ -7,6 +7,7 @@
 <li><span class="fw-bold text-secondary-emphasis">Serial:</span> {{ object.serial }}<br></li>
 <li><span class="fw-bold text-secondary-emphasis">Purpose:</span> {{ object.purpose }}<br></li>
 <li><span class="fw-bold text-secondary-emphasis">Owner:</span> <a href="{% url 'people:detail' object.pk %}">{{ object.person }}</a></li>
+<li><span class="fw-bold text-secondary-emphasis">Is Active:</span> {% include "snippets/active_toggle.html" %}<br></li>
 </ul>
 
 <a class='btn btn-primary'

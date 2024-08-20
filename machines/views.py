@@ -2,11 +2,11 @@ from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 
-from base.views import BaseToggleActiveView, BaseListView
+from base.views import BaseToggleActiveView
 from .models import Machine
-from .forms import MachineForm
+from .forms import MachineForm, ConfigureMachineForm, MachineTimeFormset
 
-class MachineListView(BaseListView, PermissionRequiredMixin):
+class MachineListView(ListView, PermissionRequiredMixin):
     permission_required = 'machines.view_machine'
 
     model = Machine
@@ -18,7 +18,7 @@ class MachineListView(BaseListView, PermissionRequiredMixin):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["can_create"] = self.request.user.has_perm("machines.add_machine")
+        context["can_create"] = self.request.user.has_perm("machines.create_machine")
         context["model"] = self.model
         return context
 
@@ -60,6 +60,32 @@ class MachineUpdateView(UpdateView, PermissionRequiredMixin):
         context = super().get_context_data(**kwargs)
         context['can_delete'] = self.request.user.has_perm('machines.delete_machine')
         return context
+
+class MachineConfigureView(UpdateView, PermissionRequiredMixin):
+    permission_required = 'machines.change_machine'
+
+    model = Machine
+    template_name = 'machine_configure_form.html'
+    form_class = ConfigureMachineForm
+    context_object_name = 'machine'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['formset'] = kwargs['formset'] if 'formset' in kwargs else MachineTimeFormset(prefix="times", queryset=context['machine'].times.all())
+        print(context['formset'])
+        return context
+    
+    def form_valid(self, form):
+        formset = MachineTimeFormset(prefix="times", data=self.request.POST)
+        if formset.is_valid():
+            self.object = form.save()
+            instances = formset.save(commit=False)
+            for instance in instances:
+                instance.machine = self.object
+                instance.save()
+            return super().form_valid(form)
+        print(formset.errors)
+        return self.render_to_response(self.get_context_data(form=form, formset=formset))
 
 class MachineDeleteView(DeleteView, PermissionRequiredMixin):
     permission_required = 'machines.delete_machine'

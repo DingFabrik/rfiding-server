@@ -35,8 +35,22 @@ $( "#{{ form.machine_autocomplete.id_for_label}}" ).autocomplete({
     minLength: 1,
         select: function( event, ui ) {
             event.preventDefault();
+            console.log(ui);
             this.value = ui.item.label;
             $("#{{ form.machine.id_for_label}}").val(ui.item.value);
+
+            select = $("#{{ form.instructed_by.id_for_label}}");
+            empty_text = select.children().first().html();
+            select.empty();
+            select.append($("<option>")
+                .val("")
+                .html(empty_text));
+            for (index in ui.item.instructors) {
+                instructor = ui.item.instructors[index];
+                select.append($("<option>")
+                    .val(instructor.value)
+                    .html(instructor.label));
+            }
         },
         focus: function( event, ui ) {
             event.preventDefault();

@@ -20,10 +20,12 @@ from django.urls import path, include
 from base.views import AboutView
 from users.views import HomeView
 from machines.api import CheckMachineAccessView, MachineConfigView
+from space.api import APISpaceStatusView
 
 api_urls = [
     path('machine/check', CheckMachineAccessView.as_view(), name='machine_check'),
     path('machine/config', MachineConfigView.as_view(), name='machine_config'),
+    path('space/status', APISpaceStatusView.as_view(), name='space_status'),
 ]
 
 urlpatterns = [
@@ -33,6 +35,7 @@ urlpatterns = [
     path('access_log/', include('access_log.urls', namespace='access_log')),
     path('machines/', include('machines.urls', namespace='machines')),
     path('people/', include('people.urls', namespace='people')),
+    path('space/', include('space.urls', namespace='space')),
     path('tokens/', include('tokens.urls', namespace='tokens')),
     path('users/', include('users.urls', namespace='users')),
     path('firmware/', include('firmware.urls', namespace='firmware')),
