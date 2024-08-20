@@ -37,7 +37,7 @@ class WeekdayField(models.CharField):
 
 class Machine(TimestampedModel):
     name = models.CharField(max_length=100)
-    mac_address = models.CharField(max_length=17)
+    mac_address = models.CharField(max_length=17, db_index=True)
     hostname = models.CharField(max_length=100)
     ip_address = models.GenericIPAddressField(null=True, blank=True)
     is_active = models.BooleanField(default=True)

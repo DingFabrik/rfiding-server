@@ -63,11 +63,11 @@
             <tr>
                 <td><a href="{% url "machines:detail" qualification.machine.id %}">{{ qualification.machine.name }}</a></td>
                 <td>{% if qualification.instructed_by %}
-                        <a href="{% url "people:detail" qualification.instructed_by.pk %}">{{ qualification.instructed_by }}</a>
+                        <a href="{% url "people:detail" qualification.instructed_by.pk %}">{{ qualification.instructed_by|default:"--" }}</a>
                     {% endif %}
                 </td>
                 <td>{{ qualification.permission_level }}</td>
-                <td>{{ qualification.comment }}</td>
+                <td>{{ qualification.comment|default:"" }}</td>
                 <td>{{ qualification.created|date:"DATE_FORMAT" }}</td>
                 {% if perms.people.qualify_person %}
                     <td><a href="{% url "people:revoke-qualification" person.pk qualification.pk %}">{% include "snippets/hoverable_revoke.html" %}</a></td>

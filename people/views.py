@@ -11,8 +11,8 @@ from .forms import PersonForm,  QualifyPersonForm, InstructorForm
 
 class PersonListView(ListView, PermissionRequiredMixin):
     permission_required = 'people.view_person'
-
     model = Person
+    queryset = Person.objects.values('pk', 'name', 'email', 'is_active', 'member_id').all()
     template_name = 'person_list.html'
     context_object_name = 'people'
 
