@@ -82,7 +82,6 @@ class MachineConfigureView(UpdateView, PermissionRequiredMixin):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['formset'] = kwargs['formset'] if 'formset' in kwargs else MachineTimeFormset(prefix="times", queryset=context['machine'].times.all())
-        print(context['formset'])
         return context
     
     def form_valid(self, form):
@@ -94,7 +93,6 @@ class MachineConfigureView(UpdateView, PermissionRequiredMixin):
                 instance.machine = self.object
                 instance.save()
             return super().form_valid(form)
-        print(formset.errors)
         return self.render_to_response(self.get_context_data(form=form, formset=formset))
 
 class MachineDeleteView(DeleteView, PermissionRequiredMixin):
