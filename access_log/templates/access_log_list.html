@@ -11,14 +11,16 @@
         <tr>
             <th>{% trans "Date" %}</th>
             <th>{% trans "Machine" %}</th>
+            <th>{% trans "Action" %}</th>
             <th>{% trans "Token" %}</th>
         </tr>
         </thead>
 {% for object in object_list %}
 <tr>
 <td>{{ object.timestamp }}</td>
-<td>{{ object.machine }}</td>
-<td>{{ object.token }}</td>
+<td><a href="{% url 'machines:detail' object.machine.pk %}">{{ object.machine }}</a></td>
+<td>{{ object.type }}</td>
+<td><a href="{% url 'tokens:detail' object.token.pk %}">{{ object.token }}</td>
 </tr>
 {% endfor %}
 {% endblock %}
