@@ -10,7 +10,7 @@
     <div class="col-sm pb-5">
         <div class="card border-secondary text-center">
             <div class="card-header">
-                <a href="@controllers.routes.TokenController.listTokens">{% trans "Tokens" %}</a>
+                <a href="{% url 'tokens:list' %}">{% trans "Tokens" %}</a>
             </div>
             <div class="card-body">
                 <div class="row">
@@ -29,7 +29,7 @@
     <div class="col-sm mb-3">
         <div class="card border-secondary text-center">
             <div class="card-header">
-                <a href="@controllers.routes.PersonController.listPersons">{% trans "People" %}</a>
+                <a href="{% url 'people:list' %}">{% trans "People" %}</a>
             </div>
             <div class="card-body">
                 <div class="row">
@@ -48,7 +48,7 @@
     <div class="col-sm mb-3">
         <div class="card border-secondary text-center">
             <div class="card-header">
-                <a href="@controllers.routes.MachineController.listMachines">{% trans "Machines" %}</a>
+                <a href="{% url 'machines:list' %}">{% trans "Machines" %}</a>
             </div>
             <div class="card-body">
                 <div class="row">

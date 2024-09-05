@@ -7,7 +7,7 @@ from .models import Person, Qualification, Instructor
 class PersonForm(forms.ModelForm):
     class Meta:
         model = Person
-        fields = ['member_id', 'name', 'email', 'is_active']
+        fields = ['member_id', 'name', 'email', 'is_active', 'notes']
 
 class QualifyPersonForm(forms.ModelForm):
     machine_autocomplete = forms.CharField(label=_('Machine'))

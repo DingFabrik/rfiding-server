@@ -9,6 +9,7 @@ from machines.models import Machine
 class Person(TimestampedModel):
     name = models.CharField(max_length=100)
     email = models.EmailField(unique=True)
+    notes = models.TextField(null=True, blank=True)
     member_id = models.IntegerField(null=True, blank=True, unique=True)
     is_active = models.BooleanField(default=True)
     

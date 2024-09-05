@@ -10,6 +10,9 @@
     <li><span class="fw-bold text-secondary-emphasis">Name:</span> {{ person.name }}</li>
     <li><span class="fw-bold text-secondary-emphasis">Email:</span> {{ person.email }}</li>
     <li><span class="fw-bold text-secondary-emphasis">Is Active:</span> {% include "snippets/active_toggle.html" %}</li>
+    {% if object.notes %}
+        <li><span class="fw-bold text-secondary-emphasis">Notes:</span> {{ object.notes }}<br></li>
+    {% endif %}
 </ul>
     </div>
     <div class="col-12 col-md-6">

@@ -8,6 +8,9 @@
 <li><span class="fw-bold text-secondary-emphasis">Purpose:</span> {{ object.purpose }}<br></li>
 <li><span class="fw-bold text-secondary-emphasis">Owner:</span> <a href="{% url 'people:detail' object.person.pk %}">{{ object.person }}</a></li>
 <li><span class="fw-bold text-secondary-emphasis">Is Active:</span> {% include "snippets/active_toggle.html" %}<br></li>
+{% if object.notes %}
+<li><span class="fw-bold text-secondary-emphasis">Notes:</span> {{ object.notes }}<br></li>
+{% endif %}
 </ul>
 
 <a class='btn btn-primary'
