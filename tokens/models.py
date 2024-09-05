@@ -19,6 +19,7 @@ class Token(TimestampedModel):
     purpose = models.CharField(max_length=100)
     notes = models.TextField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
+    archived = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.serial}"
@@ -30,6 +31,7 @@ class Token(TimestampedModel):
         verbose_name = _("Token")
         verbose_name_plural = _("Tokens")
         ordering = ["pk"]
+        unique_together = ("serial", "archived")
 
 class UnknownToken(TimestampedModel):
     serial = models.CharField(max_length=20)
