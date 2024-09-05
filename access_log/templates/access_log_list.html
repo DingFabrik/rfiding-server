@@ -19,7 +19,7 @@
 <tr>
 <td>{{ object.timestamp }}</td>
 <td><a href="{% url 'machines:detail' object.machine.pk %}">{{ object.machine }}</a></td>
-<td>{{ object.type }}</td>
+<td>{{ object.get_type_display }}</td>
 <td><a href="{% url 'tokens:detail' object.token.pk %}">{{ object.token }}</td>
 </tr>
 {% endfor %}

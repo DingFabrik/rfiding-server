@@ -4,8 +4,10 @@
 
 {% block title %}
 {% if token %}
-{% blocktrans %}Edit {{ token }}{% endblocktrans %}
+{% blocktrans %}Edit <span class="text-primary-emphasis">{{ token }}</span>{% endblocktrans %}
+{% elif prefilled_serial %}
+{% blocktrans %}Assign Token{% endblocktrans %}
 {% else %}
-{% blocktrans %}Add a new token{% endblocktrans %}
+{% blocktrans %}Add a new Token{% endblocktrans %}
 {% endif %}
 {% endblock %}

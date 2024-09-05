@@ -108,10 +108,29 @@ class RevokeQualificationPersonView(DeleteView, PermissionRequiredMixin):
     def get_object(self, queryset: QuerySet[Any] | None = ...) -> Model:
         return self.model.objects.filter(person=self.kwargs['pk'], pk=self.kwargs['qualification']).first()
     
-
     def get_success_url(self):
         return reverse_lazy('people:detail', kwargs={'pk': self.kwargs['pk']})
     
+class EditQualificationPersonView(UpdateView, PermissionRequiredMixin):
+    permission_required = 'people.qualify_person'
+
+    model = Qualification
+    form_class = QualifyPersonForm
+    template_name = 'qualify_person.html'
+
+    def get_object(self, queryset: QuerySet[Any] | None = ...) -> Model:
+        return self.model.objects.filter(person=self.kwargs['pk'], pk=self.kwargs['qualification']).first()
+    
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context['person'] = Person.objects.get(pk=self.kwargs['pk'])
+        context['machine'] = context['form'].instance.machine
+        return context
+    
+    def get_success_url(self):
+        return reverse_lazy('people:detail', kwargs={'pk': self.kwargs['pk']})
+    
+
 class AddInstructorPersonView(CreateView, PermissionRequiredMixin):
     permission_required = 'people.change_instructors'
     

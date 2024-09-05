@@ -42,7 +42,7 @@ class MachineDetailView(DetailView, PermissionRequiredMixin):
         context = super().get_context_data(**kwargs)
         context['can_edit'] = self.request.user.has_perm('machines.change_machine')
         context['can_delete'] = self.request.user.has_perm('machines.delete_machine')
-        context['qualifications'] = self.object.qualified_people.select_related('person').all()
+        context['qualifications'] = self.object.qualified_people.select_related('person').select_related('instructed_by').all()
         context['qualifcations_count'] = len(context['qualifications'])
         context['instructors'] = self.object.instructors.select_related('person').all()
         context['instructors_count'] = len(context['instructors'])

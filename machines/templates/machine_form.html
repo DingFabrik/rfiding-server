@@ -4,7 +4,7 @@
 
 {% block title %}
 {% if machine %}
-{% blocktrans %}Edit {{ machine.name }}{% endblocktrans %}
+{% blocktrans %}Edit <span class="text-primary-emphasis">{{ machine.name }}</span>{% endblocktrans %}
 {% else %}
 {% blocktrans %}Add a new machine{% endblocktrans %}
 {% endif %}

@@ -55,7 +55,7 @@ class AssignTokenView(CreateView, PermissionRequiredMixin):
 
     def get_initial(self):
         initial = super().get_initial()
-        initial['serial'] = self.request.GET.get('serial')
+        initial['serial'] = self.kwargs['serial']
         return initial
     
     def form_valid(self, form):
@@ -64,6 +64,11 @@ class AssignTokenView(CreateView, PermissionRequiredMixin):
         if unknown_token.exists():
             unknown_token.delete()
         return r
+    
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context['prefilled_serial'] = True
+        return context
 
 class TokenDetailView(DetailView, PermissionRequiredMixin):
     permission_required = 'tokens.view_token'

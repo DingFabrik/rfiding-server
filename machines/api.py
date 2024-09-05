@@ -6,7 +6,7 @@ from rest_framework import status, permissions
 from space.models import SpaceState
 
 from .models import Machine
-from tokens.models import Token
+from tokens.models import Token, UnknownToken
 from access_log.models import AccessLog, LOG_TYPE_BOOTED, LOG_TYPE_ENABLED
 
 def formatted_mac(mac_address):
@@ -74,6 +74,7 @@ class CheckMachineAccessView(APIView):
         try:
             token = Token.objects.select_related('person').get(serial=tokenID)
         except Token.DoesNotExist:
+            UnknownToken.objects.get_or_create(serial=tokenID, machine=machine)
             return Response({"error": "Token does not exist", "access": 0}, status=status.HTTP_404_NOT_FOUND)
         
         if not token.is_active or not token.person.is_active:

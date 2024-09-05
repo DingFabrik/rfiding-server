@@ -3,8 +3,14 @@
 {% load static %}
 {% load crispy_forms_tags %}
 
+{% block container_classes %}container-slim{% endblock %}
+
 {% block title %}
-{% blocktrans %}Add qualification for {{ person }}{% endblocktrans %}
+{% if object %}
+    {% blocktrans %}Update qualification for <span class="text-primary-emphasis">{{ person }}</span> using <span class="text-primary-emphasis">{{ machine }}</span>{% endblocktrans %}
+{% else %}
+    {% blocktrans %}Add qualification for <span class="text-primary-emphasis">{{ person }}</span>{% endblocktrans %}
+{% endif %}
 {% endblock %}
 
 {% block content %}
@@ -12,7 +18,9 @@
     {% csrf_token %}
     {{ form.person }}
     {{ form.machine }}
+    {% if not object %}
     {{ form.machine_autocomplete|as_crispy_field }}
+    {% endif %}
     {{ form.machine.errors }}
     {{ form.instructed_by|as_crispy_field }}
     {{ form.permission_level|as_crispy_field }}

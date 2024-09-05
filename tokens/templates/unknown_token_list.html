@@ -11,14 +11,14 @@
 
 {% block content %}
 {% if tokens %}
-<table class="table">
+<table class="table table-bordered">
     <thead>
         <tr>
             <th>{% trans "Serial" %}</th>
             <th>{% trans "Machine" %}</th>
             <th>{% trans "Timestamp" %}</th>
             {% if perms.tokens.create_token %}
-            <th>{% trans "Modify" %}</th>
+            <th>{% trans "Assign" %}</th>
             {% endif %}
         </tr>
         </thead>
@@ -26,9 +26,9 @@
 <tr>
 <td>{{ token.serial }}</td>
 <td>{{ token.machine }}</td>
-<td>{{ token.created_at }}</td>
+<td>{{ token.created }}</td>
 {% if perms.tokens.create_token %}
-<td><a href="{% url "tokens:assign" token.serial %}"><i class="bi-pencil-square"></i></a></td>
+<td><a href="{% url "tokens:assign" token.serial %}"><i class="bi-link"></i></a></td>
 {% endif %}
 </tr>
 {% endfor %}
@@ -38,7 +38,7 @@
     <div class="card-body">
         <i class="bi-broadcast display-3 text-body-tertiary"></i>
         <h4 class="h5">{% trans "No Tokens found." %}</h4>
-        <p class="text-body-tertiary">{% trans "Any token that is tappen on a reader and now known to the database will show up here." %}</p>
+        <p class="text-body-tertiary">{% trans "Any token that is tappen on a reader and not known to the database will show up here." %}</p>
     </div>
 </div>
 {% endif %}

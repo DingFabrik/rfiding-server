@@ -10,7 +10,7 @@ class PersonForm(forms.ModelForm):
         fields = ['member_id', 'name', 'email', 'is_active', 'notes']
 
 class QualifyPersonForm(forms.ModelForm):
-    machine_autocomplete = forms.CharField(label=_('Machine'))
+    machine_autocomplete = forms.CharField(label=_('Machine'), required=False)
     class Meta:
         model = Qualification
         fields = ['machine', 'person', 'instructed_by', 'permission_level', 'comment']

@@ -13,6 +13,7 @@ urlpatterns = [
     path('<int:pk>/toggle_active', views.PersonToggleActiveView.as_view(), name='toggle-active'),
     path('<int:pk>/delete', views.PersonDeleteView.as_view(), name='delete'),
     path('<int:pk>/qualify', views.QualifyPersonView.as_view(), name='qualify'),
+    path('<int:pk>/qualify/<int:qualification>', views.EditQualificationPersonView.as_view(), name='edit-qualification'),
     path('<int:pk>/revoke/<int:qualification>', views.RevokeQualificationPersonView.as_view(), name='revoke-qualification'),
     path('<int:pk>/add-instructor', views.AddInstructorPersonView.as_view(), name='add-instructor'),
     path('<int:pk>/revoke-instructor/<int:instructor>', views.RevokeInstructorPersonView.as_view(), name='revoke-instructor'),

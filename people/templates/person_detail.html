@@ -57,6 +57,7 @@
                 <th>{% trans "Comment" %}</th>
                 <th>{% trans "Date" %}</th>
                 {% if perms.people.qualify_person %}
+                <th>{% trans "Edit" %}</th>
                 <th>{% trans "Revoke" %}</th>
                 {% endif %}
             </tr>
@@ -69,10 +70,11 @@
                         <a href="{% url "people:detail" qualification.instructed_by.pk %}">{{ qualification.instructed_by|default:"--" }}</a>
                     {% endif %}
                 </td>
-                <td>{{ qualification.permission_level }}</td>
+                <td>{{ qualification.get_permission_level_display }}</td>
                 <td>{{ qualification.comment|default:"" }}</td>
                 <td>{{ qualification.created|date:"DATE_FORMAT" }}</td>
                 {% if perms.people.qualify_person %}
+                    <td><a href="{% url "people:edit-qualification" person.pk qualification.pk %}"><i class="bi-pencil-square"></i></a></td>
                     <td><a href="{% url "people:revoke-qualification" person.pk qualification.pk %}">{% include "snippets/hoverable_revoke.html" %}</a></td>
                 {% endif %}
             </tr>
