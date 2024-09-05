@@ -4,12 +4,14 @@
         <tr>
             <th>{% trans "Date" %}</th>
             <th>{% trans "Machine" %}</th>
+            <th>{% trans "Action" %}</th>
         </tr>
         </thead>
 {% for object in object_list %}
 <tr>
-<td>{{ object.timestmap }}</td>
+<td>{{ object.timestamp }}</td>
 <td>{{ object.machine }}</td>
+<td>{{ object.action }}</td>
 </tr>
 {% endfor %}
 </table>

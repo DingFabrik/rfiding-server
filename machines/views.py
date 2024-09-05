@@ -1,4 +1,5 @@
 from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.db.models.query import QuerySet
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 
@@ -12,6 +13,13 @@ class MachineListView(ListView, PermissionRequiredMixin):
     model = Machine
     template_name = 'machine_list.html'
     context_object_name = 'machines'
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        search = self.request.GET.get('search')
+        if search:
+            queryset = queryset.filter(name__icontains=search)
+        return queryset
 
     def get_paginate_by(self, queryset):
         return self.request.user.page_length

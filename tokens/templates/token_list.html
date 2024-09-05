@@ -2,6 +2,9 @@
 {% load i18n %}
 
 {% block top_actions %}
+<form class="float-start me-3">
+    <input type="text" class="form-control" placeholder="{% trans "Search" %}" name="search" value="{{ request.GET.search }}">
+</form>
 {% if perms.tokens.create_token %}
 <a href="{% url 'tokens:unknown' %}" class="btn btn-primary"><i class="bi-plus-lg"></i> {% blocktrans %}Assign Token{% endblocktrans %}</a>
 {% endif %}
