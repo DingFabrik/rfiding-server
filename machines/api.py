@@ -35,7 +35,7 @@ class MachineConfigView(APIView):
         
         log = AccessLog.objects.create(machine=machine, type=LOG_TYPE_BOOTED)
         log.save()
-        return Response({"runTimer": machine.runtimer, "minPower": machine.min_power, "controlParameter": machine.control_parameter}, status=status.HTTP_200_OK)
+        return Response({"runtimer": machine.runtimer, "minPower": machine.min_power, "controlParameter": machine.control_parameter}, status=status.HTTP_200_OK)
         
 
 class CheckMachineAccessView(APIView):
