@@ -2,6 +2,8 @@ from django.views.generic import TemplateView, UpdateView, ListView, CreateView,
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth.views import PasswordChangeView
 from django.conf import settings
 from django.urls import reverse_lazy
 
@@ -74,3 +76,8 @@ class UserDeleteView(DeleteView, PermissionRequiredMixin):
     model = RFIDingUser
     template_name = "user_delete.html"
     success_url = reverse_lazy('users:list')
+
+class ChangePasswordView(PasswordChangeView):
+    form_class = PasswordChangeForm
+    success_url = reverse_lazy('home')
+    template_name = 'change_password.html'
