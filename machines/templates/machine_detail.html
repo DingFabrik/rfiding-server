@@ -42,13 +42,12 @@
     <thead>
         <tr>
             <th>{% trans "Name" %}</th>
-            <th>{% trans "Qualification Comment" %}</th>
             <th>{% trans "Access Type" %}
+            <th style="max-width: 40%;">{% trans "Qualification Comment" %}</th>
             <th>{% trans "Instructor" %}</th>
             <th>{% trans "Date" %}</th>
             {% if perms.people.qualify_person %}
-            <th>{% trans "Edit" %}
-            <th>{% trans "Revoke" %}</th>
+            <th width="60"></th>
             {% endif %}
         </tr>
     </thead>
@@ -57,12 +56,14 @@
         <tr>
             <td><a href="{% url "people:detail" qualification.person.id %}">{{ qualification.person.name }}</a></td>
             <td>{{ qualification.get_permission_level_display }}</td>
-            <td>{{ qualification.comment }}</td>
+            <td style="max-width: 600px;">{{ qualification.comment }}</td>
             <td>{{ qualification.instructed_by|default:"--" }}</td>
             <td>{{ qualification.created|date:"DATE_FORMAT" }}</td>
             {% if perms.people.qualify_person %}
-                <td><a href="{% url "people:edit-qualification" qualification.person.pk qualification.pk %}"><i class="bi-pencil-square me-2"></i></a></td>
-                <td><a href="{% url "people:revoke-qualification" qualification.person.pk qualification.pk %}">{% include "snippets/hoverable_revoke.html" %}</a></td>
+                <td>
+                    <a href="{% url "people:edit-qualification" qualification.person.pk qualification.pk %}" data-bs-toggle="tooltip" title="{% trans 'Edit' %}"><i class="bi-pencil-square me-2"></i></a>
+                    <a href="{% url "people:revoke-qualification" qualification.person.pk qualification.pk %}" data-bs-toggle="tooltip" title="{% trans 'Revoke' %}">{% include "snippets/hoverable_revoke.html" %}</a>
+                </td>
             {% endif %}
         </tr>
         {% endfor %}

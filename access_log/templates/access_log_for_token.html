@@ -15,12 +15,14 @@
         <tr>
             <th>{% trans "Date" %}</th>
             <th>{% trans "Machine" %}</th>
+            <th>{% trans "Action" %}</th>
         </tr>
         </thead>
 {% for object in object_list %}
 <tr>
-<td>{{ object.timestmap }}</td>
-<td>{{ object.machine }}</td>
+    <td><span data-bs-toggle="tooltip" title="{{ object.timestamp }}">{{ object.timestamp|naturaltime }}</span></td>
+    <td>{{ object.machine }}</td>
+    <td>{{ object.get_type_display }}</td>
 </tr>
 {% endfor %}
 {% endblock %}

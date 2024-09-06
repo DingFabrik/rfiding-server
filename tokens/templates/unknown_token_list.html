@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 {% load i18n %}
+{% load l10n %}
+{% load humanize %}
 
 {% block title %}
 {% trans "Unknown tokens" %}
@@ -16,7 +18,7 @@
         <tr>
             <th>{% trans "Serial" %}</th>
             <th>{% trans "Machine" %}</th>
-            <th>{% trans "Timestamp" %}</th>
+            <th>{% trans "Seen" %}</th>
             {% if perms.tokens.create_token %}
             <th>{% trans "Assign" %}</th>
             {% endif %}
@@ -26,7 +28,7 @@
 <tr>
 <td>{{ token.serial }}</td>
 <td>{{ token.machine }}</td>
-<td>{{ token.created }}</td>
+<td><span data-bs-toggle="tooltip" title="{{ token.created }}">{{ token.created|naturaltime }}</span></td>
 {% if perms.tokens.create_token %}
 <td><a href="{% url "tokens:assign" token.serial %}"><i class="bi-link"></i></a></td>
 {% endif %}
