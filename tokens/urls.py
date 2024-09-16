@@ -14,7 +14,7 @@ urlpatterns = [
         views.TokenToggleActiveView.as_view(),
         name="toggle-active",
     ),
-    path("<int:pk>/delete", views.TokenDeleteView.as_view(), name="delete"),
+    path("<int:pk>/archive", views.TokenArchiveView.as_view(), name="delete"),
     path("assign/<str:serial>", views.AssignTokenView.as_view(), name="assign"),
     path("unknown", views.UnknownTokenListView.as_view(), name="unknown"),
     path("unknown/clear", views.ClearUnknownTokensView.as_view(), name="clear-unknown"),

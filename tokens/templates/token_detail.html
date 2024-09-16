@@ -1,6 +1,17 @@
 {% extends "base_detail.html" %}
 {% load i18n %}
 
+{% block top_actions %}
+<div class="btn-group" role="group">
+{% if can_edit %}
+<a href="{% url request.resolver_match.namespace|add:':update' object.pk %}" class="btn btn-primary {% if object.archived %}disabled" aria-disabled="true"{% else %}"{% endif %}><i class="bi-pencil-square me-2"></i>{% trans "Edit "%}</a>
+{% endif %}
+{% if can_delete %}
+<a href="{% url request.resolver_match.namespace|add:':delete' object.pk %}" class="btn btn-danger {% if object.archived %}disabled" aria-disabled="true"{% else %}"{% endif %}><i class="bi-trash me-1"></i>{% trans "Archive"%}</a>
+{% endif %}
+</div>
+{% endblock %}
+
 {% block content %}
 <h4>{% trans "Details" %}</h4>
 <ul class="mb-4 list-unstyled">
@@ -8,6 +19,9 @@
 <li><span class="fw-bold text-secondary-emphasis">{% trans "Purpose" %}:</span> {{ object.purpose }}<br></li>
 <li><span class="fw-bold text-secondary-emphasis">{% trans "Owner" %}:</span> <a href="{% url 'people:detail' object.person.pk %}">{{ object.person }}</a></li>
 <li><span class="fw-bold text-secondary-emphasis">{% trans "Is Active" %}:</span> {% include "snippets/active_toggle.html" %}<br></li>
+{% if object.archived %}
+<li><span class="fw-bold text-secondary-emphasis">{% trans "Archived" %}:</span> {{ object.archived }}<br></li>
+{% endif %}
 {% if object.notes %}
 <li><span class="fw-bold text-secondary-emphasis">{% trans "Notes" %}:</span> {{ object.notes }}<br></li>
 {% endif %}

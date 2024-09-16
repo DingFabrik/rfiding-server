@@ -1,5 +1,6 @@
 from typing import Any
 from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.http import HttpRequest, HttpResponse
 from django.views.generic import (
     ListView,
     DetailView,
@@ -10,6 +11,7 @@ from django.views.generic import (
 )
 from django.urls import reverse_lazy
 from django.shortcuts import redirect
+from django.utils import timezone
 
 from base.views import BaseToggleActiveView
 from .models import Token, UnknownToken
@@ -17,7 +19,7 @@ from .forms import TokenForm
 
 
 class TokenListView(ListView, PermissionRequiredMixin):
-    queryset = Token.objects.select_related("person").all().order_by("id")
+    queryset = Token.objects.select_related("person").filter(archived=None).order_by("id")
     permission_required = "tokens.view_token"
 
     model = Token
@@ -119,12 +121,25 @@ class TokenUpdateView(UpdateView, PermissionRequiredMixin):
         return context
 
 
-class TokenDeleteView(DeleteView, PermissionRequiredMixin):
+class TokenArchiveView(DeleteView, PermissionRequiredMixin):
     permission_required = "tokens.delete_token"
 
     model = Token
-    template_name = "delete_confirm.html"
+    template_name = "archive_confirm.html"
     success_url = reverse_lazy("tokens:list")
+    
+    def handle(self):
+        token = self.get_object()
+        token.is_active = False
+        token.archived = timezone.now()
+        token.save()
+        return redirect(self.success_url)
+    
+    def delete(self, request: HttpRequest, *args: str, **kwargs: Any) -> HttpResponse:
+        return self.handle()
+
+    def post(self, request: HttpRequest, *args: str, **kwargs: Any) -> HttpResponse:
+        return self.handle()
 
 
 class TokenToggleActiveView(BaseToggleActiveView):

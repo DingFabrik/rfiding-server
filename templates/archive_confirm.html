@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% blocktrans %}Archive {{ object }}{% endblocktrans %}{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-12 col-md-offset-3">
+            <div class="alert-danger alert">{% blocktrans %}Do you really want to archive {{ object }}?{% endblocktrans %}</div>
+            <form action="" method="post">
+                {% csrf_token %}
+                <div class="text-right">
+                    <a href="{{ object.get_absolute_url }}" class="btn btn-secondary me-3">{% trans "No" %}</a>
+                    <input type="submit" value="{% trans "Yes" %}" class="btn btn-danger"/>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

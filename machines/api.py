@@ -109,7 +109,7 @@ class CheckMachineAccessView(APIView):
             )
 
         try:
-            token = Token.objects.select_related("person").get(serial=tokenID)
+            token = Token.objects.select_related("person").get(serial=tokenID, archived=None)
         except Token.DoesNotExist:
             UnknownToken.objects.get_or_create(serial=tokenID, machine=machine)
             return Response(
