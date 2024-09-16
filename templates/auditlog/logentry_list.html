@@ -1,0 +1,36 @@
+{% extends "base_list.html" %}
+{% load i18n %}
+{% load humanize %}
+
+{% block top_actions %}
+<form class="float-start me-3">
+    <input type="text" class="form-control" placeholder="{% trans "Search" %}" name="search" value="{{ request.GET.search }}">
+</form>
+{% endblock %}
+
+{% block table %}
+    <thead>
+        <tr>
+            <th>{% trans "Timestamp" %}</th>
+            <th>{% trans "User" %}</th>
+            <th>{% trans "Action" %}</th>
+            <th>{% trans "Object" %}
+            <th>{% trans "Changes" %}</th>
+        </tr>
+        </thead>
+{% for object in object_list %}
+<tr>
+<td><span data-bs-toggle="tooltip" title="{{ object.timestamp }}">{{ object.timestamp|naturaltime }}</span></td>
+<td>
+    {% if object.actor %}
+        <a href="{% url "users:detail" object.actor_id %}">{{ object.actor }}</a>
+    {% else %}
+        System
+    {% endif %}
+</td>
+<td>{{ object.get_action_display }}</td>
+<td>{{ object.content_type.name }} {{ object.object_repr }}</td>
+<td>{% trans "Changes" %}: {{ object.changes_dict|length }} - {% for change in object.changes_dict %}{{ change }}{% if not forloop.last %}{% if forloop.revcounter == 2 %} {% trans "and" %} {% else %}, {% endif %}{% else %}{% endif %}{% endfor %}</td>
+</tr>
+{% endfor %}
+{% endblock %}

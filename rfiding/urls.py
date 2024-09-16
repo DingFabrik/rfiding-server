@@ -18,7 +18,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
-from base.views import AboutView
+from base.views import AboutView, AuditlogView
 from users.views import HomeView
 from machines.api import CheckMachineAccessView, MachineConfigView
 from space.api import APISpaceStatusView
@@ -43,4 +43,5 @@ urlpatterns = [
     path("__debug__/", include("debug_toolbar.urls")),
     path("api/", include((api_urls, "api"), namespace="api")),
     path("about/", AboutView.as_view(), name="about"),
+    path("auditlog/", AuditlogView.as_view(), name="auditlog"),
 ]

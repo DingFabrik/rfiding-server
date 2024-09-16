@@ -56,6 +56,21 @@ argon2 = ["argon2-cffi (>=19.1.0)"]
 bcrypt = ["bcrypt"]
 
 [[package]]
+name = "django-auditlog"
+version = "3.0.0"
+description = "Audit log app for Django"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "django-auditlog-3.0.0.tar.gz", hash = "sha256:9de49f80a4911135d136017123cd73461f869b4947eec14d5e76db4b88182f3f"},
+    {file = "django_auditlog-3.0.0-py3-none-any.whl", hash = "sha256:92db1cf4a51ceca5c26b3ff46997d9e3305a02da1bd435e2efb5b8b6d300ce1f"},
+]
+
+[package.dependencies]
+Django = ">=3.2"
+python-dateutil = ">=2.7.0"
+
+[[package]]
 name = "django-autocomplete-light"
 version = "3.11.0"
 description = "Fresh autocompletes for Django"
@@ -116,6 +131,38 @@ files = [
 
 [package.dependencies]
 django = ">=4.2"
+
+[[package]]
+name = "factory-boy"
+version = "3.3.1"
+description = "A versatile test fixtures replacement based on thoughtbot's factory_bot for Ruby."
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "factory_boy-3.3.1-py2.py3-none-any.whl", hash = "sha256:7b1113c49736e1e9995bc2a18f4dbf2c52cf0f841103517010b1d825712ce3ca"},
+    {file = "factory_boy-3.3.1.tar.gz", hash = "sha256:8317aa5289cdfc45f9cae570feb07a6177316c82e34d14df3c2e1f22f26abef0"},
+]
+
+[package.dependencies]
+Faker = ">=0.7.0"
+
+[package.extras]
+dev = ["Django", "Pillow", "SQLAlchemy", "coverage", "flake8", "isort", "mongoengine", "mongomock", "mypy", "tox", "wheel (>=0.32.0)", "zest.releaser[recommended]"]
+doc = ["Sphinx", "sphinx-rtd-theme", "sphinxcontrib-spelling"]
+
+[[package]]
+name = "faker"
+version = "28.4.1"
+description = "Faker is a Python package that generates fake data for you."
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "Faker-28.4.1-py3-none-any.whl", hash = "sha256:e59c01d1e8b8e20a83255ab8232c143cb2af3b4f5ab6a3f5ce495f385ad8ab4c"},
+    {file = "faker-28.4.1.tar.gz", hash = "sha256:4294d169255a045990720d6f3fa4134b764a4cdf46ef0d3c7553d2506f1adaa1"},
+]
+
+[package.dependencies]
+python-dateutil = ">=2.4"
 
 [[package]]
 name = "freezegun"
@@ -196,4 +243,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "d14a07536202a054a23e027ddf8cd3d6c5a920dbf1cc887de43c8e2a25f4d823"
+content-hash = "c1bd2d7f07437ac4d9baa5c5306e88555c9b41b607accd33c728848a65af93f2"

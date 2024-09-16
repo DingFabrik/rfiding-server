@@ -51,6 +51,8 @@ INSTALLED_APPS = [
     "space",
     "tokens",
     "users",
+
+    "auditlog"
 ]
 
 MIDDLEWARE = [
@@ -62,6 +64,7 @@ MIDDLEWARE = [
     "users.middleware.LanguageMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "auditlog.middleware.AuditlogMiddleware",
 ]
 
 ROOT_URLCONF = "rfiding.urls"

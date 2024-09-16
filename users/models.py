@@ -3,7 +3,7 @@ from django.core import validators
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.utils.translation import gettext_lazy as _
 from django.conf import settings
-
+from auditlog.registry import auditlog
 
 class UserManager(BaseUserManager):
     """Define a model manager for User model with no username field."""
@@ -60,3 +60,9 @@ class RFIDingUser(AbstractUser):
     )
 
     objects = UserManager()
+
+    class Meta:
+        verbose_name = _("User")
+        verbose_name_plural = _("Users")
+
+auditlog.register(RFIDingUser, exclude_fields=["password", "last_login"])

@@ -1,7 +1,8 @@
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, ListView
 import platform
 import django
 from django.contrib.auth.mixins import PermissionRequiredMixin
+from auditlog.models import LogEntry
 
 from rfiding import settings
 
@@ -27,4 +28,17 @@ class BaseToggleActiveView(TemplateView, PermissionRequiredMixin):
         object.is_active = not object.is_active
         object.save()
         context["object"] = object
+        return context
+
+class AuditlogView(ListView):
+    model = LogEntry
+    queryset = LogEntry.objects.all().order_by("-timestamp")
+    permission_required = "tokens.view_token"
+
+    def get_paginate_by(self, queryset):
+        return self.request.user.page_length
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["model"] = self.model
         return context

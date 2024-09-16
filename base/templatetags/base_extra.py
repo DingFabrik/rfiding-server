@@ -6,22 +6,30 @@ register = template.Library()
 
 @register.simple_tag
 def get_verbose_name(object):
-    return object._meta.verbose_name
+    if hasattr(object, "_meta"):
+        return object._meta.verbose_name
+    return object
 
 
 @register.simple_tag
 def get_verbose_name_plural(object):
-    return object._meta.verbose_name_plural
+    if hasattr(object, "_meta"):
+        return object._meta.verbose_name_plural
+    return object
 
 
 @register.filter
 def verbose_name(object):
-    return object._meta.verbose_name
+    if hasattr(object, "_meta"):
+        return object._meta.verbose_name
+    return object.__class__.__name__
 
 
 @register.filter
 def verbose_name_plural(object):
-    return object._meta.verbose_name_plural
+    if hasattr(object, "_meta"):
+        return object._meta.verbose_name_plural
+    return object.__class__.__name__
 
 
 @register.filter("range")

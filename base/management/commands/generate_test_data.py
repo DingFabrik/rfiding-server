@@ -11,8 +11,8 @@ from tokens.factories import TokenFactory
 from access_log.factories import AccessLogFactory
 
 NUM_MACHINES = 60
-NUM_PEOPLE = 5000
-NUM_LOGS = 500000
+NUM_PEOPLE = 500
+NUM_LOGS = 500
 
 
 class Command(BaseCommand):

@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.urls import reverse
+from auditlog.registry import auditlog
 
 from base.models import TimestampedModel
 
@@ -82,3 +83,7 @@ class Instructor(TimestampedModel):
     class Meta:
         verbose_name = _("Instructor")
         verbose_name_plural = _("Instructors")
+
+auditlog.register(Person, mask_fields=["email"], exclude_fields=["created", "updated"])
+auditlog.register(Qualification, exclude_fields=["created", "updated"])
+auditlog.register(Instructor, exclude_fields=["created", "updated"])

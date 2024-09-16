@@ -3,6 +3,7 @@ from django.db import models
 from base.models import TimestampedModel
 from django.utils.translation import gettext as _
 from django.urls import reverse
+from auditlog.registry import auditlog
 
 from machines.fields import WeekdayFormField
 
@@ -78,3 +79,7 @@ class MachineTimes(TimestampedModel):
     weekdays = WeekdayField()
     start_time = models.TimeField()
     end_time = models.TimeField()
+
+
+auditlog.register(Machine, exclude_fields=["created", "updated"])
+auditlog.register(MachineTimes, exclude_fields=["created", "updated"])

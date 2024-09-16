@@ -2,6 +2,7 @@ from django.db import models
 from django.urls import reverse
 from base.models import TimestampedModel
 from django.utils.translation import gettext_lazy as _
+from auditlog.registry import auditlog
 
 from machines.models import Machine
 from people.models import Person
@@ -40,3 +41,5 @@ class UnknownToken(TimestampedModel):
 
     def __str__(self):
         return f"{self.serial}"
+
+auditlog.register(Token, exclude_fields=["created", "updated"])

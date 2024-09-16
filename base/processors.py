@@ -32,6 +32,13 @@ def menu_processor(request):
             "has_permission": request.user.has_perm("access_log.view_accesslog"),
             "active": request.resolver_match.app_name == "access_log",
         },
+        {
+            "name": _("Audit Log"),
+            "url": reverse("auditlog"),
+            "icon": "person-lines-fill",
+            "has_permission": request.user.is_superuser,
+            "active": request.resolver_match.url_name == "auditlog",
+        },
         """{
             "name": _("Firmware"),
             "url": reverse("firmware:list"),
