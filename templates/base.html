@@ -34,14 +34,19 @@
             {% endfor %}
           </ul>
           <ul class="navbar-nav ms-auto">
+            {% if space_state %}
+            <div class="d-flex align-items-center">
+              <a href="{% url "space:status" %}" class="align-middle me-4 badge text-bg-{% if space_state.is_open %}success{% else %}danger{% endif %}">{{ space_state }}</a>
+            </div>
+            {% endif %}
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="dropdown-right" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  {{ user.name}}
+                  {{ user.name|default:user.email}}
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="dropdown-right">
                   {% if perms.users.view_users %}
                     <li><a class="dropdown-item" href="{% url "users:list" %}">{% trans "Users" %}</a></li>
-                    {% endif %}
+                  {% endif %}
                     <li><a class="dropdown-item" href="{% url "users:profile" %}">{% trans "Settings" %}</a></li>
                     <li><a class="dropdown-item" href="{% url 'about' %}">{% trans "About" %}</a></li>
                     <li><a class="dropdown-item" class="nav-link" href="{% url "logout" %}" aria-label="Logout">{% trans "Sign out" %}</a></li>

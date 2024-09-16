@@ -32,7 +32,7 @@ class BaseToggleActiveView(TemplateView, PermissionRequiredMixin):
 
 class AuditlogView(ListView):
     model = LogEntry
-    queryset = LogEntry.objects.all().order_by("-timestamp")
+    queryset = LogEntry.objects.all().select_related("content_type").order_by("-timestamp")
     permission_required = "tokens.view_token"
 
     def get_paginate_by(self, queryset):

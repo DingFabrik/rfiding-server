@@ -1,5 +1,5 @@
 {% load i18n %}
-
+{% load humanize %}
 <html>
     <head>
         <title>Dingfabrik 3.0 Status</title>
@@ -13,14 +13,16 @@
         }
         </style>
     </head>
-    <body>
+    <body bgcolor="{% if state.is_open %}#9BE564{% else %}#F95738{% endif %}">
         <div>
-            <h1>{% blocktrans %}Die Dingfabrik 3.0 ist {{ state_text }}.{% endblocktrans %}</h1>
+            <h1>{% blocktrans %}{{ space_name }} is {{ state_text }}.{% endblocktrans %}</h1>
             {% if warning != None %}
             <p>{{ warning }}</p>
             {% endif %}
             <p>{{ contact }}</p>
-            <p>{% blocktrans %}Dieser Status wurde gesetzt (<em>{{ status.updated_at }}</em>).{% endblocktrans %}</p>
+            {% with time=state.updated|naturaltime %}
+            <p>{% blocktrans %}This state was set {{ time }}{% endblocktrans %} (<em>{{ state.updated }}</em>).</p>
+            {% endwith %}
         </div>
     </body>
 </html>
