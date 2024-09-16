@@ -21,9 +21,9 @@ class CheckMachineTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_fixes_mac_address(self):
-        data = {"machine": "aa:bb:cc:dd:ee:ff", "tokenUid": "123"}
+        data = {"machine": "dd:bb:cc:dd:ee:ff", "tokenUid": "123"}
         machine = Machine.objects.create(
-            mac_address="aa:bb:cc:dd:ee:ff",
+            mac_address="dd:bb:cc:dd:ee:ff",
             hostname="test",
             name="test",
             is_active=False,
@@ -31,7 +31,7 @@ class CheckMachineTests(APITestCase):
         machine.save()
         response = self.client.get(CheckMachineTests.url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-        self.assertEqual(response.data["error"], "Machine is restricted")
+        self.assertEqual(response.data["error"], "Machine is not active")
 
     def test_missing_token(self):
         """

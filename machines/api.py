@@ -70,12 +70,19 @@ class CheckMachineAccessView(APIView):
 
         tokenID = tokenID.lower()
 
+
         try:
             machine = Machine.objects.get(mac_address=mac_address)
         except Machine.DoesNotExist:
             return Response(
                 {"error": "Machine does not exist", "access": 0},
                 status=status.HTTP_404_NOT_FOUND,
+            )
+        
+        if not machine.is_active:
+            return Response(
+                {"error": "Machine is not active", "access": 0},
+                status=status.HTTP_403_FORBIDDEN,
             )
 
         times = machine.times.all()
