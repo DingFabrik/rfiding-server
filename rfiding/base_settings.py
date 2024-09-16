@@ -11,15 +11,23 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
-
-VERSION = "0.6.0"
+import toml
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
+VERSION = "unknown"
+# adopt path to your pyproject.toml
+pyproject_toml_file = BASE_DIR / "pyproject.toml"
+if pyproject_toml_file.exists() and pyproject_toml_file.is_file():
+    data = toml.load(pyproject_toml_file)
+    # check project.version
+    if "project" in data and "version" in data["project"]:
+        VERSION = data["project"]["version"]
+    # check tool.poetry.version
+    elif "tool" in data and "poetry" in data["tool"] and "version" in data["tool"]["poetry"]:
+        VERSION = data["tool"]["poetry"]["version"]
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = "CHANGEME"
@@ -28,7 +36,6 @@ SECRET_KEY = "CHANGEME"
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
