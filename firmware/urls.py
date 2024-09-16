@@ -1,7 +1,3 @@
-from django.contrib import admin
-from django.urls import path
+app_name = "firmware"
 
-app_name = 'firmware'
-
-urlpatterns = [
-]
+urlpatterns = []

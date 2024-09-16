@@ -5,6 +5,7 @@ from .models import AccessLog
 from tokens.models import Token
 from machines.models import Machine
 
+
 class AccessLogFactory(DjangoModelFactory):
     class Meta:
         model = AccessLog

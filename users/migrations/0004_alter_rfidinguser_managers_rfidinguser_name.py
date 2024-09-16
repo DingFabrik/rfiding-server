@@ -5,21 +5,20 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('users', '0003_remove_rfidinguser_username'),
+        ("users", "0003_remove_rfidinguser_username"),
     ]
 
     operations = [
         migrations.AlterModelManagers(
-            name='rfidinguser',
+            name="rfidinguser",
             managers=[
-                ('objects', users.models.UserManager()),
+                ("objects", users.models.UserManager()),
             ],
         ),
         migrations.AddField(
-            model_name='rfidinguser',
-            name='name',
-            field=models.CharField(blank=True, max_length=150, verbose_name='Name'),
+            model_name="rfidinguser",
+            name="name",
+            field=models.CharField(blank=True, max_length=150, verbose_name="Name"),
         ),
     ]

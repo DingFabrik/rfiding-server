@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('tokens', '0007_alter_token_serial'),
+        ("tokens", "0007_alter_token_serial"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='token',
-            name='note',
+            model_name="token",
+            name="note",
             field=models.TextField(blank=True, null=True),
         ),
     ]

@@ -5,23 +5,31 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('people', '0006_alter_person_options_qualification_instructed_by_and_more'),
+        ("people", "0006_alter_person_options_qualification_instructed_by_and_more"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='person',
-            options={'ordering': ['pk'], 'permissions': (('change_instructor', 'Can manage instructors'),), 'verbose_name': 'Person', 'verbose_name_plural': 'People'},
+            name="person",
+            options={
+                "ordering": ["pk"],
+                "permissions": (("change_instructor", "Can manage instructors"),),
+                "verbose_name": "Person",
+                "verbose_name_plural": "People",
+            },
         ),
         migrations.RemoveField(
-            model_name='person',
-            name='can_instruct',
+            model_name="person",
+            name="can_instruct",
         ),
         migrations.AlterField(
-            model_name='instructor',
-            name='person',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='can_instruct', to='people.person'),
+            model_name="instructor",
+            name="person",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="can_instruct",
+                to="people.person",
+            ),
         ),
     ]

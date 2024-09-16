@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('machines', '0005_machine_control_parameter_machine_min_power_and_more'),
+        ("machines", "0005_machine_control_parameter_machine_min_power_and_more"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='machine',
-            name='mac_address',
+            model_name="machine",
+            name="mac_address",
             field=models.CharField(db_index=True, max_length=17),
         ),
     ]

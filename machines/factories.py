@@ -1,7 +1,8 @@
 import factory
 from factory.django import DjangoModelFactory
 
-from .models import Machine, MachineTimes
+from .models import Machine
+
 
 class MachineFactory(DjangoModelFactory):
     class Meta:

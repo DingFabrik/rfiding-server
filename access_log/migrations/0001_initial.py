@@ -5,26 +5,44 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
-        ('machines', '0004_alter_machine_options'),
-        ('tokens', '0006_alter_token_options'),
+        ("machines", "0004_alter_machine_options"),
+        ("tokens", "0006_alter_token_options"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='AccessLog',
+            name="AccessLog",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('timestamp', models.DateTimeField(auto_now_add=True)),
-                ('machine', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='machines.machine')),
-                ('token', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='tokens.token')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("timestamp", models.DateTimeField(auto_now_add=True)),
+                (
+                    "machine",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="machines.machine",
+                    ),
+                ),
+                (
+                    "token",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="tokens.token"
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Access Log',
-                'verbose_name_plural': 'Access Logs',
+                "verbose_name": "Access Log",
+                "verbose_name_plural": "Access Logs",
             },
         ),
     ]

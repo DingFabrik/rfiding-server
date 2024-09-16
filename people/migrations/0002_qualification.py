@@ -5,26 +5,44 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('machines', '0001_initial'),
-        ('people', '0001_initial'),
+        ("machines", "0001_initial"),
+        ("people", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Qualification',
+            name="Qualification",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created', models.DateTimeField(auto_now_add=True)),
-                ('updated', models.DateTimeField(auto_now=True)),
-                ('comment', models.TextField(blank=True, null=True)),
-                ('machine', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='machines.machine')),
-                ('person', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='people.person')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("created", models.DateTimeField(auto_now_add=True)),
+                ("updated", models.DateTimeField(auto_now=True)),
+                ("comment", models.TextField(blank=True, null=True)),
+                (
+                    "machine",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="machines.machine",
+                    ),
+                ),
+                (
+                    "person",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="people.person"
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Qualification',
-                'verbose_name_plural': 'Qualifications',
+                "verbose_name": "Qualification",
+                "verbose_name_plural": "Qualifications",
             },
         ),
     ]

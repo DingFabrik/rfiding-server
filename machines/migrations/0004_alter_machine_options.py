@@ -4,14 +4,17 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('machines', '0003_alter_machineconfig_machine'),
+        ("machines", "0003_alter_machineconfig_machine"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='machine',
-            options={'ordering': ['pk'], 'verbose_name': 'Machine', 'verbose_name_plural': 'Machines'},
+            name="machine",
+            options={
+                "ordering": ["pk"],
+                "verbose_name": "Machine",
+                "verbose_name_plural": "Machines",
+            },
         ),
     ]

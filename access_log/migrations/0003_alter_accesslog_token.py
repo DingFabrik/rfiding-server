@@ -5,16 +5,20 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('access_log', '0002_accesslog_type'),
-        ('tokens', '0006_alter_token_options'),
+        ("access_log", "0002_accesslog_type"),
+        ("tokens", "0006_alter_token_options"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='accesslog',
-            name='token',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='tokens.token'),
+            model_name="accesslog",
+            name="token",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to="tokens.token",
+            ),
         ),
     ]

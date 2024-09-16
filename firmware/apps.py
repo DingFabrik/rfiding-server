@@ -2,5 +2,5 @@ from django.apps import AppConfig
 
 
 class FirmwaresConfig(AppConfig):
-    default_auto_field = 'django.db.models.BigAutoField'
-    name = 'firmware'
+    default_auto_field = "django.db.models.BigAutoField"
+    name = "firmware"

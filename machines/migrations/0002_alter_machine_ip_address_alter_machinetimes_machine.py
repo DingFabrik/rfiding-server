@@ -5,20 +5,23 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('machines', '0001_initial'),
+        ("machines", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='machine',
-            name='ip_address',
+            model_name="machine",
+            name="ip_address",
             field=models.GenericIPAddressField(blank=True, null=True),
         ),
         migrations.AlterField(
-            model_name='machinetimes',
-            name='machine',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='times', to='machines.machine'),
+            model_name="machinetimes",
+            name="machine",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="times",
+                to="machines.machine",
+            ),
         ),
     ]

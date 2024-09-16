@@ -4,14 +4,13 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('space', '0001_initial'),
+        ("space", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='spacestate',
-            options={'ordering': ['-created']},
+            name="spacestate",
+            options={"ordering": ["-created"]},
         ),
     ]

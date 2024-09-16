@@ -1,5 +1,5 @@
-from django.utils import timezone
 from django.utils import translation
+
 
 class LanguageMiddleware:
     def __init__(self, get_response):

@@ -4,15 +4,22 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('people', '0007_alter_person_options_remove_person_can_instruct_and_more'),
+        ("people", "0007_alter_person_options_remove_person_can_instruct_and_more"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='qualification',
-            name='permission_level',
-            field=models.CharField(choices=[('if_space_open', 'If space is open'), ('always', 'Always'), ('never', 'Never')], default='if_space_open', max_length=20),
+            model_name="qualification",
+            name="permission_level",
+            field=models.CharField(
+                choices=[
+                    ("if_space_open", "If space is open"),
+                    ("always", "Always"),
+                    ("never", "Never"),
+                ],
+                default="if_space_open",
+                max_length=20,
+            ),
         ),
     ]

@@ -1,6 +1,5 @@
 from django.db import models
 from django.urls import reverse
-from django.conf import settings
 from base.models import TimestampedModel
 from django.utils.translation import gettext_lazy as _
 
@@ -12,6 +11,7 @@ TOKEN_STATUS = (
     ("archived", "Archived"),
     ("assigned", "Assigned"),
 )
+
 
 class Token(TimestampedModel):
     serial = models.CharField(max_length=20, db_index=True)
@@ -32,6 +32,7 @@ class Token(TimestampedModel):
         verbose_name_plural = _("Tokens")
         ordering = ["pk"]
         unique_together = ("serial", "archived")
+
 
 class UnknownToken(TimestampedModel):
     serial = models.CharField(max_length=20)

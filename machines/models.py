@@ -6,34 +6,38 @@ from django.urls import reverse
 
 from machines.fields import WeekdayFormField
 
+
 def is_str(obj):
     try:
         return isinstance(obj, basestring)
     except NameError:
         return isinstance(obj, str)
 
+
 class WeekdayField(models.CharField):
     def __init__(self, *args, **kwargs):
-        kwargs['max_length'] = 20
+        kwargs["max_length"] = 20
         super(WeekdayField, self).__init__(*args, **kwargs)
 
     def formfield(self, **kwargs):
-        return super(WeekdayField, self).formfield(form_class=WeekdayFormField, **kwargs)
+        return super(WeekdayField, self).formfield(
+            form_class=WeekdayFormField, **kwargs
+        )
 
     def to_python(self, value):
         if is_str(value):
             if value:
-                value = [int(x) for x in value.strip('[]').split(',') if x]
+                value = [int(x) for x in value.strip("[]").split(",") if x]
             else:
                 value = []
         return value
-    
 
     def from_db_value(self, value, expression, connection):
         return self.to_python(value)
 
     def get_db_prep_value(self, value, connection=None, prepared=False):
         return ",".join([str(x) for x in value or []])
+
 
 class Machine(TimestampedModel):
     name = models.CharField(max_length=100)
@@ -56,16 +60,21 @@ class Machine(TimestampedModel):
 
     def get_absolute_url(self):
         return reverse("machines:detail", kwargs={"pk": self.pk})
-    
+
     def is_now_valid_time(self):
         if not self.times.all():
             return True
         now = datetime.datetime.now()
-        return self.times.filter(weekdays__contains=now.weekday()).filter(start_time__lte=now.time()).filter(end_time__gte=now.time()).exists()
+        return (
+            self.times.filter(weekdays__contains=now.weekday())
+            .filter(start_time__lte=now.time())
+            .filter(end_time__gte=now.time())
+            .exists()
+        )
 
 
 class MachineTimes(TimestampedModel):
-    machine = models.ForeignKey(Machine, on_delete=models.CASCADE, related_name='times')
+    machine = models.ForeignKey(Machine, on_delete=models.CASCADE, related_name="times")
     weekdays = WeekdayField()
     start_time = models.TimeField()
     end_time = models.TimeField()

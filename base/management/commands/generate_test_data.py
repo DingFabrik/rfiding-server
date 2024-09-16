@@ -1,5 +1,3 @@
-import random
-
 from django.db import transaction
 from django.core.management.base import BaseCommand
 
@@ -16,6 +14,7 @@ NUM_MACHINES = 60
 NUM_PEOPLE = 5000
 NUM_LOGS = 500000
 
+
 class Command(BaseCommand):
     help = "Generates test data"
 
@@ -27,9 +26,9 @@ class Command(BaseCommand):
             m.objects.all().delete()
 
         self.stdout.write("Creating new data...")
-        machines = MachineFactory.create_batch(NUM_MACHINES)
-        people = PersonFactory.create_batch(NUM_PEOPLE)
-        tokens = TokenFactory.create_batch(NUM_PEOPLE)
-        qualifications = QualificationFactory.create_batch(NUM_PEOPLE * NUM_MACHINES)
-        instructors = InstructorFactory.create_batch(NUM_PEOPLE)
+        MachineFactory.create_batch(NUM_MACHINES)
+        PersonFactory.create_batch(NUM_PEOPLE)
+        TokenFactory.create_batch(NUM_PEOPLE)
+        QualificationFactory.create_batch(NUM_PEOPLE * NUM_MACHINES)
+        InstructorFactory.create_batch(NUM_PEOPLE)
         AccessLogFactory.create_batch(NUM_LOGS)

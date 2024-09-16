@@ -7,5 +7,5 @@ DAY_CHOICES = (
     ("3", _("Thursday")),
     ("4", _("Friday")),
     ("5", _("Saturday")),
-    ("6", _("Sunday"))
+    ("6", _("Sunday")),
 )

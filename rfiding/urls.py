@@ -14,6 +14,7 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
 from django.contrib import admin
 from django.urls import path, include
 
@@ -23,23 +24,23 @@ from machines.api import CheckMachineAccessView, MachineConfigView
 from space.api import APISpaceStatusView
 
 api_urls = [
-    path('machine/check', CheckMachineAccessView.as_view(), name='machine_check'),
-    path('machine/config', MachineConfigView.as_view(), name='machine_config'),
-    path('space/status', APISpaceStatusView.as_view(), name='space_status'),
+    path("machine/check", CheckMachineAccessView.as_view(), name="machine_check"),
+    path("machine/config", MachineConfigView.as_view(), name="machine_config"),
+    path("space/status", APISpaceStatusView.as_view(), name="space_status"),
 ]
 
 urlpatterns = [
-    path('', HomeView.as_view(), name='home'),
-    path('admin/', admin.site.urls),
+    path("", HomeView.as_view(), name="home"),
+    path("admin/", admin.site.urls),
     path("accounts/", include("django.contrib.auth.urls")),
-    path('access_log/', include('access_log.urls', namespace='access_log')),
-    path('machines/', include('machines.urls', namespace='machines')),
-    path('people/', include('people.urls', namespace='people')),
-    path('space/', include('space.urls', namespace='space')),
-    path('tokens/', include('tokens.urls', namespace='tokens')),
-    path('users/', include('users.urls', namespace='users')),
-    path('firmware/', include('firmware.urls', namespace='firmware')),
+    path("access_log/", include("access_log.urls", namespace="access_log")),
+    path("machines/", include("machines.urls", namespace="machines")),
+    path("people/", include("people.urls", namespace="people")),
+    path("space/", include("space.urls", namespace="space")),
+    path("tokens/", include("tokens.urls", namespace="tokens")),
+    path("users/", include("users.urls", namespace="users")),
+    path("firmware/", include("firmware.urls", namespace="firmware")),
     path("__debug__/", include("debug_toolbar.urls")),
-    path('api/', include((api_urls, 'api'), namespace='api')),
-    path('about/', AboutView.as_view(), name='about')
+    path("api/", include((api_urls, "api"), namespace="api")),
+    path("about/", AboutView.as_view(), name="about"),
 ]

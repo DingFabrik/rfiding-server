@@ -18,6 +18,26 @@ django-autocomplete-light = "^3.11.0"
 [tool.poetry.group.dev.dependencies]
 django-debug-toolbar = "^4.4.6"
 
+[tool.ruff]
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "B", "Q"]
+ignore = []
+fixable = ["ALL"]
+
+[tool.ruff.lint.per-file-ignores]
+"settings.dev.py" = ["F"]
+"settings.prod.py" = ["F"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
+docstring-code-format = false
+docstring-code-line-length = "dynamic"
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"

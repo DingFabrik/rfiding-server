@@ -4,26 +4,32 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Firmware',
+            name="Firmware",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created', models.DateTimeField(auto_now_add=True)),
-                ('updated', models.DateTimeField(auto_now=True)),
-                ('name', models.CharField(max_length=255, verbose_name='Name')),
-                ('version', models.CharField(max_length=255, verbose_name='Version')),
-                ('file', models.FileField(upload_to='firmware/', verbose_name='File')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("created", models.DateTimeField(auto_now_add=True)),
+                ("updated", models.DateTimeField(auto_now=True)),
+                ("name", models.CharField(max_length=255, verbose_name="Name")),
+                ("version", models.CharField(max_length=255, verbose_name="Version")),
+                ("file", models.FileField(upload_to="firmware/", verbose_name="File")),
             ],
             options={
-                'verbose_name': 'Firmware',
-                'verbose_name_plural': 'Firmwares',
+                "verbose_name": "Firmware",
+                "verbose_name_plural": "Firmwares",
             },
         ),
     ]

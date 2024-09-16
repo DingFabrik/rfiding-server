@@ -5,16 +5,17 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('people', '0003_alter_qualification_machine_and_more'),
-        ('tokens', '0002_initial'),
+        ("people", "0003_alter_qualification_machine_and_more"),
+        ("tokens", "0002_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='token',
-            name='user',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='people.person'),
+            model_name="token",
+            name="user",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to="people.person"
+            ),
         ),
     ]

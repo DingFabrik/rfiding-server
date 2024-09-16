@@ -4,14 +4,17 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('tokens', '0005_rename_user_token_person'),
+        ("tokens", "0005_rename_user_token_person"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='token',
-            options={'ordering': ['pk'], 'verbose_name': 'Token', 'verbose_name_plural': 'Tokens'},
+            name="token",
+            options={
+                "ordering": ["pk"],
+                "verbose_name": "Token",
+                "verbose_name_plural": "Tokens",
+            },
         ),
     ]

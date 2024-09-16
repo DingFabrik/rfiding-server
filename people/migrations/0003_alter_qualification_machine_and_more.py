@@ -5,21 +5,28 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('machines', '0001_initial'),
-        ('people', '0002_qualification'),
+        ("machines", "0001_initial"),
+        ("people", "0002_qualification"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='qualification',
-            name='machine',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='qualified_people', to='machines.machine'),
+            model_name="qualification",
+            name="machine",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="qualified_people",
+                to="machines.machine",
+            ),
         ),
         migrations.AlterField(
-            model_name='qualification',
-            name='person',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='qualifications', to='people.person'),
+            model_name="qualification",
+            name="person",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="qualifications",
+                to="people.person",
+            ),
         ),
     ]

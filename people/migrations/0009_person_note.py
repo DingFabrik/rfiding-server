@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('people', '0008_qualification_permission_level'),
+        ("people", "0008_qualification_permission_level"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='person',
-            name='note',
+            model_name="person",
+            name="note",
             field=models.TextField(blank=True, null=True),
         ),
     ]

@@ -1,6 +1,7 @@
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
+
 def menu_processor(request):
     menu = [
         {
@@ -37,6 +38,6 @@ def menu_processor(request):
             "icon": "microchip",
             "has_permission": request.user.has_perm("firmware.view_firmware"),
             "active": request.resolver_match.app_name == "firmware",
-        },"""
+        },""",
     ]
     return {"menu": menu}

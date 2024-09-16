@@ -11,6 +11,7 @@ LOG_TYPES = (
     (LOG_TYPE_DISABLED, _("Disabled")),
 )
 
+
 # Create your models here.
 class AccessLog(models.Model):
     class Meta:
@@ -18,7 +19,9 @@ class AccessLog(models.Model):
         verbose_name_plural = _("Access Logs")
 
     timestamp = models.DateTimeField(auto_now_add=True)
-    token = models.ForeignKey("tokens.Token", on_delete=models.CASCADE, null=True, blank=True)
+    token = models.ForeignKey(
+        "tokens.Token", on_delete=models.CASCADE, null=True, blank=True
+    )
     machine = models.ForeignKey("machines.Machine", on_delete=models.CASCADE)
     type = models.CharField(max_length=20, choices=LOG_TYPES)
 

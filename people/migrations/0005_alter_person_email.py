@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('people', '0004_alter_qualification_options'),
+        ("people", "0004_alter_qualification_options"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='person',
-            name='email',
+            model_name="person",
+            name="email",
             field=models.EmailField(max_length=254, unique=True),
         ),
     ]

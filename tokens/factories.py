@@ -4,6 +4,7 @@ from factory.django import DjangoModelFactory
 from .models import Token
 from people.models import Person
 
+
 class TokenFactory(DjangoModelFactory):
     class Meta:
         model = Token
