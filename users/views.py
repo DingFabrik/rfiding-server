@@ -4,6 +4,7 @@ from django.views.generic import (
     ListView,
     CreateView,
     DeleteView,
+    DetailView,
 )
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
@@ -77,6 +78,17 @@ class UserUpdateView(UpdateView, PermissionRequiredMixin):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context["can_delete"] = self.request.user.has_perm("users.delete_rfidinguser")
+        return context
+
+class UserDetailView(DetailView, PermissionRequiredMixin):
+    permission_required = "users.change_rfidinguser"
+    model = RFIDingUser
+    template_name = "user_detail.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["can_edit"] = self.request.user.has_perm("users.change_rfidinguser")
         context["can_delete"] = self.request.user.has_perm("users.delete_rfidinguser")
         return context
 
