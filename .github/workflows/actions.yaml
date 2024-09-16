@@ -38,6 +38,9 @@ jobs:
       run: poetry install --no-interaction --no-root
     - name: Install project
       run: poetry install --no-interaction
+    - name: Copy the dev settings
+      run: |
+        cp rfiding/settings.dev.py rfiding/settings.py
     - name: Run Tests
       run: |
-        python manage.py test
+        poetry run manage.py test

@@ -52,8 +52,6 @@ INSTALLED_APPS = [
     'space',
     'tokens',
     'users',
-
-    'debug_toolbar',
 ]
 
 MIDDLEWARE = [
@@ -65,7 +63,6 @@ MIDDLEWARE = [
     'users.middleware.LanguageMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-        "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
 
 ROOT_URLCONF = 'rfiding.urls'
