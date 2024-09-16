@@ -5,10 +5,10 @@
 <div class="btn-group" role="group">
 {% if can_edit %}
 <a href="{% url request.resolver_match.namespace|add:':update' object.pk %}" class="btn btn-primary"><i class="bi-pencil-square me-2"></i>{% trans "Edit "%}</a>
-<a href="{% url request.resolver_match.namespace|add:':configure' object.pk %}" class="btn btn-primary"><i class="bi-sliders me-2"></i>{% trans "Configure "%}</a>
+<a href="{% url request.resolver_match.namespace|add:':configure' object.pk %}" class="btn btn-primary"><i class="bi-sliders me-2"></i>{% trans "Configure"%}</a>
 {% endif %}
 {% if can_delete %}
-<a href="{% url request.resolver_match.namespace|add:':delete' object.pk %}" class="btn btn-danger"><i class="bi-trash me-1"></i>{% trans "Delete "%}</a>
+<a href="{% url request.resolver_match.namespace|add:':delete' object.pk %}" class="btn btn-danger"><i class="bi-trash me-1"></i>{% trans "Delete"%}</a>
 {% endif %}
 </div>
 {% endblock %}
@@ -18,25 +18,31 @@
 <div class="col-md-6">
 <h4>{% trans "Details" %}</h4>
 <ul class="list-unstyled">
-<li><span class="fw-bold text-secondary-emphasis">Name:</span> {{ object.name }}<br></li>
-<li><span class="fw-bold text-secondary-emphasis">Hostname:</span> {{ object.hostname }}<br></li>
-<li><span class="fw-bold text-secondary-emphasis">MAC Address:</span> {{ object.mac_address }}<br></li>
-<li><span class="fw-bold text-secondary-emphasis">IP Address:</span> {{ object.ip_address }}<br></li>
-<li><span class="fw-bold text-secondary-emphasis">Is Active:</span> {% include "snippets/active_toggle.html" %}<br></li>
+<li><span class="fw-bold text-secondary-emphasis">{% trans "Name" %}:</span> {{ object.name }}<br></li>
+<li><span class="fw-bold text-secondary-emphasis">{% trans "Hostname" %}:</span> {{ object.hostname }}<br></li>
+<li><span class="fw-bold text-secondary-emphasis">{% trans "MAC Address" %}:</span> {{ object.mac_address }}<br></li>
+<li><span class="fw-bold text-secondary-emphasis">{% trans "IP Address" %}:</span> {{ object.ip_address }}<br></li>
+<li><span class="fw-bold text-secondary-emphasis">{% trans "Is Active" %}:</span> {% include "snippets/active_toggle.html" %}<br></li>
+<li><span class="fw-bold text-secondary-emphasis">{% trans "Needs Qualification" %}:</span>   {% if object.needs_qualification %}
+    <i class="bi-check-circle-fill text-success" aria-hidden="true"></i>
+    {% else %}
+    <i class="bi-x-circle-fill text-danger" aria-hidden="true"></i>
+    {% endif %}<br></li>
 </ul>
 </div>
 <div class="col-md-6">
     <h4>{% trans "Configuration" %}</h4>
     <ul class="list-unstyled">
-        <li><span class="fw-bold text-secondary-emphasis">Runtimer:</span> {{ object.runtimer }}<br></li>
-        <li><span class="fw-bold text-secondary-emphasis">Min Power:</span> {{ object.min_power }}<br></li>
-        <li><span class="fw-bold text-secondary-emphasis">Control Parameter:</span> {{ object.control_parameter|default:"--" }}<br></li>
+        <li><span class="fw-bold text-secondary-emphasis">{% trans "Runtimer" %}:</span> {{ object.runtimer }}<br></li>
+        <li><span class="fw-bold text-secondary-emphasis">{% trans "Min Power" %}:</span> {{ object.min_power }}<br></li>
+        <li><span class="fw-bold text-secondary-emphasis">{% trans "Control Parameter" %}:</span> {{ object.control_parameter|default:"--" }}<br></li>
         </ul>
 </div>
 </div>
 
 <div class="mb-5">
 <h4>{% trans "Qualifications" %}</h4>
+{% if machine.needs_qualification %}
 <div class="text-body-secondary">{% blocktrans %}{{ qualifications_count }} people are qualified to use this machine:{% endblocktrans %}</div>
 <table class="table table-striped table-bordered">
     <thead>
@@ -69,8 +75,11 @@
         {% endfor %}
     </tbody>
 </table>
+{% else %}
+<div class="text-body-secondary">{% blocktrans %}All active users are qualified to use this machine{% endblocktrans %}</div>
+{% endif %}
 </div>
-
+{% if machine.needs_qualification %}
 <div class="mb-5">
     <h4>{% trans "Instructors" %}</h4>
     <div class="text-body-secondary">{% blocktrans %}{{ instructors_count }} people can instruct on usage of this machine:{% endblocktrans %}</div>
@@ -97,4 +106,5 @@
         </tbody>
     </table>
 </div>
+{% endif %}
 {% endblock %}

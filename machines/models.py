@@ -46,6 +46,7 @@ class Machine(TimestampedModel):
     hostname = models.CharField(max_length=100)
     ip_address = models.GenericIPAddressField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
+    needs_qualification = models.BooleanField(default=True)
 
     runtimer = models.IntegerField(default=0)
     min_power = models.IntegerField(default=0)

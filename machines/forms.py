@@ -7,7 +7,7 @@ from .models import Machine, MachineTimes
 class MachineForm(forms.ModelForm):
     class Meta:
         model = Machine
-        fields = ["name", "hostname", "ip_address", "mac_address", "is_active"]
+        fields = ["name", "hostname", "ip_address", "mac_address", "is_active", "needs_qualification"]
 
 
 class ConfigureMachineForm(forms.ModelForm):

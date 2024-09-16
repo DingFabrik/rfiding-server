@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-16 14:12+0000\n"
-"PO-Revision-Date: 2024-09-16 16:26+0200\n"
+"POT-Creation-Date: 2024-09-16 14:57+0000\n"
+"PO-Revision-Date: 2024-09-16 16:57+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -47,17 +47,17 @@ msgstr "Zugriffs Log für %(name)s"
 #: access_log/templates/access_log_for_token.html:16
 #: access_log/templates/access_log_list.html:13
 #: access_log/templates/partial_access_log_for_token.html:5
-#: machines/templates/machine_detail.html:48
-#: machines/templates/machine_detail.html:82
+#: machines/templates/machine_detail.html:54
+#: machines/templates/machine_detail.html:91
 #: people/templates/person_detail.html:58
-#: people/templates/person_detail.html:102
+#: people/templates/person_detail.html:103
 msgid "Date"
 msgstr "Datum"
 
 #: access_log/templates/access_log_for_token.html:17
 #: access_log/templates/access_log_list.html:14
 #: access_log/templates/partial_access_log_for_token.html:6
-#: machines/models.py:55 people/forms.py:14 people/forms.py:33
+#: machines/models.py:56 people/forms.py:14 people/forms.py:33
 #: tokens/templates/unknown_token_list.html:20
 msgid "Machine"
 msgstr "Maschine"
@@ -82,7 +82,7 @@ msgstr "Tokens"
 msgid "People"
 msgstr "Menschen"
 
-#: base/processors.py:22 machines/models.py:56 users/templates/home.html:51
+#: base/processors.py:22 machines/models.py:57 users/templates/home.html:51
 msgid "Machines"
 msgstr "Maschinen"
 
@@ -103,6 +103,7 @@ msgid "Save"
 msgstr "Speichern"
 
 #: machines/templates/machine_configure_form.html:66
+#: machines/templates/machine_detail.html:11 templates/base_detail.html:14
 #: templates/base_form.html:14
 msgid "Delete"
 msgstr "Löschen"
@@ -112,12 +113,9 @@ msgid "Edit "
 msgstr "Editieren "
 
 #: machines/templates/machine_detail.html:8
-msgid "Configure "
+#: machines/templates/machine_list.html:13
+msgid "Configure"
 msgstr "Konfigurieren"
-
-#: machines/templates/machine_detail.html:11 templates/base_detail.html:14
-msgid "Delete "
-msgstr "Löschen"
 
 #: machines/templates/machine_detail.html:19
 #: people/templates/person_detail.html:7 tokens/templates/token_detail.html:5
@@ -125,66 +123,107 @@ msgstr "Löschen"
 msgid "Details"
 msgstr "Details"
 
-#: machines/templates/machine_detail.html:29
+#: machines/templates/machine_detail.html:21
+#: machines/templates/machine_detail.html:50
+#: machines/templates/machine_detail.html:90
+#: machines/templates/machine_list.html:9
+#: people/templates/person_detail.html:10
+#: people/templates/person_detail.html:54
+#: people/templates/person_detail.html:102 people/templates/person_list.html:8
+#: users/models.py:50 users/templates/user_list.html:17
+msgid "Name"
+msgstr "Name"
+
+#: machines/templates/machine_detail.html:22
+#: machines/templates/machine_list.html:7
+#: people/templates/person_detail.html:101
+msgid "Hostname"
+msgstr "Hostname"
+
+#: machines/templates/machine_detail.html:23
+msgid "MAC Address"
+msgstr "MAC-Adresse"
+
+#: machines/templates/machine_detail.html:24
+msgid "IP Address"
+msgstr "IP Adresse"
+
+#: machines/templates/machine_detail.html:25
+#: people/templates/person_detail.html:12 tokens/templates/token_detail.html:10
+msgid "Is Active"
+msgstr "Ist Aktiv"
+
+#: machines/templates/machine_detail.html:26
+msgid "Needs Qualification"
+msgstr "Braucht Qualifikation"
+
+#: machines/templates/machine_detail.html:34
 msgid "Configuration"
 msgstr "Konfiguration"
 
-#: machines/templates/machine_detail.html:39 people/models.py:67
+#: machines/templates/machine_detail.html:36
+msgid "Runtimer"
+msgstr "Laufzeit"
+
+#: machines/templates/machine_detail.html:37
+msgid "Min Power"
+msgstr "Min Power"
+
+#: machines/templates/machine_detail.html:38
+msgid "Control Parameter"
+msgstr "Kontrollparameter"
+
+#: machines/templates/machine_detail.html:44 people/models.py:67
 #: people/templates/person_detail.html:44
 msgid "Qualifications"
 msgstr "Qualifikationen"
 
-#: machines/templates/machine_detail.html:40
+#: machines/templates/machine_detail.html:46
 #, python-format
 msgid "%(qualifications_count)s people are qualified to use this machine:"
 msgstr ""
 "%(qualifications_count)s Personen sind qualifiziert diese Maschine zu nutzen:"
 
-#: machines/templates/machine_detail.html:44
-#: machines/templates/machine_detail.html:81
-#: machines/templates/machine_list.html:9
-#: people/templates/person_detail.html:54
-#: people/templates/person_detail.html:101 people/templates/person_list.html:8
-#: users/models.py:50 users/templates/user_list.html:17
-msgid "Name"
-msgstr "Name"
-
-#: machines/templates/machine_detail.html:45
+#: machines/templates/machine_detail.html:51
 msgid "Access Type"
 msgstr "Zugriffstyp"
 
-#: machines/templates/machine_detail.html:46
+#: machines/templates/machine_detail.html:52
 msgid "Qualification Comment"
 msgstr "Qualifikationskommentar"
 
-#: machines/templates/machine_detail.html:47 people/models.py:84
+#: machines/templates/machine_detail.html:53 people/models.py:84
 msgid "Instructor"
 msgstr "Einweisend"
 
-#: machines/templates/machine_detail.html:64
-#: people/templates/person_detail.html:60
+#: machines/templates/machine_detail.html:70
+#: people/templates/person_detail.html:77
 msgid "Edit"
 msgstr "Editieren"
 
-#: machines/templates/machine_detail.html:65
-#: machines/templates/machine_detail.html:83
-#: people/templates/person_detail.html:61
-#: people/templates/person_detail.html:104
+#: machines/templates/machine_detail.html:71
+#: machines/templates/machine_detail.html:92
+#: people/templates/person_detail.html:78
+#: people/templates/person_detail.html:105
 msgid "Revoke"
 msgstr "Entziehen"
 
-#: machines/templates/machine_detail.html:75 people/models.py:85
+#: machines/templates/machine_detail.html:79
+msgid "All active users are qualified to use this machine"
+msgstr "Alle aktiven. Personen sind qualifiziert diese Maschine zu nutzen"
+
+#: machines/templates/machine_detail.html:84 people/models.py:85
 msgid "Instructors"
 msgstr "Einweisende"
 
-#: machines/templates/machine_detail.html:76
+#: machines/templates/machine_detail.html:85
 #, python-format
 msgid "%(instructors_count)s people can instruct on usage of this machine:"
 msgstr ""
-"%(instructors_count)s Personen können Einweisungen für diese Maschine geben"
+"%(instructors_count)s Personen können Einweisungen für diese Maschine geben:"
 
-#: machines/templates/machine_detail.html:80
-#: people/templates/person_list.html:7
+#: machines/templates/machine_detail.html:89
+#: people/templates/person_detail.html:9 people/templates/person_list.html:7
 msgid "Member ID"
 msgstr "Mitglieds ID"
 
@@ -196,11 +235,6 @@ msgstr "<span class=“text-primary-emphasis”>%(machine.name)s</span> editiere
 #: machines/templates/machine_form.html:9
 msgid "Add a new machine"
 msgstr "Neue Maschine hinzufügen"
-
-#: machines/templates/machine_list.html:7
-#: people/templates/person_detail.html:100
-msgid "Hostname"
-msgstr "Hostname"
 
 #: machines/templates/machine_list.html:8
 msgid "MAC-Address"
@@ -214,10 +248,6 @@ msgstr "Maschine Aktiv"
 #: tokens/templates/token_list.html:27
 msgid "Modify"
 msgstr "Modifizieren"
-
-#: machines/templates/machine_list.html:13
-msgid "Configure"
-msgstr "Konfigurieren"
 
 #: machines/utils.py:4
 msgid "Monday"
@@ -247,6 +277,10 @@ msgstr "Samstag"
 msgid "Sunday"
 msgstr "Sonntag"
 
+#: people/forms.py:25 people/forms.py:44
+msgid "Machine name or hostname"
+msgstr "Maschinenname oder Hostname"
+
 #: people/models.py:19
 msgid "Person"
 msgstr "Person"
@@ -275,6 +309,14 @@ msgstr ""
 "<span class=“text-primary-emphasis”>%(person)s</span> als einweisende Person "
 "hinzufügen"
 
+#: people/templates/person_detail.html:11 people/templates/person_list.html:9
+msgid "E-Mail"
+msgstr "E-Mail"
+
+#: people/templates/person_detail.html:14 tokens/templates/token_detail.html:12
+msgid "Notes"
+msgstr "Notizen"
+
 #: people/templates/person_detail.html:32
 #, python-format
 msgid "<b>%(name)s</b> has no tokens."
@@ -301,25 +343,25 @@ msgstr "Zugriffsstufe"
 msgid "Comment"
 msgstr "Kommentar"
 
-#: people/templates/person_detail.html:85
+#: people/templates/person_detail.html:86
 #, python-format
 msgid "<b>%(name)s</b> is not qualified for any machines."
 msgstr "<b>%(name)s</b> ist für keine Maschine qualifiziert."
 
-#: people/templates/person_detail.html:90
+#: people/templates/person_detail.html:91
 msgid "Instructor for"
 msgstr "Einweisend für"
 
-#: people/templates/person_detail.html:92
+#: people/templates/person_detail.html:93
 msgid "Add as instructor"
 msgstr "Als einweisende Person hinzufügen"
 
-#: people/templates/person_detail.html:96
+#: people/templates/person_detail.html:97
 #, python-format
 msgid "<b>%(name)s</b> can instruct people for the following machines:"
 msgstr "<b>%(name)s</b> kann Personen für die folgenden Maschinen einweisen:"
 
-#: people/templates/person_detail.html:124
+#: people/templates/person_detail.html:125
 #, python-format
 msgid "<b>%(name)s</b> can not instruct people for any machines."
 msgstr "<b>%(name)s</b> kann keine Einweisungen geben."
@@ -332,10 +374,6 @@ msgstr "<span class=“text-primary-emphasis”>%(person)s</span> editieren"
 #: people/templates/person_form.html:9
 msgid "Add a new person"
 msgstr "Neue Person hinzufügen"
-
-#: people/templates/person_list.html:9
-msgid "E-Mail"
-msgstr "E-Mail"
 
 #: people/templates/person_list.html:10 tokens/templates/token_list.html:24
 #: users/templates/home.html:19 users/templates/home.html:38
@@ -369,18 +407,27 @@ msgstr ""
 msgid "%(space_name)s is %(state_text)s."
 msgstr "%(space_name)s ist %(state_text)s."
 
+#: space/templates/status.html:22
+msgid "Contact"
+msgstr "Kontakt"
+
 #: space/templates/status.html:24
 #, python-format
 msgid "This state was set %(time)s"
 msgstr "Der Status wurde %(time)s gesetzt"
 
-#: space/views.py:16
+#: space/views.py:19
 msgid "open"
 msgstr "Offen"
 
-#: space/views.py:16
+#: space/views.py:19
 msgid "closed"
 msgstr "Geschlossen"
+
+#: space/views.py:24
+msgid ""
+"Space status might not be accurate anymore! Consider contacting the space."
+msgstr "Status könnte nicht mehr korrekt sein! Kontaktiere eventuell den Raum."
 
 #: templates/about.html:5 templates/base.html:51
 msgid "About"
@@ -407,7 +454,7 @@ msgstr "Suchen"
 msgid "Timestamp"
 msgstr "Zeitstempel"
 
-#: templates/auditlog/logentry_list.html:15 users/models.py:65
+#: templates/auditlog/logentry_list.html:15 users/models.py:66
 msgid "User"
 msgstr "Benutzer*in"
 
@@ -424,7 +471,7 @@ msgstr "Änderungen"
 msgid "and"
 msgstr "und"
 
-#: templates/base.html:48 users/models.py:66 users/templates/user_list.html:5
+#: templates/base.html:48 users/models.py:67 users/templates/user_list.html:5
 msgid "Users"
 msgstr "Benutzer*innen"
 
@@ -492,6 +539,19 @@ msgstr "E-Mail Adresse"
 msgid "Password"
 msgstr "Passwort"
 
+#: tokens/templates/token_detail.html:7 tokens/templates/token_list.html:22
+#: tokens/templates/unknown_token_list.html:19
+msgid "Serial"
+msgstr "Serial"
+
+#: tokens/templates/token_detail.html:8 tokens/templates/token_list.html:23
+msgid "Purpose"
+msgstr "Zweck"
+
+#: tokens/templates/token_detail.html:9 tokens/templates/token_list.html:25
+msgid "Owner"
+msgstr "Besitzer*in"
+
 #: tokens/templates/token_detail.html:20
 msgid "Load Access Log"
 msgstr "Zugriffslog laden"
@@ -509,19 +569,6 @@ msgstr "Token zuweisen"
 #: tokens/templates/token_form.html:11
 msgid "Add a new Token"
 msgstr "Neuen Token hinzufügen"
-
-#: tokens/templates/token_list.html:22
-#: tokens/templates/unknown_token_list.html:19
-msgid "Serial"
-msgstr "Serial"
-
-#: tokens/templates/token_list.html:23
-msgid "Purpose"
-msgstr "Zweck"
-
-#: tokens/templates/token_list.html:25
-msgid "Owner"
-msgstr "Besitzer*in"
 
 #: tokens/templates/unknown_token_list.html:7
 msgid "Unknown tokens"
@@ -563,15 +610,15 @@ msgstr "Berechtigungen"
 msgid "Important dates"
 msgstr "Wichtige Daten"
 
-#: users/models.py:53
+#: users/models.py:54
 msgid "Langauge"
 msgstr "Sprache"
 
-#: users/models.py:56
+#: users/models.py:57
 msgid "Page Length"
 msgstr "Seitenlänge"
 
-#: users/models.py:58
+#: users/models.py:59
 msgid "Number of items to show per page"
 msgstr "Anzahl an Einträgen pro Seite"
 
@@ -608,3 +655,9 @@ msgstr "Benutzer*in hinzufügen"
 #: users/templates/user_list.html:16
 msgid "ID"
 msgstr "ID"
+
+#~ msgid "Delete "
+#~ msgstr "Löschen"
+
+#~ msgid "Configure "
+#~ msgstr "Konfigurieren"

@@ -11,7 +11,7 @@
 <a href="{% url request.resolver_match.namespace|add:':update' object.pk %}" class="btn btn-primary"><i class="bi-pencil-square me-2"></i>{% trans "Edit "%}</a>
 {% endif %}
 {% if can_delete %}
-<a href="{% url request.resolver_match.namespace|add:':delete' object.pk %}" class="btn btn-danger"><i class="bi-trash me-1"></i>{% trans "Delete "%}</a>
+<a href="{% url request.resolver_match.namespace|add:':delete' object.pk %}" class="btn btn-danger"><i class="bi-trash me-1"></i>{% trans "Delete"%}</a>
 {% endif %}
 </div>
 {% endblock %}

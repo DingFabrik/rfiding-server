@@ -49,6 +49,7 @@ class RFIDingUser(AbstractUser):
     )  # changes email to unique and blank to false
     name = models.CharField(_("Name"), max_length=150, blank=True)
     REQUIRED_FIELDS = []
+    
     language = models.CharField(
         _("Langauge"), max_length=10, default="en", choices=settings.LANGUAGES
     )

@@ -22,7 +22,7 @@ class QualifyPersonForm(forms.ModelForm):
             "machine_autocomplete": forms.TextInput(
                 attrs={
                     "class": "form-control",
-                    "placeholder": "Machine name or hostname",
+                    "placeholder": _("Machine name or hostname"),
                 }
             ),
             "comment": forms.Textarea(attrs={"rows": 4}),
@@ -41,7 +41,7 @@ class InstructorForm(forms.ModelForm):
             "machine_autocomplete": forms.TextInput(
                 attrs={
                     "class": "form-control",
-                    "placeholder": "Machine name or hostname",
+                    "placeholder": _("Machine name or hostname"),
                 }
             ),
         }
