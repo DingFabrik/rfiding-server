@@ -13,13 +13,13 @@
         }
         </style>
     </head>
-    <body bgcolor="{% if state.is_open %}#9BE564{% else %}#F95738{% endif %}">
+    <body bgcolor="{% if state.is_open %}{% if warning %}#FFE347{% else %}#9BE564{% endif %}{% else %}#F95738{% endif %}">
         <div>
             <h1>{% blocktrans %}{{ space_name }} is {{ state_text }}.{% endblocktrans %}</h1>
-            {% if warning != None %}
-            <p>{{ warning }}</p>
+            {% if warning %}
+            <h2>{{ warning }}</h2>
             {% endif %}
-            <p>{{ contact }}</p>
+            <p>{% trans "Contact" %}: {{ space_contact }}</p>
             {% with time=state.updated|naturaltime %}
             <p>{% blocktrans %}This state was set {{ time }}{% endblocktrans %} (<em>{{ state.updated }}</em>).</p>
             {% endwith %}

@@ -136,6 +136,9 @@ USE_I18N = True
 
 USE_TZ = True
 
+LOCALE_PATHS = [
+    BASE_DIR / 'locale',
+]
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
@@ -171,3 +174,4 @@ CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 SPACE_STATE_SECRET = "12345"
 SPACE_NAME = "Makerspace"
+SPACE_CONTACT = "01234 / 123456"

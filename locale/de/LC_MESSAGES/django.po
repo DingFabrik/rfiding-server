@@ -1,0 +1,610 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-09-16 14:12+0000\n"
+"PO-Revision-Date: 2024-09-16 16:26+0200\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.5\n"
+
+#: access_log/models.py:9
+msgid "Booted"
+msgstr "Gestartet"
+
+#: access_log/models.py:10
+msgid "Enabled"
+msgstr "Aktiviert"
+
+#: access_log/models.py:11
+msgid "Disabled"
+msgstr "Deaktiviert"
+
+#: access_log/models.py:18 base/processors.py:29
+msgid "Access Log"
+msgstr "Zugriffs Log"
+
+#: access_log/models.py:19
+msgid "Access Logs"
+msgstr "Zugriffs Logs"
+
+#: access_log/templates/access_log_for_token.html:5
+#, python-format
+msgid "Access Log for %(name)s"
+msgstr "Zugriffs Log für %(name)s"
+
+#: access_log/templates/access_log_for_token.html:16
+#: access_log/templates/access_log_list.html:13
+#: access_log/templates/partial_access_log_for_token.html:5
+#: machines/templates/machine_detail.html:48
+#: machines/templates/machine_detail.html:82
+#: people/templates/person_detail.html:58
+#: people/templates/person_detail.html:102
+msgid "Date"
+msgstr "Datum"
+
+#: access_log/templates/access_log_for_token.html:17
+#: access_log/templates/access_log_list.html:14
+#: access_log/templates/partial_access_log_for_token.html:6
+#: machines/models.py:55 people/forms.py:14 people/forms.py:33
+#: tokens/templates/unknown_token_list.html:20
+msgid "Machine"
+msgstr "Maschine"
+
+#: access_log/templates/access_log_for_token.html:18
+#: access_log/templates/access_log_list.html:15
+#: access_log/templates/partial_access_log_for_token.html:7
+#: templates/auditlog/logentry_list.html:16
+msgid "Action"
+msgstr "Aktion"
+
+#: access_log/templates/access_log_list.html:16 tokens/models.py:32
+msgid "Token"
+msgstr "Token"
+
+#: base/processors.py:8 people/templates/person_detail.html:21
+#: tokens/models.py:33 users/templates/home.html:13
+msgid "Tokens"
+msgstr "Tokens"
+
+#: base/processors.py:15 people/models.py:20 users/templates/home.html:32
+msgid "People"
+msgstr "Menschen"
+
+#: base/processors.py:22 machines/models.py:56 users/templates/home.html:51
+msgid "Machines"
+msgstr "Maschinen"
+
+#: base/processors.py:36
+msgid "Audit Log"
+msgstr "Audit Log"
+
+#: machines/templates/machine_configure_form.html:8
+#, python-format
+msgid "Configure <span class=\"text-primary-emphasis\">%(machine)s</span>"
+msgstr "<span class=“text-primary-emphasis”>%(machine)s</span> konfigurieren"
+
+#: machines/templates/machine_configure_form.html:63
+#: people/templates/instructor_person.html:19
+#: people/templates/qualify_person.html:30 templates/base_form.html:11
+#: users/templates/profile.html:13
+msgid "Save"
+msgstr "Speichern"
+
+#: machines/templates/machine_configure_form.html:66
+#: templates/base_form.html:14
+msgid "Delete"
+msgstr "Löschen"
+
+#: machines/templates/machine_detail.html:7 templates/base_detail.html:11
+msgid "Edit "
+msgstr "Editieren "
+
+#: machines/templates/machine_detail.html:8
+msgid "Configure "
+msgstr "Konfigurieren"
+
+#: machines/templates/machine_detail.html:11 templates/base_detail.html:14
+msgid "Delete "
+msgstr "Löschen"
+
+#: machines/templates/machine_detail.html:19
+#: people/templates/person_detail.html:7 tokens/templates/token_detail.html:5
+#: users/templates/user_detail.html:9
+msgid "Details"
+msgstr "Details"
+
+#: machines/templates/machine_detail.html:29
+msgid "Configuration"
+msgstr "Konfiguration"
+
+#: machines/templates/machine_detail.html:39 people/models.py:67
+#: people/templates/person_detail.html:44
+msgid "Qualifications"
+msgstr "Qualifikationen"
+
+#: machines/templates/machine_detail.html:40
+#, python-format
+msgid "%(qualifications_count)s people are qualified to use this machine:"
+msgstr ""
+"%(qualifications_count)s Personen sind qualifiziert diese Maschine zu nutzen:"
+
+#: machines/templates/machine_detail.html:44
+#: machines/templates/machine_detail.html:81
+#: machines/templates/machine_list.html:9
+#: people/templates/person_detail.html:54
+#: people/templates/person_detail.html:101 people/templates/person_list.html:8
+#: users/models.py:50 users/templates/user_list.html:17
+msgid "Name"
+msgstr "Name"
+
+#: machines/templates/machine_detail.html:45
+msgid "Access Type"
+msgstr "Zugriffstyp"
+
+#: machines/templates/machine_detail.html:46
+msgid "Qualification Comment"
+msgstr "Qualifikationskommentar"
+
+#: machines/templates/machine_detail.html:47 people/models.py:84
+msgid "Instructor"
+msgstr "Einweisend"
+
+#: machines/templates/machine_detail.html:64
+#: people/templates/person_detail.html:60
+msgid "Edit"
+msgstr "Editieren"
+
+#: machines/templates/machine_detail.html:65
+#: machines/templates/machine_detail.html:83
+#: people/templates/person_detail.html:61
+#: people/templates/person_detail.html:104
+msgid "Revoke"
+msgstr "Entziehen"
+
+#: machines/templates/machine_detail.html:75 people/models.py:85
+msgid "Instructors"
+msgstr "Einweisende"
+
+#: machines/templates/machine_detail.html:76
+#, python-format
+msgid "%(instructors_count)s people can instruct on usage of this machine:"
+msgstr ""
+"%(instructors_count)s Personen können Einweisungen für diese Maschine geben"
+
+#: machines/templates/machine_detail.html:80
+#: people/templates/person_list.html:7
+msgid "Member ID"
+msgstr "Mitglieds ID"
+
+#: machines/templates/machine_form.html:7
+#, python-format
+msgid "Edit <span class=\"text-primary-emphasis\">%(machine.name)s</span>"
+msgstr "<span class=“text-primary-emphasis”>%(machine.name)s</span> editieren"
+
+#: machines/templates/machine_form.html:9
+msgid "Add a new machine"
+msgstr "Neue Maschine hinzufügen"
+
+#: machines/templates/machine_list.html:7
+#: people/templates/person_detail.html:100
+msgid "Hostname"
+msgstr "Hostname"
+
+#: machines/templates/machine_list.html:8
+msgid "MAC-Address"
+msgstr "MAC-Adresse"
+
+#: machines/templates/machine_list.html:10
+msgid "Machine Active"
+msgstr "Maschine Aktiv"
+
+#: machines/templates/machine_list.html:12 people/templates/person_list.html:12
+#: tokens/templates/token_list.html:27
+msgid "Modify"
+msgstr "Modifizieren"
+
+#: machines/templates/machine_list.html:13
+msgid "Configure"
+msgstr "Konfigurieren"
+
+#: machines/utils.py:4
+msgid "Monday"
+msgstr "Montag"
+
+#: machines/utils.py:5
+msgid "Tuesday"
+msgstr "Dienstag"
+
+#: machines/utils.py:6
+msgid "Wednesday"
+msgstr "Mittwoch"
+
+#: machines/utils.py:7
+msgid "Thursday"
+msgstr "Donnerstag"
+
+#: machines/utils.py:8
+msgid "Friday"
+msgstr "Freitag"
+
+#: machines/utils.py:9
+msgid "Saturday"
+msgstr "Samstag"
+
+#: machines/utils.py:10
+msgid "Sunday"
+msgstr "Sonntag"
+
+#: people/models.py:19
+msgid "Person"
+msgstr "Person"
+
+#: people/models.py:37
+msgid "If space is open"
+msgstr "Wenn Raum geöffnet"
+
+#: people/models.py:38
+msgid "Always"
+msgstr "Immer"
+
+#: people/models.py:39
+msgid "Never"
+msgstr "Nie"
+
+#: people/models.py:66
+msgid "Qualification"
+msgstr "Qualifikation"
+
+#: people/templates/instructor_person.html:7
+#, python-format
+msgid ""
+"Add <span class=\"text-primary-emphasis\">%(person)s</span> as instructor"
+msgstr ""
+"<span class=“text-primary-emphasis”>%(person)s</span> als einweisende Person "
+"hinzufügen"
+
+#: people/templates/person_detail.html:32
+#, python-format
+msgid "<b>%(name)s</b> has no tokens."
+msgstr "<b>%(name)s</b> hat keine Tokens."
+
+#: people/templates/person_detail.html:46
+msgid "Add Qualification"
+msgstr "Qualifikation hinzufügen"
+
+#: people/templates/person_detail.html:50
+#, python-format
+msgid "<b>%(name)s</b> is qualified for the following machines:"
+msgstr "<b>%(name)s</b> ist für die folgenden Maschinen qualifiziert:"
+
+#: people/templates/person_detail.html:55
+msgid "Instructed by"
+msgstr "Eingewiesen von"
+
+#: people/templates/person_detail.html:56
+msgid "Permission Level"
+msgstr "Zugriffsstufe"
+
+#: people/templates/person_detail.html:57
+msgid "Comment"
+msgstr "Kommentar"
+
+#: people/templates/person_detail.html:85
+#, python-format
+msgid "<b>%(name)s</b> is not qualified for any machines."
+msgstr "<b>%(name)s</b> ist für keine Maschine qualifiziert."
+
+#: people/templates/person_detail.html:90
+msgid "Instructor for"
+msgstr "Einweisend für"
+
+#: people/templates/person_detail.html:92
+msgid "Add as instructor"
+msgstr "Als einweisende Person hinzufügen"
+
+#: people/templates/person_detail.html:96
+#, python-format
+msgid "<b>%(name)s</b> can instruct people for the following machines:"
+msgstr "<b>%(name)s</b> kann Personen für die folgenden Maschinen einweisen:"
+
+#: people/templates/person_detail.html:124
+#, python-format
+msgid "<b>%(name)s</b> can not instruct people for any machines."
+msgstr "<b>%(name)s</b> kann keine Einweisungen geben."
+
+#: people/templates/person_form.html:7
+#, python-format
+msgid "Edit <span class=\"text-primary-emphasis\">%(person)s</span>"
+msgstr "<span class=“text-primary-emphasis”>%(person)s</span> editieren"
+
+#: people/templates/person_form.html:9
+msgid "Add a new person"
+msgstr "Neue Person hinzufügen"
+
+#: people/templates/person_list.html:9
+msgid "E-Mail"
+msgstr "E-Mail"
+
+#: people/templates/person_list.html:10 tokens/templates/token_list.html:24
+#: users/templates/home.html:19 users/templates/home.html:38
+#: users/templates/home.html:57
+msgid "Active"
+msgstr "Aktiv"
+
+#: people/templates/person_list.html:15
+msgid "Qualify"
+msgstr "Qualifizieren"
+
+#: people/templates/qualify_person.html:10
+#, python-format
+msgid ""
+"Update qualification for <span class=\"text-primary-emphasis\">%(person)s</"
+"span> using <span class=\"text-primary-emphasis\">%(machine)s</span>"
+msgstr ""
+"Qualifikation von <span class=“text-primary-emphasis”>%(person)s</span> für "
+"<span class=“text-primary-emphasis”>%(machine)s</span> aktualisieren"
+
+#: people/templates/qualify_person.html:12
+#, python-format
+msgid ""
+"Add qualification for <span class=\"text-primary-emphasis\">%(person)s</span>"
+msgstr ""
+"Qualifikation für <span class=“text-primary-emphasis”>%(person)s</span> "
+"hinzufügen"
+
+#: space/templates/status.html:18
+#, python-format
+msgid "%(space_name)s is %(state_text)s."
+msgstr "%(space_name)s ist %(state_text)s."
+
+#: space/templates/status.html:24
+#, python-format
+msgid "This state was set %(time)s"
+msgstr "Der Status wurde %(time)s gesetzt"
+
+#: space/views.py:16
+msgid "open"
+msgstr "Offen"
+
+#: space/views.py:16
+msgid "closed"
+msgstr "Geschlossen"
+
+#: templates/about.html:5 templates/base.html:51
+msgid "About"
+msgstr "Über"
+
+#: templates/about.html:12
+msgid "Version"
+msgstr "Version"
+
+#: templates/about.html:22
+msgid "Python version"
+msgstr "Python Version"
+
+#: templates/about.html:30
+msgid "Django version"
+msgstr "Django Version"
+
+#: templates/auditlog/logentry_list.html:7 templates/base_list.html:11
+#: tokens/templates/token_list.html:6
+msgid "Search"
+msgstr "Suchen"
+
+#: templates/auditlog/logentry_list.html:14
+msgid "Timestamp"
+msgstr "Zeitstempel"
+
+#: templates/auditlog/logentry_list.html:15 users/models.py:65
+msgid "User"
+msgstr "Benutzer*in"
+
+#: templates/auditlog/logentry_list.html:17
+msgid "Object"
+msgstr "Objekt"
+
+#: templates/auditlog/logentry_list.html:18
+#: templates/auditlog/logentry_list.html:33
+msgid "Changes"
+msgstr "Änderungen"
+
+#: templates/auditlog/logentry_list.html:33
+msgid "and"
+msgstr "und"
+
+#: templates/base.html:48 users/models.py:66 users/templates/user_list.html:5
+msgid "Users"
+msgstr "Benutzer*innen"
+
+#: templates/base.html:50
+msgid "Settings"
+msgstr "Einstellungen"
+
+#: templates/base.html:52
+msgid "Sign out"
+msgstr "Abmelden"
+
+#: templates/base.html:55
+msgid "Theme"
+msgstr "Thema"
+
+#: templates/base.html:59
+msgid "Light"
+msgstr "Hell"
+
+#: templates/base.html:65
+msgid "Dark"
+msgstr "Dunkel"
+
+#: templates/base.html:71
+msgid "Auto"
+msgstr "Auto"
+
+#: templates/base_list.html:14 templates/base_list.html:20
+#, python-format
+msgid "Add %(modelname)s"
+msgstr "%(modelname)s hinzufügen"
+
+#: templates/delete_confirm.html:4
+#, python-format
+msgid "Delete %(object)s"
+msgstr "%(object)s löschen"
+
+#: templates/delete_confirm.html:9
+#, python-format
+msgid "Do you really want to delete %(object)s?"
+msgstr "Solen %(object)s wirklich gelöscht werden?"
+
+#: templates/delete_confirm.html:13
+msgid "No"
+msgstr "Nein"
+
+#: templates/delete_confirm.html:14
+msgid "Yes"
+msgstr "Ja"
+
+#: templates/registration/login.html:10 templates/registration/login.html:29
+msgid "Sign in"
+msgstr "Anmelden"
+
+#: templates/registration/login.html:16
+msgid "E-Mail Address or password incorrect"
+msgstr "E-Mail Adresse oder Passwort inkorrekt"
+
+#: templates/registration/login.html:21 templates/registration/login.html:22
+#: users/models.py:48 users/templates/user_list.html:18
+msgid "E-Mail Address"
+msgstr "E-Mail Adresse"
+
+#: templates/registration/login.html:25 templates/registration/login.html:26
+msgid "Password"
+msgstr "Passwort"
+
+#: tokens/templates/token_detail.html:20
+msgid "Load Access Log"
+msgstr "Zugriffslog laden"
+
+#: tokens/templates/token_form.html:7
+#, python-format
+msgid "Edit <span class=\"text-primary-emphasis\">%(token)s</span>"
+msgstr "<span class=“text-primary-emphasis”>%(token)s</span> editieren"
+
+#: tokens/templates/token_form.html:9 tokens/templates/token_list.html:9
+#: tokens/templates/token_list.html:15
+msgid "Assign Token"
+msgstr "Token zuweisen"
+
+#: tokens/templates/token_form.html:11
+msgid "Add a new Token"
+msgstr "Neuen Token hinzufügen"
+
+#: tokens/templates/token_list.html:22
+#: tokens/templates/unknown_token_list.html:19
+msgid "Serial"
+msgstr "Serial"
+
+#: tokens/templates/token_list.html:23
+msgid "Purpose"
+msgstr "Zweck"
+
+#: tokens/templates/token_list.html:25
+msgid "Owner"
+msgstr "Besitzer*in"
+
+#: tokens/templates/unknown_token_list.html:7
+msgid "Unknown tokens"
+msgstr "Unbekannte Tokens"
+
+#: tokens/templates/unknown_token_list.html:11
+msgid "Clear list"
+msgstr "Liste leeren"
+
+#: tokens/templates/unknown_token_list.html:21
+msgid "Seen"
+msgstr "Gesehen"
+
+#: tokens/templates/unknown_token_list.html:23
+msgid "Assign"
+msgstr "Zuweisen"
+
+#: tokens/templates/unknown_token_list.html:42
+msgid "No Tokens found."
+msgstr "Keine Tokens gefunden."
+
+#: tokens/templates/unknown_token_list.html:43
+msgid ""
+"Any token that is tappen on a reader and not known to the database will show "
+"up here."
+msgstr ""
+"Jeder Token der an einen Leser gehalten wird und nicht in der Datenbank ist, "
+"taucht hier auf."
+
+#: users/admin.py:14
+msgid "Personal info"
+msgstr "Persönliche Informationen"
+
+#: users/admin.py:16
+msgid "Permissions"
+msgstr "Berechtigungen"
+
+#: users/admin.py:27
+msgid "Important dates"
+msgstr "Wichtige Daten"
+
+#: users/models.py:53
+msgid "Langauge"
+msgstr "Sprache"
+
+#: users/models.py:56
+msgid "Page Length"
+msgstr "Seitenlänge"
+
+#: users/models.py:58
+msgid "Number of items to show per page"
+msgstr "Anzahl an Einträgen pro Seite"
+
+#: users/templates/home.html:5
+msgid "Welcome to RfiDing"
+msgstr "Willkommen bei RFIDing"
+
+#: users/templates/home.html:23 users/templates/home.html:42
+#: users/templates/home.html:61
+msgid "Total"
+msgstr "Insgesamt"
+
+#: users/templates/profile.html:6
+msgid "Profile"
+msgstr "Profil"
+
+#: users/templates/profile.html:16
+msgid "Change Password"
+msgstr "Passwort ändern"
+
+#: users/templates/user_form.html:6
+#, python-format
+msgid "Edit %(user)s"
+msgstr "%(user)s editieren"
+
+#: users/templates/user_form.html:8
+msgid "Add a new user"
+msgstr "Neue Benutzer*in hinzufügen"
+
+#: users/templates/user_list.html:9
+msgid "Add user"
+msgstr "Benutzer*in hinzufügen"
+
+#: users/templates/user_list.html:16
+msgid "ID"
+msgstr "ID"
