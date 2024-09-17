@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-16 14:57+0000\n"
+"POT-Creation-Date: 2024-09-17 13:29+0000\n"
 "PO-Revision-Date: 2024-09-16 16:57+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -80,7 +80,7 @@ msgstr "Tokens"
 
 #: base/processors.py:15 people/models.py:20 users/templates/home.html:32
 msgid "People"
-msgstr "Menschen"
+msgstr "Personen"
 
 #: base/processors.py:22 machines/models.py:57 users/templates/home.html:51
 msgid "Machines"
@@ -109,6 +109,7 @@ msgid "Delete"
 msgstr "Löschen"
 
 #: machines/templates/machine_detail.html:7 templates/base_detail.html:11
+#: tokens/templates/token_detail.html:7
 msgid "Edit "
 msgstr "Editieren "
 
@@ -118,7 +119,7 @@ msgid "Configure"
 msgstr "Konfigurieren"
 
 #: machines/templates/machine_detail.html:19
-#: people/templates/person_detail.html:7 tokens/templates/token_detail.html:5
+#: people/templates/person_detail.html:7 tokens/templates/token_detail.html:16
 #: users/templates/user_detail.html:9
 msgid "Details"
 msgstr "Details"
@@ -130,7 +131,7 @@ msgstr "Details"
 #: people/templates/person_detail.html:10
 #: people/templates/person_detail.html:54
 #: people/templates/person_detail.html:102 people/templates/person_list.html:8
-#: users/models.py:50 users/templates/user_list.html:17
+#: users/models.py:62 users/templates/user_list.html:17
 msgid "Name"
 msgstr "Name"
 
@@ -149,7 +150,7 @@ msgid "IP Address"
 msgstr "IP Adresse"
 
 #: machines/templates/machine_detail.html:25
-#: people/templates/person_detail.html:12 tokens/templates/token_detail.html:10
+#: people/templates/person_detail.html:12 tokens/templates/token_detail.html:21
 msgid "Is Active"
 msgstr "Ist Aktiv"
 
@@ -313,7 +314,7 @@ msgstr ""
 msgid "E-Mail"
 msgstr "E-Mail"
 
-#: people/templates/person_detail.html:14 tokens/templates/token_detail.html:12
+#: people/templates/person_detail.html:14 tokens/templates/token_detail.html:26
 msgid "Notes"
 msgstr "Notizen"
 
@@ -402,6 +403,16 @@ msgstr ""
 "Qualifikation für <span class=“text-primary-emphasis”>%(person)s</span> "
 "hinzufügen"
 
+#: space/models.py:12
+msgid "Open"
+msgstr "Offen"
+
+#: space/models.py:12
+#, fuzzy
+#| msgid "closed"
+msgid "Closed"
+msgstr "Geschlossen"
+
 #: space/templates/status.html:18
 #, python-format
 msgid "%(space_name)s is %(state_text)s."
@@ -429,7 +440,7 @@ msgid ""
 "Space status might not be accurate anymore! Consider contacting the space."
 msgstr "Status könnte nicht mehr korrekt sein! Kontaktiere eventuell den Raum."
 
-#: templates/about.html:5 templates/base.html:51
+#: templates/about.html:5 templates/base.html:50
 msgid "About"
 msgstr "Über"
 
@@ -445,6 +456,26 @@ msgstr "Python Version"
 msgid "Django version"
 msgstr "Django Version"
 
+#: templates/archive_confirm.html:4
+#, fuzzy, python-format
+#| msgid "Delete %(object)s"
+msgid "Archive %(object)s"
+msgstr "%(object)s löschen"
+
+#: templates/archive_confirm.html:9
+#, fuzzy, python-format
+#| msgid "Do you really want to delete %(object)s?"
+msgid "Do you really want to archive %(object)s?"
+msgstr "Solen %(object)s wirklich gelöscht werden?"
+
+#: templates/archive_confirm.html:13 templates/delete_confirm.html:13
+msgid "No"
+msgstr "Nein"
+
+#: templates/archive_confirm.html:14 templates/delete_confirm.html:14
+msgid "Yes"
+msgstr "Ja"
+
 #: templates/auditlog/logentry_list.html:7 templates/base_list.html:11
 #: tokens/templates/token_list.html:6
 msgid "Search"
@@ -454,7 +485,7 @@ msgstr "Suchen"
 msgid "Timestamp"
 msgstr "Zeitstempel"
 
-#: templates/auditlog/logentry_list.html:15 users/models.py:66
+#: templates/auditlog/logentry_list.html:15 users/models.py:81
 msgid "User"
 msgstr "Benutzer*in"
 
@@ -471,33 +502,17 @@ msgstr "Änderungen"
 msgid "and"
 msgstr "und"
 
-#: templates/base.html:48 users/models.py:67 users/templates/user_list.html:5
+#: templates/base.html:47 users/models.py:82 users/templates/user_list.html:5
 msgid "Users"
 msgstr "Benutzer*innen"
 
-#: templates/base.html:50
+#: templates/base.html:49
 msgid "Settings"
 msgstr "Einstellungen"
 
-#: templates/base.html:52
+#: templates/base.html:51
 msgid "Sign out"
 msgstr "Abmelden"
-
-#: templates/base.html:55
-msgid "Theme"
-msgstr "Thema"
-
-#: templates/base.html:59
-msgid "Light"
-msgstr "Hell"
-
-#: templates/base.html:65
-msgid "Dark"
-msgstr "Dunkel"
-
-#: templates/base.html:71
-msgid "Auto"
-msgstr "Auto"
 
 #: templates/base_list.html:14 templates/base_list.html:20
 #, python-format
@@ -514,14 +529,6 @@ msgstr "%(object)s löschen"
 msgid "Do you really want to delete %(object)s?"
 msgstr "Solen %(object)s wirklich gelöscht werden?"
 
-#: templates/delete_confirm.html:13
-msgid "No"
-msgstr "Nein"
-
-#: templates/delete_confirm.html:14
-msgid "Yes"
-msgstr "Ja"
-
 #: templates/registration/login.html:10 templates/registration/login.html:29
 msgid "Sign in"
 msgstr "Anmelden"
@@ -531,7 +538,7 @@ msgid "E-Mail Address or password incorrect"
 msgstr "E-Mail Adresse oder Passwort inkorrekt"
 
 #: templates/registration/login.html:21 templates/registration/login.html:22
-#: users/models.py:48 users/templates/user_list.html:18
+#: users/models.py:60 users/templates/user_list.html:18
 msgid "E-Mail Address"
 msgstr "E-Mail Adresse"
 
@@ -539,20 +546,28 @@ msgstr "E-Mail Adresse"
 msgid "Password"
 msgstr "Passwort"
 
-#: tokens/templates/token_detail.html:7 tokens/templates/token_list.html:22
+#: tokens/templates/token_card.html:16 tokens/templates/token_detail.html:23
+msgid "Archived"
+msgstr ""
+
+#: tokens/templates/token_detail.html:10
+msgid "Archive"
+msgstr ""
+
+#: tokens/templates/token_detail.html:18 tokens/templates/token_list.html:22
 #: tokens/templates/unknown_token_list.html:19
 msgid "Serial"
 msgstr "Serial"
 
-#: tokens/templates/token_detail.html:8 tokens/templates/token_list.html:23
+#: tokens/templates/token_detail.html:19 tokens/templates/token_list.html:23
 msgid "Purpose"
 msgstr "Zweck"
 
-#: tokens/templates/token_detail.html:9 tokens/templates/token_list.html:25
+#: tokens/templates/token_detail.html:20 tokens/templates/token_list.html:25
 msgid "Owner"
 msgstr "Besitzer*in"
 
-#: tokens/templates/token_detail.html:20
+#: tokens/templates/token_detail.html:34
 msgid "Load Access Log"
 msgstr "Zugriffslog laden"
 
@@ -610,17 +625,69 @@ msgstr "Berechtigungen"
 msgid "Important dates"
 msgstr "Wichtige Daten"
 
-#: users/models.py:54
+#: users/models.py:43
+msgid "Default (Blue)"
+msgstr ""
+
+#: users/models.py:44
+#, fuzzy
+#| msgid "Purpose"
+msgid "Purple"
+msgstr "Zweck"
+
+#: users/models.py:45
+msgid "Red"
+msgstr ""
+
+#: users/models.py:46
+#, fuzzy
+#| msgid "Changes"
+msgid "Orange"
+msgstr "Änderungen"
+
+#: users/models.py:47
+msgid "Yellow"
+msgstr ""
+
+#: users/models.py:48
+msgid "Green"
+msgstr ""
+
+#: users/models.py:49
+msgid "Pink"
+msgstr ""
+
+#: users/models.py:50
+msgid "Teal"
+msgstr ""
+
+#: users/models.py:51
+msgid "Cyan"
+msgstr ""
+
+#: users/models.py:66
 msgid "Langauge"
 msgstr "Sprache"
 
-#: users/models.py:57
+#: users/models.py:69
 msgid "Page Length"
 msgstr "Seitenlänge"
 
-#: users/models.py:59
+#: users/models.py:71
 msgid "Number of items to show per page"
 msgstr "Anzahl an Einträgen pro Seite"
+
+#: users/models.py:75
+msgid "Light"
+msgstr "Hell"
+
+#: users/models.py:75
+msgid "Dark"
+msgstr "Dunkel"
+
+#: users/models.py:75
+msgid "Auto"
+msgstr "Auto"
 
 #: users/templates/home.html:5
 msgid "Welcome to RfiDing"
@@ -655,6 +722,9 @@ msgstr "Benutzer*in hinzufügen"
 #: users/templates/user_list.html:16
 msgid "ID"
 msgstr "ID"
+
+#~ msgid "Theme"
+#~ msgstr "Thema"
 
 #~ msgid "Delete "
 #~ msgstr "Löschen"

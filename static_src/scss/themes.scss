@@ -19,6 +19,8 @@ $themecolors: (
     --bs-primary-rgb: #{to-rgb($main)};
     --bs-link-color: $main;
     --bs-link-color-rgb: #{to-rgb($main)};
+    --bs-link-hover-color: #{mix($gray-600, map.get($value, "#{$color}-300"), .5)};
+    --bs-link-hover-color-rgb: #{to-rgb(mix($gray-600, map.get($value, "#{$color}-300"), .5))};
     .page-link.active, .active > .page-link {
         background-color: $main;
         border-color: $main;
