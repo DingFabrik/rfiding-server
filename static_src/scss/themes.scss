@@ -1,0 +1,45 @@
+@use "sass:map";
+
+$themecolors: (
+  "blue":    $blues,
+  "green":  $greens,
+  "red":    $reds,
+  "yellow": $yellows,
+  "purple": $purples,
+  "pink":   $pinks,
+  "orange":   $oranges,
+  "teal":   $teals,
+  "cyan":   $cyans,
+) !default;
+
+@each $color, $value in $themecolors {
+  [data-bs-themecolor="#{$color}"] {
+    $main: map.get($value, "#{$color}-500");
+    --bs-primary: $main;
+    --bs-primary-rgb: #{to-rgb($main)};
+    --bs-link-color: $main;
+    --bs-link-color-rgb: #{to-rgb($main)};
+    .page-link.active, .active > .page-link {
+        background-color: $main;
+        border-color: $main;
+    }
+    .page-link:hover {
+      color: map.get($value, "#{$color}-200");
+    }
+
+    .btn-primary {
+      --bs-btn-bg: #{mix($gray-600, map.get($value, "#{$color}-400"), .5)};
+      --bs-btn-border-color: #{rgba($white, .25)};
+      --bs-btn-hover-bg: #{darken(mix($gray-600, map.get($value, "#{$color}-400"), .5), 5%)};
+      --bs-btn-hover-border-color: #{rgba($white, .25)};
+      --bs-btn-active-bg: #{darken(mix($gray-600, map.get($value, "#{$color}-400"), .5), 10%)};
+      --bs-btn-active-border-color: #{rgba($white, .5)};
+      --bs-btn-focus-border-color: #{rgba($white, .5)};
+      --bs-btn-focus-box-shadow: 0 0 0 .25rem rgba(255, 255, 255, .2);
+    }
+  }
+  [data-bs-themecolor="#{$color}"][data-bs-theme="dark"] {
+    --bs-link-color: map.get($value, "#{$color}-300");
+    --bs-link-color-rgb: #{to-rgb(map.get($value, "#{$color}-300"))};
+  }
+}

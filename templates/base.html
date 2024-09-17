@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css">
     <link href="{% static "css/main.css" %}" rel="stylesheet">
   </head>
-  <body class="bg-body-tertiary" data-bs-theme="{{ user.theme_mode|default:"auto" }}">
+  <body class="bg-body-tertiary" data-bs-themecolor="{{ user.theme|default:"blue" }}" data-bs-theme="{{ user.theme_mode|default:"auto" }}">
     {% if user.is_authenticated %}
     <nav class="navbar navbar-expand-md navbar-dark bg-dark border-bottom border-1 border-primary fixed-top">
       <div class="container">
@@ -76,13 +76,10 @@
       <p class="text-center text-body-secondary">© 2024 <a class="text-body-secondary" href="https://dingfabrik.de">Dingfabrik e.V.</a></p>
     </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-    <script type="text/javascript"  src="{% static 'js/htmx.min.js' %}" defer></script>
+    <script type="text/javascript" src="{% static 'js/main.js' %}"></script>
     {% block js_extra %}
     {% endblock%}
     <script>
-      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
-      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
       {% block script_extra %}
       {% endblock%}
     </script>

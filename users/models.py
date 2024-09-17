@@ -39,6 +39,18 @@ class UserManager(BaseUserManager):
         return self._create_user(email, password, **extra_fields)
 
 
+THEME_COLORS = (
+    ("default", _("Default (Blue)")),
+    ("purple", _("Purple")),
+    ("red", _("Red")),
+    ("orange", _("Orange")),
+    ("yellow", _("Yellow")),
+    ("green", _("Green")),
+    ("pink", _("Pink")),
+    ("teal", _("Teal")),
+    ("cyan", _("Cyan")),
+)
+
 class RFIDingUser(AbstractUser):
     USERNAME_FIELD = "email"
     username = None
@@ -61,7 +73,7 @@ class RFIDingUser(AbstractUser):
     )
 
     theme_mode = models.CharField(max_length=10, choices=[("light", _("Light")), ("dark", _("Dark")), ("auto", _("Auto"))], default="auto")
-    theme = models.CharField(max_length=10, choices=[("default", _("Default")), ], default="default")
+    theme = models.CharField(max_length=10, choices=THEME_COLORS, default="default")
 
     objects = UserManager()
 

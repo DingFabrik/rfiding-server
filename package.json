@@ -1,0 +1,29 @@
+{
+  "js": "static/js/main.js",
+  "css": "static/css/main.css",
+  "targets": {
+    "css": {
+      "source": "static_src/scss/main.scss"
+    },
+    "js": {
+      "engines": {
+        "browsers": "> 0.5%, last 2 versions, not dead"
+      },
+      "outputFormat": "global",
+      "source": "static_src/js/main.js"
+    }
+  },
+  "scripts": {
+    "watch": "parcel watch",
+    "build": "parcel build"
+  },
+  "devDependencies": {
+    "@parcel/transformer-sass": "^2.12.0",
+    "parcel": "^2.12.0"
+  },
+  "dependencies": {
+    "@popperjs/core": "^2.11.8",
+    "bootstrap": "^5.3.3",
+    "jquery-ui": "^1.14.0"
+  }
+}

@@ -38,8 +38,7 @@
 {% endblock %}
 
 {% block script_extra %}
-
-$( "#{{ form.machine_autocomplete.id_for_label}}" ).autocomplete({
+$("#{{ form.machine_autocomplete.id_for_label}}").autocomplete({
     source: "{% url 'machines:autocomplete-qualifyable' form.person.value %}",
     minLength: 1,
         select: function( event, ui ) {
