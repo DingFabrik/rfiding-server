@@ -30,7 +30,7 @@
 <a class='btn btn-primary'
     href="{% url 'access_log:for-token' object.pk %}"
     hx-get="{% url 'access_log:for-token' object.pk %}"
-                        hx-swap="outerHTML">
+    hx-swap="outerHTML">
         {% trans "Load Access Log" %} <i class="htmx-indicator loader"></i>
 </a>
 {% endblock %}

@@ -106,5 +106,12 @@
         </tbody>
     </table>
 </div>
+
+<a class='btn btn-primary'
+    href="{% url 'access_log:for-machine' object.pk %}"
+    hx-get="{% url 'access_log:for-machine' object.pk %}"
+    hx-swap="outerHTML">
+        {% trans "Load Access Log" %} <i class="htmx-indicator loader"></i>
+</a>
 {% endif %}
 {% endblock %}

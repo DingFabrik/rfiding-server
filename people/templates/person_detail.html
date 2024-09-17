@@ -124,7 +124,13 @@
     {% else %}
         <div class="alert alert-secondary">{% with name=person.name %}{% blocktrans %}<b>{{ name }}</b> can not instruct people for any machines.{% endblocktrans %}{% endwith %}</div>
     {% endif %}
-    
 </div>
 </div>
+
+<a class='btn btn-primary'
+    href="{% url 'access_log:for-person' object.pk %}"
+    hx-get="{% url 'access_log:for-person' object.pk %}"
+    hx-swap="outerHTML">
+        {% trans "Load Access Log" %} <i class="htmx-indicator loader"></i>
+</a>
 {% endblock %}

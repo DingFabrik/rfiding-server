@@ -2,7 +2,7 @@
 {% load i18n %}
 
 {% block title %}
-{% with name=token %}{% blocktrans %}Access Log for {{ name }}{% endblocktrans %}{% endwith %}
+{% with name=person %}{% blocktrans %}Access Log for {{ name }}{% endblocktrans %}{% endwith %}
 {% endblock %}
 
 {% block top_actions %}
@@ -11,5 +11,5 @@
 {% endblock %}
 
 {% block content %}
-{% include "partial_access_log_for_token.html" %}
+{% include "partial_access_log_for_person.html" %}
 {% endblock %}

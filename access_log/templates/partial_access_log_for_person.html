@@ -6,17 +6,18 @@
             <tr>
                 <th>{% trans "Date" %}</th>
                 <th>{% trans "Machine" %}</th>
+                <th>{% trans "Token" %}</th>
                 <th>{% trans "Action" %}</th>
             </tr>
             </thead>
     {% for object in object_list %}
     <tr>
         <td><span data-bs-toggle="tooltip" title="{{ object.timestamp }}">{{ object.timestamp|naturaltime }}</span></td>
-    <td>{{ object.machine }}</td>
-    <td>{{ object.get_type_display }}</td>
+        <td>{{ object.machine }}</td>
+        <td>{{ object.token }}</td>
+        <td>{{ object.get_type_display }}</td>
     </tr>
     {% endfor %}
     </table>
-
     {% include "base_pagination.html" %}
 </div>
