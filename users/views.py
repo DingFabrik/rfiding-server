@@ -23,7 +23,7 @@ from users.models import RFIDingUser
 class ProfileView(UpdateView):
     model = RFIDingUser
     template_name = "profile.html"
-    fields = ["name", "email", "language", "page_length"]
+    fields = ["name", "email", "language", "page_length", "theme_mode"]
     success_url = reverse_lazy("users:profile")
 
     def get_object(self):

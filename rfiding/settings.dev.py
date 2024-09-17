@@ -2,6 +2,8 @@ from .base_settings import *
 
 DEBUG = True
 
+STATIC_ROOT = BASE_DIR / "/staticfiles/"
+
 INSTALLED_APPS += [
     "debug_toolbar",
 ]

@@ -30,7 +30,7 @@ class BaseToggleActiveView(TemplateView, PermissionRequiredMixin):
         context["object"] = object
         return context
 
-class AuditlogView(ListView):
+class AuditlogView(ListView, PermissionRequiredMixin):
     model = LogEntry
     queryset = LogEntry.objects.all().select_related("content_type").order_by("-timestamp")
     permission_required = "tokens.view_token"

@@ -49,7 +49,7 @@ class RFIDingUser(AbstractUser):
     )  # changes email to unique and blank to false
     name = models.CharField(_("Name"), max_length=150, blank=True)
     REQUIRED_FIELDS = []
-    
+
     language = models.CharField(
         _("Langauge"), max_length=10, default="en", choices=settings.LANGUAGES
     )
@@ -59,6 +59,9 @@ class RFIDingUser(AbstractUser):
         help_text=_("Number of items to show per page"),
         validators=[validators.MinValueValidator(1), validators.MaxValueValidator(300)],
     )
+
+    theme_mode = models.CharField(max_length=10, choices=[("light", _("Light")), ("dark", _("Dark")), ("auto", _("Auto"))], default="auto")
+    theme = models.CharField(max_length=10, choices=[("default", _("Default")), ], default="default")
 
     objects = UserManager()
 
