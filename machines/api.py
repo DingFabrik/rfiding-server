@@ -122,23 +122,23 @@ class CheckMachineAccessView(APIView):
                 {"error": "Token/Person is not active", "access": 0},
                 status=status.HTTP_403_FORBIDDEN,
             )
-
-        qualification = (
-            token.person.qualifications.filter(machine=machine).order_by().first()
-        )
-        if qualification is None:
-            return Response(
-                {"error": "Person does not have access to machine", "access": 0},
-                status=status.HTTP_403_FORBIDDEN,
+        if machine.needs_qualification:
+            qualification = (
+                token.person.qualifications.filter(machine=machine).order_by().first()
             )
-
-        if qualification.permission_level == PERMISSION_LEVELS[0][0]:
-            space_state = SpaceState.objects.first()
-            if space_state is not None and not space_state.is_open:
+            if qualification is None or qualification.permission_level == PERMISSION_LEVELS[2][0]:
                 return Response(
-                    {"error": "Space is closed", "access": 0},
+                    {"error": "Person does not have access to machine", "access": 0},
                     status=status.HTTP_403_FORBIDDEN,
                 )
+
+            if qualification.permission_level == PERMISSION_LEVELS[0][0]:
+                space_state = SpaceState.objects.first()
+                if space_state is not None and not space_state.is_open:
+                    return Response(
+                        {"error": "Space is closed", "access": 0},
+                        status=status.HTTP_403_FORBIDDEN,
+                    )
         AccessLog.objects.create(machine=machine, token=token, type=LOG_TYPE_ENABLED)
         return Response(
             {
