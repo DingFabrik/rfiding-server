@@ -1,0 +1,12 @@
+RFIDing 1.0
+===========
+
+This is the initial public release of RFIDing.
+
+**Features:**
+
+* Manage machines, tokens and people
+* Individual qualifications per user for fine grained access control
+* Audit log for all actions
+* API to communicate with clients
+* Backend system for controlling if the space is open or not.

@@ -1,16 +1,16 @@
 {
-  "js": "static/js/main.js",
-  "css": "static/css/main.css",
+  "js": "server/static/js/main.js",
+  "css": "server/static/css/main.css",
   "targets": {
     "css": {
-      "source": "static_src/scss/main.scss"
+      "source": "server/static_src/scss/main.scss"
     },
     "js": {
       "engines": {
         "browsers": "> 0.5%, last 2 versions, not dead"
       },
       "outputFormat": "global",
-      "source": "static_src/js/main.js"
+      "source": "server/static_src/js/main.js"
     }
   },
   "scripts": {

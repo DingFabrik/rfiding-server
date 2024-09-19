@@ -21,6 +21,9 @@ django-webpack-loader = "^3.1.1"
 django-debug-toolbar = "^4.4.6"
 freezegun = "^1.5.1"
 factory-boy = "^3.3.1"
+sphinx = "^8.0.2"
+sphinxcontrib-httpdomain = "^1.8.1"
+furo = "^2024.8.6"
 
 [tool.ruff]
 target-version = "py312"
