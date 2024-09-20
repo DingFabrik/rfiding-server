@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load i18n  %}
+{% load static %}
+
+{% block content %}
+<div class="col-md-3 mx-auto text-center">
+    <div class="mx-auto mb-5" style="width: 140px;">
+        <img src="{% static "images/logo-dark.svg" %}" alt="Logo" width="140">
+    </div>
+    <h3>{% trans "Signed out" %}</h3>
+    <p>{% trans "You have successfully signed out." %}</p>
+    <a href="{% url "login" %}" class="btn btn-primary btn">{% trans "Sign in again" %}</a>
+</div>
+{% endblock %}
+
+<input id="inputEmail" class="form-control" placeholder="Email address" required="" autofocus="" type="email">

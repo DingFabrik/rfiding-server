@@ -7,7 +7,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 VERSION = "unknown"
 # adopt path to your pyproject.toml
-pyproject_toml_file = BASE_DIR / "pyproject.toml"
+pyproject_toml_file = BASE_DIR / "../pyproject.toml"
 if pyproject_toml_file.exists() and pyproject_toml_file.is_file():
     data = toml.load(pyproject_toml_file)
     # check project.version
@@ -150,6 +150,7 @@ STATICFILES_DIRS = [
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 AUTH_USER_MODEL = "users.RFIDingUser"
+LOGIN_REDIRECT_URL = "/"
 
 INTERNAL_IPS = [
     # ...
