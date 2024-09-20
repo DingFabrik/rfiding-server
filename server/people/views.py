@@ -123,7 +123,7 @@ class RevokeQualificationPersonView(DeleteView, PermissionRequiredMixin):
     permission_required = "people.qualify_person"
 
     model = Qualification
-    template_name = "delete_confirm.html"
+    template_name = "revoke_qualification_confirm.html"
 
     def get_object(self, queryset: QuerySet[Any] | None = ...) -> Model:
         return self.model.objects.filter(
@@ -179,7 +179,7 @@ class RevokeInstructorPersonView(DeleteView, PermissionRequiredMixin):
     permission_required = "people.change_instructors"
 
     model = Instructor
-    template_name = "delete_confirm.html"
+    template_name = "revoke_instructor_confirm.html"
 
     def get_object(self, queryset: QuerySet[Any] | None = ...) -> Model:
         return self.model.objects.filter(

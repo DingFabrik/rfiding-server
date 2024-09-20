@@ -42,7 +42,7 @@
 <div class="row">
 <div class="mb-5 col-12">
     <h4>{% trans "Qualifications" %}
-        {% if perms.people.change_person %}
+        {% if perms.people.qualify_person %}
             <a class="btn btn-primary btn-sm float-end" href="{% url "people:qualify" person.pk %}">{% trans "Add Qualification" %}</a>
         {% endif %}
 </h4>
@@ -127,9 +127,9 @@
 </div>
 </div>
 
-<a class='btn btn-primary'
-    href="{% url 'access_log:for-person' object.pk %}"
-    hx-get="{% url 'access_log:for-person' object.pk %}"
+<a class="btn btn-primary"
+    href="{% url "access_log:for-person" object.pk %}"
+    hx-get="{% url "access_log:for-person" object.pk %}"
     hx-swap="outerHTML">
         {% trans "Load Access Log" %} <i class="htmx-indicator loader"></i>
 </a>

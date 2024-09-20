@@ -15,7 +15,7 @@
                 {% csrf_token %}
                 <div class="text-right">
                     <a href="{{ object.get_absolute_url }}" class="btn btn-secondary me-3">{% trans "No" %}</a>
-                    <input type="submit" value="{% trans "Yes" %}" class="btn btn-danger"/>
+                    <input type="submit" value="{% trans "Delete" %}" class="btn btn-danger"/>
                 </div>
             </form>
         </div>

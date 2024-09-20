@@ -7,14 +7,16 @@
             <div class="alert-danger alert d-flex align-items-center" role="alert">
                 <i class="bi bi-exclamation-triangle-fill me-3"></i>
                 <div>
-                    <h5 class="mb-0">{% blocktrans %}Do you really want to archive <b>{{ object }}</b>?{% endblocktrans %}</h5>
+                    {% with person=object.person machine=object.machine %}
+                    <h5 class="mb-0">{% blocktrans %}Remove <b>{{ person }}</b> as instructor for <b>{{ machine }}</b>?{% endblocktrans %}</h5>
+                    {% endwith %}
                 </div>
             </div>
             <form action="" method="post">
                 {% csrf_token %}
                 <div class="text-right">
                     <a href="{{ object.get_absolute_url }}" class="btn btn-secondary me-3">{% trans "No" %}</a>
-                    <input type="submit" value="{% trans "Archive" %}" class="btn btn-danger"/>
+                    <input type="submit" value="{% trans "Remove" %}" class="btn btn-danger"/>
                 </div>
             </form>
         </div>

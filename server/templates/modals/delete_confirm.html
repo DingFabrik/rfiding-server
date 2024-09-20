@@ -1,0 +1,22 @@
+{% load i18n %}
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+            <i class="bi-trash fs-1 text-danger me-2"></i>
+          <h1 class="modal-title fs-5" id="confirmDeleteModalLabel">{% blocktrans %}Do you really want to delete <b>{{ object }}</b>?{% endblocktrans %}</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            {% blocktrans %}Deleting an object permanently removes it and can not be undone{% endblocktrans %}
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans "No" %}</button>
+          <form action="{% url request.resolver_match.namespace|add:':delete' object.pk %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">{% trans "Delete" %}</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>

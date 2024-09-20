@@ -7,7 +7,7 @@
 <a href="{% url request.resolver_match.namespace|add:':update' object.pk %}" class="btn btn-primary {% if object.archived %}disabled" aria-disabled="true"{% else %}"{% endif %}><i class="bi-pencil-square me-2"></i>{% trans "Edit "%}</a>
 {% endif %}
 {% if can_delete %}
-<a href="{% url request.resolver_match.namespace|add:':delete' object.pk %}" class="btn btn-danger {% if object.archived %}disabled" aria-disabled="true"{% else %}"{% endif %}><i class="bi-trash me-1"></i>{% trans "Archive"%}</a>
+<a href="{% url request.resolver_match.namespace|add:':delete' object.pk %}" class="btn btn-danger {% if object.archived %}disabled" aria-disabled="true"{% else %}" data-bs-toggle="modal" data-bs-target="#confirmArchiveModal"{% endif %}><i class="bi-archive me-1"></i>{% trans "Archive"%}</a>
 {% endif %}
 </div>
 {% endblock %}
@@ -33,4 +33,11 @@
     hx-swap="outerHTML">
         {% trans "Load Access Log" %} <i class="htmx-indicator loader"></i>
 </a>
+{% endblock %}
+
+
+{% block extra_content %}
+{% if can_delete %}
+{% include 'modals/archive_confirm.html' %}
+{% endif %}
 {% endblock %}
