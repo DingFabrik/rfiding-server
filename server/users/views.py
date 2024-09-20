@@ -17,7 +17,7 @@ from tokens.models import Token
 from machines.models import Machine
 from people.models import Person
 from users.models import RFIDingUser
-
+from .forms import UserForm
 
 @method_decorator(login_required, name="dispatch")
 class ProfileView(UpdateView):
@@ -63,8 +63,8 @@ class UserCreateView(CreateView, PermissionRequiredMixin):
     permission_required = "users.add_rfidinguser"
 
     model = RFIDingUser
+    form_class = UserForm
     template_name = "user_form.html"
-    fields = ["name", "email"]
     success_url = reverse_lazy("users:list")
 
 
@@ -72,8 +72,8 @@ class UserUpdateView(UpdateView, PermissionRequiredMixin):
     permission_required = "users.change_rfidinguser"
 
     model = RFIDingUser
+    form_class = UserForm
     template_name = "user_form.html"
-    fields = ["name", "email"]
     success_url = reverse_lazy("users:list")
 
     def get_context_data(self, **kwargs):

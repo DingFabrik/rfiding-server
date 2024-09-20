@@ -2,9 +2,16 @@
 {% load i18n %}
 
 {% block title %}
-{% if user %}
-{% blocktrans %}Edit {{ user }}{% endblocktrans %}
+{% if model %}
+{% blocktrans %}Edit {{ model }}{% endblocktrans %}
 {% else %}
 {% blocktrans %}Add a new user{% endblocktrans %}
 {% endif %}
+{% endblock %}
+
+{% block script_extra %}
+$("#id_user_permissions").prop("disabled", $("#id_is_superuser").val())
+$("#id_is_superuser").change(function() {
+    $("#id_user_permissions").prop("disabled", this.checked);
+});
 {% endblock %}
