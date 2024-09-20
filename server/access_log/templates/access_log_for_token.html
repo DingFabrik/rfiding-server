@@ -6,6 +6,7 @@
 {% endblock %}
 
 {% block top_actions %}
+<a href="{% url 'tokens:detail' token.pk %}" class="btn btn-outline-primary">{% trans "Go to token" %}</a>
 {% endblock %}
 {% block bottom_actions %}
 {% endblock %}

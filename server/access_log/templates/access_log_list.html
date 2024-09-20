@@ -18,10 +18,10 @@
         </thead>
 {% for object in object_list %}
 <tr>
-    <td><span data-bs-toggle="tooltip" title="{{ object.timestamp }}">{{ object.timestamp|naturaltime }}</span></td>
+    <td>{% include "snippets/timestamp.html" with timestamp=object.timestamp %}</td>
     <td><a href="{% url 'machines:detail' object.machine.pk %}">{{ object.machine }}</a></td>
-<td>{{ object.get_type_display }}</td>
-<td><a href="{% url 'tokens:detail' object.token.pk %}">{{ object.token }}</td>
+    <td>{{ object.get_type_display }}</td>
+    <td><a href="{% url 'tokens:detail' object.token.pk %}">{{ object.token }}</a></td>
 </tr>
 {% endfor %}
 {% endblock %}

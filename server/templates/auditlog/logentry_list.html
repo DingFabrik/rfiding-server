@@ -20,8 +20,8 @@
         </thead>
 {% for object in object_list %}
 <tr>
-<td><span data-bs-toggle="tooltip" title="{{ object.timestamp }}">{{ object.timestamp|naturaltime }}</span></td>
-<td>
+    <td>{% include "snippets/timestamp.html" with timestamp=object.timestamp %}</td>
+    <td>
     {% if object.actor %}
         <a href="{% url "users:detail" object.actor_id %}">{{ object.actor }}</a>
     {% else %}

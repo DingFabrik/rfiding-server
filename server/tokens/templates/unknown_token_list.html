@@ -28,7 +28,7 @@
 <tr>
 <td>{{ token.serial }}</td>
 <td>{{ token.machine }}</td>
-<td><span data-bs-toggle="tooltip" title="{{ token.created }}">{{ token.created|naturaltime }}</span></td>
+<td>{% include "snippets/timestamp.html" with timestamp=token.created %}</td>
 {% if perms.tokens.create_token %}
 <td><a href="{% url "tokens:assign" token.serial %}"><i class="bi-link"></i></a></td>
 {% endif %}

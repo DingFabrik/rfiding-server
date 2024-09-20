@@ -6,6 +6,7 @@
 {% endblock %}
 
 {% block top_actions %}
+<a href="{% url 'machines:detail' machine.pk %}" class="btn btn-outline-primary">{% trans "Go to machine" %}</a>
 {% endblock %}
 {% block bottom_actions %}
 {% endblock %}
