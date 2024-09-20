@@ -1,5 +1,7 @@
-RFIDing
--------
+.. image:: https://raw.githubusercontent.com/DingFabrik/rfiding-server/refs/heads/dev/assets/logo-dark.svg
+
+**🔔 Warning**: While we are already using RFIDing at Dingfabrik, there is no completed documentation on how to set it up. This will be available with the 1.0 release
+
 
 .. image:: https://img.shields.io/badge/license-MIT-blue.svg
     :alt: MIT License
@@ -8,8 +10,8 @@ RFIDing
 .. image:: https://img.shields.io/badge/release-1.0_alpha1-blue.svg
     :alt: 1.0_alpha1
 
-Rfiding is a project to restrict access to machines and doors in our hackerspace.
+Rfiding is a project to restrict access to machines and doors in a makerspace, hackerspace or open workshop.
 
-This project is the server part to communicate with rfiding clients.
+It was developed for use at Dingfabrik in cologne germany, but should be easily adaptable to other spaces.
 
-One implementation for a client can be found at [rfiding](https://github.com/DingFabrik/rfiding).
+Currently we are working towards a 1.0 release, which has the goal of being stable and having documentation regarding setup and usage in other spaces.

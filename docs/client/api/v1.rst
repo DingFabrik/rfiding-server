@@ -24,8 +24,6 @@ RFIDing API v1 (Legacy)
       Vary: Accept
       Content-Type: text/json
 
-      
-
    :query machine: mac address of the machine
    :statuscode 200: no error
    :statuscode 404: machine is not found
