@@ -466,7 +466,7 @@ msgstr "%(object)s löschen"
 #, fuzzy, python-format
 #| msgid "Do you really want to delete %(object)s?"
 msgid "Do you really want to archive %(object)s?"
-msgstr "Solen %(object)s wirklich gelöscht werden?"
+msgstr "Soll %(object)s wirklich gelöscht werden?"
 
 #: templates/archive_confirm.html:13 templates/delete_confirm.html:13
 msgid "No"
@@ -527,7 +527,7 @@ msgstr "%(object)s löschen"
 #: templates/delete_confirm.html:9
 #, python-format
 msgid "Do you really want to delete %(object)s?"
-msgstr "Solen %(object)s wirklich gelöscht werden?"
+msgstr "Soll %(object)s wirklich gelöscht werden?"
 
 #: templates/registration/login.html:10 templates/registration/login.html:29
 msgid "Sign in"

@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "base_slim.html" %}
 {% load i18n %}
 {% load crispy_forms_tags %}
 
@@ -10,8 +10,9 @@
 <form action="" method="post">
 {% csrf_token %}
 {{ form | crispy }}
-<button class="btn btn-lg btn-primary btn-block" type="submit">{% trans "Save" %}</button>
+<button class="btn btn-primary btn-block" type="submit">{% trans "Save" %}</button>
 </form>
 
-<a href="{% url 'users:change_password' %}" class="btn btn-lg btn-primary mt-5">{% trans "Change Password" %}</a>
+<hr class="my-5" />
+<a href="{% url "users:change_password" %}" class="btn btn-primary">{% trans "Change Password" %}</a>
 {% endblock %}

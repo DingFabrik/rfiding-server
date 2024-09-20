@@ -1,12 +1,15 @@
-{% extends "base.html" %}
+{% extends "base_slim.html" %}
 {% load i18n %}
-
-{% block title %}{% blocktrans %}Archive {{ object }}{% endblocktrans %}{% endblock %}
 
 {% block content %}
     <div class="row">
         <div class="col-md-12 col-md-offset-3">
-            <div class="alert-danger alert">{% blocktrans %}Do you really want to archive {{ object }}?{% endblocktrans %}</div>
+            <div class="alert-danger alert d-flex align-items-center" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-3"></i>
+                <div>
+                    <h5 class="mb-0">{% blocktrans %}Do you really want to archive <b>{{ object }}</b>?{% endblocktrans %}</h5>
+                </div>
+            </div>
             <form action="" method="post">
                 {% csrf_token %}
                 <div class="text-right">
