@@ -77,6 +77,7 @@ TEMPLATES = [
                 "django.contrib.messages.context_processors.messages",
                 "space.processors.space_state_processor",
                 "base.processors.menu_processor",
+                "base.processors.version_processor",
             ],
         },
     },

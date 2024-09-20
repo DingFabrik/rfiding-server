@@ -1,6 +1,9 @@
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
+from django.conf import settings as SETTINGS
 
+def version_processor(request):
+    return { "rfiding_version": SETTINGS.VERSION }
 
 def menu_processor(request):
     menu = [
