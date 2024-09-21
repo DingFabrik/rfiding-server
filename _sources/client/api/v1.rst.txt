@@ -1,0 +1,29 @@
+RFIDing API v1 (Legacy)
+=======================
+
+.. danger::
+   This is the legacy version of the API. It is recommended to use API v2 for new clients.
+
+.. http:get:: /api/machine/config
+
+   The configuration of the machine.
+
+   **Example request**:
+
+   .. sourcecode:: http
+
+      GET /api/chamine/check HTTP/1.1
+      Host: example.com
+      Accept: application/json
+
+   **Example response**:
+
+   .. sourcecode:: http
+
+      HTTP/1.1 200 OK
+      Vary: Accept
+      Content-Type: text/json
+
+   :query machine: mac address of the machine
+   :statuscode 200: no error
+   :statuscode 404: machine is not found
