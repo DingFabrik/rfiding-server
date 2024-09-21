@@ -21,7 +21,13 @@
     <td>{% include "snippets/timestamp.html" with timestamp=object.timestamp %}</td>
     <td><a href="{% url 'machines:detail' object.machine.pk %}">{{ object.machine }}</a></td>
     <td>{{ object.get_type_display }}</td>
-    <td><a href="{% url 'tokens:detail' object.token.pk %}">{{ object.token }}</a></td>
+    <td>
+        {% if object.token %}
+        <a href="{% url 'tokens:detail' object.token.pk %}">{{ object.token }}</a>
+        {% else %}
+        ----
+        {% endif %}
+    </td>
 </tr>
 {% endfor %}
 {% endblock %}

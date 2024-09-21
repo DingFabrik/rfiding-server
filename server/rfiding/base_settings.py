@@ -18,7 +18,7 @@ if pyproject_toml_file.exists() and pyproject_toml_file.is_file():
         VERSION = data["tool"]["poetry"]["version"]
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "CHANGEME"
+SECRET_KEY = "django-insecure-35c6=m7c4nu++9cw5ipmxz$klg_8(rf%b1*1(%rvq&cqcml$cd"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
