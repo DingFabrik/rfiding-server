@@ -1,4 +1,6 @@
 .. image:: https://raw.githubusercontent.com/DingFabrik/rfiding-server/refs/heads/dev/assets/logo-dark.svg
+    :width: 400
+    :align: center
 
 **🔔 Warning**: While we are already using RFIDing at Dingfabrik, there is no completed documentation on how to set it up. This will be available with the 1.0 release
 
