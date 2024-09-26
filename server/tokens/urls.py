@@ -18,4 +18,5 @@ urlpatterns = [
     path("assign/<str:serial>", views.AssignTokenView.as_view(), name="assign"),
     path("unknown", views.UnknownTokenListView.as_view(), name="unknown"),
     path("unknown/clear", views.ClearUnknownTokensView.as_view(), name="clear-unknown"),
+    path("person-for-token", views.PersonForTokenPopoverView.as_view(), name="person-for-token-popover"),
 ]

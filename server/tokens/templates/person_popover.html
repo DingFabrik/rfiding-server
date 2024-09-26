@@ -1,0 +1,8 @@
+<div class="person-popover">
+    <h6>{{ object.name }}</h6>
+    <ul class="list-unstyled">
+        <li><span class="fw-bold text-secondary">Member ID:</span> {{ object.member_id }}</li>
+        <li><span class="fw-bold text-secondary">Email:</span> {{ object.email }}</li>
+        <li><span class="fw-bold text-secondary">Is Active:</span> {% include "snippets/active_toggle.html" %}</li>
+    </ul>
+</div>

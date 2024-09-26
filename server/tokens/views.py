@@ -1,8 +1,10 @@
 from typing import Any
 from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.db.models.query import QuerySet
 from django.http import HttpRequest, HttpResponse
 from django.views.generic import (
     ListView,
+    TemplateView,
     DetailView,
     CreateView,
     UpdateView,
@@ -16,6 +18,7 @@ from django.utils import timezone
 from base.views import BaseToggleActiveView
 from .models import Token, UnknownToken
 from .forms import TokenForm
+from people.models import Person
 
 
 class TokenListView(ListView, PermissionRequiredMixin):
@@ -145,3 +148,15 @@ class TokenArchiveView(DeleteView, PermissionRequiredMixin):
 class TokenToggleActiveView(BaseToggleActiveView):
     permission_required = "tokens.change_token"
     model = Token
+
+class PersonForTokenPopoverView(TemplateView):
+    template_name = "person_popover.html"
+    model = Person
+
+    def get_queryset(self) -> QuerySet[Any]:
+        return Person.objects.filter(token__pk=self.request.GET["token_pk"])
+    
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context["object"] = self.get_queryset().get()
+        return context

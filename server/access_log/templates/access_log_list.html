@@ -21,13 +21,28 @@
     <td>{% include "snippets/timestamp.html" with timestamp=object.timestamp %}</td>
     <td><a href="{% url 'machines:detail' object.machine.pk %}">{{ object.machine }}</a></td>
     <td>{{ object.get_type_display }}</td>
-    <td>
-        {% if object.token %}
-        <a href="{% url 'tokens:detail' object.token.pk %}">{{ object.token }}</a>
-        {% else %}
-        ----
-        {% endif %}
-    </td>
+    <td>{% include "token_cell.html" %}</td>
 </tr>
 {% endfor %}
+{% endblock %}
+
+{% block script_extra %}
+$(document).ready(function(){
+const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="token-popover"]')
+const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new window.bootstrap.Popover(popoverTriggerEl, {
+    "html": true,
+    "delay": 200,
+    "content": function (e) {
+        const token_pk = e.getAttribute('data-token-pk');
+        console.log(token_pk);
+        $.ajax({
+            url: '{% url "tokens:person-for-token-popover" %}?token_pk=' + token_pk,
+            success: function(response){
+                $('#'+token_pk).html(response);
+            }
+        });
+        return '<div id="'+ token_pk +'">Loading...</div>';
+    }
+}));
+});
 {% endblock %}
