@@ -89,6 +89,9 @@
     <script>
       {% block script_extra %}
       {% endblock%}
+      updateTooltips();
+
+      urlMap['person-for-token-popover'] = '{% url "tokens:person-for-token-popover" %}';
     </script>
   </body>
 </html>
