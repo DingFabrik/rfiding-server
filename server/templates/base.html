@@ -89,6 +89,13 @@
     <script>
       {% block script_extra %}
       {% endblock%}
+      window.addEventListener('DOMContentLoaded', () => {
+        {% if user.theme_mode|default:"auto" == "auto" %}
+          document.documentElement.setAttribute('data-bs-theme', (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'))
+        {% else %}
+          document.documentElement.setAttribute('data-bs-theme', user.theme_mode|default:"light")
+        {% endif %}
+      });
       updateTooltips();
 
       urlMap['person-for-token-popover'] = '{% url "tokens:person-for-token-popover" %}';
