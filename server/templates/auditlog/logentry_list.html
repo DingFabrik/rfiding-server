@@ -29,7 +29,7 @@
     {% endif %}
 </td>
 <td>{{ object.get_action_display }}</td>
-<td>{{ object.content_type.name }} {{ object.object_repr }}</td>
+<td><i>{{ object.content_type.name }}</i> {{ object.object_repr }}</td>
 <td>{% trans "Changes" %}: {{ object.changes_dict|length }} - {% for change in object.changes_dict %}{{ change }}{% if not forloop.last %}{% if forloop.revcounter == 2 %} {% trans "and" %} {% else %}, {% endif %}{% else %}{% endif %}{% endfor %}</td>
 </tr>
 {% endfor %}

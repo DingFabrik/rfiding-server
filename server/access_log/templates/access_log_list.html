@@ -1,6 +1,5 @@
 {% extends base_template %}
 {% load i18n %}
-{% load humanize %}
 
 {% block top_actions %}
 <select
@@ -34,7 +33,7 @@
     <td>{% include "snippets/timestamp.html" with timestamp=object.timestamp %}</td>
     <td><a href="{% url 'machines:detail' object.machine.pk %}">{{ object.machine }}</a></td>
     <td>{{ object.get_type_display }}</td>
-    <td>{% include "token_cell.html" %}</td>
+    <td>{% include "token_cell.html" with token=object.token %}</td>
 </tr>
 {% endfor %}
 {% endblock %}

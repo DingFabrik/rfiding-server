@@ -1,5 +1,5 @@
-{% if object.token %}
-<a href="{% url 'tokens:detail' object.token.pk %}" data-bs-toggle="token-popover" data-bs-trigger="hover focus" data-token-pk="{{ object.token.pk }}">{{ object.token }}</a>
+{% if token %}
+<a href="{% url 'tokens:detail' token.pk %}" data-bs-toggle="token-popover" data-bs-trigger="hover focus" data-token-pk="{{ token.pk }}">{{ token }}</a>
 {% else %}
 ----
 {% endif %}

@@ -48,12 +48,13 @@ class PartialMixin:
     partial_base_template = "partial_base.html"
     
     @property
-    def is_htmx(self):
+    def is_partial(self):
         return self.request.headers.get("HX-Request") == "true"
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["base_template"] = self.partial_base_template if self.is_htmx else self.full_base_template
+        context["base_template"] = self.partial_base_template if self.is_partial else self.full_base_template
+        context["is_partial"] = self.is_partial
         return context
 
 
