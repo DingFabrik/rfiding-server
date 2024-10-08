@@ -14,5 +14,7 @@
                 <i class="bi-trash me-1"></i> {% trans 'Delete' %}
             </a>
         {% endif %}
+        {% block extra_form_buttons %}
+        {% endblock %}
 </form>
 {% endblock %}

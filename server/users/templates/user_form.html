@@ -9,6 +9,13 @@
 {% endif %}
 {% endblock %}
 
+{% block extra_form_buttons %}
+{% if object and request.user.is_superuser %}
+    <a class="btn btn-warning float-end me-3" href="{% url 'users:admin_change_password' object.pk %}">
+        <i class="bi-key me-1"></i> {% trans 'Change Password' %}
+    </a>
+{% endif %}
+{% endblock %}
 {% block script_extra %}
 $("#id_user_permissions").prop("disabled", $("#id_is_superuser").val())
 $("#id_is_superuser").change(function() {

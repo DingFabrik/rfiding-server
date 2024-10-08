@@ -1,3 +1,4 @@
+from django.forms.forms import BaseForm
 from django.views.generic import (
     TemplateView,
     UpdateView,
@@ -5,11 +6,12 @@ from django.views.generic import (
     CreateView,
     DeleteView,
     DetailView,
+    FormView
 )
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.contrib.auth.mixins import PermissionRequiredMixin
-from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth.forms import PasswordChangeForm, AdminPasswordChangeForm
 from django.contrib.auth.views import PasswordChangeView
 from django.urls import reverse_lazy
 
@@ -105,3 +107,21 @@ class ChangePasswordView(PasswordChangeView):
     form_class = PasswordChangeForm
     success_url = reverse_lazy("home")
     template_name = "change_password.html"
+    
+class AdminChangePasswordView(FormView):
+    form_class = AdminPasswordChangeForm
+    template_name = "change_password.html"
+    success_url = reverse_lazy("users:list")
+    
+    def get_object(self):
+        return RFIDingUser.objects.get(pk=self.kwargs["pk"])
+    
+    def get_form(self) -> BaseForm:
+        if self.request.POST:
+            return AdminPasswordChangeForm(user=self.get_object(), data=self.request.POST)
+        return AdminPasswordChangeForm(user=self.get_object())
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["object"] = self.get_object()
+        return context
