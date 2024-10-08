@@ -7,9 +7,9 @@
 {% endblock %}
 
 {% block top_actions %}
-<form class="float-start me-3">
-    <input type="text" class="form-control" placeholder="{% trans "Search" %}" name="search" value="{{ request.GET.search }}">
-</form>
+<div class="float-start me-3">
+    {% include "snippets/search_form.html" %}
+</div>
 {% if can_create %}
 <a href="{% url request.resolver_match.namespace|add:':create' %}" class="btn btn-primary"><i class="bi-plus-lg"></i> {% with model|verbose_name as modelname %}{% blocktrans %}Add {{ modelname }}{% endblocktrans %}{% endwith %}</a>
 {% endif %}

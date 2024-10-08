@@ -11,12 +11,12 @@ from django.views.generic import (
 )
 from django.urls import reverse_lazy
 
-from base.views import BaseToggleActiveView
+from base.views import BaseToggleActiveView, PartialListMixin
 from .models import Person, Qualification, Instructor
 from .forms import PersonForm, QualifyPersonForm, InstructorForm
 
 
-class PersonListView(ListView, PermissionRequiredMixin):
+class PersonListView(PartialListMixin, ListView, PermissionRequiredMixin):
     permission_required = "people.view_person"
     model = Person
     queryset = Person.objects.values(

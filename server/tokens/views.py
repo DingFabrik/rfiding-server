@@ -15,13 +15,13 @@ from django.urls import reverse_lazy
 from django.shortcuts import redirect
 from django.utils import timezone
 
-from base.views import BaseToggleActiveView
+from base.views import BaseToggleActiveView, PartialListMixin
 from .models import Token, UnknownToken
 from .forms import TokenForm
 from people.models import Person
 
 
-class TokenListView(ListView, PermissionRequiredMixin):
+class TokenListView(PartialListMixin, ListView, PermissionRequiredMixin):
     queryset = Token.objects.select_related("person").filter(archived=None).order_by("id")
     permission_required = "tokens.view_token"
 

@@ -1,3 +1,4 @@
+from django.db.models.query import QuerySet
 from django.views.generic import TemplateView, ListView
 import platform
 import django
@@ -30,19 +31,6 @@ class BaseToggleActiveView(TemplateView, PermissionRequiredMixin):
         context["object"] = object
         return context
 
-class AuditlogView(ListView, PermissionRequiredMixin):
-    model = LogEntry
-    queryset = LogEntry.objects.all().select_related("content_type").order_by("-timestamp")
-    permission_required = "tokens.view_token"
-
-    def get_paginate_by(self, queryset):
-        return self.request.user.page_length
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["model"] = self.model
-        return context
-
 class PartialMixin:
     full_base_template = "base.html"
     partial_base_template = "partial_base.html"
@@ -57,7 +45,27 @@ class PartialMixin:
         context["is_partial"] = self.is_partial
         return context
 
-
 class PartialListMixin(PartialMixin):
     full_base_template = "base_list.html"
     partial_base_template = "partial_base_list.html"
+    
+class AuditlogView(PartialListMixin, ListView, PermissionRequiredMixin):
+    model = LogEntry
+    queryset = LogEntry.objects.all().select_related("content_type").order_by("-timestamp")
+    permission_required = "tokens.view_token"
+    
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        if "search" in self.request.GET:
+            queryset = queryset.filter(
+                object_repr__icontains=self.request.GET["search"]
+            )
+        return queryset
+
+    def get_paginate_by(self, queryset):
+        return self.request.user.page_length
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["model"] = self.model
+        return context

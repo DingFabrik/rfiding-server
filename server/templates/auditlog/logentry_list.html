@@ -1,11 +1,9 @@
-{% extends "base_list.html" %}
+{% extends base_template %}
 {% load i18n %}
 {% load humanize %}
 
 {% block top_actions %}
-<form class="float-start me-3">
-    <input type="text" class="form-control" placeholder="{% trans "Search" %}" name="search" value="{{ request.GET.search }}">
-</form>
+{% include "snippets/search_form.html" %}
 {% endblock %}
 
 {% block table %}

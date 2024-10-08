@@ -1,0 +1,13 @@
+{% load i18n %}
+<form class="float-start">
+    <input
+    type="search"
+    class="form-control"
+    placeholder="{% trans "Search" %}"
+    name="search"
+    value="{{ request.GET.search }}"
+    hx-get=""
+    hx-target="#main_list"
+    hx-trigger="input changed delay:300ms, search"
+    hx-push-url="true">
+</form>

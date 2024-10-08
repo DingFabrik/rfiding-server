@@ -8,12 +8,12 @@ from django.views.generic import (
 )
 from django.urls import reverse_lazy
 
-from base.views import BaseToggleActiveView
+from base.views import BaseToggleActiveView, PartialListMixin
 from .models import Machine
 from .forms import MachineForm, ConfigureMachineForm, MachineTimeFormset
 
 
-class MachineListView(ListView, PermissionRequiredMixin):
+class MachineListView(PartialListMixin, ListView, PermissionRequiredMixin):
     permission_required = "machines.view_machine"
 
     model = Machine
