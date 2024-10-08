@@ -1,9 +1,22 @@
-{% extends "base_list.html" %}
+{% extends base_template %}
 {% load i18n %}
 {% load humanize %}
 
 {% block top_actions %}
+<select
+    id="log_action"
+    name="action"
+    class="form-control"
+    hx-get="{% url 'access_log:list' %}"
+    hx-trigger="change delay:500ms"
+    hx-target="#main_list"
+    hx-push-url="true">
+    {% for x, y in filter_form.fields.action.choices %}
+    <option value="{{ x }}"{% if form.fields.action.value == x %} selected{% endif %}>{{ y }}</option>
+    {% endfor %}
+</select>
 {% endblock %}
+
 {% block bottom_actions %}
 {% endblock %}
 

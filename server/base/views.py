@@ -42,3 +42,21 @@ class AuditlogView(ListView, PermissionRequiredMixin):
         context = super().get_context_data(**kwargs)
         context["model"] = self.model
         return context
+
+class PartialMixin:
+    full_base_template = "base.html"
+    partial_base_template = "partial_base.html"
+    
+    @property
+    def is_htmx(self):
+        return self.request.headers.get("HX-Request") == "true"
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["base_template"] = self.partial_base_template if self.is_htmx else self.full_base_template
+        return context
+
+
+class PartialListMixin(PartialMixin):
+    full_base_template = "base_list.html"
+    partial_base_template = "partial_base_list.html"

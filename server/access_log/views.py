@@ -2,17 +2,25 @@ from typing import Any
 from django.db.models.query import QuerySet
 from django.views.generic import ListView
 
+from base.views import PartialListMixin
 from .models import AccessLog
+from .forms import AccessLogFilterForm
 from tokens.models import Token
 from machines.models import Machine
 from people.models import Person
 
-class AccessLogListView(ListView):
+class AccessLogListView(PartialListMixin, ListView):
     model = AccessLog
     queryset = AccessLog.objects.select_related("token").select_related("machine").all()
     template_name = "access_log_list.html"
     context_object_name = "access_logs"
     ordering = ["-timestamp"]
+    
+    def get_queryset(self) -> QuerySet[Any]:
+        queryset =  super().get_queryset()
+        if "action" in self.request.GET and self.request.GET["action"] != "all":
+            queryset = queryset.filter(type=self.request.GET["action"])
+        return queryset
 
     def get_paginate_by(self, queryset):
         return self.request.user.page_length
@@ -22,24 +30,19 @@ class AccessLogListView(ListView):
         context["can_create"] = self.request.user.has_perm(
             "access_log.create_accesslog"
         )
+        context["filter_form"] = AccessLogFilterForm(self.request.GET)
         context["model"] = self.model
         return context
 
 
-class AccessLogForTokenView(ListView):
+class AccessLogForTokenView(PartialListMixin, ListView):
     model = AccessLog
     context_object_name = "access_logs"
     ordering = ["-timestamp"]
+    template_name = "access_log_for_token.html"
 
     def get_queryset(self) -> QuerySet[Any]:
         return super().get_queryset().filter(token__pk=self.kwargs["token"])
-
-    def get_template_names(self) -> list[str]:
-        is_htmx = self.request.headers.get("HX-Request") == "true"
-        if is_htmx:
-            return ["partial_access_log_for_token.html"]
-        else:
-            return ["access_log_for_token.html"]
 
     def get_paginate_by(self, queryset):
         return self.request.user.page_length

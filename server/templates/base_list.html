@@ -22,9 +22,11 @@
 {% endblock %}
 
 {% block content %}
-<table class="table table-bordered table-hover">
-{% block table %}
-{% endblock %}
-</table>
-{% include "base_pagination.html" %}
+<div id="main_list">
+    <table class="table table-bordered table-hover">
+    {% block table %}
+    {% endblock %}
+    </table>
+    {% include "base_pagination.html" %}
+</div>
 {% endblock %}
