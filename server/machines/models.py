@@ -7,6 +7,10 @@ from auditlog.registry import auditlog
 
 from machines.fields import WeekdayFormField
 
+SUPPORTED_CHIPS = [
+    ("esp32", "ESP32"),
+    ("esp8266", "ESP8266"),
+]
 
 def is_str(obj):
     try:
@@ -44,9 +48,13 @@ class Machine(TimestampedModel):
     name = models.CharField(max_length=100)
     mac_address = models.CharField(max_length=17, db_index=True)
     hostname = models.CharField(max_length=100)
-    ip_address = models.GenericIPAddressField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
     needs_qualification = models.BooleanField(default=True, help_text=_("If disabled, any active user can access this machine."))
+    completed_setup = models.BooleanField(default=False)
+    
+    ip_address = models.GenericIPAddressField(null=True, blank=True)
+    chip = models.CharField(max_length=100, default=SUPPORTED_CHIPS[0][0], choices=SUPPORTED_CHIPS)
+    firmware_version = models.CharField(max_length=50, null=True, blank=True)
 
     runtimer = models.IntegerField(default=0)
     min_power = models.IntegerField(default=0)
@@ -75,7 +83,7 @@ class Machine(TimestampedModel):
         )
 
 
-class MachineTimes(TimestampedModel):
+class MachineTime(TimestampedModel):
     machine = models.ForeignKey(Machine, on_delete=models.CASCADE, related_name="times")
     weekdays = WeekdayField()
     start_time = models.TimeField()
@@ -83,4 +91,4 @@ class MachineTimes(TimestampedModel):
 
 
 auditlog.register(Machine, exclude_fields=["created", "updated"])
-auditlog.register(MachineTimes, exclude_fields=["created", "updated"])
+auditlog.register(MachineTime, exclude_fields=["created", "updated"])

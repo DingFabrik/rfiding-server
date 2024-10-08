@@ -1,13 +1,13 @@
 from django import forms
 
 from .utils import DAY_CHOICES
-from .models import Machine, MachineTimes
+from .models import Machine, MachineTime
 
 
 class MachineForm(forms.ModelForm):
     class Meta:
         model = Machine
-        fields = ["name", "hostname", "ip_address", "mac_address", "is_active", "needs_qualification"]
+        fields = ["name", "hostname", "ip_address", "mac_address", "is_active", "needs_qualification", "completed_setup", "chip"]
 
 
 class ConfigureMachineForm(forms.ModelForm):
@@ -22,10 +22,10 @@ class ConfigureMachineTimeForm(forms.ModelForm):
     )
 
     class Meta:
-        model = MachineTimes
+        model = MachineTime
         fields = ["weekdays", "start_time", "end_time"]
 
 
 MachineTimeFormset = forms.modelformset_factory(
-    MachineTimes, extra=3, max_num=7, form=ConfigureMachineTimeForm
+    MachineTime, extra=3, max_num=7, form=ConfigureMachineTimeForm
 )

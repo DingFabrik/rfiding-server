@@ -1,6 +1,6 @@
 from django.urls import reverse
 from freezegun import freeze_time
-from machines.models import Machine, MachineTimes
+from machines.models import Machine, MachineTime
 from rest_framework import status
 from rest_framework.test import APITestCase
 
@@ -205,7 +205,7 @@ class CheckMachineTests(APITestCase):
             mac_address="aa:bb:cc:dd:ee:ff", hostname="test", name="test"
         )
         machine.save()
-        machinetime = MachineTimes.objects.create(
+        machinetime = MachineTime.objects.create(
             machine=machine, weekdays="1,3", start_time="00:00", end_time="22:00"
         )
         machinetime.save()
@@ -229,7 +229,7 @@ class CheckMachineTests(APITestCase):
             mac_address="aa:bb:cc:dd:ee:ff", hostname="test", name="test"
         )
         machine.save()
-        machinetime = MachineTimes.objects.create(
+        machinetime = MachineTime.objects.create(
             machine=machine, weekdays="0,1,3", start_time="00:00", end_time="22:00"
         )
         machinetime.save()
@@ -244,7 +244,7 @@ class CheckMachineTests(APITestCase):
             mac_address="aa:bb:cc:dd:ee:ff", hostname="test", name="test"
         )
         machine.save()
-        machinetime = MachineTimes.objects.create(
+        machinetime = MachineTime.objects.create(
             machine=machine, weekdays="0,3", start_time="00:00", end_time="22:00"
         )
         machinetime.save()

@@ -8,6 +8,7 @@ from django.views.generic import (
 )
 from django.urls import reverse_lazy
 
+from access_log.models import AccessLog
 from base.views import BaseToggleActiveView, PartialListMixin
 from .models import Machine
 from .forms import MachineForm, ConfigureMachineForm, MachineTimeFormset
@@ -21,7 +22,7 @@ class MachineListView(PartialListMixin, ListView, PermissionRequiredMixin):
     context_object_name = "machines"
 
     def get_queryset(self):
-        queryset = super().get_queryset()
+        queryset = super().get_queryset().filter(completed_setup=True)
         search = self.request.GET.get("search")
         if search:
             queryset = queryset.filter(name__icontains=search)
@@ -48,6 +49,13 @@ class MachineDetailView(DetailView, PermissionRequiredMixin):
         context = super().get_context_data(**kwargs)
         context["can_edit"] = self.request.user.has_perm("machines.change_machine")
         context["can_delete"] = self.request.user.has_perm("machines.delete_machine")
+        try:
+            access = AccessLog.objects.filter(
+                machine=self.object
+            ).latest("-timestamp")
+            context["last_access"] = access.timestamp
+        except AccessLog.DoesNotExist:
+            context["last_access"] = None
         if self.object.needs_qualification:
             context["qualifications"] = (
                 self.object.qualified_people.select_related("person")

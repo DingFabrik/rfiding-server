@@ -14,7 +14,7 @@
 {% endblock %}
 
 {% block content %}
-<div class="row mb-5">
+<div class="row mb-4">
 <div class="col-md-6">
 <h4>{% trans "Details" %}</h4>
 <ul class="list-unstyled">
@@ -28,6 +28,8 @@
     {% else %}
     <i class="bi-x-circle-fill text-danger" aria-hidden="true"></i>
     {% endif %}<br></li>
+    <li><span class="fw-bold text-secondary-emphasis">{% trans "Chip" %}:</span> {{ object.get_chip_display }}<br></li>
+    <li><span class="fw-bold text-secondary-emphasis">{% trans "Last used" %}:</span> {{ last_access }}<br></li>
 </ul>
 </div>
 <div class="col-md-6">
