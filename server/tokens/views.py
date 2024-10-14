@@ -14,12 +14,22 @@ from django.views.generic import (
 from django.urls import reverse_lazy
 from django.shortcuts import redirect
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 
 from base.views import BaseToggleActiveView, PartialListMixin
 from .models import Token, UnknownToken
 from .forms import TokenForm
 from people.models import Person
 
+
+TOKEN_SORT_CHOICES = (
+    ("pk", _("Default")),
+    ("serial", _("Serial")),
+    ("purpose", _("Purpose")),
+    ("-updated", _("Last Modified")),
+)
+
+TOKEN_SORT_CHOICES_KEYS = [choice[0] for choice in TOKEN_SORT_CHOICES]
 
 class TokenListView(PartialListMixin, ListView, PermissionRequiredMixin):
     queryset = Token.objects.select_related("person").filter(archived=None).order_by("id")
@@ -34,6 +44,9 @@ class TokenListView(PartialListMixin, ListView, PermissionRequiredMixin):
         search = self.request.GET.get("search")
         if search:
             queryset = queryset.filter(serial__icontains=search)
+        sort = self.request.GET.get("sort")
+        if sort in TOKEN_SORT_CHOICES_KEYS:
+            queryset = queryset.order_by(sort)
         return queryset
 
     def get_paginate_by(self, queryset):
@@ -43,6 +56,7 @@ class TokenListView(PartialListMixin, ListView, PermissionRequiredMixin):
         context = super().get_context_data(**kwargs)
         context["can_create"] = self.request.user.has_perm("tokens.create_token")
         context["model"] = self.model
+        context["sort_choices"] = TOKEN_SORT_CHOICES
         return context
 
 

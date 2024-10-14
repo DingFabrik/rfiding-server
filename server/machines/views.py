@@ -7,12 +7,24 @@ from django.views.generic import (
     DeleteView,
 )
 from django.urls import reverse_lazy
+from django.utils.translation import gettext_lazy as _
 
 from access_log.models import AccessLog
 from base.views import BaseToggleActiveView, PartialListMixin
 from .models import Machine
 from .forms import MachineForm, ConfigureMachineForm, MachineTimeFormset
 
+
+MACHINE_SORT_CHOICES = (
+    ("pk", _("Default")),
+    ("name", _("Name")),
+    ("hostname", _("Hostname")),
+    ("ip_address", _("IP Address")),
+    ("mac_address", _("MAC Address")),
+    ("-updated", _("Last Modified")),
+)
+
+MACHINE_SORT_CHOICES_KEYS = [choice[0] for choice in MACHINE_SORT_CHOICES]
 
 class MachineListView(PartialListMixin, ListView, PermissionRequiredMixin):
     permission_required = "machines.view_machine"
@@ -26,6 +38,9 @@ class MachineListView(PartialListMixin, ListView, PermissionRequiredMixin):
         search = self.request.GET.get("search")
         if search:
             queryset = queryset.filter(name__icontains=search)
+        sort = self.request.GET.get("sort")
+        if sort in MACHINE_SORT_CHOICES_KEYS:
+            queryset = queryset.order_by(sort)
         return queryset
 
     def get_paginate_by(self, queryset):
@@ -35,6 +50,7 @@ class MachineListView(PartialListMixin, ListView, PermissionRequiredMixin):
         context = super().get_context_data(**kwargs)
         context["can_create"] = self.request.user.has_perm("machines.create_machine")
         context["model"] = self.model
+        context["sort_choices"] = MACHINE_SORT_CHOICES
         return context
 
 

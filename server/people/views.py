@@ -10,12 +10,22 @@ from django.views.generic import (
     DeleteView,
 )
 from django.urls import reverse_lazy
+from django.utils.translation import gettext_lazy as _
 
 from base.views import BaseToggleActiveView, PartialListMixin
 from .models import Person, Qualification, Instructor
 from .forms import PersonForm, QualifyPersonForm, InstructorForm
 
 
+PEOPLE_SORT_CHOICES = (
+    ("pk", _("Default")),
+    ("name", _("Name")),
+    ("email", _("E-Email")),
+    ("member_id", _("Member ID")),
+    ("-updated", _("Last Modified")),
+)
+
+PEOPLE_SORT_CHOICES_KEYS = [choice[0] for choice in PEOPLE_SORT_CHOICES]
 class PersonListView(PartialListMixin, ListView, PermissionRequiredMixin):
     permission_required = "people.view_person"
     model = Person
@@ -30,6 +40,9 @@ class PersonListView(PartialListMixin, ListView, PermissionRequiredMixin):
         search = self.request.GET.get("search")
         if search:
             queryset = queryset.filter(name__icontains=search)
+        sort = self.request.GET.get("sort")
+        if sort in PEOPLE_SORT_CHOICES_KEYS:
+            queryset = queryset.order_by(sort)
         return queryset
 
     def get_paginate_by(self, queryset):
@@ -39,6 +52,7 @@ class PersonListView(PartialListMixin, ListView, PermissionRequiredMixin):
         context = super().get_context_data(**kwargs)
         context["can_create"] = self.request.user.has_perm("people.create_person")
         context["model"] = self.model
+        context["sort_choices"] = PEOPLE_SORT_CHOICES
         return context
 
 

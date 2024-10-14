@@ -1,13 +1,34 @@
 {% load i18n %}
-<form class="float-start">
+<form class="float-start row row-cols-lg-auto g-3 align-items-center" action="/">
+    <div class="col-12">
     <input
+    id="id_search"
     type="search"
     class="form-control"
     placeholder="{% trans "Search" %}"
     name="search"
     value="{{ request.GET.search }}"
-    hx-get=""
+    hx-get="{{ request.path }}"
+    hx-include="#id_sort"
     hx-target="#main_list"
     hx-trigger="input changed delay:300ms, search"
     hx-push-url="true">
+    </div>
+    {% if sort_choices %}
+    <div class="col-12">
+        <select
+        id="id_sort"
+        class="form-select"
+        name="sort"
+        hx-get="{{ request.path }}"
+        hx-include="#id_search"
+        hx-target="#main_list"
+        hx-trigger="change"
+        hx-push-url="true">
+        {% for choice in sort_choices %}
+            <option value="{{ choice.0 }}" {% if choice.0 == request.GET.sort %}selected{% endif %}>{{ choice.1 }}</option>
+        {% endfor %}
+        </select>
+    </div>
+    {% endif %}
 </form>
