@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-10-14 09:11+0000\n"
-"PO-Revision-Date: 2024-09-16 16:57+0200\n"
+"PO-Revision-Date: 2024-10-14 13:37+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -21,7 +21,7 @@ msgstr ""
 
 #: server/access_log/forms.py:8
 msgid "All"
-msgstr ""
+msgstr "Alle"
 
 #: server/access_log/models.py:10
 msgid "Booted"
@@ -37,7 +37,7 @@ msgstr "Deaktiviert"
 
 #: server/access_log/models.py:13
 msgid "Registered"
-msgstr ""
+msgstr "Registriert"
 
 #: server/access_log/models.py:20
 #: server/access_log/templates/access_log_for_machine.html:17
@@ -59,10 +59,8 @@ msgid "Access Log for %(name)s"
 msgstr "Zugriffs Log für %(name)s"
 
 #: server/access_log/templates/access_log_for_machine.html:9
-#, fuzzy
-#| msgid "Add a new machine"
 msgid "Go to machine"
-msgstr "Neue Maschine hinzufügen"
+msgstr "Zu Machine gehen"
 
 #: server/access_log/templates/access_log_for_machine.html:23
 #: server/access_log/templates/access_log_for_person.html:23
@@ -92,11 +90,11 @@ msgstr "Aktion"
 
 #: server/access_log/templates/access_log_for_machine.html:38
 msgid "This machine has not been used yet."
-msgstr ""
+msgstr "Diese Machine wurde noch nicht genutzt."
 
 #: server/access_log/templates/access_log_for_person.html:9
 msgid "Go to person"
-msgstr ""
+msgstr "Zu Person gehen"
 
 #: server/access_log/templates/access_log_for_person.html:24
 #: server/access_log/templates/access_log_for_token.html:24
@@ -108,15 +106,15 @@ msgstr "Maschine"
 
 #: server/access_log/templates/access_log_for_person.html:40
 msgid "This person has not accessed anything yet."
-msgstr ""
+msgstr "Diese Person hat noch nicht auf etwas zugegriffen."
 
 #: server/access_log/templates/access_log_for_token.html:9
 msgid "Go to token"
-msgstr ""
+msgstr "Zu Token gehen"
 
 #: server/access_log/templates/access_log_for_token.html:39
 msgid "This token has not been used yet"
-msgstr ""
+msgstr "Dieser Token wurde noch nicht genutzt"
 
 #: server/base/processors.py:11 server/people/templates/person_detail.html:21
 #: server/tokens/models.py:33 server/users/templates/home.html:13
@@ -140,49 +138,47 @@ msgstr "Audit Log"
 #: server/machines/client_modules.py:4 server/machines/client_modules.py:9
 #: server/machines/client_modules.py:18
 msgid "None"
-msgstr ""
+msgstr "Kein"
 
 #: server/machines/client_modules.py:5
 msgid "RFID Reader"
-msgstr ""
+msgstr "RFID Leser"
 
 #: server/machines/client_modules.py:10
 msgid "Onboard LED"
-msgstr ""
+msgstr "Onboard LED"
 
 #: server/machines/client_modules.py:11
 msgid "Double LEDs"
-msgstr ""
+msgstr "Doppel-LED"
 
 #: server/machines/client_modules.py:12
 msgid "Red/Green LED"
-msgstr ""
+msgstr "Rot/Grüne LED"
 
 #: server/machines/client_modules.py:13
 msgid "Single RGB LED"
-msgstr ""
+msgstr "Einzelne RGB LED"
 
 #: server/machines/client_modules.py:14
 msgid "RGB Ring LED"
-msgstr ""
+msgstr "RGB LED Ring"
 
 #: server/machines/client_modules.py:19
 msgid "Relay"
-msgstr ""
+msgstr "Relay"
 
 #: server/machines/client_modules.py:20
 msgid "Relay with power meter"
-msgstr ""
+msgstr "Relay mit Strommessung"
 
 #: server/machines/client_modules.py:21
 msgid "Lock"
-msgstr ""
+msgstr "Schloss"
 
 #: server/machines/models.py:53
-#, fuzzy
-#| msgid "All active users are qualified to use this machine"
 msgid "If disabled, any active user can access this machine."
-msgstr "Alle aktiven. Personen sind qualifiziert diese Maschine zu nutzen"
+msgstr "Alle aktiven. Personen sind qualifiziert diese Maschine zu nutzen."
 
 #: server/machines/templates/machine_configure_form.html:8
 #, python-format
@@ -190,50 +186,44 @@ msgid "Configure <span class=\"text-primary-emphasis\">%(machine)s</span>"
 msgstr "<span class=“text-primary-emphasis”>%(machine)s</span> konfigurieren"
 
 #: server/machines/templates/machine_configure_form.html:16
-#, fuzzy
-#| msgid "Configuration"
 msgid "General configuration"
-msgstr "Konfiguration"
+msgstr "Generelle Konfiguration"
 
 #: server/machines/templates/machine_configure_form.html:22
-#, fuzzy
-#| msgid "Active"
 msgid "Active Times"
-msgstr "Aktiv"
+msgstr "Aktive Zeiten"
 
 #: server/machines/templates/machine_configure_form.html:31
 msgid "Mo"
-msgstr ""
+msgstr "Mo"
 
 #: server/machines/templates/machine_configure_form.html:34
 msgid "Tu"
-msgstr ""
+msgstr "Di"
 
 #: server/machines/templates/machine_configure_form.html:37
 msgid "We"
-msgstr ""
+msgstr "Mi"
 
 #: server/machines/templates/machine_configure_form.html:40
 msgid "Th"
-msgstr ""
+msgstr "Do"
 
 #: server/machines/templates/machine_configure_form.html:43
 msgid "Fr"
-msgstr ""
+msgstr "Fr"
 
 #: server/machines/templates/machine_configure_form.html:46
-#, fuzzy
-#| msgid "Save"
 msgid "Sa"
-msgstr "Speichern"
+msgstr "Sa"
 
 #: server/machines/templates/machine_configure_form.html:49
 msgid "Su"
-msgstr ""
+msgstr "So"
 
 #: server/machines/templates/machine_configure_form.html:66
 msgid "Modules"
-msgstr ""
+msgstr "Module"
 
 #: server/machines/templates/machine_configure_form.html:81
 #: server/people/templates/instructor_person.html:19
@@ -306,11 +296,11 @@ msgstr "Braucht Qualifikation"
 
 #: server/machines/templates/machine_detail.html:31
 msgid "Chip"
-msgstr ""
+msgstr "Chip"
 
 #: server/machines/templates/machine_detail.html:32
 msgid "Last used"
-msgstr ""
+msgstr "Zuletzt genutzt"
 
 #: server/machines/templates/machine_detail.html:36
 msgid "Configuration"
@@ -570,10 +560,10 @@ msgstr ""
 "hinzufügen"
 
 #: server/people/templates/revoke_instructor_confirm.html:11
-#, fuzzy, python-format
-#| msgid "<b>%(name)s</b> can not instruct people for any machines."
+#, python-format
 msgid "Remove <b>%(person)s</b> as instructor for <b>%(machine)s</b>?"
-msgstr "<b>%(name)s</b> kann keine Einweisungen geben."
+msgstr ""
+"<b>%(person)s</b> als einweisende Person von <b>%(machine)s</b> entfernen?"
 
 #: server/people/templates/revoke_instructor_confirm.html:18
 #: server/people/templates/revoke_qualification_confirm.html:18
@@ -586,21 +576,19 @@ msgstr "Nein"
 
 #: server/people/templates/revoke_instructor_confirm.html:19
 msgid "Remove"
-msgstr ""
+msgstr "Entfernen"
 
 #: server/people/templates/revoke_qualification_confirm.html:11
 #, python-format
 msgid ""
 "Revoke the qualification that <b>%(person)s</b> has on <b>%(machine)s</b>?"
-msgstr ""
+msgstr "Qualifikation die <b>%(person)s</b> für <b>%(machine)s</b> entfernen?"
 
 #: server/space/models.py:12
 msgid "Open"
 msgstr "Offen"
 
 #: server/space/models.py:12
-#, fuzzy
-#| msgid "closed"
 msgid "Closed"
 msgstr "Geschlossen"
 
@@ -649,16 +637,15 @@ msgstr "Django Version"
 
 #: server/templates/archive_confirm.html:10
 #: server/templates/modals/archive_confirm.html:7
-#, fuzzy, python-format
-#| msgid "Do you really want to delete %(object)s?"
+#, python-format
 msgid "Do you really want to archive <b>%(object)s</b>?"
-msgstr "Soll %(object)s wirklich gelöscht werden?"
+msgstr "Soll %(object)s wirklich archiviert werden?"
 
 #: server/templates/archive_confirm.html:17
 #: server/templates/modals/archive_confirm.html:14
 #: server/tokens/templates/token_detail.html:10
 msgid "Archive"
-msgstr ""
+msgstr "Archivieren"
 
 #: server/templates/auditlog/logentry_list.html:12
 msgid "Timestamp"
@@ -701,31 +688,27 @@ msgstr "%(modelname)s hinzufügen"
 
 #: server/templates/delete_confirm.html:10
 #: server/templates/modals/delete_confirm.html:7
-#, fuzzy, python-format
-#| msgid "Do you really want to delete %(object)s?"
+#, python-format
 msgid "Do you really want to delete <b>%(object)s</b>?"
-msgstr "Soll %(object)s wirklich gelöscht werden?"
+msgstr "Soll <b>%(object)s </b> wirklich gelöscht werden?"
 
 #: server/templates/delete_confirm.html:11
 #: server/templates/modals/delete_confirm.html:11
 msgid "Deleting an object permanently removes it and can not be undone"
 msgstr ""
+"Objekte zu löschen ist permanent und kann nicht rückgängig gemacht werden"
 
 #: server/templates/registration/logged_out.html:10
-#, fuzzy
-#| msgid "Sign out"
 msgid "Signed out"
-msgstr "Abmelden"
+msgstr "Abgemeldet"
 
 #: server/templates/registration/logged_out.html:11
 msgid "You have successfully signed out."
-msgstr ""
+msgstr "Du hast dich erfolgreich abgemeldet"
 
 #: server/templates/registration/logged_out.html:12
-#, fuzzy
-#| msgid "Sign in"
 msgid "Sign in again"
-msgstr "Anmelden"
+msgstr "Erneut anmelden"
 
 #: server/templates/registration/login.html:10
 #: server/templates/registration/login.html:29
@@ -754,7 +737,7 @@ msgstr "Suchen"
 #: server/tokens/templates/token_card.html:16
 #: server/tokens/templates/token_detail.html:23
 msgid "Archived"
-msgstr ""
+msgstr "Archiviert"
 
 #: server/tokens/templates/token_detail.html:18
 #: server/tokens/templates/token_list.html:22
@@ -829,43 +812,39 @@ msgstr "Wichtige Daten"
 
 #: server/users/models.py:43
 msgid "Default (Blue)"
-msgstr ""
+msgstr "Standard (Blau)"
 
 #: server/users/models.py:44
-#, fuzzy
-#| msgid "Purpose"
 msgid "Purple"
-msgstr "Zweck"
+msgstr "Lila"
 
 #: server/users/models.py:45
 msgid "Red"
-msgstr ""
+msgstr "Rot"
 
 #: server/users/models.py:46
-#, fuzzy
-#| msgid "Changes"
 msgid "Orange"
-msgstr "Änderungen"
+msgstr "Orange"
 
 #: server/users/models.py:47
 msgid "Yellow"
-msgstr ""
+msgstr "Gelb"
 
 #: server/users/models.py:48
 msgid "Green"
-msgstr ""
+msgstr "Grün"
 
 #: server/users/models.py:49
 msgid "Pink"
-msgstr ""
+msgstr "Pink"
 
 #: server/users/models.py:50
 msgid "Teal"
-msgstr ""
+msgstr "Türkis"
 
 #: server/users/models.py:51
 msgid "Cyan"
-msgstr ""
+msgstr "Cyan"
 
 #: server/users/models.py:66
 msgid "Langauge"
@@ -892,10 +871,9 @@ msgid "Auto"
 msgstr "Auto"
 
 #: server/users/templates/change_password.html:7
-#, fuzzy, python-format
-#| msgid "Change Password"
+#, python-format
 msgid "Change password for %(object)s"
-msgstr "Passwort ändern"
+msgstr "Passwort für %(object)s ändern"
 
 #: server/users/templates/change_password.html:9
 #: server/users/templates/change_password.html:14
@@ -918,10 +896,9 @@ msgid "Profile"
 msgstr "Profil"
 
 #: server/users/templates/user_form.html:6
-#, fuzzy, python-format
-#| msgid "Edit %(user)s"
+#, python-format
 msgid "Edit %(model)s"
-msgstr "%(user)s editieren"
+msgstr "%(model)s editieren"
 
 #: server/users/templates/user_form.html:8
 msgid "Add a new user"
