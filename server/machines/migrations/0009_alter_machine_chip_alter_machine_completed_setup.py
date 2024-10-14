@@ -6,18 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('machines', '0008_alter_machine_options_machine_chip_and_more'),
+        ("machines", "0008_alter_machine_options_machine_chip_and_more"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='machine',
-            name='chip',
-            field=models.CharField(choices=[('esp32', 'ESP32'), ('esp8266', 'ESP8266')], default='esp32', max_length=100),
+            model_name="machine",
+            name="chip",
+            field=models.CharField(choices=[("esp32", "ESP32"), ("esp8266", "ESP8266")], default="esp32", max_length=100),
         ),
         migrations.AlterField(
-            model_name='machine',
-            name='completed_setup',
+            model_name="machine",
+            name="completed_setup",
             field=models.BooleanField(default=False),
         ),
     ]

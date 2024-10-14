@@ -21,13 +21,24 @@ from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView,
 
 from base.views import AboutView, AuditlogView
 from users.views import HomeView
-from machines.api import CheckMachineAccessView, MachineConfigView
+from machines.api.v1 import CheckMachineAccessView, MachineConfigView
 from space.api import APISpaceStatusView
 
-api_urls = [
+api_v1_urls = [
     path("machine/check", CheckMachineAccessView.as_view(), name="machine_check"),
     path("machine/config", MachineConfigView.as_view(), name="machine_config"),
     path("space/status", APISpaceStatusView.as_view(), name="space_status"),
+]
+
+api_v2_urls = [
+    path("machine/check", CheckMachineAccessView.as_view(), name="machine_check"),
+    path("machine/config", MachineConfigView.as_view(), name="machine_config"),
+    path("space/status", APISpaceStatusView.as_view(), name="space_status"),
+]
+
+api_urls = api_v1_urls + [
+    path("v1/", include((api_v1_urls, "v1"), namespace="v1")),
+    path("v2/", include((api_v2_urls, "v2"), namespace="v2")),
 ]
 
 urlpatterns = [

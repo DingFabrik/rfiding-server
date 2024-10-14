@@ -1,4 +1,3 @@
-from django.db.models.query import QuerySet
 from django.views.generic import TemplateView, ListView
 import platform
 import django

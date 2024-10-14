@@ -5,19 +5,10 @@ from rest_framework.response import Response
 from rest_framework import status, permissions
 from space.models import SpaceState
 
-from .models import Machine
+from .common import formatted_mac
+from machines.models import Machine
 from tokens.models import Token, UnknownToken
 from access_log.models import AccessLog, LOG_TYPE_BOOTED, LOG_TYPE_ENABLED
-
-
-def formatted_mac(mac_address):
-    if mac_address is None:
-        return None
-    if ":" not in mac_address:
-        return ":".join(
-            mac_address[i : i + 2].lower() for i in range(0, len(mac_address), 2)
-        )
-    return mac_address
 
 
 class MachineConfigView(APIView):
