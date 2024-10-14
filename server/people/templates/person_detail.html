@@ -22,7 +22,7 @@
     <div class="row">
         {% with tokens=person.token_set.all %}
             {% for token in tokens %}
-            <div class="col col-2 col-sm-12 col-md-8 mb-2">
+            <div class="col col-2 col-sm-12 col-md-6 mb-2">
                 {% include "token_card.html" %}
             </div>
             {% empty %}
