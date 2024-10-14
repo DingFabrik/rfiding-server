@@ -29,7 +29,7 @@ class MachineConfigView(APIView):
                 {"error": "Machine does not exist"}, status=status.HTTP_404_NOT_FOUND
             )
 
-        if not machine.is_active or not machine.is_now_valid_time():
+        if not machine.is_active:
             return Response(
                 {"error": "Machine is restricted"}, status=status.HTTP_403_FORBIDDEN
             )

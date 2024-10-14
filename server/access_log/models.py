@@ -2,6 +2,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 LOG_TYPE_BOOTED = "booted"
+LOG_TYPE_REGISTERED = "registered"
 LOG_TYPE_ENABLED = "enabled"
 LOG_TYPE_DISABLED = "disabled"
 
@@ -9,6 +10,7 @@ LOG_TYPES = (
     (LOG_TYPE_BOOTED, _("Booted")),
     (LOG_TYPE_ENABLED, _("Enabled")),
     (LOG_TYPE_DISABLED, _("Disabled")),
+    (LOG_TYPE_REGISTERED, _("Registered")),
 )
 
 

@@ -13,10 +13,13 @@
     {% csrf_token %}
     <div class="row">
         <div class="col-md-6">
-            {{ form | crispy }}
+            <h4>{% trans "General configuration" %}</h4>
+            {{ form.runtimer | as_crispy_field }}
+            {{ form.min_power | as_crispy_field }}
+            {{ form.control_parameter | as_crispy_field }}
         </div>
         <div class="col-md-6">
-
+            <h4>{% trans "Active Times" %}</h4>
             {{ formset.management_form }}
             {% for timeform in formset %}
             <div class="row g-3">
@@ -25,25 +28,25 @@
                     <label for="id_times-{{ forloop.counter0 }}-weekdays-group" class="form-label">Weekdays</label>
                     <div id="id_times-{{ forloop.counter0 }}-weekdays-group" class="btn-group" role="group" aria-label="Basic checkbox toggle button group">
                         <input type="checkbox" class="btn-check" name="times-{{ forloop.counter0 }}-weekdays"{% if 0 in timeform.weekdays.value or '0' in timeform.weekdays.value %} checked{% endif %} value="0" id="id_times-{{ forloop.counter0 }}-weekdays_0">
-                        <label for="id_times-{{ forloop.counter0 }}-weekdays_0" class="btn btn-outline-primary">Mo</label>
+                        <label for="id_times-{{ forloop.counter0 }}-weekdays_0" class="btn btn-outline-primary">{% trans "Mo" %}</label>
 
                         <input type="checkbox" class="btn-check" name="times-{{ forloop.counter0 }}-weekdays"{% if 1 in timeform.weekdays.value or '1' in timeform.weekdays.value %} checked{% endif %} value="1" id="id_times-{{ forloop.counter0 }}-weekdays_1">
-                        <label for="id_times-{{ forloop.counter0 }}-weekdays_1" class="btn btn-outline-primary">Tu</label>
+                        <label for="id_times-{{ forloop.counter0 }}-weekdays_1" class="btn btn-outline-primary">{% trans "Tu" %}</label>
 
                         <input type="checkbox" class="btn-check" name="times-{{ forloop.counter0 }}-weekdays"{% if 2 in timeform.weekdays.value or '2' in timeform.weekdays.value %} checked{% endif %} value="2" id="id_times-{{ forloop.counter0 }}-weekdays_2">
-                        <label for="id_times-{{ forloop.counter0 }}-weekdays_2" class="btn btn-outline-primary">We</label>
+                        <label for="id_times-{{ forloop.counter0 }}-weekdays_2" class="btn btn-outline-primary">{% trans "We" %}</label>
 
                         <input type="checkbox" class="btn-check" name="times-{{ forloop.counter0 }}-weekdays"{% if 3 in timeform.weekdays.value or '3' in timeform.weekdays.value %} checked{% endif %} value="3" id="id_times-{{ forloop.counter0 }}-weekdays_3">
-                        <label for="id_times-{{ forloop.counter0 }}-weekdays_3" class="btn btn-outline-primary">Th</label>
+                        <label for="id_times-{{ forloop.counter0 }}-weekdays_3" class="btn btn-outline-primary">{% trans "Th" %}</label>
 
                         <input type="checkbox" class="btn-check" name="times-{{ forloop.counter0 }}-weekdays"{% if 4 in timeform.weekdays.value or '4' in timeform.weekdays.value %} checked{% endif %} value="4" id="id_times-{{ forloop.counter0 }}-weekdays_4">
-                        <label for="id_times-{{ forloop.counter0 }}-weekdays_4" class="btn btn-outline-primary">Fr</label>
+                        <label for="id_times-{{ forloop.counter0 }}-weekdays_4" class="btn btn-outline-primary">{% trans "Fr" %}</label>
 
                         <input type="checkbox" class="btn-check" name="times-{{ forloop.counter0 }}-weekdays"{% if 5 in timeform.weekdays.value or '5' in timeform.weekdays.value %} checked{% endif %} value="5" id="id_times-{{ forloop.counter0 }}-weekdays_5">
-                        <label for="id_times-{{ forloop.counter0 }}-weekdays_5" class="btn btn-outline-primary">Sa</label>
+                        <label for="id_times-{{ forloop.counter0 }}-weekdays_5" class="btn btn-outline-primary">{% trans "Sa" %}</label>
 
                         <input type="checkbox" class="btn-check" name="times-{{ forloop.counter0 }}-weekdays"{% if 6 in timeform.weekdays.value or '6' in timeform.weekdays.value %} checked{% endif %} value="6" id="id_times-{{ forloop.counter0 }}-weekdays_6">
-                        <label for="id_times-{{ forloop.counter0 }}-weekdays_6" class="btn btn-outline-primary">Su</label>
+                        <label for="id_times-{{ forloop.counter0 }}-weekdays_6" class="btn btn-outline-primary">{% trans "Su" %}</label>
                     </div>
                     {% if timeform.weekdays.errors %}
                     <p id="error_1_id_times-0-start_time" class="invalid-feedback"><strong>{{ timeform.weekdays.errors }}</strong></p>
@@ -59,6 +62,21 @@
             {% endfor %}
         </div>
     </div>
+    <div class="row">
+        <h4 class="mt-5">{% trans "Modules" %}</h4>
+        <div class="col-md-4">
+            {{ form.access_control_module | as_crispy_field }}
+            {{ form.access_control_module_settings | as_crispy_field }}
+        </div>
+        <div class="col-md-4">
+            {{ form.status_display_module | as_crispy_field }}
+            {{ form.status_display_module_settings | as_crispy_field }}
+        </div>
+        <div class="col-md-4">
+            {{ form.actor_module | as_crispy_field }}
+            {{ form.actor_module_settings | as_crispy_field }}
+        </div>  
+    </div>
 
             <button class="btn btn-primary" type="submit">{% trans "Save" %}</button>
         {% if object and can_delete %}
@@ -67,4 +85,20 @@
             </a>
         {% endif %}
 </form>
+{% endblock %}
+
+{% block script_extra %}
+function link_module_fields (module_field, settings_field) {
+    const initial_value = $(module_field).val();
+    $(settings_field).prop("disabled", initial_value == 0);
+
+    $(module_field).change(function() {
+        var module_id = $(this).val();
+        $(settings_field).prop("disabled", module_id == 0);
+    });
+}
+
+link_module_fields("#id_access_control_module", "#id_access_control_module_settings");
+link_module_fields("#id_status_display_module", "#id_status_display_module_settings");
+link_module_fields("#id_actor_module", "#id_actor_module_settings");
 {% endblock %}

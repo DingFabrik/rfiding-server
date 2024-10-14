@@ -6,6 +6,7 @@ from django.urls import reverse
 from auditlog.registry import auditlog
 
 from machines.fields import WeekdayFormField
+from .client_modules import ACCESS_CONTROL_MODULES, STATUS_DISPLAY_MODULES, ACTOR_MODULES
 
 SUPPORTED_CHIPS = [
     ("esp32", "ESP32"),
@@ -59,6 +60,13 @@ class Machine(TimestampedModel):
     runtimer = models.IntegerField(default=0)
     min_power = models.IntegerField(default=0)
     control_parameter = models.CharField(max_length=100, null=True, blank=True)
+
+    access_control_module = models.IntegerField(default=0, choices=ACCESS_CONTROL_MODULES)
+    access_control_module_settings = models.JSONField(default=dict, blank=True)
+    status_display_module = models.IntegerField(default=0, choices=STATUS_DISPLAY_MODULES)
+    status_display_module_settings = models.JSONField(default=dict, blank=True)
+    actor_module = models.IntegerField(default=0, choices=ACTOR_MODULES)
+    actor_module_settings = models.JSONField(default=dict, blank=True)
 
     class Meta:
         verbose_name = _("Machine")

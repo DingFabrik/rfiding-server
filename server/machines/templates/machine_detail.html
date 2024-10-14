@@ -38,6 +38,10 @@
         <li><span class="fw-bold text-secondary-emphasis">{% trans "Runtimer" %}:</span> {{ object.runtimer }}<br></li>
         <li><span class="fw-bold text-secondary-emphasis">{% trans "Min Power" %}:</span> {{ object.min_power }}<br></li>
         <li><span class="fw-bold text-secondary-emphasis">{% trans "Control Parameter" %}:</span> {{ object.control_parameter|default:"--" }}<br></li>
+        <li class="mt-3 mb-0 h5">{% trans "Modules" %}</li>
+        <li><span class="fw-bold text-secondary-emphasis">{% trans "Access Control" %}:</span> {{ object.get_access_control_module_display|default:"--" }}<br></li>
+        <li><span class="fw-bold text-secondary-emphasis">{% trans "Status Display" %}:</span> {{ object.get_status_display_module_display|default:"--" }}<br></li>
+        <li><span class="fw-bold text-secondary-emphasis">{% trans "Actor" %}:</span> {{ object.get_actor_module_display|default:"--" }}<br></li>
         </ul>
 </div>
 </div>
