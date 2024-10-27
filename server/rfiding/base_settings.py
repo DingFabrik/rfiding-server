@@ -28,6 +28,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    "daphne",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -172,3 +173,5 @@ CRISPY_TEMPLATE_PACK = "bootstrap5"
 SPACE_STATE_SECRET = "12345"
 SPACE_NAME = "Makerspace"
 SPACE_CONTACT = "01234 / 123456"
+
+ASGI_APPLICATION = "rfiding.asgi.application"
