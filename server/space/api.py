@@ -3,7 +3,6 @@ from rest_framework.response import Response
 from rest_framework import status, permissions
 from django.conf import settings as SETTINGS
 
-from .models import SpaceState
 from .common import get_current_space_state, update_space_state
 
 class APISpaceStatusView(APIView):

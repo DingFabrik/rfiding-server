@@ -1,10 +1,8 @@
 import json
-from asgiref.sync import async_to_sync
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from channels.layers import get_channel_layer
 from django.conf import settings as SETTINGS
 
-from .models import SpaceState
 from .common import aupdate_space_state, aget_current_space_state
 
 channel_layer = get_channel_layer()

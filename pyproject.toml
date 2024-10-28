@@ -26,6 +26,9 @@ sphinx = "^8.0.2"
 sphinxcontrib-httpdomain = "^1.8.1"
 furo = "^2024.8.6"
 
+[tool.poetry.group.slack.dependencies]
+slack-sdk = "^3.33.2"
+
 [tool.ruff]
 target-version = "py312"
 
