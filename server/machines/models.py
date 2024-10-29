@@ -89,6 +89,23 @@ class Machine(TimestampedModel):
             .filter(end_time__gte=now.time())
             .exists()
         )
+    
+    def get_valid_end_time(self):
+        if not self.times.all():
+            return datetime.time(23, 59, 59)
+        now = datetime.datetime.now()
+        try:
+            return (
+                self.times.filter(weekdays__contains=now.weekday())
+                .filter(start_time__lte=now.time())
+                .filter(end_time__gte=now.time())
+                .first()
+                .end_time
+            )
+        except AttributeError:
+            return None
+        except MachineTime.DoesNotExist:
+            return None
 
 
 class MachineTime(TimestampedModel):

@@ -9,7 +9,7 @@ from tokens.models import Token
 from people.models import Person, Qualification
 
 
-class CheckMachineTests(APITestCase):
+class V1CheckMachineTests(APITestCase):
     url = reverse("api:machine_check")
 
     def test_missing_machine(self):
@@ -17,7 +17,7 @@ class CheckMachineTests(APITestCase):
         Ensure it errors if machine is not passed
         """
         data = {"tokenUid": "123"}
-        response = self.client.get(CheckMachineTests.url, data, format="json")
+        response = self.client.get(V1CheckMachineTests.url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_fixes_mac_address(self):
@@ -29,16 +29,15 @@ class CheckMachineTests(APITestCase):
             is_active=False,
         )
         machine.save()
-        response = self.client.get(CheckMachineTests.url, data, format="json")
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-        self.assertEqual(response.data["error"], "Machine is not active")
+        response = self.client.get(V1CheckMachineTests.url, data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_missing_token(self):
         """
         Ensure it errors if token is not passed
         """
         data = {"machine": "123"}
-        response = self.client.get(CheckMachineTests.url, data, format="json")
+        response = self.client.get(V1CheckMachineTests.url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_invalid_machine(self):
@@ -46,7 +45,7 @@ class CheckMachineTests(APITestCase):
         Ensure it errors if machine does not exist
         """
         data = {"machine": "aabbccddeeff", "tokenUid": "456"}
-        response = self.client.get(CheckMachineTests.url, data, format="json")
+        response = self.client.get(V1CheckMachineTests.url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_invalid_token(self):
@@ -58,7 +57,7 @@ class CheckMachineTests(APITestCase):
             mac_address="aa:bb:cc:dd:ee:ff", hostname="test", name="test"
         )
         machine.save()
-        response = self.client.get(CheckMachineTests.url, data, format="json")
+        response = self.client.get(V1CheckMachineTests.url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_inactive_machine(self):
@@ -73,8 +72,8 @@ class CheckMachineTests(APITestCase):
             is_active=False,
         )
         machine.save()
-        response = self.client.get(CheckMachineTests.url, data, format="json")
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        response = self.client.get(V1CheckMachineTests.url, data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_inactive_token(self):
         """
@@ -89,8 +88,8 @@ class CheckMachineTests(APITestCase):
         person.save()
         token = Token.objects.create(serial="456", person=person, is_active=False)
         token.save()
-        response = self.client.get(CheckMachineTests.url, data, format="json")
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        response = self.client.get(V1CheckMachineTests.url, data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_inactive_person(self):
         """
@@ -107,8 +106,8 @@ class CheckMachineTests(APITestCase):
         person.save()
         token = Token.objects.create(serial="456", person=person)
         token.save()
-        response = self.client.get(CheckMachineTests.url, data, format="json")
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        response = self.client.get(V1CheckMachineTests.url, data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_no_qualification(self):
         data = {"machine": "aabbccddeeff", "tokenUid": "456"}
@@ -120,7 +119,7 @@ class CheckMachineTests(APITestCase):
         person.save()
         token = Token.objects.create(serial="456", person=person)
         token.save()
-        response = self.client.get(CheckMachineTests.url, data, format="json")
+        response = self.client.get(V1CheckMachineTests.url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(
             response.data["error"], "Person does not have access to machine"
@@ -138,7 +137,7 @@ class CheckMachineTests(APITestCase):
         qualification.save()
         token = Token.objects.create(serial="456", person=person)
         token.save()
-        response = self.client.get(CheckMachineTests.url, data, format="json")
+        response = self.client.get(V1CheckMachineTests.url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["access"], 1)
 
@@ -154,7 +153,7 @@ class CheckMachineTests(APITestCase):
         qualification.save()
         token = Token.objects.create(serial="456", person=person)
         token.save()
-        response = self.client.get(CheckMachineTests.url, data, format="json")
+        response = self.client.get(V1CheckMachineTests.url, data, format="json")
         state = SpaceState.objects.create(is_open=True)
         state.save()
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -174,7 +173,7 @@ class CheckMachineTests(APITestCase):
         token.save()
         state = SpaceState.objects.create(is_open=False)
         state.save()
-        response = self.client.get(CheckMachineTests.url, data, format="json")
+        response = self.client.get(V1CheckMachineTests.url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(response.data["access"], 0)
 
@@ -194,7 +193,7 @@ class CheckMachineTests(APITestCase):
         token.save()
         state = SpaceState.objects.create(is_open=False)
         state.save()
-        response = self.client.get(CheckMachineTests.url, data, format="json")
+        response = self.client.get(V1CheckMachineTests.url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["access"], 1)
 
@@ -218,7 +217,7 @@ class CheckMachineTests(APITestCase):
         token = Token.objects.create(serial="456", person=person)
         token.save()
 
-        response = self.client.get(CheckMachineTests.url, data, format="json")
+        response = self.client.get(V1CheckMachineTests.url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["access"], 1)
 
@@ -233,7 +232,7 @@ class CheckMachineTests(APITestCase):
             machine=machine, weekdays="0,1,3", start_time="00:00", end_time="22:00"
         )
         machinetime.save()
-        response = self.client.get(CheckMachineTests.url, data, format="json")
+        response = self.client.get(V1CheckMachineTests.url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(response.data["access"], 0)
 
@@ -248,6 +247,6 @@ class CheckMachineTests(APITestCase):
             machine=machine, weekdays="0,3", start_time="00:00", end_time="22:00"
         )
         machinetime.save()
-        response = self.client.get(CheckMachineTests.url, data, format="json")
+        response = self.client.get(V1CheckMachineTests.url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(response.data["access"], 0)

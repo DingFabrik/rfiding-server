@@ -62,4 +62,4 @@ jobs:
         cp ./server/rfiding/settings.dev.py ./server/rfiding/settings.py
     - name: Run Tests
       run: |
-        poetry run ./server/manage.py test
+        poetry run ./server/manage.py test server

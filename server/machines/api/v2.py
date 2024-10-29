@@ -1,32 +1,19 @@
-from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions
 
-from .common import formatted_mac
-from machines.models import Machine
+from .common import formatted_mac, BaseAPIView
 from access_log.models import AccessLog, LOG_TYPE_REGISTERED, LOG_TYPE_BOOTED
 from machines.serializers import MachineConfigSerializer
 
-class MachineRegisterView(APIView):
+class MachineRegisterView(BaseAPIView):
     permission_classes = [permissions.AllowAny]
+    required_post_parameters = ["machine"]
 
     def post(self, request, format=None):
         mac_address = formatted_mac(request.POST.get("machine", None))
+        machine = self.get_machine(mac_address)
 
-        if mac_address is None:
-            return Response(
-                {"error": "Missing parameters"}, status=status.HTTP_400_BAD_REQUEST
-            )
-
-        try:
-            machine = Machine.objects.get(mac_address__iexact=mac_address)
-        except Machine.DoesNotExist:
-            return Response(
-                {"error": "Machine does not exist"}, status=status.HTTP_404_NOT_FOUND
-            )
-
-        log = AccessLog.objects.create(machine=machine, type=LOG_TYPE_REGISTERED)
-        log.save()
+        AccessLog.objects.create(machine=machine, type=LOG_TYPE_REGISTERED)
         return Response(
             {
                 "runtimer": machine.runtimer,
@@ -36,31 +23,15 @@ class MachineRegisterView(APIView):
             status=status.HTTP_200_OK,
         )
 
-class MachineConfigView(APIView):
+class MachineConfigView(BaseAPIView):
     permission_classes = [permissions.AllowAny]
+    required_get_parameters = ["machine"]
 
     def get(self, request, format=None):
         mac_address = formatted_mac(request.GET.get("machine", None))
+        machine = self.get_machine(mac_address)
 
-        if mac_address is None:
-            return Response(
-                {"error": "Missing parameters"}, status=status.HTTP_400_BAD_REQUEST
-            )
-
-        try:
-            machine = Machine.objects.get(mac_address__iexact=mac_address)
-        except Machine.DoesNotExist:
-            return Response(
-                {"error": "Machine does not exist"}, status=status.HTTP_404_NOT_FOUND
-            )
-
-        if not machine.is_active or not machine.is_now_valid_time():
-            return Response(
-                {"error": "Machine is restricted"}, status=status.HTTP_403_FORBIDDEN
-            )
-
-        log = AccessLog.objects.create(machine=machine, type=LOG_TYPE_BOOTED)
-        log.save()
+        AccessLog.objects.create(machine=machine, type=LOG_TYPE_BOOTED)
         return Response(
             MachineConfigSerializer({
                 "runtimer": machine.runtimer,
