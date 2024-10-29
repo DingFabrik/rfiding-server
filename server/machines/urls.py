@@ -28,4 +28,14 @@ urlpatterns = [
         ajax.InstructorMachineAutocompleteView.as_view(),
         name="autocomplete-instructor",
     ),
+    path(
+        "<int:pk>/qualifications",
+        views.MachineQualificationsListView.as_view(),
+        name="qualifications",
+    ),
+    path(
+        "<int:pk>/instructors",
+        views.MachineInstructorListView.as_view(),
+        name="instructors",
+    ),
 ]

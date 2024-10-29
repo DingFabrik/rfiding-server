@@ -6,6 +6,7 @@ from django.views.generic import (
     UpdateView,
     DeleteView,
 )
+from django.core.paginator import Paginator
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 
@@ -13,7 +14,7 @@ from access_log.models import AccessLog
 from base.views import BaseToggleActiveView, PartialListMixin
 from .models import Machine
 from .forms import MachineForm, ConfigureMachineForm, MachineTimeFormset
-
+from people.models import Qualification, Instructor
 
 MACHINE_SORT_CHOICES = (
     ("pk", _("Default")),
@@ -73,14 +74,18 @@ class MachineDetailView(DetailView, PermissionRequiredMixin):
         except AccessLog.DoesNotExist:
             context["last_access"] = None
         if self.object.needs_qualification:
-            context["qualifications"] = (
+            qualifications = (
                 self.object.qualified_people.select_related("person")
                 .select_related("instructed_by")
                 .all()
             )
-            context["qualifications_count"] = len(context["qualifications"])
-            context["instructors"] = self.object.instructors.select_related("person").all()
-            context["instructors_count"] = len(context["instructors"])
+            qualifications_paginator = Paginator(qualifications, self.request.user.page_length)
+            context["qualifications"] = qualifications_paginator.get_page(1)
+            context["qualifications_count"] = qualifications_paginator.count
+            instructors = self.object.instructors.select_related("person").all()
+            instructors_paginator = Paginator(instructors, self.request.user.page_length)
+            context["instructors"] = instructors_paginator.get_page(1)
+            context["instructors_count"] = instructors_paginator.count
         return context
 
 
@@ -151,3 +156,42 @@ class MachineDeleteView(DeleteView, PermissionRequiredMixin):
 class MachineToggleActiveView(BaseToggleActiveView):
     permission_required = "machines.change_machine"
     model = Machine
+
+class MachineQualificationsListView(PartialListMixin, ListView, PermissionRequiredMixin):
+    permission_required = "people.view_qualification"
+    model = Qualification
+    template_name = "person_qualifications_list.html"
+
+    def get_queryset(self):
+        queryset = Qualification.objects.filter(person=self.kwargs["pk"]).select_related("machine").all()
+        return queryset
+
+    def get_paginate_by(self, queryset):
+        return self.request.user.page_length
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["person"] = Machine.objects.get(pk=self.kwargs["pk"])
+        context["qualifications"] = context["page_obj"]
+        return context
+
+
+class MachineInstructorListView(PartialListMixin, ListView, PermissionRequiredMixin):
+    permission_required = "people.view_instructor"
+    model = Instructor
+    template_name = "person_instructor_list.html"
+    context_object_name = "instructors"
+
+    def get_queryset(self):
+        queryset = Instructor.objects.filter(machine=self.kwargs["pk"]).select_related("person").all()
+        return queryset
+    
+    def get_paginate_by(self, queryset):
+        return self.request.user.page_length
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["model"] = self.model
+        context["machine"] = Machine.objects.get(pk=self.kwargs["pk"])
+        context["instructors"] = context["page_obj"]
+        return context

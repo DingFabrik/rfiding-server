@@ -242,4 +242,5 @@ class PersonInstructorListView(PartialListMixin, ListView, PermissionRequiredMix
         context = super().get_context_data(**kwargs)
         context["model"] = self.model
         context["person"] = Person.objects.get(pk=self.kwargs["pk"])
+        context["can_instruct"] = context["page_obj"]
         return context

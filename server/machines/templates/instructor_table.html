@@ -1,0 +1,31 @@
+{% load i18n %}
+<div id="cinstructors_container">
+    {% if instructors %}
+    <table class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <th>{% trans "Member ID" %}</th>
+                <th>{% trans "Name" %}</th>
+                <th>{% trans "Date" %}</th>
+                <th>{% trans "Revoke" %}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for instructor in instructors %}
+            <tr>
+                <td><a href="{% url "people:detail" instructor.person.id %}">{{ instructor.person.member_id }}</a></td>
+                <td><a href="{% url "people:detail" instructor.person.id %}">{{ instructor.person.name }}</a></td>
+                <td>{{ instructor.created|date:"DATE_FORMAT" }}</td>
+                {% if perms.people.qualify_person %}
+                    <td><a href="{% url "people:revoke-instructor" instructor.person.pk instructor.pk %}">{% include "snippets/hoverable_revoke.html" %}</a></td>
+                    {% endif %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% url 'machines:instructors' machine.pk as page_path %}
+    {% include "base_pagination.html" with page_obj=instructors target="instructors_container" %}
+    {% else %}
+        <div class="alert alert-secondary">{% trans "There are no instructors for this machine" %}</div>
+    {% endif %}
+</div>

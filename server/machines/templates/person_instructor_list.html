@@ -1,0 +1,10 @@
+{% extends base_template %}
+{% load i18n %}
+
+{% block title %}
+{% with name=person %}{% blocktrans %}{{ name }} can instruct for these Machines{% endblocktrans %}{% endwith %}
+{% endblock %}
+
+{% block content %}
+{% include "qualifications_table.html" %}
+{% endblock %}

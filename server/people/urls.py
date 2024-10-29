@@ -41,4 +41,9 @@ urlpatterns = [
         views.RevokeInstructorPersonView.as_view(),
         name="revoke-instructor",
     ),
+    path(
+        "<int:pk>/instructor",
+        views.PersonInstructorListView.as_view(),
+        name="instructs-for",
+    ),
 ]
