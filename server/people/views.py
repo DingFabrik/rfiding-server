@@ -2,6 +2,7 @@ from typing import Any
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.db.models.base import Model as Model
 from django.db.models.query import QuerySet
+from django.core.paginator import Paginator
 from django.views.generic import (
     ListView,
     DetailView,
@@ -67,14 +68,18 @@ class PersonDetailView(DetailView, PermissionRequiredMixin):
         context = super().get_context_data(**kwargs)
         context["can_edit"] = self.request.user.has_perm("people.change_person")
         context["can_delete"] = self.request.user.has_perm("people.delete_person")
-        context["qualifications"] = (
+        qualifications = (
             self.object.qualifications.select_related("machine")
             .select_related("instructed_by")
             .all()
         )
-        context["can_instruct"] = self.object.can_instruct.select_related(
-            "machine"
-        ).all()
+        qualifications_paginator = Paginator(qualifications, self.request.user.page_length)
+        context["qualifications"] = qualifications_paginator.get_page(1)
+        can_instruct = (self.object.can_instruct.select_related("machine")
+            .all()
+        )
+        can_instruct_paginator = Paginator(can_instruct, self.request.user.page_length)
+        context["can_instruct"] = can_instruct_paginator.get_page(1)
         return context
 
 
@@ -169,6 +174,23 @@ class EditQualificationPersonView(UpdateView, PermissionRequiredMixin):
     def get_success_url(self):
         return reverse_lazy("people:detail", kwargs={"pk": self.kwargs["pk"]})
 
+class PersonQualificationsListView(PartialListMixin, ListView, PermissionRequiredMixin):
+    permission_required = "people.view_qualification"
+    model = Qualification
+    template_name = "person_qualifications_list.html"
+
+    def get_queryset(self):
+        queryset = Qualification.objects.filter(person=self.kwargs["pk"]).select_related("machine").all()
+        return queryset
+
+    def get_paginate_by(self, queryset):
+        return self.request.user.page_length
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["person"] = Person.objects.get(pk=self.kwargs["pk"])
+        context["qualifications"] = context["page_obj"]
+        return context
 
 class AddInstructorPersonView(CreateView, PermissionRequiredMixin):
     permission_required = "people.change_instructors"
@@ -202,3 +224,22 @@ class RevokeInstructorPersonView(DeleteView, PermissionRequiredMixin):
 
     def get_success_url(self):
         return reverse_lazy("people:detail", kwargs={"pk": self.kwargs["pk"]})
+
+class PersonInstructorListView(PartialListMixin, ListView, PermissionRequiredMixin):
+    permission_required = "people.view_instructor"
+    model = Instructor
+    template_name = "person_instructor_list.html"
+    context_object_name = "instructors"
+
+    def get_queryset(self):
+        queryset = Instructor.objects.filter(person=self.kwargs["pk"]).select_related("machine").all()
+        return queryset
+    
+    def get_paginate_by(self, queryset):
+        return self.request.user.page_length
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["model"] = self.model
+        context["person"] = Person.objects.get(pk=self.kwargs["pk"])
+        return context
