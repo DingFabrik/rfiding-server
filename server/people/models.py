@@ -18,7 +18,7 @@ class Person(TimestampedModel):
     class Meta:
         verbose_name = _("Person")
         verbose_name_plural = _("People")
-        ordering = ["pk"]
+        ordering = ["member_id"]
         permissions = (("change_instructor", "Can manage instructors"),)
 
     def get_absolute_url(self):
@@ -66,6 +66,7 @@ class Qualification(TimestampedModel):
         verbose_name = _("Qualification")
         verbose_name_plural = _("Qualifications")
         permissions = (("qualify_person", "Can manage qualifications"),)
+        ordering = ["machine", "person__name"]
 
 
 class Instructor(TimestampedModel):
@@ -83,6 +84,7 @@ class Instructor(TimestampedModel):
     class Meta:
         verbose_name = _("Instructor")
         verbose_name_plural = _("Instructors")
+        ordering = ["machine", "person"]
 
 auditlog.register(Person, mask_fields=["email"], exclude_fields=["created", "updated"])
 auditlog.register(Qualification, exclude_fields=["created", "updated"])

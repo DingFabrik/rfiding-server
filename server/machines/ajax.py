@@ -26,11 +26,12 @@ class QualifyableMachineAutocompleteView(APIView):
         machines = get_machines(request, request.GET.get("term", None))
         machines = machines.filter(needs_qualification=True, is_active=True)
         machines = machines.exclude(qualified_people__person__id=person)
+        machines.select_related("instructors")
         returned = []
         for machine in machines:
             instructors = [
-                {"value": instructors.person.id, "label": instructors.person.__str__()}
-                for instructors in machine.instructors.all()
+                {"value": instructor["person__pk"], "label": instructor["person__name"]}
+                for instructor in machine.instructors.select_related("person").order_by("person__name").values("person__pk", "person__name").all()
             ]
             returned.append(
                 {
