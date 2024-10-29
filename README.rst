@@ -9,8 +9,8 @@
     :alt: MIT License
     :target: https://opensource.org/license/mit/
 
-.. image:: https://img.shields.io/badge/release-1.0_alpha1-blue.svg
-    :alt: 1.0_alpha1
+.. image:: https://img.shields.io/badge/release-1.0_alpha2-blue.svg
+    :alt: 1.0_alpha2
 
 Rfiding is a project to restrict access to machines and doors in a makerspace, hackerspace or open workshop.
 

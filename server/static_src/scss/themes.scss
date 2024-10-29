@@ -29,6 +29,10 @@ $themecolors: (
       color: map.get($value, "#{$color}-200");
     }
 
+    .dropdown-item.active, .dropdown-item:active, .active > .dropdown-item {
+      background-color: $main;
+  }
+
     .btn-primary {
       --bs-btn-bg: #{mix($gray-600, map.get($value, "#{$color}-400"), .5)};
       --bs-btn-border-color: #{rgba($white, .25)};

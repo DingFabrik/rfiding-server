@@ -27,7 +27,7 @@
             {% for item in menu %}
             {% if item.has_permission %}
               <li class="nav-item">
-                <a class="nav-link {% if item.active %}active{% endif %}" href="{{ item.url }}"><i class="bi-{{item.icon}} me-1"></i> {{item.name}}</a>
+                <a class="nav-link {% if item.active %}active{% endif %}" href="{{ item.url }}"><i class="bi-{% if item.active and item.active_icon %}{{item.active_icon}}{% else %}{{item.icon}}{% endif %} me-1"></i> {{item.name}}</a>
               </li>
             {% endif %}
             {% endfor %}
@@ -43,16 +43,19 @@
                   {{ user.name|default:user.email}}
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="dropdown-right">
-                  {% if perms.users.view_users %}
-                    <li><a class="dropdown-item" href="{% url "users:list" %}">{% trans "Users" %}</a></li>
-                  {% endif %}
-                  <li><a class="dropdown-item" href="{% url "about" %}">{% trans "About" %}</a></li>
-                  <li><hr class="dropdown-divider"></li>
-                  <li><a class="dropdown-item" href="{% url "users:profile" %}">{% trans "Settings" %}</a></li>
+                  {% for item in side_menu %}
+                  {% if item.type == "divider" %}
+                    <li><hr class="dropdown-divider"></li>
+                  {% else %}
+                    {% if item.has_permission %}
+                      <li><a class="dropdown-item {% if item.active %}active{% endif %}" href="{{ item.url }}"><i class="bi-{% if item.active and item.active_icon %}{{item.active_icon}}{% else %}{{item.icon}}{% endif %} me-1"></i> {{item.name}}</a></li>
+                    {% endif %}
+                    {% endif%}
+                  {% endfor %}
                   <li>
                     <form method="post" action="{% url "logout" %}">
                       {% csrf_token %}
-                      <button type="submit" class="dropdown-item">{% trans "Sign out" %}</button>
+                      <button type="submit" class="dropdown-item"><i class="bi-door-closed me-1"></i> {% trans "Sign out" %}</button>
                     </form>
                   </li>
                 </ul>

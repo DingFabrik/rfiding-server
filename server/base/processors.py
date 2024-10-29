@@ -18,6 +18,7 @@ def menu_processor(request):
             "name": _("People"),
             "url": reverse("people:list"),
             "icon": "people",
+            "active_icon": "people-fill",
             "has_permission": request.user.has_perm("people.view_person"),
             "active": request.resolver_match.app_name == "people",
         },
@@ -25,6 +26,7 @@ def menu_processor(request):
             "name": _("Machines"),
             "url": reverse("machines:list"),
             "icon": "hdd",
+            "active_icon": "hdd-fill",
             "has_permission": request.user.has_perm("machines.view_machine"),
             "active": request.resolver_match.app_name == "machines",
         },
@@ -35,6 +37,9 @@ def menu_processor(request):
             "has_permission": request.user.has_perm("access_log.view_accesslog"),
             "active": request.resolver_match.app_name == "access_log",
         },
+    ]
+    
+    side_menu = [
         {
             "name": _("Audit Log"),
             "url": reverse("auditlog"),
@@ -49,5 +54,39 @@ def menu_processor(request):
             "has_permission": request.user.has_perm("firmware.view_firmware"),
             "active": request.resolver_match.app_name == "firmware",
         },""",
+        {
+            "name": _("Users"),
+            "url": reverse("users:list"),
+            "icon": "person-badge",
+            "active_icon": "person-badge-fill",
+            "has_permission": request.user.has_perm("users.view_user"),
+            "active": request.resolver_match.app_name == "users" and request.resolver_match.url_name != "profile",
+        },
+        {
+            "name": _("Django Admin"),
+            "url": reverse("admin:index"),
+            "icon": "person-badge",
+            "active_icon": "person-badge-fill",
+            "has_permission": request.user.is_staff,
+        },
+        {
+            "name": _("About"),
+            "url": reverse("about"),
+            "icon": "info-circle",
+            "active_icon": "info-circle-fill",
+            "has_permission": True,
+            "active": request.resolver_match.url_name == "about",
+        },
+        {
+            "type": "divider"
+        },
+        {
+            "name": _("Settings"),
+            "url": reverse("users:profile"),
+            "icon": "gear",
+            "active_icon": "gear-fill",
+            "has_permission": True,
+            "active": request.resolver_match.url_name == "profile",
+        },
     ]
-    return {"menu": menu}
+    return {"menu": menu, "side_menu": side_menu}

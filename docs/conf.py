@@ -9,7 +9,7 @@
 project = "RFIDing"
 copyright = "2024, Dingfabrik e.V."
 author = "Phillip Thelen"
-release = "1.0-alpha1"
+release = "1.0-alpha2"
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
