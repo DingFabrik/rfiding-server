@@ -13,7 +13,7 @@ class SpaceStateConsumer(AsyncJsonWebsocketConsumer):
         await channel_layer.group_add("space_state", self.channel_name)
         await self.accept()
         
-        await self.send(json.dumps({"state": str((await aget_current_space_state()).is_open)}))
+        await self.send(json.dumps({"state": (await aget_current_space_state()).is_open}))
     
     async def disconnect(self, code):
         channel_layer.group_discard("space_state", self.channel_name)

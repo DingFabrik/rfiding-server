@@ -1,6 +1,7 @@
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 from django.conf import settings
+import json
 
 from .models import SpaceState
 
