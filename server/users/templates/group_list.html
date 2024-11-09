@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title%}
+{% trans "Groups" %}
+{% endblock %}
+
+{% block top_actions %}
+<a href="{% url 'users:groups:create' %}" class="btn btn-primary">{% trans "Add Group" %}</a>
+{% endblock %}
+
+{% block content %}
+<table class="table table-striped table-bordered">
+    <thead>
+        <tr>
+            <th>{% trans "ID" %}</th>
+            <th>{% trans "Name" %}</th>
+        </tr>
+        </thead>
+{% for group in groups %}
+<tr>
+<td>{{ group.pk }}</td>
+{% if perms.auth.modify_group %}
+<td><a href="{% url "users:groups:update" group.pk %}">{{ group.name }}</a></td>
+{% else %}
+<td>{{ group.name }}</td>
+{% endif %}
+</tr>
+{% endfor %}
+</table>
+{% endblock %}

@@ -40,7 +40,6 @@ def update_space_state(new_state):
     if new_state == current_state.is_open:
         return current_state
     state = SpaceState.objects.create(is_open=new_state)
-    print(state.created)
     if channel_layer is not None:
         async_to_sync(channel_layer.group_send)("space_state", {"type": "space_state", "state": new_state})
     for reporter in state_reporters:

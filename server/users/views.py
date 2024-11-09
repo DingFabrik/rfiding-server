@@ -13,13 +13,14 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth.forms import PasswordChangeForm, AdminPasswordChangeForm
 from django.contrib.auth.views import PasswordChangeView
+from django.contrib.auth.models import Group
 from django.urls import reverse_lazy
 
 from tokens.models import Token
 from machines.models import Machine
 from people.models import Person
 from users.models import RFIDingUser
-from .forms import UserForm
+from .forms import UserForm, GroupForm
 
 @method_decorator(login_required, name="dispatch")
 class ProfileView(UpdateView):
@@ -52,6 +53,12 @@ class HomeView(TemplateView):
         context["user"] = self.request.user
         return context
 
+
+class ChangePasswordView(PasswordChangeView):
+    form_class = PasswordChangeForm
+    success_url = reverse_lazy("home")
+    template_name = "change_password.html"
+    
 
 class UserListView(ListView, PermissionRequiredMixin):
     permission_required = "users.view_rfidinguser"
@@ -99,14 +106,8 @@ class UserDeleteView(DeleteView, PermissionRequiredMixin):
     permission_required = "users.delete_rfidinguser"
 
     model = RFIDingUser
-    template_name = "user_delete.html"
+    template_name = "delete_confirm.html"
     success_url = reverse_lazy("users:list")
-
-
-class ChangePasswordView(PasswordChangeView):
-    form_class = PasswordChangeForm
-    success_url = reverse_lazy("home")
-    template_name = "change_password.html"
     
 class AdminChangePasswordView(FormView):
     form_class = AdminPasswordChangeForm
@@ -125,3 +126,41 @@ class AdminChangePasswordView(FormView):
         context = super().get_context_data(**kwargs)
         context["object"] = self.get_object()
         return context
+
+
+class GroupListView(ListView, PermissionRequiredMixin):
+    permission_required = "auth.view_group"
+
+    model = Group
+    template_name = "group_list.html"
+    context_object_name = "groups"
+
+
+class GroupCreateView(CreateView, PermissionRequiredMixin):
+    permission_required = "auth.add_group"
+
+    model = Group
+    form_class = GroupForm
+    template_name = "group_form.html"
+    success_url = reverse_lazy("users:groups:list")
+
+
+class GroupUpdateView(UpdateView, PermissionRequiredMixin):
+    permission_required = "auth.change_group"
+
+    model = Group
+    form_class = GroupForm
+    template_name = "group_form.html"
+    success_url = reverse_lazy("users:groups:list")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["can_delete"] = self.request.user.has_perm("auth.delete_group")
+        return context
+
+class GroupDeleteView(DeleteView, PermissionRequiredMixin):
+    permission_required = "auth.delete_group"
+
+    model = Group
+    template_name = "delete_confirm.html"
+    success_url = reverse_lazy("users:groups:list")
