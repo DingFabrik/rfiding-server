@@ -46,7 +46,7 @@
             <a class="btn btn-primary btn-sm float-end" href="{% url "people:qualify" person.pk %}">{% trans "Add Qualification" %}</a>
         {% endif %}
 </h4>
-{% include "qualifications_table.html" with is_partial=True %}
+{% include "people_qualifications_table.html" with is_partial=True %}
 </div>
 
 <div class="mb-5 col-12">

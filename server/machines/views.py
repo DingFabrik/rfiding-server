@@ -160,7 +160,7 @@ class MachineToggleActiveView(BaseToggleActiveView):
 class MachineQualificationsListView(PartialListMixin, ListView, PermissionRequiredMixin):
     permission_required = "people.view_qualification"
     model = Qualification
-    template_name = "person_qualifications_list.html"
+    template_name = "machine_qualifications_list.html"
 
     def get_queryset(self):
         queryset = Qualification.objects.filter(person=self.kwargs["pk"]).select_related("machine").all()
@@ -179,7 +179,7 @@ class MachineQualificationsListView(PartialListMixin, ListView, PermissionRequir
 class MachineInstructorListView(PartialListMixin, ListView, PermissionRequiredMixin):
     permission_required = "people.view_instructor"
     model = Instructor
-    template_name = "person_instructor_list.html"
+    template_name = "machine_instructor_list.html"
     context_object_name = "instructors"
 
     def get_queryset(self):

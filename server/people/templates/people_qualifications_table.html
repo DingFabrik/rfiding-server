@@ -18,7 +18,7 @@
         </thead>
         <tbody>
             {% for qualification in qualifications %}
-            <tr>
+            <tr class="align-middle">
                 <td><a href="{% url "machines:detail" qualification.machine.id %}">{{ qualification.machine.name }}</a></td>
                 <td>{% if qualification.instructed_by %}
                         <a href="{% url "people:detail" qualification.instructed_by.pk %}">{{ qualification.instructed_by|default:"--" }}</a>

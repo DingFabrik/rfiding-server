@@ -17,7 +17,7 @@
         </thead>
         <tbody>
             {% for qualification in qualifications %}
-            <tr>
+            <tr class="align-middle">
                 <td><a href="{% url "people:detail" qualification.person.id %}">{{ qualification.person.name }}</a></td>
                 <td>{{ qualification.get_permission_level_display }}</td>
                 <td style="max-width: 600px;">{{ qualification.comment }}</td>
