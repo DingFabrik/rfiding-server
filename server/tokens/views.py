@@ -20,6 +20,7 @@ from base.views import BaseToggleActiveView, PartialListMixin
 from .models import Token, UnknownToken
 from .forms import TokenForm
 from people.models import Person
+from .common import clear_unknown_tokens
 
 
 TOKEN_SORT_CHOICES = (
@@ -72,7 +73,7 @@ class ClearUnknownTokensView(View, PermissionRequiredMixin):
     permission_required = "tokens.delete_unknown_token"
 
     def get(self, request):
-        UnknownToken.objects.all().delete()
+        clear_unknown_tokens()
         return redirect("tokens:unknown")
 
 

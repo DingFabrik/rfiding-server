@@ -1,0 +1,22 @@
+{% load i18n %}<table id="unknown_token_container" class="table table-bordered" {% if is_partial %}hx-swap-oob="outerHTML"{% endif %}>
+    <thead>
+        <tr>
+            <th>{% trans "Serial" %}</th>
+            <th>{% trans "Machine" %}</th>
+            <th>{% trans "Seen" %}</th>
+            {% if perms.tokens.create_token %}
+            <th>{% trans "Assign" %}</th>
+            {% endif %}
+        </tr>
+        </thead>
+{% for token in tokens %}
+<tr>
+<td>{{ token.serial }}</td>
+<td>{{ token.machine }}</td>
+<td>{% include "snippets/timestamp.html" with timestamp=token.created %}</td>
+{% if perms.tokens.create_token %}
+<td><a href="{% url "tokens:assign" token.serial %}"><i class="bi-link"></i></a></td>
+{% endif %}
+</tr>
+{% endfor %}
+</table>

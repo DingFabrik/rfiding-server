@@ -3,45 +3,29 @@
 {% load l10n %}
 {% load humanize %}
 
-{% block title %}
-{% trans "Unknown tokens" %}
-{% endblock %}
-
-{% block top_actions %}
-<a href="{% url 'tokens:clear-unknown' %}" class="btn btn-primary"><i class="bi-arrow-clockwise"></i> {% trans "Clear list" %}</a>
-{% endblock %}
-
-{% block content %}
+{% block main %}
+<div hx-ext="ws" ws-connect="/ws/tokens/unknown/">
+    <div class="mb-3 clearfix">
+        <div class="float-end">
+            <a
+                href="{% url 'tokens:clear-unknown' %}"
+                ws-send
+                hx-vals='{"action": "clear"}'
+                class="btn btn-primary">
+                <i class="bi-x-circle"></i> {% trans "Clear list" %}
+            </a>
+        </div>
+          <h1 class="h2">{% trans "Unknown tokens" %}</h1>
+        </div>
+          {% block content %}
+          {% endblock content %}
+          <div class="mb-3 clearfix">
+            <div class="float-end">{% block bottom_actions %}{% endblock %}</div>
+        </div>
 {% if tokens %}
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>{% trans "Serial" %}</th>
-            <th>{% trans "Machine" %}</th>
-            <th>{% trans "Seen" %}</th>
-            {% if perms.tokens.create_token %}
-            <th>{% trans "Assign" %}</th>
-            {% endif %}
-        </tr>
-        </thead>
-{% for token in tokens %}
-<tr>
-<td>{{ token.serial }}</td>
-<td>{{ token.machine }}</td>
-<td>{% include "snippets/timestamp.html" with timestamp=token.created %}</td>
-{% if perms.tokens.create_token %}
-<td><a href="{% url "tokens:assign" token.serial %}"><i class="bi-link"></i></a></td>
-{% endif %}
-</tr>
-{% endfor %}
-</table>
+{% include "unknown_token_table.html" %}
 {% else %}
-<div class="card text-center">
-    <div class="card-body">
-        <i class="bi-broadcast display-3 text-body-tertiary"></i>
-        <h4 class="h5">{% trans "No Tokens found." %}</h4>
-        <p class="text-body-tertiary">{% trans "Any token that is tappen on a reader and not known to the database will show up here." %}</p>
-    </div>
-</div>
+{% include "unknown_tokens_empty.html" %}
 {% endif %}
+</div>
 {% endblock %}

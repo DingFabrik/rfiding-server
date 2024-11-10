@@ -3,6 +3,11 @@ from django.urls import reverse
 from base.models import TimestampedModel
 from django.utils.translation import gettext_lazy as _
 from auditlog.registry import auditlog
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
+from django.template.loader import render_to_string
 
 from machines.models import Machine
 from people.models import Person
@@ -41,5 +46,13 @@ class UnknownToken(TimestampedModel):
 
     def __str__(self):
         return f"{self.serial}"
+
+channel_layer = get_channel_layer()
+    
+@receiver(post_save, sender=UnknownToken)
+def print_only_after_deal_created(sender, instance, created, **kwargs):
+    if created:
+        async_to_sync(channel_layer.group_send)("unknown_tokens", {"type": "unknown_token_list_changed"})
+
 
 auditlog.register(Token, exclude_fields=["created", "updated"])

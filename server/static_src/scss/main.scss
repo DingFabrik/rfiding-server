@@ -1,4 +1,3 @@
-
 @import "bootstrap/scss/bootstrap";
 @import "themes.scss";
 
@@ -40,7 +39,7 @@ body {
   background-clip: padding-box;
 }
 
-.ui-autocomplete > li > div {
+.ui-autocomplete>li>div {
   display: block;
   padding: 3px 20px;
   clear: both;
@@ -69,8 +68,9 @@ body {
   position: absolute;
   width: 1px;
 }
+
 .container-slim {
-    max-width: 700px;
+  max-width: 700px;
 }
 
 .icon-rotate {
@@ -79,28 +79,36 @@ body {
   animation-iteration-count: infinite;
   animation-timing-function: linear;
 }
+
 @keyframes rotateThis {
-  from { transform:scale(1)rotate(0deg);}
-  to {transform: scale(1) rotate(360deg);}
+  from {
+    transform: scale(1)rotate(0deg);
+  }
+
+  to {
+    transform: scale(1) rotate(360deg);
+  }
 }
 
-.htmx-indicator{
-  display:none;
-}
-.htmx-request .htmx-indicator{
-  display:inline;
+.htmx-indicator {
+  display: none;
 }
 
-.htmx-request.htmx-indicator{
-  display:inline;
+.htmx-request .htmx-indicator {
+  display: inline;
+}
+
+.htmx-request.htmx-indicator {
+  display: inline;
 }
 
 .revoke:hover .bi-x-circle,
 .revoke .bi-x-circle-fill {
-    display: none;
+  display: none;
 }
+
 .revoke:hover .bi-x-circle-fill {
-    display: inline;
+  display: inline;
 }
 
 .active_toggle {
@@ -110,4 +118,32 @@ body {
 .alert.alert-sm {
   padding: 0.25rem 0.5rem;
   font-size: 0.875rem;
+}
+
+body {
+  background-color: #000
+}
+
+.wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh
+}
+
+.pulsing {
+  animation: animate 5s linear infinite
+}
+
+
+@keyframes animate {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.2;
+  }
+  100% {
+    opacity: 1;
+  }
 }

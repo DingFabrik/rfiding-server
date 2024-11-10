@@ -66,6 +66,7 @@
     </nav>
     {% endif %}
 <main role="main" class="container mb-5 {% block container_classes %}{% endblock %}">
+  {% block main %}
   <div class="mb-3 clearfix">
     <div class="float-end">{% block top_actions %}{% endblock %}</div>
       <h1 class="h2">  {% block title %}
@@ -77,6 +78,7 @@
       <div class="mb-3 clearfix">
         <div class="float-end">{% block bottom_actions %}{% endblock %}</div>
     </div>
+  {% endblock %}
   </main>
 
   {% block extra_content %}

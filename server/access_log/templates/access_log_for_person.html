@@ -12,7 +12,7 @@
 {% endblock %}
 
 {% block content %}
-<div id="list_container">
+<div id="access_log_container">
     {% if is_partial %}
     <h4>{% trans "Access Log" %}</h4>
     {% endif %}
@@ -35,7 +35,7 @@
     </tr>
     {% endfor %}
     </table>
-    {% include "base_pagination.html" %}
+    {% include "base_pagination.html" with target="access_log_container" %}
     {% else %}
     <div class="alert alert-secondary text-center">{% trans "This person has not accessed anything yet." %}</div>
     {% endif%}

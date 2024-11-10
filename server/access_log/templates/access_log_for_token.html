@@ -12,7 +12,7 @@
 {% endblock %}
 
 {% block content %}
-<div id="list_container">
+<div id="access_log_container">
     {% if is_partial %}
     <h4>{% trans "Access Log" %}</h4>
     {% endif %}
@@ -34,7 +34,7 @@
     {% endfor %}
     </table>
 
-    {% include "base_pagination.html" %}
+    {% include "base_pagination.html" with terget="access_log_container" %}
     {% else %}
     <div class="alert alert-secondary text-center">{% trans "This token has not been used yet" %}</div>
     {% endif%}
