@@ -12,6 +12,12 @@ STATIC_ROOT = "/var/www/example.com/static/"
 # Set all hosts your deploy will be available from
 ALLOWED_HOSTS = []
 
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+    },
+}
+
 # Configure your space
 SPACE_STATE_SECRET = ""
 SPACE_NAME = ""
