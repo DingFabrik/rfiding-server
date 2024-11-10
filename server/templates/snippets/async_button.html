@@ -1,0 +1,15 @@
+{% load i18n %}<div>
+    <a class='btn btn-primary'
+        href="{{ url }}"
+        hx-get="{{ url}}"
+        hx-swap="outerHTML"
+        hx-target="closest div">
+            {{ label }} <div class="htmx-indicator">
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                <span class="visually-hidden">Loading...</span>
+            </div>
+    </a>
+    <div class="alert alert-sm alert-danger d-inline-block invisible">
+        <i class="bi-exclamation-triangle-fill"></i> {% trans "Could not load data." %}
+    </div>
+</div>

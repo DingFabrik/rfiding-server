@@ -31,7 +31,19 @@ window.updateTooltips = function () {
     }));
 }
 
+window.addEventListener('htmx:beforeRequest', function(event) {
+    const alert = document.querySelector('.alert');
+    if (alert) {
+        alert.classList.add('invisible');
+    }
+});
+
+window.addEventListener('htmx:beforeSwap', function(event) {
+    if (event.detail.xhr.status >= 400) {
+        event.detail.target.querySelector('.alert').classList.remove('invisible');
+    }
+});
+
 window.addEventListener('htmx:afterSwap', function(event) {
-    console.log(event);
     updateTooltips();
 })

@@ -68,10 +68,7 @@
 </div>
 {% endif %}
 
-<a class='btn btn-primary'
-    href="{% url 'access_log:for-machine' object.pk %}"
-    hx-get="{% url 'access_log:for-machine' object.pk %}"
-    hx-swap="outerHTML">
-        {% trans "Load Access Log" %} <i class="htmx-indicator loader"></i>
-</a>
+{% url "access_log:for-machine" object.pk as access_log_url %}
+{% trans "Load Access Log" as access_log_label %}
+{% include "snippets/async_button.html" with url=access_log_url label=access_log_label %}
 {% endblock %}
