@@ -38,6 +38,7 @@
 {% endblock %}
 
 {% block script_extra %}
+document.getElementById("{{ form.instructed_by.id_for_label }}").disabled = true;
 $("#{{ form.machine_autocomplete.id_for_label}}").autocomplete({
     source: "{% url 'machines:autocomplete-qualifyable' form.person.value %}",
     minLength: 1,
@@ -59,6 +60,7 @@ $("#{{ form.machine_autocomplete.id_for_label}}").autocomplete({
                     .val(instructor.value)
                     .html(instructor.label));
             }
+            document.getElementById("{{ form.instructed_by.id_for_label }}").disabled = false;
         },
         focus: function( event, ui ) {
             event.preventDefault();
