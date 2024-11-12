@@ -47,28 +47,50 @@
 </div>
 
 <div class="row">
-<div class="mb-5 col-12">
-<h4>{% trans "Qualifications" %}</h4>
-{% if machine.needs_qualification %}
-<div class="text-body-secondary">{% blocktrans %}{{ qualifications_count }} people are qualified to use this machine:{% endblocktrans %}</div>
-{% include "qualifications_table.html" with is_partial=True %}
-{% else %}
-<div class="text-body-secondary">{% blocktrans %}All active users are qualified to use this machine{% endblocktrans %}</div>
-{% endif %}
-</div>
-</div>
-{% if machine.needs_qualification %}
-<div class="row">
     <div class="mb-5 col-12">
-        <h4>{% trans "Instructors" %}</h4>
-    <div class="text-body-secondary">{% blocktrans %}{{ instructors_count }} people can instruct on usage of this machine:{% endblocktrans %}</div>
-    {% include "instructor_table.html" with is_partial=True %}
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+              <button class="nav-link active" id="qualifications-tab" data-bs-toggle="tab" data-bs-target="#qualifications-tab-pane" type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">{% trans "Qualifications" %}</button>
+            </li>
+            {% if machine.needs_qualification %}
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="instructor-tab" data-bs-toggle="tab" data-bs-target="#instructor-tab-pane" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">{% trans "Instructors" %}</button>
+            </li>
+            {% endif %}
+            {% if perms.access_log.view_access_log %}
+            <li class="nav-item" role="presentation">
+              <button
+              class="nav-link"
+              id="accesslog-tab"
+              hx-get="{% url "access_log:for-person" object.pk %}"
+              hx-target="#accesslog-tab-pane"
+              data-bs-toggle="tab"
+              data-bs-target="#accesslog-tab-pane"
+              type="button"
+              role="tab"
+              aria-controls="contact-tab-pane" aria-selected="false">{% trans "Access Log" %}</button>
+            </li>
+            {% endif %}
+          </ul>
+          <div class="tab-content mt-4" id="myTabContent">
+            <div class="tab-pane show active" id="qualifications-tab-pane" role="tabpanel" aria-labelledby="qualifications-tab" tabindex="0">
+                {% if machine.needs_qualification %}
+                <div class="text-body-secondary">{% blocktrans %}{{ qualifications_count }} people are qualified to use this machine:{% endblocktrans %}</div>
+                {% include "qualifications_table.html" with is_partial=True %}
+                {% else %}
+                <div class="text-body-secondary">{% blocktrans %}All active users are qualified to use this machine{% endblocktrans %}</div>
+                {% endif %}
+            </div>
+            {% if machine.needs_qualification %}
+            <div class="tab-pane" id="instructor-tab-pane" role="tabpanel" aria-labelledby="instructor-tab" tabindex="0">
+                <div class="text-body-secondary">{% blocktrans %}{{ instructors_count }} people can instruct on usage of this machine:{% endblocktrans %}</div>
+                {% include "instructor_table.html" with is_partial=True %}
+            </div>
+            {% endif %}
+            {% if perms.access_log.view_access_log %}
+            <div class="tab-pane" id="accesslog-tab-pane" role="tabpanel" aria-labelledby="accesslog-tab" tabindex="0"></div>
+            {% endif %}
+          </div>
+    </div>
 </div>
-</div>
-</div>
-{% endif %}
-
-{% url "access_log:for-machine" object.pk as access_log_url %}
-{% trans "Load Access Log" as access_log_label %}
-{% include "snippets/async_button.html" with url=access_log_url label=access_log_label %}
 {% endblock %}

@@ -40,26 +40,56 @@
 </div>
 
 <div class="row">
-<div class="mb-5 col-12">
-    <h4>{% trans "Qualifications" %}
-        {% if perms.people.qualify_person %}
-            <a class="btn btn-primary btn-sm float-end" href="{% url "people:qualify" person.pk %}">{% trans "Add Qualification" %}</a>
-        {% endif %}
-</h4>
-{% include "person_qualifications_table.html" with is_partial=True %}
+    <div class="mb-5 col-12">
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="qualifications-tab" data-bs-toggle="tab" data-bs-target="#qualifications-tab-pane" type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">{% trans "Qualifications" %}</button>
+            </li>
+            <li class="nav-item" role="presentation">
+            <button class="nav-link" id="instructor-tab" data-bs-toggle="tab" data-bs-target="#instructor-tab-pane" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">{% trans "Instructor for" %}</button>
+            </li>
+            {% if perms.access_log.view_access_log %}
+            
+            <li class="nav-item" role="presentation">
+            <button
+            class="nav-link"
+            id="accesslog-tab"
+            hx-get="{% url "access_log:for-person" object.pk %}"
+            hx-target="#accesslog-tab-pane"
+            data-bs-toggle="tab"
+            data-bs-target="#accesslog-tab-pane"
+            type="button"
+            role="tab"
+            aria-controls="contact-tab-pane" aria-selected="false">{% trans "Access Log" %}</button>
+            </li>
+            {% endif %}
+        </ul>
+        <div class="tab-content mt-4" id="myTabContent">
+            <div class="tab-pane show active" id="qualifications-tab-pane" role="tabpanel" aria-labelledby="qualifications-tab" tabindex="0">
+                {% if perms.people.qualify_person %}
+                    <a class="btn btn-primary btn-sm float-end mb-2" href="{% url "people:qualify" person.pk %}">{% trans "Add Qualification" %}</a>
+                {% endif %}
+                {% include "person_qualifications_table.html" with is_partial=True %}
+            </div>
+            <div class="tab-pane" id="instructor-tab-pane" role="tabpanel" aria-labelledby="instructor-tab" tabindex="0">
+                {% if perms.people.change_person %}
+                    <a class="btn btn-primary btn-sm float-end mb-2" href="{% url "people:add-instructor" person.pk %}">{% trans "Add as instructor" %}</a>
+                {% endif %}
+                {% include "person_instructor_table.html" with is_partial=True %}
+            </div>
+            {% if perms.access_log.view_access_log %}
+            <div class="tab-pane" id="accesslog-tab-pane" role="tabpanel" aria-labelledby="accesslog-tab" tabindex="0"></div>
+            {% endif %}
+        </div>
+    </div>
 </div>
+{% endblock %}
 
-<div class="mb-5 col-12">
-    <h4>{% trans "Instructor for" %}
-        {% if perms.people.change_person %}
-        <a class="btn btn-primary btn-sm float-end" href="{% url "people:add-instructor" person.pk %}">{% trans "Add as instructor" %}</a>
-        {% endif %}
-    </h4>
-{% include "person_instructor_table.html" with is_partial=True %}
-</div>
-</div>
-
-{% url "access_log:for-person" object.pk as access_log_url %}
-{% trans "Load Access Log" as access_log_label %}
-{% include "snippets/async_button.html" with url=access_log_url label=access_log_label %}
+{% block script_extra %}
+htmx.on("htmx:beforeRequest", function(evt) {
+	if(evt.detail.target.hasChildNodes()){
+		// prevent another request
+		evt.preventDefault()
+	}
+});
 {% endblock %}
