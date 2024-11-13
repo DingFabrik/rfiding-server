@@ -3,6 +3,10 @@ import * as htmx from './htmx.min.js'
 global.htmx = htmx;
 import * as htmxws from './htmx-ws.js'
 
+import Chart from 'chart.js/auto';
+
+window.Chart = Chart;
+
 var jquery = require("jquery");
 window.$ = window.jQuery = jquery; // notice the definition of global variables here
 require("jquery-ui/dist/jquery-ui.js");

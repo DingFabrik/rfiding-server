@@ -1,0 +1,118 @@
+{% extends base_template %}
+{% load i18n %}
+
+{% block content %}
+<h4>{% trans "Access by day (last 90 days)" %}</h4>
+<div style="height: 300px;"><canvas id="daily_usage"></canvas></div>
+<h4 class="mt-4">{% trans "Access by hour (last 90 days)" %}</h4>
+<div style="height: 300px;"><canvas id="hourly_usage"></canvas></div>
+<h4 class="mt-4">{% trans "Access by Weekday (last 90 days)" %}</h4>
+<div style="height: 300px;"><canvas id="weekday_usage"></canvas></div>
+{% endblock %}
+
+{% block script_extra %}
+(async function() {
+    const by_day = [
+{% for entry in access_by_day %}{ date: '{{ entry.day }}', count: {{ entry.count }} }{% if not forloop.last %},{% endif %}
+{% endfor %}
+    ];
+
+    const by_hour = [
+      {% for entry in access_by_hour %}{ hour: '{{ entry.hour }}', count: {{ entry.count }} }{% if not forloop.last %},{% endif %}
+      {% endfor %}
+          ];
+
+    const by_weekday = [
+      {% for entry in access_by_weekday %}{ weekday: '{{ entry.weekday }}', count: {{ entry.count }} }{% if not forloop.last %},{% endif %}
+      {% endfor %}
+          ];
+
+    new Chart(
+      document.getElementById('daily_usage'),
+      {
+        type: 'bar',
+        data: {
+          labels: by_day.map(row => row.date),
+          datasets: [
+            {
+              label: 'Access by day',
+              data: by_day.map(row => row.count)
+            }
+          ]
+        },
+        options: {
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: false
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      }
+    );
+
+    new Chart(
+      document.getElementById('hourly_usage'),
+      {
+        type: 'bar',
+        data: {
+          labels: by_hour.map(row => row.hour),
+          datasets: [
+            {
+              label: 'Access by hour',
+              data: by_hour.map(row => row.count)
+            }
+          ]
+        },
+        options: {
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: false
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      }
+    );
+
+    new Chart(
+      document.getElementById('weekday_usage'),
+      {
+        type: 'bar',
+        data: {
+          labels: by_weekday.map(row => row.weekday),
+          datasets: [
+            {
+              label: 'Access by weekday',
+              data: by_weekday.map(row => row.count)
+            }
+          ]
+        },
+        options: {
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: false
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      }
+    );
+  })();
+ 
+  {% endblock %}

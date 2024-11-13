@@ -13,7 +13,7 @@ from django.views.generic import (
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 
-from base.views import BaseToggleActiveView, PartialListMixin
+from base.views import BaseToggleActiveView, PartialListMixin, PartialMixin
 from .models import Person, Qualification, Instructor
 from .forms import PersonForm, QualifyPersonForm, InstructorForm
 

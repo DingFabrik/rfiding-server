@@ -24,6 +24,7 @@
   "dependencies": {
     "@popperjs/core": "^2.11.8",
     "bootstrap": "^5.3.3",
+    "chart.js": "^4.4.6",
     "jquery-ui": "^1.14.0"
   }
 }

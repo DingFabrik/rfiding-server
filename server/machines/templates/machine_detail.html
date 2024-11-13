@@ -62,15 +62,27 @@
               <button
               class="nav-link"
               id="accesslog-tab"
-              hx-get="{% url "access_log:for-person" object.pk %}"
+              hx-get="{% url "access_log:for-machine" object.pk %}"
               hx-target="#accesslog-tab-pane"
               data-bs-toggle="tab"
               data-bs-target="#accesslog-tab-pane"
               type="button"
               role="tab"
-              aria-controls="contact-tab-pane" aria-selected="false">{% trans "Access Log" %}</button>
+              aria-controls="accesslog-tab-pane" aria-selected="false">{% trans "Access Log" %}</button>
             </li>
             {% endif %}
+            <li class="nav-item" role="presentation">
+              <button
+              class="nav-link"
+              id="statistics-tab"
+              hx-get="{% url "machines:statistics" object.pk %}"
+              hx-target="#statistics-tab-pane"
+              data-bs-toggle="tab"
+              data-bs-target="#statistics-tab-pane"
+              type="button"
+              role="tab"
+              aria-controls="statistics-tab-pane" aria-selected="false">{% trans "Statistics" %}</button>
+            </li>
           </ul>
           <div class="tab-content mt-4" id="myTabContent">
             <div class="tab-pane show active" id="qualifications-tab-pane" role="tabpanel" aria-labelledby="qualifications-tab" tabindex="0">
@@ -90,6 +102,7 @@
             {% if perms.access_log.view_access_log %}
             <div class="tab-pane" id="accesslog-tab-pane" role="tabpanel" aria-labelledby="accesslog-tab" tabindex="0"></div>
             {% endif %}
+            <div class="tab-pane" id="statistics-tab-pane" role="tabpanel" aria-labelledby="statistics-tab" tabindex="0"></div>
           </div>
     </div>
 </div>

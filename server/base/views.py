@@ -44,10 +44,11 @@ class PartialMixin:
         context["is_partial"] = self.is_partial
         return context
 
+
 class PartialListMixin(PartialMixin):
     full_base_template = "base_list.html"
-    partial_base_template = "partial_base_list.html"
-    
+    partial_base_template = "partial_base_list.html"  
+
 class AuditlogView(PartialListMixin, ListView, PermissionRequiredMixin):
     model = LogEntry
     queryset = LogEntry.objects.all().select_related("content_type").order_by("-timestamp")

@@ -9,9 +9,12 @@ from django.views.generic import (
 from django.core.paginator import Paginator
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
+from django.db.models.functions import TruncDay, TruncHour, ExtractWeekDay
+from django.db.models import Count
+from datetime import datetime, timedelta
 
-from access_log.models import AccessLog
-from base.views import BaseToggleActiveView, PartialListMixin
+from access_log.models import AccessLog, LOG_TYPE_ENABLED
+from base.views import BaseToggleActiveView, PartialListMixin, PartialMixin
 from .models import Machine
 from .forms import MachineForm, ConfigureMachineForm, MachineTimeFormset
 from people.models import Qualification, Instructor
@@ -194,4 +197,62 @@ class MachineInstructorListView(PartialListMixin, ListView, PermissionRequiredMi
         context["model"] = self.model
         context["machine"] = Machine.objects.get(pk=self.kwargs["pk"])
         context["instructors"] = context["page_obj"]
+        return context
+    
+
+class MachineStatisticsView(PartialMixin, DetailView, PermissionRequiredMixin):
+    permission_required = "machines.view_machine"
+    
+    model = Machine
+    template_name = "machine_statistics.html"
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        timeframe_start = datetime.now() - timedelta(days=90)
+        query = (AccessLog.objects
+                 .filter(machine=self.object,
+                         timestamp__gte=timeframe_start,
+                         type=LOG_TYPE_ENABLED))
+        
+        day_counts = (query
+                                    .annotate(day=TruncDay('timestamp'))
+                                    .values('day')
+                                    .annotate(count=Count('id'))   
+                                    .all())
+        day_map = {}
+        for count in day_counts:
+            day_map[count['day'].strftime("%d.%m")] = count['count']
+        day_list = []
+        for day in range(90):
+            date = (timeframe_start + timedelta(days=day)).strftime("%d.%m")
+            day_list.append({"day": date, "count": day_map.get(date, 0)})
+        context["access_by_day"] = day_list
+        
+        hour_map = {}
+        counts = (query.annotate(hour=TruncHour('timestamp'))
+                        .values('hour')
+                        .annotate(count=Count('id'))   
+                        .all())
+        for count in counts:
+            hour_map[count['hour'].hour] = count['count']
+        hour_list = []
+        for hour in range(24):
+            hour_list.append({"hour": hour, "count": hour_map.get(hour, 0)})
+        context["access_by_hour"] = hour_list
+        
+        weekday_map = {}
+        counts = (query.annotate(weekday=ExtractWeekDay('timestamp'))
+                        .values('weekday')
+                        .annotate(count=Count('id'))   
+                        .all())
+        for count in counts:
+            index = count['weekday'] - 1
+            if index == 0:
+                index = 7
+            weekday_map[index] = count['count']
+        weekday_list = []
+        weekdays = [_('Monday'), _('Tuesday'), _('Wednesday'), _('Thursday'), _('Friday'), _('Saturday'), _('Sunday')]
+        for weekday in range(1, 8):
+            weekday_list.append({"weekday": weekdays[weekday-1], "count": weekday_map.get(weekday, 0)})
+        context["access_by_weekday"] = weekday_list
         return context

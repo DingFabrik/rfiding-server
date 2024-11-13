@@ -13,8 +13,6 @@ LOG_TYPES = (
     (LOG_TYPE_REGISTERED, _("Registered")),
 )
 
-
-# Create your models here.
 class AccessLog(models.Model):
     class Meta:
         verbose_name = _("Access Log")

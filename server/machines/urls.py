@@ -38,4 +38,9 @@ urlpatterns = [
         views.MachineInstructorListView.as_view(),
         name="instructors",
     ),
+    path(
+        "<int:pk>/statistics",
+        views.MachineStatisticsView.as_view(),
+        name="statistics",
+    ),
 ]
