@@ -1,5 +1,7 @@
-{% extends "base_slim.html" %}
+{% extends base_template %}
 {% load i18n %}
+
+{% block notitle %}{% endblock %}
 
 {% block content %}
     <div class="row">
@@ -12,6 +14,7 @@
                     {% endwith %}
                 </div>
             </div>
+            {% if not is_partial %}
             <form action="" method="post">
                 {% csrf_token %}
                 <div class="text-right">
@@ -19,6 +22,17 @@
                     <input type="submit" value="{% trans "Remove" %}" class="btn btn-danger"/>
                 </div>
             </form>
+            {% endif %}
         </div>
     </div>
+{% endblock %}
+
+{% block buttons %}
+<form action="{{ request.path }}" method="post">
+    {% csrf_token %}
+    <div class="text-right">
+        <a data-bs-dismiss="modal" class="btn btn-secondary me-3">{% trans "No" %}</a>
+        <input type="submit" value="{% trans "Remove" %}" class="btn btn-danger"/>
+    </div>
+</form>
 {% endblock %}

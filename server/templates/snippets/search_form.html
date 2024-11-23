@@ -10,7 +10,7 @@
     value="{{ request.GET.search }}"
     hx-get="{{ request.path }}"
     hx-include="#id_sort"
-    hx-target="#main_list"
+    hx-target="#list_container"
     hx-trigger="input changed delay:300ms, search"
     hx-push-url="true">
     </div>
@@ -22,7 +22,7 @@
         name="sort"
         hx-get="{{ request.path }}"
         hx-include="#id_search"
-        hx-target="#main_list"
+        hx-target="#list_container"
         hx-trigger="change"
         hx-push-url="true">
         {% for choice in sort_choices %}

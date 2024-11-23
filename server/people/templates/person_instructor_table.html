@@ -21,8 +21,18 @@
                 <td>{{ instructor.created|date:"DATE_FORMAT" }}</td>
                 {% if perms.people.change_instructor %}
                     <td>
-                        <a href="{% url "people:revoke-instructor" person.pk instructor.pk %}">{% include "snippets/hoverable_revoke.html" %}</a>
-                    </td>
+                        <div class="d-inline"
+                        data-bs-toggle="tooltip"
+                        title="{% trans 'Revoke' %}">
+                        <a
+                        href="{% url 'people:revoke-instructor' instructor.person.pk instructor.pk %}"
+                        data-bs-toggle="modal"
+                        data-bs-target="#hx_delete_modals"
+                        hx-get="{% url 'people:revoke-instructor' instructor.person.pk instructor.pk %}"
+                        hx-target="#hx_delete_modals"
+                        hx-trigger="click"
+                        >{% include 'snippets/hoverable_revoke.html' %}</a>
+                        </div>                    </td>
                     {% endif %}
             </tr>
             {% endfor %}

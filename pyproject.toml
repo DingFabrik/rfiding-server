@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "rfiding-server"
-version = "1.0-alpha2"
+version = "1.0-beta1"
 description = "Rfiding is a project to restrict access to machines and doors in our hackerspace."
 authors = ["Phillip Thelen <phillip@thelen.space>"]
 readme = "README.md"

@@ -1,0 +1,24 @@
+{% extends "partial_base.html" %}
+{% load i18n %}
+
+{% block content %}
+<div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">{% blocktrans %}Do you really want to delete <b>{{ object }}</b>?{% endblocktrans %}</h5>
+      </div>
+      <div class="modal-body">
+        <p>{% blocktrans %}Deleting an object permanently removes it and can not be undone{% endblocktrans %}</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans "No"%}</button>
+        <form action="{{ request.path }}" method="post">
+            {% csrf_token %}
+            <div class="text-right">
+                <input type="submit" value="{% trans "Delete" %}" class="btn btn-danger"/>
+            </div>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}

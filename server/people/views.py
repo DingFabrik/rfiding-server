@@ -138,10 +138,12 @@ class QualifyPersonView(CreateView, PermissionRequiredMixin):
         return reverse_lazy("people:detail", kwargs={"pk": self.kwargs["pk"]})
 
 
-class RevokeQualificationPersonView(DeleteView, PermissionRequiredMixin):
+class RevokeQualificationPersonView(PartialMixin, DeleteView, PermissionRequiredMixin):
     permission_required = "people.qualify_person"
 
     model = Qualification
+    full_base_template = "base_slim.html"
+    partial_base_template = "partial_base_modal.html"
     template_name = "revoke_qualification_confirm.html"
 
     def get_object(self, queryset: QuerySet[Any] | None = ...) -> Model:
@@ -211,10 +213,12 @@ class AddInstructorPersonView(CreateView, PermissionRequiredMixin):
         return reverse_lazy("people:detail", kwargs={"pk": self.kwargs["pk"]})
 
 
-class RevokeInstructorPersonView(DeleteView, PermissionRequiredMixin):
+class RevokeInstructorPersonView(PartialMixin, DeleteView, PermissionRequiredMixin):
     permission_required = "people.change_instructors"
 
     model = Instructor
+    full_base_template = "base_slim.html"
+    partial_base_template = "partial_base_modal.html"
     template_name = "revoke_instructor_confirm.html"
 
     def get_object(self, queryset: QuerySet[Any] | None = ...) -> Model:

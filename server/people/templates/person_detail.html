@@ -78,17 +78,9 @@
           {% include 'person_instructor_table.html' with is_partial=True %}
         </div>
         {% if perms.access_log.view_access_log %}
-          <div class="tab-pane" id="accesslog-tab-pane" role="tabpanel" aria-labelledby="accesslog-tab" tabindex="0"></div>
+          <div class="tab-pane" id="accesslog-tab-pane" role="tabpanel" aria-labelledby="accesslog-tab" tabindex="0">{% include "snippets/spinner.html" %}</div>
         {% endif %}
       </div>
     </div>
   </div>
-{% endblock %}
-
-{% block script_extra %}
-  htmx.on("htmx:beforeRequest", function(evt) {
-    if(evt.detail.target.classList.contains("tab-pane") && evt.detail.target.hasChildNodes()){
-        evt.preventDefault()
-    }
-});
 {% endblock %}

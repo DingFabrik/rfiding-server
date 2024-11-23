@@ -28,7 +28,18 @@
                 {% if perms.people.qualify_person %}
                     <td>
                         <a href="{% url "people:edit-qualification" qualification.person.pk qualification.pk %}" data-bs-toggle="tooltip" title="{% trans 'Edit' %}"><i class="bi-pencil-square me-2"></i></a>
-                        <a href="{% url "people:revoke-qualification" qualification.person.pk qualification.pk %}" data-bs-toggle="tooltip" title="{% trans 'Revoke' %}">{% include "snippets/hoverable_revoke.html" %}</a>
+                        <div class="d-inline"
+                        data-bs-toggle="tooltip"
+                        title="{% trans 'Revoke' %}">
+                        <a
+                        href="{% url 'people:revoke-qualification' qualification.person.pk qualification.pk %}"
+                        data-bs-toggle="modal"
+                        data-bs-target="#hx_delete_modals"
+                        hx-get="{% url 'people:revoke-qualification' qualification.person.pk qualification.pk %}"
+                        hx-target="#hx_delete_modals"
+                        hx-trigger="click"
+                        >{% include 'snippets/hoverable_revoke.html' %}</a>
+                        </div>
                     </td>
                 {% endif %}
             </tr>

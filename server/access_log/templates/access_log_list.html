@@ -8,7 +8,7 @@
     class="form-control"
     hx-get="{% url 'access_log:list' %}"
     hx-trigger="change delay:500ms"
-    hx-target="#main_list"
+    hx-target="#list_container"
     hx-push-url="true">
     {% for x, y in filter_form.fields.action.choices %}
     <option value="{{ x }}"{% if form.fields.action.value == x %} selected{% endif %}>{{ y }}</option>

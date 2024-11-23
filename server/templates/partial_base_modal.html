@@ -1,0 +1,20 @@
+{% load i18n %}<div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      {% block notitle %}
+      <div class="modal-header">
+        <h5 class="modal-title">{% block title %}{% endblock %}</h5>
+      </div>
+      {% endblock %}
+      <div class="modal-body">
+        {% block content %}{% endblock %}
+      </div>
+      <div class="modal-footer">
+        {% block buttons%}{% endblock %}
+      </div>
+    </div>
+  </div>
+
+<script>
+    {% block script_extra %}
+    {% endblock%}
+</script>
