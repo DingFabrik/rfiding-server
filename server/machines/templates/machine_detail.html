@@ -88,7 +88,7 @@
             <div class="tab-pane show active" id="qualifications-tab-pane" role="tabpanel" aria-labelledby="qualifications-tab" tabindex="0">
                 {% if machine.needs_qualification %}
                 <div class="text-body-secondary">{% blocktrans %}{{ qualifications_count }} people are qualified to use this machine:{% endblocktrans %}</div>
-                {% include "qualifications_table.html" with is_partial=True %}
+                {% include "machine_qualifications_table.html" with is_partial=True %}
                 {% else %}
                 <div class="text-body-secondary">{% blocktrans %}All active users are qualified to use this machine{% endblocktrans %}</div>
                 {% endif %}

@@ -38,7 +38,9 @@
 {% endblock %}
 
 {% block script_extra %}
+{% if form.devices.value %}
 document.getElementById("{{ form.instructed_by.id_for_label }}").disabled = true;
+{% endif %}
 $("#{{ form.machine_autocomplete.id_for_label}}").autocomplete({
     source: "{% url 'machines:autocomplete-qualifyable' form.person.value %}",
     minLength: 1,

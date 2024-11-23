@@ -1,95 +1,94 @@
-{% extends "base_detail.html" %}
+{% extends 'base_detail.html' %}
 {% load i18n %}
 
 {% block content %}
-<div class="row mb-5">
+  <div class="row mb-5">
     <div class="col-12 col-md-6">
-<h4>{% trans "Details" %}</h4>
-<ul class="mb-5 list-unstyled">
-    <li><span class="fw-bold text-secondary-emphasis">{% trans "Member ID" %}:</span> {{ person.member_id }}</li>
-    <li><span class="fw-bold text-secondary-emphasis">{% trans "Name" %}:</span> {{ person.name }}</li>
-    <li><span class="fw-bold text-secondary-emphasis">{% trans "E-Mail" %}:</span> {{ person.email }}</li>
-    <li><span class="fw-bold text-secondary-emphasis">{% trans "Is Active" %}:</span> {% include "snippets/active_toggle.html" %}</li>
-    {% if object.notes %}
-        <li><span class="fw-bold text-secondary-emphasis">{% trans "Notes" %}:</span> {{ object.notes }}<br></li>
-    {% endif %}
-</ul>
+      <h4>{% trans 'Details' %}</h4>
+      <ul class="mb-5 list-unstyled">
+        <li>
+          <span class="fw-bold text-secondary-emphasis">{% trans 'Member ID' %}:</span> {{ person.member_id }}
+        </li>
+        <li>
+          <span class="fw-bold text-secondary-emphasis">{% trans 'Name' %}:</span> {{ person.name }}
+        </li>
+        <li>
+          <span class="fw-bold text-secondary-emphasis">{% trans 'E-Mail' %}:</span> {{ person.email }}
+        </li>
+        <li>
+          <span class="fw-bold text-secondary-emphasis">{% trans 'Is Active' %}:</span> {% include 'snippets/active_toggle.html' %}
+        </li>
+        {% if object.notes %}
+          <li>
+            <span class="fw-bold text-secondary-emphasis">{% trans 'Notes' %}:</span> {{ object.notes }}<br />
+          </li>
+        {% endif %}
+      </ul>
     </div>
     <div class="col-12 col-md-6">
-
-<div class="mb-5">
-    <h4>{% trans "Tokens" %}</h4>
-    <div class="row">
-        {% with tokens=person.token_set.all %}
+      <div class="mb-5">
+        <h4>{% trans 'Tokens' %}</h4>
+        <div class="row">
+          {% with tokens=person.token_set.all %}
             {% for token in tokens %}
-            <div class="col col-2 col-sm-12 col-md-6 mb-2">
-                {% include "token_card.html" %}
-            </div>
+              <div class="col col-2 col-sm-12 col-md-6 mb-2">
+                {% include 'token_card.html' %}
+              </div>
             {% empty %}
-            <div class="col">
-
-            <div class="col alert alert-secondary">
-                {% with name=person.name %}{% blocktrans %}<b>{{ name }}</b> has no tokens.{% endblocktrans %}{% endwith %}
-            </div>
-            </div>
-        {% endfor %}
-        {% endwith %}
-    </div>
-</div>
-</div>
-</div>
-
-<div class="row">
-    <div class="mb-5 col-12">
-        <ul class="nav nav-tabs" id="myTab" role="tablist">
-            <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="qualifications-tab" data-bs-toggle="tab" data-bs-target="#qualifications-tab-pane" type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">{% trans "Qualifications" %}</button>
-            </li>
-            <li class="nav-item" role="presentation">
-            <button class="nav-link" id="instructor-tab" data-bs-toggle="tab" data-bs-target="#instructor-tab-pane" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">{% trans "Instructor for" %}</button>
-            </li>
-            {% if perms.access_log.view_access_log %}
-            
-            <li class="nav-item" role="presentation">
-            <button
-            class="nav-link"
-            id="accesslog-tab"
-            hx-get="{% url "access_log:for-person" object.pk %}"
-            hx-target="#accesslog-tab-pane"
-            data-bs-toggle="tab"
-            data-bs-target="#accesslog-tab-pane"
-            type="button"
-            role="tab"
-            aria-controls="contact-tab-pane" aria-selected="false">{% trans "Access Log" %}</button>
-            </li>
-            {% endif %}
-        </ul>
-        <div class="tab-content mt-4" id="myTabContent">
-            <div class="tab-pane show active" id="qualifications-tab-pane" role="tabpanel" aria-labelledby="qualifications-tab" tabindex="0">
-                {% if perms.people.qualify_person %}
-                    <a class="btn btn-primary btn-sm float-end mb-2" href="{% url "people:qualify" person.pk %}">{% trans "Add Qualification" %}</a>
-                {% endif %}
-                {% include "person_qualifications_table.html" with is_partial=True %}
-            </div>
-            <div class="tab-pane" id="instructor-tab-pane" role="tabpanel" aria-labelledby="instructor-tab" tabindex="0">
-                {% if perms.people.change_person %}
-                    <a class="btn btn-primary btn-sm float-end mb-2" href="{% url "people:add-instructor" person.pk %}">{% trans "Add as instructor" %}</a>
-                {% endif %}
-                {% include "person_instructor_table.html" with is_partial=True %}
-            </div>
-            {% if perms.access_log.view_access_log %}
-            <div class="tab-pane" id="accesslog-tab-pane" role="tabpanel" aria-labelledby="accesslog-tab" tabindex="0"></div>
-            {% endif %}
+              <div class="col">
+                <div class="col alert alert-secondary">
+                  {% with name=person.name %}
+                    {% blocktrans %}<b>{{ name }}</b> has no tokens.{% endblocktrans %}
+                  {% endwith %}
+                </div>
+              </div>
+            {% endfor %}
+          {% endwith %}
         </div>
+      </div>
     </div>
-</div>
+  </div>
+
+  <div class="row">
+    <div class="mb-5 col-12">
+      <ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="qualifications-tab" data-bs-toggle="tab" data-bs-target="#qualifications-tab-pane" type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">{% trans 'Qualifications' %}</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="instructor-tab" data-bs-toggle="tab" data-bs-target="#instructor-tab-pane" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">{% trans 'Instructor for' %}</button>
+        </li>
+        {% if perms.access_log.view_access_log %}
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="accesslog-tab" hx-get="{% url 'access_log:for-person' object.pk %}" hx-target="#accesslog-tab-pane" data-bs-toggle="tab" data-bs-target="#accesslog-tab-pane" type="button" role="tab" aria-controls="contact-tab-pane" aria-selected="false">{% trans 'Access Log' %}</button>
+          </li>
+        {% endif %}
+      </ul>
+      <div class="tab-content mt-4">
+        <div class="tab-pane show active" id="qualifications-tab-pane" role="tabpanel" aria-labelledby="qualifications-tab" tabindex="0">
+          {% if perms.people.qualify_person %}
+            <a class="btn btn-primary btn-sm float-end mb-2" href="{% url 'people:qualify' person.pk %}">{% trans 'Add Qualification' %}</a>
+          {% endif %}
+          {% include 'person_qualifications_table.html' with is_partial=True %}
+        </div>
+        <div class="tab-pane" id="instructor-tab-pane" role="tabpanel" aria-labelledby="instructor-tab" tabindex="0">
+          {% if perms.people.change_person %}
+            <a class="btn btn-primary btn-sm float-end mb-2" href="{% url 'people:add-instructor' person.pk %}">{% trans 'Add as instructor' %}</a>
+          {% endif %}
+          {% include 'person_instructor_table.html' with is_partial=True %}
+        </div>
+        {% if perms.access_log.view_access_log %}
+          <div class="tab-pane" id="accesslog-tab-pane" role="tabpanel" aria-labelledby="accesslog-tab" tabindex="0"></div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
 {% endblock %}
 
 {% block script_extra %}
-htmx.on("htmx:beforeRequest", function(evt) {
-	if(evt.detail.target.hasChildNodes()){
-		// prevent another request
-		evt.preventDefault()
-	}
+  htmx.on("htmx:beforeRequest", function(evt) {
+    if(evt.detail.target.classList.contains("tab-pane") && evt.detail.target.hasChildNodes()){
+        evt.preventDefault()
+    }
 });
 {% endblock %}

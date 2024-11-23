@@ -1,14 +1,13 @@
 {% load i18n %}
-
 <div id="qualifications_container">
     {% if qualifications %}
     <table class="table table-striped table-bordered">
         <thead>
             <tr>
                 <th>{% trans "Name" %}</th>
+                <th>{% trans "Instructed by" %}</th>
                 <th>{% trans "Access Type" %}
                 <th style="max-width: 40%;">{% trans "Qualification Comment" %}</th>
-                <th>{% trans "Instructor" %}</th>
                 <th>{% trans "Date" %}</th>
                 {% if perms.people.qualify_person %}
                 <th width="60"></th>
@@ -19,9 +18,12 @@
             {% for qualification in qualifications %}
             <tr class="align-middle">
                 <td><a href="{% url "people:detail" qualification.person.id %}">{{ qualification.person.name }}</a></td>
+                <td>{% if qualification.instructed_by %}
+                    <a href="{% url "people:detail" qualification.instructed_by.pk %}">{{ qualification.instructed_by}}</a>
+                    {% else %}--{% endif %}
+                </td>
                 <td>{{ qualification.get_permission_level_display }}</td>
                 <td style="max-width: 600px;">{{ qualification.comment }}</td>
-                <td>{{ qualification.instructed_by|default:"--" }}</td>
                 <td>{{ qualification.created|date:"DATE_FORMAT" }}</td>
                 {% if perms.people.qualify_person %}
                     <td>

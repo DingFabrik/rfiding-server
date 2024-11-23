@@ -1,8 +1,6 @@
 {% load i18n %}
-
 <div id="qualifications_container">
     {% if qualifications %}
-    <div>{% with name=person.name %}{% blocktrans %}<b>{{ name }}</b> is qualified for the following machines:{% endblocktrans %}{% endwith %}</div>
     <table class="table table-striped table-bordered mb-4 mt-1">
         <thead>
             <tr>
@@ -21,8 +19,8 @@
             <tr class="align-middle">
                 <td><a href="{% url "machines:detail" qualification.machine.id %}">{{ qualification.machine.name }}</a></td>
                 <td>{% if qualification.instructed_by %}
-                        <a href="{% url "people:detail" qualification.instructed_by.pk %}">{{ qualification.instructed_by|default:"--" }}</a>
-                    {% endif %}
+                        <a href="{% url "people:detail" qualification.instructed_by.pk %}">{{ qualification.instructed_by}}</a>
+                    {% else %}--{% endif %}
                 </td>
                 <td>{{ qualification.get_permission_level_display }}</td>
                 <td>{{ qualification.comment|default:"" }}</td>

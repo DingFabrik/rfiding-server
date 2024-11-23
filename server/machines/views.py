@@ -78,7 +78,8 @@ class MachineDetailView(DetailView, PermissionRequiredMixin):
             context["last_access"] = None
         if self.object.needs_qualification:
             qualifications = (
-                self.object.qualified_people.select_related("person")
+                self.object.qualified_people
+                .select_related("person")
                 .select_related("instructed_by")
                 .all()
             )
@@ -166,7 +167,7 @@ class MachineQualificationsListView(PartialListMixin, ListView, PermissionRequir
     template_name = "machine_qualifications_list.html"
 
     def get_queryset(self):
-        queryset = Qualification.objects.filter(person=self.kwargs["pk"]).select_related("machine").all()
+        queryset = Qualification.objects.filter(machine=self.kwargs["pk"]).select_related("person").all()
         return queryset
 
     def get_paginate_by(self, queryset):
@@ -213,7 +214,7 @@ class MachineStatisticsView(PartialMixin, DetailView, PermissionRequiredMixin):
                  .filter(machine=self.object,
                          timestamp__gte=timeframe_start,
                          type=LOG_TYPE_ENABLED))
-        
+
         day_counts = (query
                                     .annotate(day=TruncDay('timestamp'))
                                     .values('day')
