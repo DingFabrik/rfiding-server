@@ -84,5 +84,5 @@ class HttpReporter(StateReporter):
             f"Reporting new state to http: {'open' if state.is_open else 'closed'}"
         )
         params = self.settings.get("PARAMS", {})
-        params["state"] = state.is_open
+        params["state"] = "1" if state.is_open else "0"
         requests.get(self.settings["URL"], params=params)
