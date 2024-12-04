@@ -20,7 +20,8 @@ class SpaceStateConsumer(AsyncJsonWebsocketConsumer):
         return super().disconnect(code)
     
     async def receive(self, text_data=None, bytes_data=None):
-        if text_data == None or text_data == "":
+        if (text_data == None or text_data == "" or
+            text_data.lower() == "ping" or text_data.lower() == "pong"):
             return
         json_data = json.loads(text_data)
         
