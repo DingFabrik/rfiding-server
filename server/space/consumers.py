@@ -20,6 +20,8 @@ class SpaceStateConsumer(AsyncJsonWebsocketConsumer):
         return super().disconnect(code)
     
     async def receive(self, text_data=None, bytes_data=None):
+        if text_data == None or text_data == "":
+            return
         json_data = json.loads(text_data)
         
         if json_data["method"] == "change_state":
@@ -29,7 +31,8 @@ class SpaceStateConsumer(AsyncJsonWebsocketConsumer):
                 return
             new_state = json_data["state"]
             await aupdate_space_state(new_state)
-        await self.send(json.dumps({"error": "invalid method"}))
+        else:
+            await self.send(json.dumps({"error": "invalid method"}))
             
     async def space_state(self, event):
         await self.send(json.dumps({"state": event["state"]}))
