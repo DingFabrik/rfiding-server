@@ -7,7 +7,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
-from django.template.loader import render_to_string
+import logging
 
 from machines.models import Machine
 from people.models import Person
@@ -18,6 +18,7 @@ TOKEN_STATUS = (
     ("assigned", "Assigned"),
 )
 
+logger = logging.getLogger(__name__)
 
 class Token(TimestampedModel):
     serial = models.CharField(max_length=20, db_index=True)
@@ -50,7 +51,8 @@ class UnknownToken(TimestampedModel):
 channel_layer = get_channel_layer()
     
 @receiver(post_save, sender=UnknownToken)
-def print_only_after_deal_created(sender, instance, created, **kwargs):
+def signal_unknowntoken_saved(sender, instance, created, **kwargs):
+    logger.info("Unknown token used\nToken ID: %s\nMachine: %s", instance.serial, instance.machine)
     if created:
         async_to_sync(channel_layer.group_send)("unknown_tokens", {"type": "unknown_token_list_changed"})
 

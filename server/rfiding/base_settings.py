@@ -175,3 +175,63 @@ SPACE_NAME = "Makerspace"
 SPACE_CONTACT = "01234 / 123456"
 
 ASGI_APPLICATION = "rfiding.asgi.application"
+
+
+def filter_unknown_token(record):
+    if record.msg.startswith("Unknown token used"):
+        return True
+    return False
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {
+            "format": "{name} {levelname} {asctime} {message}",
+            "style": "{",
+        },
+        "simple": {
+            "format": "{levelname} {message}",
+            "style": "{",
+        },
+    },
+    "filters": {
+        "require_debug_false": {
+            "()": "django.utils.log.RequireDebugFalse",
+        },
+        "require_debug_true": {
+            "()": "django.utils.log.RequireDebugTrue",
+        },
+        "filter_unknown_tokens": {
+            "()": "django.utils.log.CallbackFilter",
+            "callback": filter_unknown_token,
+        }
+    },
+    "handlers": {
+        "console": {
+            "filters": ["require_debug_true"],
+            "class": "logging.StreamHandler",
+            "formatter": "simple"
+        },
+        "console_verbose": {
+            "filters": ["require_debug_true"],
+            "class": "logging.StreamHandler",
+            "formatter": "verbose"
+        },
+        "mail_admins": {
+            "filters": ["require_debug_false"],
+            "class": "django.utils.log.AdminEmailHandler",
+        }
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["console"],
+            "level": "INFO",
+        },
+        "tokens.models": {
+            "filters": ["filter_unknown_tokens"],
+            "handlers": ["console_verbose", "mail_admins"],
+            "level": "INFO",
+        }
+    },
+}
