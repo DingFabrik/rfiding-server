@@ -1,7 +1,6 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.layers import get_channel_layer
-from django.conf import settings as SETTINGS
 from django.template.loader import render_to_string
 from asgiref.sync import sync_to_async
 

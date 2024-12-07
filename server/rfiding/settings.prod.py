@@ -13,8 +13,8 @@ STATIC_ROOT = "/var/www/example.com/static/"
 ALLOWED_HOSTS = []
 
 CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer",
     },
 }
 

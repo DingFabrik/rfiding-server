@@ -216,13 +216,13 @@ class MachineStatisticsView(PartialMixin, DetailView, PermissionRequiredMixin):
                          type=LOG_TYPE_ENABLED))
 
         day_counts = (query
-                                    .annotate(day=TruncDay('timestamp'))
-                                    .values('day')
-                                    .annotate(count=Count('id'))   
+                                    .annotate(day=TruncDay("timestamp"))
+                                    .values("day")
+                                    .annotate(count=Count("id"))   
                                     .all())
         day_map = {}
         for count in day_counts:
-            day_map[count['day'].strftime("%d.%m")] = count['count']
+            day_map[count["day"].strftime("%d.%m")] = count["count"]
         day_list = []
         for day in range(90):
             date = (timeframe_start + timedelta(days=day)).strftime("%d.%m")
@@ -230,29 +230,29 @@ class MachineStatisticsView(PartialMixin, DetailView, PermissionRequiredMixin):
         context["access_by_day"] = day_list
         
         hour_map = {}
-        counts = (query.annotate(hour=TruncHour('timestamp'))
-                        .values('hour')
-                        .annotate(count=Count('id'))   
+        counts = (query.annotate(hour=TruncHour("timestamp"))
+                        .values("hour")
+                        .annotate(count=Count("id"))   
                         .all())
         for count in counts:
-            hour_map[count['hour'].hour] = count['count']
+            hour_map[count["hour"].hour] = count["count"]
         hour_list = []
         for hour in range(24):
             hour_list.append({"hour": hour, "count": hour_map.get(hour, 0)})
         context["access_by_hour"] = hour_list
         
         weekday_map = {}
-        counts = (query.annotate(weekday=ExtractWeekDay('timestamp'))
-                        .values('weekday')
-                        .annotate(count=Count('id'))   
+        counts = (query.annotate(weekday=ExtractWeekDay("timestamp"))
+                        .values("weekday")
+                        .annotate(count=Count("id"))   
                         .all())
         for count in counts:
-            index = count['weekday'] - 1
+            index = count["weekday"] - 1
             if index == 0:
                 index = 7
-            weekday_map[index] = count['count']
+            weekday_map[index] = count["count"]
         weekday_list = []
-        weekdays = [_('Monday'), _('Tuesday'), _('Wednesday'), _('Thursday'), _('Friday'), _('Saturday'), _('Sunday')]
+        weekdays = [_("Monday"), _("Tuesday"), _("Wednesday"), _("Thursday"), _("Friday"), _("Saturday"), _("Sunday")]
         for weekday in range(1, 8):
             weekday_list.append({"weekday": weekdays[weekday-1], "count": weekday_map.get(weekday, 0)})
         context["access_by_weekday"] = weekday_list
