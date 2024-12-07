@@ -30,13 +30,17 @@ async def aget_current_space_state():
         return SpaceState(is_open=False)
     return current_state
         
-def update_space_state(new_state):
-    new_state = str(new_state)
-    current_state = get_current_space_state()
-    if new_state == "1":
+def parse_state(new_state):
+    new_state = str(new_state).lower()
+    if new_state == "1" or new_state == "true" or new_state == "open":
         new_state = True
-    elif new_state == "0":
+    elif new_state == "0" or new_state == "false" or new_state == "closed":
         new_state = False
+    return new_state
+        
+def update_space_state(new_state):
+    current_state = get_current_space_state()
+    new_state = parse_state(new_state)
     if new_state == current_state.is_open:
         return current_state
     state = SpaceState.objects.create(is_open=new_state)
@@ -47,12 +51,8 @@ def update_space_state(new_state):
     return state
     
 async def aupdate_space_state(new_state):
-    new_state = str(new_state)
     current_state = await aget_current_space_state()
-    if new_state == "1":
-        new_state = True
-    elif new_state == "0":
-        new_state = False
+    new_state = parse_state(new_state)
     if new_state == current_state.is_open:
         return current_state
     state = await SpaceState.objects.acreate(is_open=new_state)
