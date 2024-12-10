@@ -209,7 +209,8 @@ class MachineStatisticsView(PartialMixin, PermissionRequiredMixin, DetailView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        timeframe_start = datetime.now() - timedelta(days=90)
+        days = int(self.request.GET.get("days", 90))
+        timeframe_start = datetime.now() - timedelta(days=days)
         query = (AccessLog.objects
                  .filter(machine=self.object,
                          timestamp__gte=timeframe_start,
@@ -224,7 +225,7 @@ class MachineStatisticsView(PartialMixin, PermissionRequiredMixin, DetailView):
         for count in day_counts:
             day_map[count["day"].strftime("%d.%m")] = count["count"]
         day_list = []
-        for day in range(90):
+        for day in range(days):
             date = (timeframe_start + timedelta(days=day)).strftime("%d.%m")
             day_list.append({"day": date, "count": day_map.get(date, 0)})
         context["access_by_day"] = day_list
@@ -256,4 +257,12 @@ class MachineStatisticsView(PartialMixin, PermissionRequiredMixin, DetailView):
         for weekday in range(1, 8):
             weekday_list.append({"weekday": weekdays[weekday-1], "count": weekday_map.get(weekday, 0)})
         context["access_by_weekday"] = weekday_list
+        
+        context["selected_days"] = days
+        context["days_choices"] = [
+            (7, _("7 Days")),
+            (30, _("30 Days")),
+            (90, _("90 Days")),
+            (365, _("365 Days")),
+        ]
         return context
