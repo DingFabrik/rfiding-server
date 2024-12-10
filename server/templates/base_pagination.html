@@ -1,34 +1,33 @@
 {% load base_extra %}
-{% load i18n %}
-
+{% load i18n %}{% load base_extra %}
 {% if page_obj.has_previous or page_obj.has_next %}
 <nav aria-label="Page navigation" class="float-start">
     <ul class="pagination">
         <li class="page-item {% if not page_obj.has_previous %}disabled{% endif %}">
-            <a class="page-link" href="{{ page_path|default:request.path }}?page=1" aria-label="First" {% if is_partial %}hx-get="{{ page_path|default:request.path }}?page=1" hx-target="#{{ target|default:"list_container" }}" {% if set_history %}hx-push-url="true"{% endif %}{% endif %}>
+            <a class="page-link" href="{{ page_path|default:request.path }}{% build_url_params request.GET page=1 %}" aria-label="First" {% if is_partial %}hx-get="{{ page_path|default:request.path }}{% build_url_params request.GET page=1 %}" hx-target="#{{ target|default:"list_container" }}" {% if set_history %}hx-push-url="true"{% endif %}{% endif %}>
                 <i class="bi-chevron-double-left"></i>
             </a>
         </li>
         {% if page_obj.has_previous %}
-            <li class="page-item"><a class="page-link" href="{{ page_path|default:request.path }}?page={{ page_obj.previous_page_number }}" {% if is_partial %}hx-get="{{ page_path|default:request.path }}?page={{ page_obj.previous_page_number }}" hx-target="#{{ target|default:"list_container" }}" {% if set_history %}hx-push-url="true"{% endif %}{% endif %}><i class="bi-chevron-left"></i></a></li>
+            <li class="page-item"><a class="page-link" href="{{ page_path|default:request.path }}{% build_url_params request.GET page=page_obj.previous_page_number %}" {% if is_partial %}hx-get="{{ page_path|default:request.path }}{% build_url_params request.GET page=page_obj.previous_page_number %}" hx-target="#{{ target|default:"list_container" }}" {% if set_history %}hx-push-url="true"{% endif %}{% endif %}><i class="bi-chevron-left"></i></a></li>
         {% else %}
             <li class="page-item disabled"><i class="page-link bi-chevron-left"></i></li>
         {% endif %}
         {% for page in 1|range_excl:page_obj.number|limit_to_last:3 %}
-            <li class="page-item"><a class="page-link" href="{{ page_path|default:request.path }}?page={{ page }}" {% if is_partial %}hx-get="{{ page_path|default:request.path }}?page={{ page }}" hx-target="#{{ target|default:"list_container" }}" {% if set_history %}hx-push-url="true"{% endif %}{% endif %}>{{ page }}</a></li>
+            <li class="page-item"><a class="page-link" href="{{ page_path|default:request.path }}{% build_url_params request.GET page=page %}" {% if is_partial %}hx-get="{{ page_path|default:request.path }}{% build_url_params request.GET page=page %}" hx-target="#{{ target|default:"list_container" }}" {% if set_history %}hx-push-url="true"{% endif %}{% endif %}>{{ page }}</a></li>
         {% endfor %}
         <li class="page-item active"><a class="page-link" href="#">{{ page_obj.number}}</a></li>
         {% for page in page_obj.number|add:1|range:page_obj.paginator.num_pages|limit_to:3 %}
-            <li class="page-item"><a class="page-link" href="{{ page_path|default:request.path }}?page={{ page }}" {% if is_partial %}hx-get="{{ page_path|default:request.path }}?page={{ page }}" hx-target="#{{ target|default:"list_container" }}" {% if set_history %}hx-push-url="true"{% endif %}{% endif %}>{{ page }}</a></li>
+            <li class="page-item"><a class="page-link" href="{{ page_path|default:request.path }}{% build_url_params request.GET page=page %}" {% if is_partial %}hx-get="{{ page_path|default:request.path }}{% build_url_params request.GET page=page %}" hx-target="#{{ target|default:"list_container" }}" {% if set_history %}hx-push-url="true"{% endif %}{% endif %}>{{ page }}</a></li>
         {% endfor %}
         {% if page_obj.has_next %}
-            <li class="page-item"><a class="page-link" href="{{ page_path|default:request.path }}?page={{ page_obj.next_page_number }}" {% if is_partial %}hx-get="{{ page_path|default:request.path }}?page={{ page_obj.next_page_number }}" hx-target="#{{ target|default:"list_container" }}" {% if set_history %}hx-push-url="true"{% endif %}{% endif %}><i class="bi-chevron-right"></i></a></li>
+            <li class="page-item"><a class="page-link" href="{{ page_path|default:request.path }}{% build_url_params request.GET page=page_obj.next_page_number %}" {% if is_partial %}hx-get="{{ page_path|default:request.path }}{% build_url_params request.GET page=page_obj.next_page_number %}" hx-target="#{{ target|default:"list_container" }}" {% if set_history %}hx-push-url="true"{% endif %}{% endif %}><i class="bi-chevron-right"></i></a></li>
         {% else %}
             <li class="page-item disabled"><i class=" page-link bi-chevron-right"></i></li>
         {% endif %}
         </li>
         <li class="page-item {% if not page_obj.has_next %}disabled{% endif %}">
-            <a class="page-link" href="{{ page_path|default:request.path }}?page={{ page_obj.paginator.num_pages }}" aria-label="Last" {% if is_partial %}hx-get="{{ page_path|default:request.path }}?page={{ page_obj.paginator.num_pages }}" hx-target="#{{ target|default:"list_container" }}" {% if set_history %}hx-push-url="true"{% endif %}{% endif %}>
+            <a class="page-link" href="{{ page_path|default:request.path }}{% build_url_params request.GET page=page_obj.num_pages %}" aria-label="Last" {% if is_partial %}hx-get="{{ page_path|default:request.path }}{% build_url_params request.GET page=page_obj.num_pages %}" hx-target="#{{ target|default:"list_container" }}" {% if set_history %}hx-push-url="true"{% endif %}{% endif %}>
                 <i class="bi-chevron-double-right"></i>
             </a>
         </li>

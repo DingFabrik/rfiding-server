@@ -50,3 +50,12 @@ def limit_to(value, arg):
 @register.filter
 def limit_to_last(value, arg):
     return value[-arg:]
+
+@register.simple_tag
+def build_url_params(params, **kwargs):
+    params = params.copy()
+    for kwarg in kwargs:
+        params[kwarg] = kwargs[kwarg]
+    if len(params) == 0:
+        return ""
+    return "?" + "&".join([f"{k}={v}" for k, v in params.items()])
