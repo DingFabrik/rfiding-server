@@ -7,6 +7,9 @@
             {% if perms.tokens.create_token %}
             <th>{% trans "Assign" %}</th>
             {% endif %}
+            {% if perms.tokens.created_blacklistedtoken %}
+            <th>{% trans "Blacklist" %}</th>
+            {% endif %}
         </tr>
         </thead>
 {% for token in tokens %}
@@ -16,6 +19,9 @@
 <td>{% include "snippets/timestamp.html" with timestamp=token.created %}</td>
 {% if perms.tokens.create_token %}
 <td><a href="{% url "tokens:assign" token.serial %}"><i class="bi-link"></i></a></td>
+{% endif %}
+{% if perms.tokens.create_blacklistedtoken %}
+<td><a href="{% url "tokens:blacklist-token" token.serial %}"><i class="bi-ban"></i></a></td>
 {% endif %}
 </tr>
 {% endfor %}

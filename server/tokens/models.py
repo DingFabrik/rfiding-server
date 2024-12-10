@@ -47,6 +47,12 @@ class UnknownToken(TimestampedModel):
 
     def __str__(self):
         return f"{self.serial}"
+    
+class BlacklistedToken(TimestampedModel):
+    serial = models.CharField(max_length=20)
+    
+    def __str__(self):
+        return f"{self.serial}"
 
 channel_layer = get_channel_layer()
     

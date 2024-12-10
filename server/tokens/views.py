@@ -17,7 +17,7 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from base.views import BaseToggleActiveView, PartialListMixin
-from .models import Token, UnknownToken
+from .models import Token, UnknownToken, BlacklistedToken
 from .forms import TokenForm
 from people.models import Person
 from .common import clear_unknown_tokens
@@ -176,3 +176,26 @@ class PersonForTokenPopoverView(PermissionRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         context["object"] = self.get_queryset().get()
         return context
+    
+    
+class BlacklistTokenView(PermissionRequiredMixin, View):
+    permission_required = "tokens.create_blacklistedtoken"
+
+    def get(self, request: HttpRequest, *args: str, **kwargs: Any) -> HttpResponse:
+        serial = kwargs["serial"]
+        UnknownToken.objects.filter(serial=serial).delete()
+        BlacklistedToken.objects.create(serial=serial)
+        return redirect("tokens:blacklisted")
+class BlacklistedTokenListView(PartialListMixin, PermissionRequiredMixin, ListView):
+    permission_required = "tokens.view_blacklistedtoken"
+
+    model = BlacklistedToken
+    template_name = "blacklisted_token_list.html"
+    context_object_name = "tokens"
+    
+class BlacklistedTokenDeleteView(PermissionRequiredMixin, DeleteView):
+    permission_required = "tokens.delete_blacklistedtoken"
+    
+    model = BlacklistedToken
+    template_name = "delete_confirm.html"
+    success_url = reverse_lazy("tokens:blacklisted")

@@ -18,5 +18,8 @@ urlpatterns = [
     path("assign/<str:serial>", views.AssignTokenView.as_view(), name="assign"),
     path("unknown", views.UnknownTokenListView.as_view(), name="unknown"),
     path("unknown/clear", views.ClearUnknownTokensView.as_view(), name="clear-unknown"),
+    path("blacklisted", views.BlacklistedTokenListView.as_view(), name="blacklisted"),
+    path("unknown/<str:serial>/blacklist", views.BlacklistTokenView.as_view(), name="blacklist-token"),
+    path("blacklisted/<int:pk>/delete", views.BlacklistedTokenDeleteView.as_view(), name="delete-blacklisted"),
     path("person-for-token", views.PersonForTokenPopoverView.as_view(), name="person-for-token-popover"),
 ]

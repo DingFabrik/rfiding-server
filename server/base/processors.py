@@ -71,6 +71,13 @@ def menu_processor(request):
             "active": request.resolver_match.app_name == "groups",
         },
         {
+            "name": _("Blacklisted Tokens"),
+            "url": reverse("tokens:blacklisted"),
+            "icon": "broadcast",
+            "has_permission": request.user.has_perm("auth.view_blacklistedtoken"),
+            "active": request.resolver_match.url_name == "blacklisted",
+        },
+        {
             "name": _("Django Admin"),
             "url": reverse("admin:index"),
             "icon": "person-gear",

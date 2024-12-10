@@ -1,0 +1,26 @@
+{% extends base_template %}
+{% load i18n %}
+
+{% block title %}{% trans "Blacklisted Tokens" %}{% endblock %}
+
+{% block top_actions %}
+{% endblock %}
+
+{% block table %}
+    <thead>
+        <tr>
+            <th>{% trans "Serial" %}</th>
+            {% if perms.tokens.delete_blacklistedtoken %}
+            <th>{% trans "Delete" %}</th>
+            {% endif %}
+        </tr>
+        </thead>
+{% for object in tokens %}
+<tr>
+<td>{{ object.serial }}</td>
+{% if perms.tokens.delete_blacklistedtoken %}
+<td><a href="{% url "tokens:delete-blacklisted" object.pk %}"><i class="bi-trash"></i></a></td>
+{% endif %}
+</tr>
+{% endfor %}
+{% endblock %}

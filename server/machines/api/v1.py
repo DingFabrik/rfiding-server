@@ -5,7 +5,7 @@ from rest_framework import status, permissions
 from space.models import SpaceState
 
 from .common import formatted_mac, BaseAPIView
-from tokens.models import Token, UnknownToken
+from tokens.models import Token, UnknownToken, BlacklistedToken
 from access_log.models import AccessLog, LOG_TYPE_BOOTED, LOG_TYPE_ENABLED
 
 
@@ -48,7 +48,8 @@ class CheckMachineAccessView(BaseAPIView):
         try:
             token = Token.objects.select_related("person").get(serial=tokenID, archived=None, is_active=True, person__is_active=True)
         except Token.DoesNotExist:
-            UnknownToken.objects.get_or_create(serial=tokenID, machine=machine)
+            if not BlacklistedToken.objects.filter(serial=tokenID).exists():
+                UnknownToken.objects.get_or_create(serial=tokenID, machine=machine)
             return Response(
                 {"error": "Token does not exist", "access": 0},
                 status=status.HTTP_404_NOT_FOUND,
