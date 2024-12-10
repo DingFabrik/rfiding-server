@@ -30,7 +30,7 @@ MACHINE_SORT_CHOICES = (
 
 MACHINE_SORT_CHOICES_KEYS = [choice[0] for choice in MACHINE_SORT_CHOICES]
 
-class MachineListView(PartialListMixin, ListView, PermissionRequiredMixin):
+class MachineListView(PartialListMixin, PermissionRequiredMixin, ListView):
     permission_required = "machines.view_machine"
 
     model = Machine
@@ -58,7 +58,7 @@ class MachineListView(PartialListMixin, ListView, PermissionRequiredMixin):
         return context
 
 
-class MachineDetailView(DetailView, PermissionRequiredMixin):
+class MachineDetailView(PermissionRequiredMixin, DetailView):
     permission_required = "machines.view_machine"
 
     model = Machine
@@ -93,7 +93,7 @@ class MachineDetailView(DetailView, PermissionRequiredMixin):
         return context
 
 
-class MachineCreateView(CreateView, PermissionRequiredMixin):
+class MachineCreateView(PermissionRequiredMixin, CreateView):
     permission_required = "machines.add_machine"
 
     model = Machine
@@ -102,7 +102,7 @@ class MachineCreateView(CreateView, PermissionRequiredMixin):
     success_url = reverse_lazy("machines:list")
 
 
-class MachineUpdateView(UpdateView, PermissionRequiredMixin):
+class MachineUpdateView(PermissionRequiredMixin, UpdateView):
     permission_required = "machines.change_machine"
 
     model = Machine
@@ -116,7 +116,7 @@ class MachineUpdateView(UpdateView, PermissionRequiredMixin):
         return context
 
 
-class MachineConfigureView(UpdateView, PermissionRequiredMixin):
+class MachineConfigureView(PermissionRequiredMixin, UpdateView):
     permission_required = "machines.change_machine"
 
     model = Machine
@@ -149,7 +149,7 @@ class MachineConfigureView(UpdateView, PermissionRequiredMixin):
         )
 
 
-class MachineDeleteView(DeleteView, PermissionRequiredMixin):
+class MachineDeleteView(PermissionRequiredMixin, DeleteView):
     permission_required = "machines.delete_machine"
 
     model = Machine
@@ -161,7 +161,7 @@ class MachineToggleActiveView(BaseToggleActiveView):
     permission_required = "machines.change_machine"
     model = Machine
 
-class MachineQualificationsListView(PartialListMixin, ListView, PermissionRequiredMixin):
+class MachineQualificationsListView(PartialListMixin, PermissionRequiredMixin, ListView):
     permission_required = "people.view_qualification"
     model = Qualification
     template_name = "machine_qualifications_list.html"
@@ -180,7 +180,7 @@ class MachineQualificationsListView(PartialListMixin, ListView, PermissionRequir
         return context
 
 
-class MachineInstructorListView(PartialListMixin, ListView, PermissionRequiredMixin):
+class MachineInstructorListView(PartialListMixin, PermissionRequiredMixin, ListView):
     permission_required = "people.view_instructor"
     model = Instructor
     template_name = "machine_instructor_list.html"
@@ -201,7 +201,7 @@ class MachineInstructorListView(PartialListMixin, ListView, PermissionRequiredMi
         return context
     
 
-class MachineStatisticsView(PartialMixin, DetailView, PermissionRequiredMixin):
+class MachineStatisticsView(PartialMixin, PermissionRequiredMixin, DetailView):
     permission_required = "machines.view_machine"
     
     model = Machine

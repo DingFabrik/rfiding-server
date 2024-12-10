@@ -18,7 +18,7 @@ class AboutView(TemplateView):
         return context
 
 
-class BaseToggleActiveView(TemplateView, PermissionRequiredMixin):
+class BaseToggleActiveView(PermissionRequiredMixin, TemplateView):
     template_name = "snippets/active_toggle.html"
 
     def get_context_data(self, **kwargs):
@@ -49,7 +49,7 @@ class PartialListMixin(PartialMixin):
     full_base_template = "base_list.html"
     partial_base_template = "partial_base_list.html"  
 
-class AuditlogView(PartialListMixin, ListView, PermissionRequiredMixin):
+class AuditlogView(PartialListMixin, PermissionRequiredMixin, ListView):
     model = LogEntry
     queryset = LogEntry.objects.all().select_related("content_type").order_by("-timestamp")
     permission_required = "tokens.view_token"

@@ -60,7 +60,7 @@ class ChangePasswordView(PasswordChangeView):
     template_name = "change_password.html"
     
 
-class UserListView(ListView, PermissionRequiredMixin):
+class UserListView(PermissionRequiredMixin, ListView):
     permission_required = "users.view_rfidinguser"
 
     model = RFIDingUser
@@ -68,7 +68,7 @@ class UserListView(ListView, PermissionRequiredMixin):
     context_object_name = "users"
 
 
-class UserCreateView(CreateView, PermissionRequiredMixin):
+class UserCreateView(PermissionRequiredMixin, CreateView):
     permission_required = "users.add_rfidinguser"
 
     model = RFIDingUser
@@ -77,7 +77,7 @@ class UserCreateView(CreateView, PermissionRequiredMixin):
     success_url = reverse_lazy("users:list")
 
 
-class UserUpdateView(UpdateView, PermissionRequiredMixin):
+class UserUpdateView(PermissionRequiredMixin, UpdateView):
     permission_required = "users.change_rfidinguser"
 
     model = RFIDingUser
@@ -90,7 +90,7 @@ class UserUpdateView(UpdateView, PermissionRequiredMixin):
         context["can_delete"] = self.request.user.has_perm("users.delete_rfidinguser")
         return context
 
-class UserDetailView(DetailView, PermissionRequiredMixin):
+class UserDetailView(PermissionRequiredMixin, DetailView):
     permission_required = "users.change_rfidinguser"
     model = RFIDingUser
     template_name = "user_detail.html"
@@ -102,7 +102,7 @@ class UserDetailView(DetailView, PermissionRequiredMixin):
         return context
 
 
-class UserDeleteView(DeleteView, PermissionRequiredMixin):
+class UserDeleteView(PermissionRequiredMixin, DeleteView):
     permission_required = "users.delete_rfidinguser"
 
     model = RFIDingUser
@@ -128,7 +128,7 @@ class AdminChangePasswordView(FormView):
         return context
 
 
-class GroupListView(ListView, PermissionRequiredMixin):
+class GroupListView(PermissionRequiredMixin, ListView):
     permission_required = "auth.view_group"
 
     model = Group
@@ -136,7 +136,7 @@ class GroupListView(ListView, PermissionRequiredMixin):
     context_object_name = "groups"
 
 
-class GroupCreateView(CreateView, PermissionRequiredMixin):
+class GroupCreateView(PermissionRequiredMixin, CreateView):
     permission_required = "auth.add_group"
 
     model = Group
@@ -145,7 +145,7 @@ class GroupCreateView(CreateView, PermissionRequiredMixin):
     success_url = reverse_lazy("users:groups:list")
 
 
-class GroupUpdateView(UpdateView, PermissionRequiredMixin):
+class GroupUpdateView(PermissionRequiredMixin, UpdateView):
     permission_required = "auth.change_group"
 
     model = Group
@@ -158,7 +158,7 @@ class GroupUpdateView(UpdateView, PermissionRequiredMixin):
         context["can_delete"] = self.request.user.has_perm("auth.delete_group")
         return context
 
-class GroupDeleteView(DeleteView, PermissionRequiredMixin):
+class GroupDeleteView(PermissionRequiredMixin, DeleteView):
     permission_required = "auth.delete_group"
 
     model = Group

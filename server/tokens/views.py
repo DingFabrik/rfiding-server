@@ -32,7 +32,7 @@ TOKEN_SORT_CHOICES = (
 
 TOKEN_SORT_CHOICES_KEYS = [choice[0] for choice in TOKEN_SORT_CHOICES]
 
-class TokenListView(PartialListMixin, ListView, PermissionRequiredMixin):
+class TokenListView(PartialListMixin, PermissionRequiredMixin, ListView):
     queryset = Token.objects.select_related("person").filter(archived=None).order_by("id")
     permission_required = "tokens.view_token"
 
@@ -61,7 +61,7 @@ class TokenListView(PartialListMixin, ListView, PermissionRequiredMixin):
         return context
 
 
-class UnknownTokenListView(ListView, PermissionRequiredMixin):
+class UnknownTokenListView(PermissionRequiredMixin, ListView):
     permission_required = "tokens.view_unknown_token"
 
     model = UnknownToken
@@ -69,7 +69,7 @@ class UnknownTokenListView(ListView, PermissionRequiredMixin):
     context_object_name = "tokens"
 
 
-class ClearUnknownTokensView(View, PermissionRequiredMixin):
+class ClearUnknownTokensView(PermissionRequiredMixin, View):
     permission_required = "tokens.delete_unknown_token"
 
     def get(self, request):
@@ -77,7 +77,7 @@ class ClearUnknownTokensView(View, PermissionRequiredMixin):
         return redirect("tokens:unknown")
 
 
-class AssignTokenView(CreateView, PermissionRequiredMixin):
+class AssignTokenView(PermissionRequiredMixin, CreateView):
     permission_required = "tokens.create_token"
 
     model = Token
@@ -102,7 +102,7 @@ class AssignTokenView(CreateView, PermissionRequiredMixin):
         return context
 
 
-class TokenDetailView(DetailView, PermissionRequiredMixin):
+class TokenDetailView(PermissionRequiredMixin, DetailView):
     permission_required = "tokens.view_token"
 
     model = Token
@@ -116,7 +116,7 @@ class TokenDetailView(DetailView, PermissionRequiredMixin):
         return context
 
 
-class TokenCreateView(CreateView, PermissionRequiredMixin):
+class TokenCreateView(PermissionRequiredMixin, CreateView):
     permission_required = "tokens.add_token"
 
     model = Token
@@ -125,7 +125,7 @@ class TokenCreateView(CreateView, PermissionRequiredMixin):
     success_url = reverse_lazy("tokens:list")
 
 
-class TokenUpdateView(UpdateView, PermissionRequiredMixin):
+class TokenUpdateView(PermissionRequiredMixin, UpdateView):
     permission_required = "tokens.change_token"
 
     model = Token
@@ -139,7 +139,7 @@ class TokenUpdateView(UpdateView, PermissionRequiredMixin):
         return context
 
 
-class TokenArchiveView(DeleteView, PermissionRequiredMixin):
+class TokenArchiveView(PermissionRequiredMixin, DeleteView):
     permission_required = "tokens.delete_token"
 
     model = Token
@@ -164,7 +164,8 @@ class TokenToggleActiveView(BaseToggleActiveView):
     permission_required = "tokens.change_token"
     model = Token
 
-class PersonForTokenPopoverView(TemplateView):
+class PersonForTokenPopoverView(PermissionRequiredMixin, TemplateView):
+    permission_required = "people.view_person"
     template_name = "person_popover.html"
     model = Person
 

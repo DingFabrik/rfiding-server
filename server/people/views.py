@@ -27,7 +27,7 @@ PEOPLE_SORT_CHOICES = (
 )
 
 PEOPLE_SORT_CHOICES_KEYS = [choice[0] for choice in PEOPLE_SORT_CHOICES]
-class PersonListView(PartialListMixin, ListView, PermissionRequiredMixin):
+class PersonListView(PartialListMixin, PermissionRequiredMixin, ListView):
     permission_required = "people.view_person"
     model = Person
     queryset = Person.objects.values(
@@ -57,7 +57,7 @@ class PersonListView(PartialListMixin, ListView, PermissionRequiredMixin):
         return context
 
 
-class PersonDetailView(DetailView, PermissionRequiredMixin):
+class PersonDetailView(PermissionRequiredMixin, DetailView):
     permission_required = "people.view_person"
 
     model = Person
@@ -83,7 +83,7 @@ class PersonDetailView(DetailView, PermissionRequiredMixin):
         return context
 
 
-class PersonCreateView(CreateView, PermissionRequiredMixin):
+class PersonCreateView(PermissionRequiredMixin, CreateView):
     permission_required = "people.add_person"
 
     model = Person
@@ -92,7 +92,7 @@ class PersonCreateView(CreateView, PermissionRequiredMixin):
     success_url = reverse_lazy("people:list")
 
 
-class PersonUpdateView(UpdateView, PermissionRequiredMixin):
+class PersonUpdateView(PermissionRequiredMixin, UpdateView):
     permission_required = "people.change_person"
 
     model = Person
@@ -106,7 +106,7 @@ class PersonUpdateView(UpdateView, PermissionRequiredMixin):
         return context
 
 
-class PersonDeleteView(DeleteView, PermissionRequiredMixin):
+class PersonDeleteView(PermissionRequiredMixin, DeleteView):
     permission_required = "people.delete_person"
 
     model = Person
@@ -119,7 +119,7 @@ class PersonToggleActiveView(BaseToggleActiveView):
     model = Person
 
 
-class QualifyPersonView(CreateView, PermissionRequiredMixin):
+class QualifyPersonView(PermissionRequiredMixin, CreateView):
     permission_required = "people.qualify_person"
 
     model = Qualification
@@ -138,7 +138,7 @@ class QualifyPersonView(CreateView, PermissionRequiredMixin):
         return reverse_lazy("people:detail", kwargs={"pk": self.kwargs["pk"]})
 
 
-class RevokeQualificationPersonView(PartialMixin, DeleteView, PermissionRequiredMixin):
+class RevokeQualificationPersonView(PartialMixin, PermissionRequiredMixin, DeleteView):
     permission_required = "people.qualify_person"
 
     model = Qualification
@@ -155,7 +155,7 @@ class RevokeQualificationPersonView(PartialMixin, DeleteView, PermissionRequired
         return reverse_lazy("people:detail", kwargs={"pk": self.kwargs["pk"]})
 
 
-class EditQualificationPersonView(UpdateView, PermissionRequiredMixin):
+class EditQualificationPersonView(PermissionRequiredMixin, UpdateView):
     permission_required = "people.qualify_person"
 
     model = Qualification
@@ -176,7 +176,7 @@ class EditQualificationPersonView(UpdateView, PermissionRequiredMixin):
     def get_success_url(self):
         return reverse_lazy("people:detail", kwargs={"pk": self.kwargs["pk"]})
 
-class PersonQualificationsListView(PartialListMixin, ListView, PermissionRequiredMixin):
+class PersonQualificationsListView(PartialListMixin, PermissionRequiredMixin, ListView):
     permission_required = "people.view_qualification"
     model = Qualification
     template_name = "person_qualifications_list.html"
@@ -194,7 +194,7 @@ class PersonQualificationsListView(PartialListMixin, ListView, PermissionRequire
         context["qualifications"] = context["page_obj"]
         return context
 
-class AddInstructorPersonView(CreateView, PermissionRequiredMixin):
+class AddInstructorPersonView(PermissionRequiredMixin, CreateView):
     permission_required = "people.change_instructors"
 
     model = Instructor
@@ -213,7 +213,7 @@ class AddInstructorPersonView(CreateView, PermissionRequiredMixin):
         return reverse_lazy("people:detail", kwargs={"pk": self.kwargs["pk"]})
 
 
-class RevokeInstructorPersonView(PartialMixin, DeleteView, PermissionRequiredMixin):
+class RevokeInstructorPersonView(PartialMixin, PermissionRequiredMixin, DeleteView):
     permission_required = "people.change_instructors"
 
     model = Instructor
@@ -229,7 +229,7 @@ class RevokeInstructorPersonView(PartialMixin, DeleteView, PermissionRequiredMix
     def get_success_url(self):
         return reverse_lazy("people:detail", kwargs={"pk": self.kwargs["pk"]})
 
-class PersonInstructorListView(PartialListMixin, ListView, PermissionRequiredMixin):
+class PersonInstructorListView(PartialListMixin, PermissionRequiredMixin, ListView):
     permission_required = "people.view_instructor"
     model = Instructor
     template_name = "person_instructor_list.html"
