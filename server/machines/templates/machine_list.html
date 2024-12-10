@@ -9,8 +9,7 @@
             <th>{% trans "Name" %}</th>
             <th>{% trans "Machine Active" %}</th>
             {% if perms.machines.modify_machine %}
-            <th>{% trans "Modify" %}</th>
-            <th>{% trans "Configure" %}</th>
+            <th width="70"></th>
             {% endif %}
         </tr>
         </thead>
@@ -20,9 +19,11 @@
     <td>{{ object.mac_address }}</td>
     <td>{{ object.name }}</td>
     <td>{% include "snippets/active_toggle.html" %}</td>
-    {% if perms.machines.modify_machine %}
-    <td><a href="{% url "machines:update" object.pk %}"><i class="bi-pencil-square"></i></a></td>
-    <td><a href="{% url "machines:configure" object.pk %}"><i class="bi-sliders"></i></a></td>
+    {% if perms.people.modify_machine %}
+    <td>
+    <a href="{% url 'machines:update' object.pk %}" data-bs-toggle="tooltip" title="{% trans 'Edit' %}"><i class="bi-pencil-square me-2"></i></a>
+    <a href="{% url "machines:configure" object.pk %}" data-bs-toggle="tooltip" title="{% trans 'Configure' %}"><i class="bi-sliders"></i></a>
+    </td>
     {% endif %}
 </tr>
 {% endfor %}

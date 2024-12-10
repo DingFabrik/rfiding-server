@@ -1,7 +1,9 @@
 {% block content %}
+{% block table_outer %}
 <table class="table table-bordered table-hover">
 {% block table %}
 {% endblock %}
 </table>
+{% endblock %}
 {% include "base_pagination.html" %}
 {% endblock %}

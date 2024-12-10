@@ -8,11 +8,8 @@
             <th>{% trans "Name" %}</th>
             <th>{% trans "E-Mail" %}</th>
             <th>{% trans "Active" %}</th>
-            {% if perms.people.modify_person %}
-            <th>{% trans "Modify" %}</th>
-            {% endif %}
-            {% if perms.people.qualify_person %}
-            <th>{% trans "Qualify" %}</th>
+            {% if perms.people.modify_person or perms.people.qualify_person %}
+            <th width="70"></th>
             {% endif %}
         </tr>
         </thead>
@@ -22,11 +19,15 @@
 <td><a href="{% url "people:detail" object.pk %}">{{ object.name }}</a></td>
 <td>{{ object.email }}</td>
 <td>{% include 'snippets/active_toggle.html' %}</td>
+{% if perms.people.modify_person or perms.people.qualify_person %}
+<td>
 {% if perms.people.modify_person %}
-<td><a href="{% url "people:update" object.pk %}"><i class="bi-pencil-square"></i></a></td>
+<a href="{% url 'people:update' object.pk %}" data-bs-toggle="tooltip" title="{% trans 'Edit' %}"><i class="bi-pencil-square me-2"></i></a>
 {% endif %}
 {% if perms.people.qualify_person %}
-<td><a href="{% url "people:qualify" object.pk %}"><i class="bi-stack"></i></a></td>
+<a href="{% url "people:qualify" object.pk %}" data-bs-toggle="tooltip" title="{% trans 'Qualify' %}"><i class="bi-stack"></i></a>
+{% endif %}
+</td>
 {% endif %}
 </tr>
 {% endfor %}

@@ -24,7 +24,7 @@
             <th>{% trans "Active" %}</th>
             <th>{% trans "Owner" %}</th>
             {% if perms.tokens.modify_token %}
-            <th>{% trans "Modify" %}</th>
+            <th width="30"></th>
             {% endif %}
         </tr>
         </thead>
@@ -39,7 +39,7 @@
 <td>{{ object.person }}</td>
 {% endif %}
 {% if perms.tokens.modify_token %}
-<td><a href="{% url "tokens:update" object.pk %}"><i class="bi-pencil-square"></i></a></td>
+<td><a href="{% url 'tokens:update' object.pk %}" data-bs-toggle="tooltip" title="{% trans 'Edit' %}"><i class="bi-pencil-square"></i></a></td>
 {% endif %}
 </tr>
 {% endfor %}

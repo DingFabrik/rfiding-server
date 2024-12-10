@@ -23,10 +23,12 @@
 
 {% block content %}
 <div id="list_container">
+    {% block table_outer %}
     <table class="table table-bordered table-hover">
     {% block table %}
     {% endblock %}
     </table>
+    {% endblock %}
     {% include "base_pagination.html" with set_history=True %}
 </div>
 {% endblock %}

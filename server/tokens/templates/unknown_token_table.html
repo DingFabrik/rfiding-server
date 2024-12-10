@@ -1,14 +1,11 @@
-{% load i18n %}<table id="unknown_token_container" class="table table-bordered" {% if is_partial %}hx-swap-oob="outerHTML"{% endif %}>
+{% load i18n %}<table id="unknown_token_container" class="table table-bordered table-hover" {% if is_partial %}hx-swap-oob="outerHTML"{% endif %}>
     <thead>
         <tr>
             <th>{% trans "Serial" %}</th>
             <th>{% trans "Machine" %}</th>
             <th>{% trans "Seen" %}</th>
-            {% if perms.tokens.create_token %}
-            <th>{% trans "Assign" %}</th>
-            {% endif %}
-            {% if perms.tokens.created_blacklistedtoken %}
-            <th>{% trans "Blacklist" %}</th>
+            {% if perms.tokens.create_token or perms.tokens.created_blacklistedtoken %}
+            <th width="70"></th>
             {% endif %}
         </tr>
         </thead>
@@ -17,11 +14,15 @@
 <td>{{ token.serial }}</td>
 <td>{{ token.machine }}</td>
 <td>{% include "snippets/timestamp.html" with timestamp=token.created %}</td>
+{% if perms.tokens.create_token or perms.tokens.create_blacklistedtoken %}
+<td>
 {% if perms.tokens.create_token %}
-<td><a href="{% url "tokens:assign" token.serial %}"><i class="bi-link"></i></a></td>
+<a href="{% url "tokens:assign" token.serial %}" data-bs-toggle="tooltip" title="{% trans 'Assign' %}"><i class="bi-link me-3"></i></a>
 {% endif %}
 {% if perms.tokens.create_blacklistedtoken %}
-<td><a href="{% url "tokens:blacklist-token" token.serial %}"><i class="bi-ban"></i></a></td>
+<a href="{% url "tokens:blacklist-token" token.serial %}" data-bs-toggle="tooltip" title="{% trans 'Blacklist' %}"><i class="bi-ban text-danger"></i></a>
+{% endif %}
+</td>
 {% endif %}
 </tr>
 {% endfor %}
