@@ -20,10 +20,27 @@ TOKEN_STATUS = (
 
 logger = logging.getLogger(__name__)
 
+class TokenType(TimestampedModel):
+    name = models.CharField(max_length=100)
+    label_prefix = models.CharField(max_length=10, blank=True)
+    label_id_padding = models.IntegerField(default=0)
+    description = models.TextField(null=True, blank=True)
+    is_active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f"{self.name}"
+
+    class Meta:
+        verbose_name = _("Token Type")
+        verbose_name_plural = _("Token Types")
+        ordering = ["name"]
+
 class Token(TimestampedModel):
     serial = models.CharField(max_length=20, db_index=True)
     person = models.ForeignKey(Person, on_delete=models.CASCADE)
     purpose = models.CharField(max_length=100)
+    type = models.ForeignKey(TokenType, on_delete=models.CASCADE, null=True)
+    label_id = models.IntegerField(null=True, blank=True)
     notes = models.TextField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
     archived = models.DateTimeField(null=True, blank=True)
@@ -64,3 +81,4 @@ def signal_unknowntoken_saved(sender, instance, created, **kwargs):
 
 
 auditlog.register(Token, exclude_fields=["created", "updated"])
+auditlog.register(TokenType, exclude_fields=["created", "updated"])
