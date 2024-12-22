@@ -80,5 +80,6 @@ class RFIDingUser(AbstractUser):
     class Meta:
         verbose_name = _("User")
         verbose_name_plural = _("Users")
+        ordering = ["email"]
 
 auditlog.register(RFIDingUser, exclude_fields=["password", "last_login"])

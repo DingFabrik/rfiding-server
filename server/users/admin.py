@@ -29,3 +29,4 @@ class UserAdmin(DjangoUserAdmin):
     list_display = ("email", "name", "is_staff")
     search_fields = ("email", "name")
     ordering = ("email",)
+    list_filter = ("is_staff", "is_superuser", "is_active", "groups")
