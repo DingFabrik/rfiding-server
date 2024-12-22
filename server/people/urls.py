@@ -1,6 +1,7 @@
 from django.urls import path
 
 from . import views
+from . import ajax
 
 app_name = "people"
 
@@ -45,5 +46,17 @@ urlpatterns = [
         "<int:pk>/instructor",
         views.PersonInstructorListView.as_view(),
         name="instructs-for",
+    ),
+    
+    # AJAX calls
+    path(
+        "autocomplete/qualify/<int:machine>",
+        ajax.QualifyablePersonAutocompleteView.as_view(),
+        name="autocomplete-qualifyable",
+    ),
+    path(
+        "autocomplete/instructor/<int:machine>",
+        ajax.InstructorPersonAutocompleteView.as_view(),
+        name="autocomplete-instructor",
     ),
 ]

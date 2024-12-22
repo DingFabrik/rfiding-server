@@ -33,6 +33,12 @@ urlpatterns = [
         views.MachineQualificationsListView.as_view(),
         name="qualifications",
     ),
+    path("<int:pk>/qualifications/qualify", views.QualifyMachineView.as_view(), name="qualify"),
+    path(
+        "<int:pk>/instructor/add",
+        views.AddInstructorMachineView.as_view(),
+        name="add-instructor",
+    ),
     path(
         "<int:pk>/instructors",
         views.MachineInstructorListView.as_view(),

@@ -12,6 +12,7 @@ class PersonForm(forms.ModelForm):
 
 class QualifyPersonForm(forms.ModelForm):
     machine_autocomplete = forms.CharField(label=_("Machine"), required=False)
+    person_autocomplete = forms.CharField(label=_("Person"), required=False)
 
     class Meta:
         model = Qualification
@@ -42,7 +43,8 @@ class QualifyPersonForm(forms.ModelForm):
 
 
 class InstructorForm(forms.ModelForm):
-    machine_autocomplete = forms.CharField(label=_("Machine"))
+    machine_autocomplete = forms.CharField(label=_("Machine"), required=False)
+    person_autocomplete = forms.CharField(label=_("Person"), required=False)
 
     class Meta:
         model = Instructor

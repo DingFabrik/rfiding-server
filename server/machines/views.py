@@ -18,6 +18,7 @@ from base.views import BaseToggleActiveView, PartialListMixin, PartialMixin
 from .models import Machine
 from .forms import MachineForm, ConfigureMachineForm, MachineTimeFormset
 from people.models import Qualification, Instructor
+from people.forms import QualifyPersonForm, InstructorForm
 
 MACHINE_SORT_CHOICES = (
     ("pk", _("Default")),
@@ -266,3 +267,40 @@ class MachineStatisticsView(PartialMixin, PermissionRequiredMixin, DetailView):
             (365, _("365 Days")),
         ]
         return context
+
+class QualifyMachineView(PermissionRequiredMixin, CreateView):
+    permission_required = "people.qualify_person"
+
+    model = Qualification
+    template_name = "qualify_person.html"
+    form_class = QualifyPersonForm
+
+    def get_initial(self):
+        return {"machine": self.kwargs["pk"]}
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["machine"] = Machine.objects.get(pk=self.kwargs["pk"])
+        print(context)
+        return context
+
+    def get_success_url(self):
+        return reverse_lazy("machines:detail", kwargs={"pk": self.kwargs["pk"]})
+
+class AddInstructorMachineView(PermissionRequiredMixin, CreateView):
+    permission_required = "people.change_instructors"
+
+    model = Instructor
+    template_name = "instructor_person.html"
+    form_class = InstructorForm
+
+    def get_initial(self):
+        return {"machine": self.kwargs["pk"]}
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["machine"] = Machine.objects.get(pk=self.kwargs["pk"])
+        return context
+
+    def get_success_url(self):
+        return reverse_lazy("machines:detail", kwargs={"pk": self.kwargs["pk"]})

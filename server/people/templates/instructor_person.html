@@ -4,7 +4,11 @@
 {% load crispy_forms_tags %}
 
 {% block title %}
+{% if person %}
 {% blocktrans %}Add <span class="text-primary-emphasis">{{ person }}</span> as instructor{% endblocktrans %}
+{% elif machine %}
+{% blocktrans %}Add instructor for <span class="text-primary-emphasis">{{ machine }}</span>{% endblocktrans %}
+{% endif %}
 {% endblock %}
 
 {% block content %}
@@ -12,8 +16,15 @@
     {% csrf_token %}
     {{ form.person }}
     {{ form.machine }}
+    {% if not machine %}
     {{ form.machine_autocomplete|as_crispy_field }}
+    {% endif %}
+    {% if not person %}
+    {{ form.person_autocomplete|as_crispy_field }}
+    {% endif %}
     {{ form.machine.errors }}
+    {{ form.person.errors }}
+    {{ form.errors }}
     <div class="row">
         <div class="col-md-11 mb-3">
             <button class="btn btn-primary btn-block" type="submit">{% trans "Save" %}</button>
@@ -27,7 +38,7 @@
 {% endblock %}
 
 {% block script_extra %}
-
+{% if not machine %}
 $( "#{{ form.machine_autocomplete.id_for_label}}" ).autocomplete({
     source: "{% url 'machines:autocomplete-instructor' form.person.value %}",
     minLength: 1,
@@ -42,4 +53,22 @@ $( "#{{ form.machine_autocomplete.id_for_label}}" ).autocomplete({
             $("#{{ form.machine.id_for_label}}").val(ui.item.value);
         }
   });
+{% endif %}
+
+{% if not person %}
+$( "#{{ form.person_autocomplete.id_for_label}}" ).autocomplete({
+    source: "{% url 'people:autocomplete-instructor' form.machine.value %}",
+    minLength: 1,
+        select: function( event, ui ) {
+            event.preventDefault();
+            this.value = ui.item.label;
+            $("#{{ form.person.id_for_label}}").val(ui.item.value);
+        },
+        focus: function( event, ui ) {
+            event.preventDefault();
+            this.value = ui.item.label;
+            $("#{{ form.person.id_for_label}}").val(ui.item.value);
+        }
+  });
+{% endif %}
 {% endblock %}
