@@ -1,6 +1,14 @@
 {% extends "base_detail.html" %}
 {% load i18n %}
 
+{% block title %}
+{{ object.name }}
+{% if object.ip_address %}
+<div hx-get="{% url "machines:status" object.pk %}" hx-swap="outerHTML" hx-trigger="load"></div>
+{% endif %}
+{% endblock %}
+
+
 {% block top_actions %}
 <div class="btn-group" role="group">
 {% if can_edit %}

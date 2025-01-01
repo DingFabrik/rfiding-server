@@ -1,0 +1,11 @@
+{% load i18n %}
+<h6 class="d-inline">
+{% if status == 'online' %}
+  <small class="badge text-bg-success h5">{% trans 'Online' %}</small>
+{% elif status == 'disconnected' %}
+  <span class="badge text-bg-secondary">{% trans 'Offline' %}</span>
+{% elif status == 'enabled' %}
+  <small class="badge text-bg-warning">{% trans 'Enabled' %}</small>
+{% else %}
+  <small class="label label-warning">{% trans 'Unknown' %}</small>
+{% endif %}

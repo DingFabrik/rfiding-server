@@ -12,9 +12,12 @@ from django.utils.translation import gettext_lazy as _
 from django.db.models.functions import TruncDay, TruncHour, ExtractWeekDay
 from django.db.models import Count
 from datetime import datetime, timedelta
+import socket
+import json
 
 from access_log.models import AccessLog, LOG_TYPE_ENABLED
 from base.views import BaseToggleActiveView, PartialListMixin, PartialMixin
+from machines.socket_helper import get_socket_data
 from .models import Machine
 from .forms import MachineForm, ConfigureMachineForm, MachineTimeFormset
 from people.models import Qualification, Instructor
@@ -157,6 +160,18 @@ class MachineDeleteView(PermissionRequiredMixin, DeleteView):
     template_name = "delete_confirm.html"
     success_url = reverse_lazy("machines:list")
 
+
+class MachineStatusPartialView(PermissionRequiredMixin, DetailView):
+    permission_required = "machines.view_machine"
+
+    model = Machine
+    template_name = "machine_status_partial.html"
+    context_object_name = "machine"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["status"] = get_socket_data(self.object.pk, "status")
+        return context
 
 class MachineToggleActiveView(BaseToggleActiveView):
     permission_required = "machines.change_machine"

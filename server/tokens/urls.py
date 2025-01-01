@@ -1,8 +1,15 @@
-from django.urls import path
+from django.urls import path, include
 
 from . import views
 
 app_name = "tokens"
+
+token_type_patterns = [
+    path("", views.TokenTypeListView.as_view(), name="list"),
+    path("add", views.TokenTypeCreateView.as_view(), name="create"),
+    path("<int:pk>/modify", views.TokenTypeUpdateView.as_view(), name="update"),
+    path("<int:pk>/delete", views.TokenTypeDeleteView.as_view(), name="delete"),
+]
 
 urlpatterns = [
     path("", views.TokenListView.as_view(), name="list"),
@@ -22,4 +29,7 @@ urlpatterns = [
     path("unknown/<str:serial>/blacklist", views.BlacklistTokenView.as_view(), name="blacklist-token"),
     path("blacklisted/<int:pk>/delete", views.BlacklistedTokenDeleteView.as_view(), name="delete-blacklisted"),
     path("person-for-token", views.PersonForTokenPopoverView.as_view(), name="person-for-token-popover"),
+    path("next-label", views.NextFreeTokenLabelView.as_view(), name="next-label-id"),
+    
+    path("types/", include((token_type_patterns, "types"), namespace="types")),
 ]

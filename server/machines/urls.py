@@ -16,6 +16,11 @@ urlpatterns = [
         views.MachineToggleActiveView.as_view(),
         name="toggle-active",
     ),
+        path(
+        "<int:pk>/status",
+        views.MachineStatusPartialView.as_view(),
+        name="status",
+    ),
     path("<int:pk>/delete", views.MachineDeleteView.as_view(), name="delete"),
     path("autocomplete", ajax.MachineAutocompleteView.as_view(), name="autocomplete"),
     path(

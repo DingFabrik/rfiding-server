@@ -54,6 +54,7 @@ class Machine(TimestampedModel):
     completed_setup = models.BooleanField(default=False)
     
     ip_address = models.GenericIPAddressField(null=True, blank=True)
+    encryption_key = models.CharField(max_length=32, null=True, blank=True)
     chip = models.CharField(max_length=100, default=SUPPORTED_CHIPS[0][0], choices=SUPPORTED_CHIPS)
     firmware_version = models.CharField(max_length=50, null=True, blank=True)
 

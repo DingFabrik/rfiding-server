@@ -12,12 +12,12 @@ from django.views.generic import (
     View,
 )
 from django.urls import reverse_lazy
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from base.views import BaseToggleActiveView, PartialListMixin
-from .models import Token, UnknownToken, BlacklistedToken
+from .models import Token, TokenType, UnknownToken, BlacklistedToken
 from .forms import TokenForm
 from people.models import Person
 from .common import clear_unknown_tokens
@@ -199,3 +199,57 @@ class BlacklistedTokenDeleteView(PermissionRequiredMixin, DeleteView):
     model = BlacklistedToken
     template_name = "delete_confirm.html"
     success_url = reverse_lazy("tokens:blacklisted")
+    
+
+class NextFreeTokenLabelView(PermissionRequiredMixin, View):
+    permission_required = "tokens.view_token"
+
+    def get(self, request: HttpRequest, *args: str, **kwargs: Any) -> HttpResponse:
+        tokens = Token.objects.filter(label_id__isnull=False)
+        label_format_func = lambda x: f"{x}"
+        if "type" in request.GET and len(request.GET["type"]) > 0:
+            token_type = get_object_or_404(TokenType, pk=request.GET["type"])
+            label_format_func = token_type.format_label_id
+            tokens = tokens.filter(type=token_type)
+        else:
+            tokens = tokens.filter(type__isnull=True)
+        token = tokens.order_by("-label_id").first()
+        if token and token.label_id:
+            label_id = token.label_id + 1
+        else:
+            label_id = 1
+        return HttpResponse(_("Next free label: %s") % label_format_func(label_id))
+    
+class TokenTypeListView(PartialListMixin, PermissionRequiredMixin, ListView):
+    permission_required = "tokens.view_tokentype"
+
+    model = TokenType
+    template_name = "tokentype_list.html"
+    context_object_name = "types"
+    
+    def get_paginate_by(self, queryset):
+        return self.request.user.page_length
+    
+class TokenTypeCreateView(PermissionRequiredMixin, CreateView):
+    permission_required = "tokens.add_tokentype"
+
+    model = TokenType
+    template_name = "tokentype_form.html"
+    fields = ["name", "description", "label_prefix", "label_id_padding"]
+    success_url = reverse_lazy("tokens:types:list")
+
+class TokenTypeUpdateView(PermissionRequiredMixin, UpdateView):
+    permission_required = "tokens.change_tokentype"
+
+    model = TokenType
+    template_name = "tokentype_form.html"
+    fields = ["name", "description", "label_prefix", "label_id_padding"]
+    context_object_name = "type"
+    success_url = reverse_lazy("tokens:types:list")
+
+class TokenTypeDeleteView(PermissionRequiredMixin, DeleteView):
+    permission_required = "tokens.delete_tokentype"
+
+    model = TokenType
+    template_name = "delete_confirm.html"
+    success_url = reverse_lazy("tokens:types:list")

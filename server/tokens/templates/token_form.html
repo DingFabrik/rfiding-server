@@ -11,3 +11,35 @@
 {% blocktrans %}Add a new Token{% endblocktrans %}
 {% endif %}
 {% endblock %}
+
+{% block content %}
+<form action="" method="post">
+    {% csrf_token %}
+    {{ form.serial|as_crispy_field }}
+    {{ form.person|as_crispy_field }}
+    <div id="div_id_type" class="mb-3">
+        <label for="id_label_type" class="form-label">
+            {{ form.type.label }}
+        </label>
+    <select
+    id="id_type"
+    name="type"
+    class="form-control"
+    hx-get="{% url 'tokens:next-label-id' %}"
+    hx-trigger="load,change"
+    hx-target="#next_id">
+        {% for x, y in form.fields.type.choices %}
+        <option value="{{ x }}"{% if form.type.value == x %} selected{% endif %}>{{ y }}</option>
+        {% endfor %}
+    </select>
+</div>
+        {{ form.label_id|as_crispy_field }}
+    <div id="next_id" class="mb-4 text-secondary"></div>
+    {{ form.notes|as_crispy_field }}
+    <div class="row">
+        <div class="col-md-11 mb-3">
+            <button class="btn btn-primary btn-block" type="submit">{% trans "Save" %}</button>
+        </div>
+    </div>
+</form>
+{% endblock %}

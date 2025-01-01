@@ -29,6 +29,9 @@ class TokenType(TimestampedModel):
 
     def __str__(self):
         return f"{self.name}"
+    
+    def format_label_id(self, label_id):
+        return f"{self.label_prefix}{label_id:0{self.label_id_padding}d}"
 
     class Meta:
         verbose_name = _("Token Type")
@@ -50,6 +53,11 @@ class Token(TimestampedModel):
 
     def get_absolute_url(self):
         return reverse("tokens:detail", kwargs={"pk": self.pk})
+    
+    def format_label(self):
+        if self.type:
+            return self.type.format_label_id(self.label_id)
+        return self.label_id or self.purpose
 
     class Meta:
         verbose_name = _("Token")
