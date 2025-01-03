@@ -1,6 +1,5 @@
-import datetime
-from people.models import PERMISSION_LEVELS
 from rest_framework.response import Response
+from rest_framework.exceptions import NotFound, PermissionDenied
 from rest_framework import status, permissions
 
 from .common import check_access, formatted_mac, BaseAPIView
@@ -38,5 +37,9 @@ class CheckMachineAccessView(BaseAPIView):
         try:
             return_data = check_access(machine, tokenID)
             return Response(return_data, status=status.HTTP_200_OK)
+        except PermissionDenied as e:
+            return Response({"error": str(e), "access": 0}, status=status.HTTP_403_FORBIDDEN)
+        except NotFound as e:
+            return Response({"error": str(e), "access": 0}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
-            return Response({"error": str(e)}, status=status.HTTP_403_FORBIDDEN)
+            return Response({"error": str(e), "access": 0}, status=status.HTTP_403_FORBIDDEN)

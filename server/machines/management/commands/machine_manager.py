@@ -2,7 +2,6 @@ from django.core.management.base import BaseCommand
 import asyncio
 from aioesphomeapi import APIClient, UserService
 from aioesphomeapi.reconnect_logic import ReconnectLogic
-import sys
 import socket
 import selectors
 import types
@@ -35,12 +34,12 @@ class ConnectionManager:
                     machine = await Machine.objects.get(mac_address=mac_address)
                 else:
                     machine = self.machine
-            if machine == None:
+            if machine is None:
                 return
             response = await sync_to_async(check_access)(self.machine, token_id)
             if "access" in response and response["access"] == 1:
                 self.client.switch_command(self.is_enabled_key, state=True)
-        except Exception as e:
+        except Exception:
             pass
         
     def send_command(self, command):
@@ -113,15 +112,15 @@ async def get_and_connect(pk):
 async def handle_client(client):
     loop = asyncio.get_event_loop()
     request = None
-    while request != 'quit':
+    while request != "quit":
         data = await loop.sock_recv(client, 1024)
-        if data == b'':
+        if data == b"":
             break
         print(data.decode())
         json_data = json.loads(data.decode())
         action = json_data["action"]
         pk = json_data["pk"]
-        if pk is None or pk == '':
+        if pk is None or pk == "":
             break
         if action == "connect":
             await get_and_connect(pk)

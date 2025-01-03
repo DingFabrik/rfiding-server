@@ -206,7 +206,9 @@ class NextFreeTokenLabelView(PermissionRequiredMixin, View):
 
     def get(self, request: HttpRequest, *args: str, **kwargs: Any) -> HttpResponse:
         tokens = Token.objects.filter(label_id__isnull=False)
-        label_format_func = lambda x: f"{x}"
+        def default_label_format_func(x):
+            return f"{x}"
+        label_format_func = default_label_format_func
         if "type" in request.GET and len(request.GET["type"]) > 0:
             token_type = get_object_or_404(TokenType, pk=request.GET["type"])
             label_format_func = token_type.format_label_id

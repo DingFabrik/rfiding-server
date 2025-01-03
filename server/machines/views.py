@@ -12,8 +12,6 @@ from django.utils.translation import gettext_lazy as _
 from django.db.models.functions import TruncDay, TruncHour, ExtractWeekDay
 from django.db.models import Count
 from datetime import datetime, timedelta
-import socket
-import json
 
 from access_log.models import AccessLog, LOG_TYPE_ENABLED
 from base.views import BaseToggleActiveView, PartialListMixin, PartialMixin

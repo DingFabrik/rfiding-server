@@ -1,5 +1,4 @@
 from django import forms
-from django.utils.translation import gettext_lazy as _
 
 from .utils import DAY_CHOICES
 from .models import Machine, MachineTime

@@ -1,6 +1,4 @@
 from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
-from django.utils.translation import gettext_lazy as _
 
 from .models import Token, TokenType, UnknownToken
 from base.admin import mark_active, mark_inactive
