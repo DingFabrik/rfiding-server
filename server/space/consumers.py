@@ -6,20 +6,19 @@ import logging
 
 from .common import aupdate_space_state, aget_current_space_state
 
-channel_layer = get_channel_layer()
 logger = logging.getLogger(__name__)
 
 class SpaceStateConsumer(AsyncJsonWebsocketConsumer):
     
     async def connect(self):
-        await channel_layer.group_add("space_state", self.channel_name)
+        await self.channel_layer.group_add("space_state", self.channel_name)
         await self.accept()
         
         await self.send(json.dumps({"state": (await aget_current_space_state()).is_open}))
         logger.debug("Websocket client connected")
     
     async def disconnect(self, code):
-        await channel_layer.group_discard("space_state", self.channel_name)
+        await self.channel_layer.group_discard("space_state", self.channel_name)
         logger.debug("websocket client disconnected")
         return await super().disconnect(code)
     
