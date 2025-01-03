@@ -33,7 +33,7 @@ TOKEN_SORT_CHOICES = (
 TOKEN_SORT_CHOICES_KEYS = [choice[0] for choice in TOKEN_SORT_CHOICES]
 
 class TokenListView(PartialListMixin, PermissionRequiredMixin, ListView):
-    queryset = Token.objects.select_related("person").filter(archived=None).order_by("id")
+    queryset = Token.objects.select_related("person").select_related("type").filter(archived=None).order_by("id")
     permission_required = "tokens.view_token"
 
     model = Token
