@@ -31,6 +31,8 @@ class TokenType(TimestampedModel):
         return f"{self.name}"
     
     def format_label_id(self, label_id):
+        if not label_id:
+            return None
         return f"{self.label_prefix}{label_id:0{self.label_id_padding}d}"
 
     class Meta:
@@ -55,7 +57,7 @@ class Token(TimestampedModel):
         return reverse("tokens:detail", kwargs={"pk": self.pk})
     
     def format_label(self):
-        if self.type:
+        if self.type and self.label_id:
             return self.type.format_label_id(self.label_id)
         return self.label_id or self.purpose
 
