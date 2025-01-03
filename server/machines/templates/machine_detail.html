@@ -3,7 +3,7 @@
 
 {% block title %}
 {{ object.name }}
-{% if object.ip_address %}
+{% if object.has_api %}
 <div hx-get="{% url "machines:status" object.pk %}" hx-swap="outerHTML" hx-trigger="load"></div>
 {% endif %}
 {% endblock %}

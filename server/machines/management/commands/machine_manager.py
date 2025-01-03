@@ -17,16 +17,26 @@ connections = {}
 class ConnectionManager:
     is_enabled_key = None
     token_id_key = None
+    mac_address_key = None
     
     is_enabled = False
     is_connected = False
+    mac_address = None
     
     def __init__(self, machine):
         self.machine = machine
+        self.mac_address = machine.mac_address
         self.client = APIClient(machine.ip_address, 6053, machine.encryption_key)
         
-    async def enable_for(self, token_id):
+    async def enable_for(self, token_id, mac_address=None):
         try:
+            if mac_address is not None:
+                if mac_address != self.machine.mac_address:
+                    machine = await Machine.objects.get(mac_address=mac_address)
+                else:
+                    machine = self.machine
+            if machine == None:
+                return
             response = await sync_to_async(check_access)(self.machine, token_id)
             if "access" in response and response["access"] == 1:
                 self.client.switch_command(self.is_enabled_key, state=True)
@@ -95,6 +105,8 @@ async def get_and_connect(pk):
     if pk in connections:
         return connections[pk]
     machine = await Machine.objects.aget(pk=pk)
+    if machine is None or not machine.has_api:
+        return
     await run_connect(machine)
     return connections[pk]
 
@@ -121,6 +133,8 @@ async def handle_client(client):
             connections.pop(pk)
         elif action == "reload_config":
             await (await get_and_connect(pk)).send_command("reload_config")
+        elif action == "restart":
+            await (await get_and_connect(pk)).send_command("restart")
         elif action == "status":
             if pk in connections and connections[pk].is_connected:
                 if connections[pk].is_enabled:                

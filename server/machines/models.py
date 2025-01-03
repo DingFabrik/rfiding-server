@@ -11,6 +11,9 @@ from .client_modules import ACCESS_CONTROL_MODULES, STATUS_DISPLAY_MODULES, ACTO
 SUPPORTED_CHIPS = [
     ("esp32", "ESP32"),
     ("esp8266", "ESP8266"),
+    ("esp32s2", "ESP32-S2"),
+    ("esp32c3", "ESP32-C3"),
+    ("esp32s3", "ESP32-S3"),
 ]
 
 def is_str(obj):
@@ -76,6 +79,12 @@ class Machine(TimestampedModel):
 
     def __str__(self):
         return f"{self.name}"
+    
+    @property
+    def has_api(self):
+        return (self.encryption_key is not None and
+                len(self.encryption_key) > 0 and
+                self.ip_address is not None)
 
     def get_absolute_url(self):
         return reverse("machines:detail", kwargs={"pk": self.pk})
