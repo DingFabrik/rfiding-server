@@ -1,8 +1,6 @@
 import datetime
 from rest_framework.views import APIView
 from rest_framework.exceptions import ValidationError, NotFound, PermissionDenied
-from rest_framework.response import Response
-from rest_framework import status
 
 from machines.models import Machine
 from tokens.models import Token, UnknownToken, BlacklistedToken
@@ -58,7 +56,7 @@ def check_access(machine, tokenID):
     except Token.DoesNotExist:
         if not BlacklistedToken.objects.filter(serial=tokenID).exists():
             UnknownToken.objects.get_or_create(serial=tokenID, machine=machine)
-        raise NotFound("Token does not exist")
+        raise NotFound("Token does not exist") from None
 
     if machine.needs_qualification:
         qualification = (
