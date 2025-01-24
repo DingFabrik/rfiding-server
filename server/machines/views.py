@@ -101,7 +101,6 @@ class MachineCreateView(PermissionRequiredMixin, CreateView):
     model = Machine
     template_name = "machine_form.html"
     form_class = MachineForm
-    success_url = reverse_lazy("machines:list")
 
 
 class MachineUpdateView(PermissionRequiredMixin, UpdateView):

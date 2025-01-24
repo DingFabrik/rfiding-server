@@ -122,7 +122,6 @@ class TokenCreateView(PermissionRequiredMixin, CreateView):
     model = Token
     template_name = "token_form.html"
     form_class = TokenForm
-    success_url = reverse_lazy("tokens:list")
 
 
 class TokenUpdateView(PermissionRequiredMixin, UpdateView):

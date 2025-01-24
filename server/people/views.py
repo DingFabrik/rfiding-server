@@ -89,7 +89,6 @@ class PersonCreateView(PermissionRequiredMixin, CreateView):
     model = Person
     template_name = "person_form.html"
     form_class = PersonForm
-    success_url = reverse_lazy("people:list")
 
 
 class PersonUpdateView(PermissionRequiredMixin, UpdateView):
