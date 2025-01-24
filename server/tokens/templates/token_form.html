@@ -17,6 +17,7 @@
     {% csrf_token %}
     {{ form.serial|as_crispy_field }}
     {{ form.person|as_crispy_field }}
+    {{ form.is_active|as_crispy_field }}
     <div id="div_id_type" class="mb-3">
         <label for="id_label_type" class="form-label">
             {{ form.type.label }}
