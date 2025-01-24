@@ -1,6 +1,5 @@
 import json
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
-from channels.layers import get_channel_layer
 from django.conf import settings as SETTINGS
 import logging
 
