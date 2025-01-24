@@ -17,6 +17,7 @@ class ConnectionManager:
     is_enabled_key = None
     token_id_key = None
     mac_address_key = None
+    error_message_key = None
     
     is_enabled = False
     is_connected = False
@@ -29,17 +30,18 @@ class ConnectionManager:
         
     async def enable_for(self, token_id, mac_address=None):
         try:
+            machine = self.machine
             if mac_address is not None:
                 if mac_address != self.machine.mac_address:
                     machine = await Machine.objects.get(mac_address=mac_address)
-                else:
-                    machine = self.machine
             if machine is None:
                 return
             response = await sync_to_async(check_access)(self.machine, token_id)
             if "access" in response and response["access"] == 1:
                 self.client.switch_command(self.is_enabled_key, state=True)
-        except Exception:
+        except Exception as e:
+            self.client.text_command(self.error_message_key, str(e))
+            print(e)
             pass
         
     def send_command(self, command):
@@ -49,17 +51,19 @@ class ConnectionManager:
         self.client.execute_service(service, {})
         
     async def change_callback(self, state):
-        if state.key == self.token_id_key:
+        if state.key == self.token_id_key and len(state.state) == 8:
             token_id = state.state
             await self.enable_for(token_id)
     
     async def setup_entities(self):
         entities = await self.client.list_entities_services()
         for entity in entities[0]:
-            if entity.object_id == "is_enabled_switch":
+            if entity.object_id == "is_enabled":
                 self.is_enabled_key = entity.key
             if entity.object_id == "token_id":
                 self.token_id_key = entity.key
+            if entity.object_id == "error_message":
+                self.error_message_key = entity.key
     
     async def connect(self):        
         def change_callback(state):
@@ -82,7 +86,8 @@ class ConnectionManager:
         
     async def disconnect(self):
         self.is_connected = False
-        await self.client.disconnect()
+        if self.client is not None:
+            await self.client.disconnect()
 
 
 sel = selectors.DefaultSelector()
