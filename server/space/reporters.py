@@ -44,6 +44,7 @@ class SlackReporter(StateReporter):
         )
         self.client.chat_postMessage(
             channel=self.channel,
+            text=_("{} is now {}").format(space_name, _("open") if state.is_open else _("closed")),
             attachments=[
                 {
                     "color": "#9BE564" if state.is_open else "#F95738",
