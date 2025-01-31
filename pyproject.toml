@@ -8,7 +8,7 @@ package-mode = false
 
 [tool.poetry.dependencies]
 python = "^3.10"
-Django = "^5.1.1"
+django = "^5.1.4"
 djangorestframework = "^3.15.2"
 django-crispy-forms = "^2.3"
 crispy-bootstrap5 = "^2024.2"
@@ -16,7 +16,7 @@ django-autocomplete-light = "^3.11.0"
 django-auditlog = "^3.0.0"
 toml = "^0.10.2"
 django-webpack-loader = "^3.1.1"
-channels = {extras = ["daphne"], version = "^4.1.0"}
+channels = {extras = ["daphne"], version = "^4.2.0"}
 aioesphomeapi = "^28.0.0"
 
 [tool.poetry.group.dev.dependencies]
