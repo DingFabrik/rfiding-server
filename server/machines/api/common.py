@@ -4,7 +4,8 @@ from rest_framework.exceptions import ValidationError, NotFound, PermissionDenie
 
 from machines.models import Machine
 from tokens.models import Token, UnknownToken, BlacklistedToken
-from access_log.models import AccessLog, LOG_TYPE_ENABLED
+from access_log.tasks import save_access_log
+from access_log.models import LOG_TYPE_ENABLED
 from people.models import PERMISSION_LEVELS
 from space.models import SpaceState
 
@@ -69,7 +70,7 @@ def check_access(machine, tokenID):
             space_state = SpaceState.objects.first()
             if space_state is not None and not space_state.is_open:
                 raise PermissionDenied("Space is closed")
-    AccessLog.objects.create(machine=machine, token=token, type=LOG_TYPE_ENABLED)
+    save_access_log.delay(machine.id, token.id, LOG_TYPE_ENABLED)
 
     now = datetime.datetime.now()
     return {

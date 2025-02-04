@@ -39,6 +39,9 @@ INSTALLED_APPS = [
     "rest_framework",
     "crispy_forms",
     "crispy_bootstrap5",
+    "django_celery_results",
+    "auditlog",
+
     "access_log",
     "base",
     "firmware",
@@ -47,8 +50,6 @@ INSTALLED_APPS = [
     "space",
     "tokens",
     "users",
-
-    "auditlog"
 ]
 
 MIDDLEWARE = [
@@ -85,11 +86,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "rfiding.wsgi.application"
-
-
-# Database
-# https://docs.djangoproject.com/en/5.0/ref/settings/#databases
-
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
@@ -97,23 +93,11 @@ DATABASES = {
     }
 }
 
-
-# Password validation
-# https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
-    },
+    { "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator" },
+    { "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator" },
+    { "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator" },
+    { "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator" },
 ]
 
 
@@ -155,9 +139,7 @@ AUTH_USER_MODEL = "users.RFIDingUser"
 LOGIN_REDIRECT_URL = "/"
 
 INTERNAL_IPS = [
-    # ...
     "127.0.0.1",
-    # ...
 ]
 
 REST_FRAMEWORK = {
@@ -167,7 +149,6 @@ REST_FRAMEWORK = {
 }
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
-
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 SPACE_STATE_SECRET = "12345"
@@ -175,6 +156,8 @@ SPACE_NAME = "Makerspace"
 SPACE_CONTACT = "01234 / 123456"
 
 ASGI_APPLICATION = "rfiding.asgi.application"
+
+CELERY_RESULT_BACKEND = "django-db"
 
 
 def filter_unknown_token(record):

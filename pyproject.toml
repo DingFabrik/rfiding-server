@@ -18,6 +18,9 @@ toml = "^0.10.2"
 django-webpack-loader = "^3.1.1"
 channels = {extras = ["daphne"], version = "^4.2.0"}
 aioesphomeapi = "^28.0.0"
+celery = "^5.4.0"
+django-celery-beat = "^2.7.0"
+django-celery-results = "^2.5.1"
 
 [tool.poetry.group.dev.dependencies]
 django-debug-toolbar = "^4.4.6"
@@ -41,6 +44,7 @@ fixable = ["ALL"]
 [tool.ruff.lint.per-file-ignores]
 "settings.dev.py" = ["F"]
 "settings.prod.py" = ["F"]
+"settings.py" = ["F"]
 
 [tool.ruff.format]
 quote-style = "double"

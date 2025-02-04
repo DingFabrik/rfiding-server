@@ -3,7 +3,8 @@ from rest_framework.exceptions import NotFound, PermissionDenied
 from rest_framework import status, permissions
 
 from .common import check_access, formatted_mac, BaseAPIView
-from access_log.models import AccessLog, LOG_TYPE_BOOTED
+from access_log.models import LOG_TYPE_BOOTED
+from access_log.tasks import save_access_log
 
 class MachineConfigView(BaseAPIView):
     permission_classes = [permissions.AllowAny]
@@ -13,7 +14,7 @@ class MachineConfigView(BaseAPIView):
         mac_address = formatted_mac(request.GET.get("machine", None))
         machine = self.get_machine(mac_address)
 
-        AccessLog.objects.create(machine=machine, type=LOG_TYPE_BOOTED)
+        save_access_log.delay(machine.id, None, LOG_TYPE_BOOTED)
         return Response(
             {
                 "runtimer": machine.runtimer,

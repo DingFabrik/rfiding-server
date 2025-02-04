@@ -2,7 +2,8 @@ from rest_framework.response import Response
 from rest_framework import status, permissions
 
 from .common import formatted_mac, BaseAPIView
-from access_log.models import AccessLog, LOG_TYPE_REGISTERED, LOG_TYPE_BOOTED
+from access_log.models import LOG_TYPE_REGISTERED, LOG_TYPE_BOOTED
+from access_log.tasks import save_access_log
 from machines.serializers import MachineConfigSerializer
 from machines.socket_helper import send_socket_action
 
@@ -14,7 +15,7 @@ class MachineRegisterView(BaseAPIView):
         mac_address = formatted_mac(request.POST.get("machine", None))
         machine = self.get_machine(mac_address)
 
-        AccessLog.objects.create(machine=machine, type=LOG_TYPE_REGISTERED)
+        save_access_log.delay(machine.id, None, LOG_TYPE_REGISTERED)
         return Response(
             {
                 "runtimer": machine.runtimer,
@@ -48,7 +49,7 @@ class MachineConfigView(BaseAPIView):
         mac_address = formatted_mac(request.GET.get("machine", None))
         machine = self.get_machine(mac_address)
 
-        AccessLog.objects.create(machine=machine, type=LOG_TYPE_BOOTED)
+        save_access_log.delay(machine.id, None, LOG_TYPE_BOOTED)
         return Response(
             MachineConfigSerializer({
                 "runtimer": machine.runtimer,
