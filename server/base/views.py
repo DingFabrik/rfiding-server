@@ -3,11 +3,24 @@ import platform
 import django
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from auditlog.models import LogEntry
+from django.utils.translation import gettext_lazy as _
 
 from rfiding import settings
 
 
-class AboutView(TemplateView):
+class TitleMixin():
+    title = None
+    
+    def get_title(self):
+        return self.title
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["html_title"] = self.get_title()
+        return context
+
+class AboutView(TitleMixin, TemplateView):
+    title = _("About")
     template_name = "about.html"
 
     def get_context_data(self, **kwargs):
@@ -49,7 +62,9 @@ class PartialListMixin(PartialMixin):
     full_base_template = "base_list.html"
     partial_base_template = "partial_base_list.html"  
 
-class AuditlogView(PartialListMixin, PermissionRequiredMixin, ListView):
+
+class AuditlogView(TitleMixin, PartialListMixin, PermissionRequiredMixin, ListView):
+    title = _("Audit Log")
     model = LogEntry
     queryset = LogEntry.objects.all().select_related("content_type").order_by("-timestamp")
     permission_required = "tokens.view_token"

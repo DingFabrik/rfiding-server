@@ -1,15 +1,17 @@
 from typing import Any
 from django.db.models.query import QuerySet
 from django.views.generic import ListView
+from django.utils.translation import gettext_lazy as _
 
-from base.views import PartialListMixin
+from base.views import PartialListMixin, TitleMixin
 from .models import AccessLog
 from .forms import AccessLogFilterForm
 from tokens.models import Token
 from machines.models import Machine
 from people.models import Person
 
-class AccessLogListView(PartialListMixin, ListView):
+class AccessLogListView(TitleMixin, PartialListMixin, ListView):
+    title = _("Access Logs")
     model = AccessLog
     queryset = AccessLog.objects.select_related("token").select_related("machine").all()
     template_name = "access_log_list.html"
@@ -35,7 +37,8 @@ class AccessLogListView(PartialListMixin, ListView):
         return context
 
 
-class AccessLogForTokenView(PartialListMixin, ListView):
+class AccessLogForTokenView(TitleMixin, PartialListMixin, ListView):
+    title = _("Access Logs")
     model = AccessLog
     context_object_name = "access_logs"
     ordering = ["-timestamp"]
@@ -53,7 +56,8 @@ class AccessLogForTokenView(PartialListMixin, ListView):
         context["token"] = Token.objects.get(pk=self.kwargs["token"])
         return context
 
-class AccessLogForPersonView(PartialListMixin, ListView):
+class AccessLogForPersonView(TitleMixin, PartialListMixin, ListView):
+    title = _("Access Logs")
     model = AccessLog
     context_object_name = "access_logs"
     ordering = ["-timestamp"]
@@ -72,7 +76,8 @@ class AccessLogForPersonView(PartialListMixin, ListView):
         return context
 
 
-class AccessLogForMachineView(PartialListMixin, ListView):
+class AccessLogForMachineView(TitleMixin, PartialListMixin, ListView):
+    title = _("Access Logs")
     model = AccessLog
     context_object_name = "access_logs"
     ordering = ["-timestamp"]

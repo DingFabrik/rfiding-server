@@ -15,7 +15,9 @@ from django.contrib.auth.forms import PasswordChangeForm, AdminPasswordChangeFor
 from django.contrib.auth.views import PasswordChangeView
 from django.contrib.auth.models import Group
 from django.urls import reverse_lazy
+from django.utils.translation import gettext_lazy as _
 
+from base.views import TitleMixin
 from tokens.models import Token
 from machines.models import Machine
 from people.models import Person
@@ -23,7 +25,8 @@ from users.models import RFIDingUser
 from .forms import UserForm, GroupForm
 
 @method_decorator(login_required, name="dispatch")
-class ProfileView(UpdateView):
+class ProfileView(TitleMixin, UpdateView):
+    title = _("Profile")
     model = RFIDingUser
     template_name = "profile.html"
     fields = ["name", "email", "language", "page_length", "theme_mode", "theme"]
@@ -39,8 +42,9 @@ class ProfileView(UpdateView):
 
 
 @method_decorator(login_required, name="dispatch")
-class HomeView(TemplateView):
+class HomeView(TitleMixin, TemplateView):
     template_name = "home.html"
+    title = _("Home")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -54,13 +58,15 @@ class HomeView(TemplateView):
         return context
 
 
-class ChangePasswordView(PasswordChangeView):
+class ChangePasswordView(TitleMixin, PasswordChangeView):
+    title = _("Change Password")
     form_class = PasswordChangeForm
     success_url = reverse_lazy("home")
     template_name = "change_password.html"
     
 
-class UserListView(PermissionRequiredMixin, ListView):
+class UserListView(TitleMixin, PermissionRequiredMixin, ListView):
+    title = _("Users")
     permission_required = "users.view_rfidinguser"
 
     model = RFIDingUser
@@ -68,7 +74,8 @@ class UserListView(PermissionRequiredMixin, ListView):
     context_object_name = "users"
 
 
-class UserCreateView(PermissionRequiredMixin, CreateView):
+class UserCreateView(TitleMixin, PermissionRequiredMixin, CreateView):
+    title = _("Create User")
     permission_required = "users.add_rfidinguser"
 
     model = RFIDingUser
@@ -77,23 +84,29 @@ class UserCreateView(PermissionRequiredMixin, CreateView):
     success_url = reverse_lazy("users:list")
 
 
-class UserUpdateView(PermissionRequiredMixin, UpdateView):
+class UserUpdateView(TitleMixin, PermissionRequiredMixin, UpdateView):
     permission_required = "users.change_rfidinguser"
 
     model = RFIDingUser
     form_class = UserForm
     template_name = "user_form.html"
     success_url = reverse_lazy("users:list")
+    
+    def get_title(self):
+        return _("Edit ${self.object.name}")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["can_delete"] = self.request.user.has_perm("users.delete_rfidinguser")
         return context
 
-class UserDetailView(PermissionRequiredMixin, DetailView):
+class UserDetailView(TitleMixin, PermissionRequiredMixin, DetailView):
     permission_required = "users.change_rfidinguser"
     model = RFIDingUser
     template_name = "user_detail.html"
+    
+    def get_title(self):
+        return self.object.name
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -102,14 +115,18 @@ class UserDetailView(PermissionRequiredMixin, DetailView):
         return context
 
 
-class UserDeleteView(PermissionRequiredMixin, DeleteView):
+class UserDeleteView(TitleMixin, PermissionRequiredMixin, DeleteView):
     permission_required = "users.delete_rfidinguser"
+    
+    def get_title(self):
+        return _("Delete ${self.object.name}")
 
     model = RFIDingUser
     template_name = "delete_confirm.html"
     success_url = reverse_lazy("users:list")
     
-class AdminChangePasswordView(FormView):
+class AdminChangePasswordView(TitleMixin, FormView):
+    title = _("Change Password")
     form_class = AdminPasswordChangeForm
     template_name = "change_password.html"
     success_url = reverse_lazy("users:list")
@@ -128,16 +145,18 @@ class AdminChangePasswordView(FormView):
         return context
 
 
-class GroupListView(PermissionRequiredMixin, ListView):
+class GroupListView(TitleMixin, PermissionRequiredMixin, ListView):
     permission_required = "auth.view_group"
+    title = _("Groups")
 
     model = Group
     template_name = "group_list.html"
     context_object_name = "groups"
 
 
-class GroupCreateView(PermissionRequiredMixin, CreateView):
+class GroupCreateView(TitleMixin, PermissionRequiredMixin, CreateView):
     permission_required = "auth.add_group"
+    title = _("Create Group")
 
     model = Group
     form_class = GroupForm
@@ -145,22 +164,28 @@ class GroupCreateView(PermissionRequiredMixin, CreateView):
     success_url = reverse_lazy("users:groups:list")
 
 
-class GroupUpdateView(PermissionRequiredMixin, UpdateView):
+class GroupUpdateView(TitleMixin, PermissionRequiredMixin, UpdateView):
     permission_required = "auth.change_group"
 
     model = Group
     form_class = GroupForm
     template_name = "group_form.html"
     success_url = reverse_lazy("users:groups:list")
+    
+    def get_title(self):
+        return _("Edit ${self.object.name}")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["can_delete"] = self.request.user.has_perm("auth.delete_group")
         return context
 
-class GroupDeleteView(PermissionRequiredMixin, DeleteView):
+class GroupDeleteView(TitleMixin, PermissionRequiredMixin, DeleteView):
     permission_required = "auth.delete_group"
 
     model = Group
     template_name = "delete_confirm.html"
     success_url = reverse_lazy("users:groups:list")
+    
+    def get_title(self):
+        return _("Delete ${self.object.name}")
