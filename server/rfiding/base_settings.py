@@ -159,7 +159,6 @@ ASGI_APPLICATION = "rfiding.asgi.application"
 
 CELERY_RESULT_BACKEND = "django-db"
 
-
 def filter_unknown_token(record):
     if record.msg.startswith("Unknown token used"):
         return True
