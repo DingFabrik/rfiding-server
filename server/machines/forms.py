@@ -14,9 +14,12 @@ class MachineForm(forms.ModelForm):
             "mac_address",
             "is_active",
             "needs_qualification",
-            "completed_setup",
             "chip",
+            "encryption_key"
         ]
+        widgets = {
+            "encryption_key": forms.PasswordInput(),
+        }
 
 
 class ConfigureMachineForm(forms.ModelForm):

@@ -24,7 +24,6 @@ class BaseAPIView(APIView):
     required_post_parameters = None
     required_delete_parameters = None
 
-
     def get_machine(self, mac_address):
         try:
             return Machine.objects.get(mac_address__iexact=mac_address, is_active=True)
@@ -39,7 +38,7 @@ class BaseAPIView(APIView):
                     raise ValidationError(f"Missing parameter {param}")
         if request.method.lower() == "post" and self.required_post_parameters:
             for param in self.required_post_parameters:
-                if request.POST.get(param, None) is None:
+                if request.data.get(param, None) is None:
                     raise ValidationError(f"Missing parameter {param}")
         if request.method.lower() == "delete" and self.required_delete_parameters:
             for param in self.required_delete_parameters:

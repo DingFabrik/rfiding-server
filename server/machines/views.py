@@ -16,7 +16,7 @@ from datetime import datetime, timedelta
 from access_log.models import AccessLog, LOG_TYPE_ENABLED
 from base.views import BaseToggleActiveView, PartialListMixin, PartialMixin, TitleMixin
 from machines.socket_helper import get_socket_data
-from .models import Machine
+from .models import Machine, MachineRegistrationRequest
 from .forms import MachineForm, ConfigureMachineForm, MachineTimeFormset
 from people.models import Qualification, Instructor
 from people.forms import QualifyPersonForm, InstructorForm
@@ -41,7 +41,7 @@ class MachineListView(TitleMixin, PartialListMixin, PermissionRequiredMixin, Lis
     context_object_name = "machines"
 
     def get_queryset(self):
-        queryset = super().get_queryset().filter(completed_setup=True)
+        queryset = super().get_queryset()
         search = self.request.GET.get("search")
         if search:
             queryset = queryset.filter(name__icontains=search)
@@ -108,6 +108,21 @@ class MachineCreateView(TitleMixin, PermissionRequiredMixin, CreateView):
     model = Machine
     template_name = "machine_form.html"
     form_class = MachineForm
+    
+    def get_initial(self):
+        initial = super().get_initial()
+        if "request" in self.request.GET:
+            request = MachineRegistrationRequest.objects.get(pk=self.request.GET["request"])
+            initial["mac_address"] = request.mac_address
+            initial["ip_address"] = request.ip_address
+            initial["hostname"] = request.hostname
+        return initial
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if "request" not in self.request.GET:
+            context["registration_requests"] = MachineRegistrationRequest.objects.all()
+        return context
 
 
 class MachineUpdateView(TitleMixin, PermissionRequiredMixin, UpdateView):
@@ -347,3 +362,13 @@ class AddInstructorMachineView(TitleMixin, PermissionRequiredMixin, CreateView):
 
     def get_success_url(self):
         return reverse_lazy("machines:detail", kwargs={"pk": self.kwargs["pk"]})
+    
+class MachineRegistrationRequestDeleteView(TitleMixin, PermissionRequiredMixin, DeleteView):
+    permission_required = "machines.delete_machineregistrationrequest"
+
+    model = Machine
+    template_name = "delete_confirm.html"
+    success_url = reverse_lazy("machines:list")
+    
+    def get_title(self):
+        return _("Delete ${self.object.name}")

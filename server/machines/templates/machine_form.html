@@ -9,3 +9,23 @@
 {% blocktrans %}Add a new machine{% endblocktrans %}
 {% endif %}
 {% endblock %}
+
+{% block pre_title %}
+{% if registration_requests %}
+<h2>{% trans "Pending registration requests" %}</h2>
+{% for request in registration_requests %}
+<div class="alert alert-secondary" role="alert">
+    <h6 class="alert-heading">{{ request.created }}</h6>
+    <div class="float-end">
+        <a href="{% url "machines:create" %}?request={{ request.pk}}" class="btn btn-primary btn-sm">{% trans "Create" %}</a>
+        <a href="{% url "machines:delete-request" pk=request.pk %}" class="btn btn-danger btn-sm">{% trans "Delete" %}</a>
+    </div>
+    <ul class="list-unstyled mb-0">
+        <li><span class="fw-bold text-emphasis">{% trans "Hostname" %}:</span> {{ request.hostname }}</li>
+        <li><span class="fw-bold text-emphasis">{% trans "MAC Address" %}:</span> {{ request.mac_address }}</li>
+        <li><span class="fw-bold text-emphasis">{% trans "IP Address" %}:</span> {{ request.ip_address }}</li>
+    </ul>
+</div>
+{% endfor %}
+{% endif %}
+{% endblock %}

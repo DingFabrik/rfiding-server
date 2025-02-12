@@ -54,4 +54,5 @@ urlpatterns = [
         views.MachineStatisticsView.as_view(),
         name="statistics",
     ),
+    path("requests/<int:pk>/delete", views.MachineRegistrationRequestDeleteView.as_view(), name="delete-request"),
 ]

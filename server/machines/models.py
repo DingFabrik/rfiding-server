@@ -54,10 +54,9 @@ class Machine(TimestampedModel):
     hostname = models.CharField(max_length=100)
     is_active = models.BooleanField(default=True)
     needs_qualification = models.BooleanField(default=True, help_text=_("If disabled, any active user can access this machine."))
-    completed_setup = models.BooleanField(default=False)
     
     ip_address = models.GenericIPAddressField(null=True, blank=True)
-    encryption_key = models.CharField(max_length=32, null=True, blank=True)
+    encryption_key = models.CharField(max_length=32, null=True, blank=True, help_text=_("32 character encryption key for secure communication with the machine."))
     chip = models.CharField(max_length=100, default=SUPPORTED_CHIPS[0][0], choices=SUPPORTED_CHIPS)
     firmware_version = models.CharField(max_length=50, null=True, blank=True)
 
@@ -123,6 +122,19 @@ class MachineTime(TimestampedModel):
     weekdays = WeekdayField()
     start_time = models.TimeField()
     end_time = models.TimeField()
+    
+class MachineRegistrationRequest(TimestampedModel):
+    mac_address = models.CharField(max_length=17, db_index=True)
+    hostname = models.CharField(max_length=100)
+    ip_address = models.GenericIPAddressField()
+
+    class Meta:
+        verbose_name = _("Registration Request")
+        verbose_name_plural = _("Registration Requests")
+        ordering = ["-created"]
+
+    def __str__(self):
+        return f"{self.mac_address}"
 
 
 auditlog.register(Machine, exclude_fields=["created", "updated"])

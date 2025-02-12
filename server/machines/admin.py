@@ -3,16 +3,12 @@ from django.contrib import admin
 from .models import Machine, MachineTime
 from base.admin import mark_active, mark_inactive
 
-@admin.action(description="Mark setup as completed")
-def complete_setup(modeladmin, request, queryset):
-    queryset.update(completed_setup=True)
-
 class MachineAdmin(admin.ModelAdmin):
-    list_display = ("name", "hostname", "is_active", "completed_setup", "chip")
+    list_display = ("name", "hostname", "is_active", "chip")
     search_fields = ("name", "hostname")
-    list_filter = ("is_active", "completed_setup")
+    list_filter = ("is_active", "chip")
     
-    actions = [complete_setup, mark_active, mark_inactive]
+    actions = [mark_active, mark_inactive]
 
 
 class MachineTimeAdmin(admin.ModelAdmin):

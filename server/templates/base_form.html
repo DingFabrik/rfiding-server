@@ -5,6 +5,7 @@
 {% block container_classes %}container-slim{% endblock %}
 
 {% block content %}
+{% block pre_form %}{% endblock %}
 <form action="" method="post">
     {% csrf_token %}
     {{ form | crispy }}
@@ -17,4 +18,5 @@
         {% block extra_form_buttons %}
         {% endblock %}
 </form>
+{% block post_form %}{% endblock %}
 {% endblock %}
