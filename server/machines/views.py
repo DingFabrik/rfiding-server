@@ -118,6 +118,12 @@ class MachineCreateView(TitleMixin, PermissionRequiredMixin, CreateView):
             initial["hostname"] = request.hostname
         return initial
     
+    def form_valid(self, form):
+        f = MachineRegistrationRequest.objects.filter(mac_address=form.cleaned_data["mac_address"])
+        if f.exists():
+            f.delete()
+        return super().form_valid(form)
+    
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         if "request" not in self.request.GET:
