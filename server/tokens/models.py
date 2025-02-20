@@ -69,7 +69,7 @@ class Token(TimestampedModel):
 
 
 class UnknownToken(TimestampedModel):
-    serial = models.CharField(max_length=20)
+    serial = models.CharField(max_length=20, blank=False)
     machine = models.ForeignKey(Machine, on_delete=models.CASCADE)
 
     def __str__(self):
@@ -78,7 +78,7 @@ class UnknownToken(TimestampedModel):
     class Meta:
         verbose_name = _("Unknown Token")
         verbose_name_plural = _("Unknown Tokens")
-        ordering = ["serial"]
+        ordering = ["-created"]
     
 class BlacklistedToken(TimestampedModel):
     serial = models.CharField(max_length=20)

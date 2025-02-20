@@ -4,7 +4,7 @@
             <th>{% trans "Serial" %}</th>
             <th>{% trans "Machine" %}</th>
             <th>{% trans "Seen" %}</th>
-            {% if perms.tokens.create_token or perms.tokens.created_blacklistedtoken %}
+            {% if can_create_token or can_create_blacklistedtoken %}
             <th width="70"></th>
             {% endif %}
         </tr>
@@ -14,12 +14,12 @@
 <td>{{ token.serial }}</td>
 <td>{{ token.machine }}</td>
 <td>{% include "snippets/timestamp.html" with timestamp=token.created %}</td>
-{% if perms.tokens.create_token or perms.tokens.create_blacklistedtoken %}
+{% if can_create_token or can_create_blacklistedtoken %}
 <td>
-{% if perms.tokens.create_token %}
+{% if can_create_token %}
 <a href="{% url "tokens:assign" token.serial %}" data-bs-toggle="tooltip" title="{% trans 'Assign' %}"><i class="bi-link me-3"></i></a>
 {% endif %}
-{% if perms.tokens.create_blacklistedtoken %}
+{% if can_create_blacklistedtoken %}
 <a href="{% url "tokens:blacklist-token" token.serial %}" data-bs-toggle="tooltip" title="{% trans 'Blacklist' %}"><i class="bi-ban text-danger"></i></a>
 {% endif %}
 </td>

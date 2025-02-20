@@ -12,6 +12,7 @@ channel_layer = get_channel_layer()
 class UnknownTokenConsumer(AsyncWebsocketConsumer):
     
     async def connect(self):
+        self.user = self.scope["user"]
         await channel_layer.group_add("unknown_tokens", self.channel_name)
         await self.accept()
             
@@ -32,5 +33,7 @@ class UnknownTokenConsumer(AsyncWebsocketConsumer):
             html = render_to_string("unknown_token_table.html", {
                 "tokens": tokens,
                 "is_partial": True,
+                "can_create_token": self.user.has_perm("tokens.create_token"),
+                "can_create_blacklistedtoken": self.user.has_perm("tokens.create_blacklistedtoken"),
             })
         await self.send(html)

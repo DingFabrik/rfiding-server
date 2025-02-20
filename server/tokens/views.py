@@ -59,6 +59,12 @@ class UnknownTokenListView(PermissionRequiredMixin, ListView):
     model = UnknownToken
     template_name = "unknown_token_list.html"
     context_object_name = "tokens"
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["can_create_token"] = self.request.user.has_perm("tokens.create_token")
+        context["can_create_blacklistedtoken"] = self.request.user.has_perm("tokens.create_blacklistedtoken")
+        return context
 
 
 class ClearUnknownTokensView(PermissionRequiredMixin, View):
