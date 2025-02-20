@@ -64,6 +64,9 @@ class Machine(TimestampedModel):
     runtimer = models.DurationField(default=0)
     min_power = models.IntegerField(default=10)
     control_parameter = models.CharField(max_length=100, null=True, blank=True)
+    display_time_countdown = models.BooleanField(default=True)
+    display_power_consumption = models.BooleanField(default=True)
+    link_relays = models.BooleanField(default=False)
 
     access_control_module = models.IntegerField(default=0, choices=ACCESS_CONTROL_MODULES)
     access_control_module_settings = models.JSONField(default=dict, blank=True)

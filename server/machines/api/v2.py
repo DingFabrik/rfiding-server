@@ -61,6 +61,7 @@ class MachineConnectView(BaseAPIView):
 class MachineConfigView(BaseAPIView):
     permission_classes = [permissions.AllowAny]
     required_get_parameters = ["mac_address"]
+    required_post_parameters = ["mac_address"]
 
     def get(self, request, format=None):
         mac_address = formatted_mac(request.GET.get("mac_address", None))
@@ -71,6 +72,32 @@ class MachineConfigView(BaseAPIView):
             MachineConfigSerializer({
                 "runtimer": machine.runtimer,
                 "minPower": machine.min_power,
+            }).data,
+            status=status.HTTP_200_OK,
+        )
+    
+    def post(self, request, format=None):
+        mac_address = formatted_mac(request.data.get("mac_address", None))
+        machine = self.get_machine(mac_address)
+        
+        was_changed = False
+        if "ip_address" in request.data and machine.ip_address != request.data["ip_address"]:
+            machine.ip_address = request.data["ip_address"]
+            was_changed = True
+        if "firmware_version" in request.data and machine.firmware_version != request.data["firmware_version"]:
+            machine.firmware_version = request.data["firmware_version"]
+            was_changed = True
+        if was_changed:
+            machine.save()
+        
+        save_access_log.delay(machine.id, None, LOG_TYPE_BOOTED)
+        return Response(
+            MachineConfigSerializer({
+                "runtimer": machine.runtimer,
+                "minPower": machine.min_power,
+                "display_time_countdown": machine.display_time_countdown,
+                "display_power_consumption": machine.display_power_consumption,
+                "link_relays": machine.link_relays,
             }).data,
             status=status.HTTP_200_OK,
         )

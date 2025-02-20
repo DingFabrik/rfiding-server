@@ -21,6 +21,9 @@ class MachineConfigSerializer(serializers.Serializer):
     runtimer = DurationMillisecondsField(default=0)
     minPower = serializers.IntegerField(default=0, min_value=0)
     controlParameter = serializers.IntegerField(default=None)
+    display_time_countdown = serializers.BooleanField(default=True)
+    display_power_consumption = serializers.BooleanField(default=True)
+    link_relays = serializers.BooleanField(default=False)
 
     accessControlModule = serializers.ChoiceField(choices=ACCESS_CONTROL_MODULES, default=0)
     accessControlModuleSettings = serializers.JSONField(default=dict, required=False)
