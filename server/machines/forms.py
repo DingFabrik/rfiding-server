@@ -12,6 +12,7 @@ class MachineForm(forms.ModelForm):
             "hostname",
             "ip_address",
             "mac_address",
+            "location",
             "is_active",
             "needs_qualification",
             "chip",

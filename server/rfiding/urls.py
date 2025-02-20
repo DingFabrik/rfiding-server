@@ -51,6 +51,7 @@ urlpatterns = [
     path("accounts/change-password/", PasswordChangeView.as_view(), name="password_change"),
     path("accounts/change-password-done/", PasswordChangeDoneView.as_view(), name="password_change_done"),
     path("access_log/", include("access_log.urls", namespace="access_log")),
+    path("locations/", include("locations.urls", namespace="locations")),
     path("machines/", include("machines.urls", namespace="machines")),
     path("people/", include("people.urls", namespace="people")),
     path("space/", include("space.urls", namespace="space")),

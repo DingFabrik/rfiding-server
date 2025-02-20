@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from datetime import timedelta
 
 from .models import Machine
 from .client_modules import ACCESS_CONTROL_MODULES, STATUS_DISPLAY_MODULES, ACTOR_MODULES
@@ -9,9 +10,15 @@ class MachineSerializer(serializers.ModelSerializer):
         model = Machine
         fields = "__all__"
 
+class DurationMillisecondsField(serializers.Field):
+    def to_representation(self, value):
+        return value.seconds * 1000
+
+    def to_internal_value(self, data):
+        return timedelta(milliseconds=data)
 
 class MachineConfigSerializer(serializers.Serializer):
-    runtimer = serializers.IntegerField(default=0, min_value=0)
+    runtimer = DurationMillisecondsField(default=0)
     minPower = serializers.IntegerField(default=0, min_value=0)
     controlParameter = serializers.IntegerField(default=None)
 

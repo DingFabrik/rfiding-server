@@ -62,13 +62,21 @@ def menu_processor(request):
             "has_permission": request.user.has_perm("users.view_rfidinguser"),
             "active": request.resolver_match.app_name == "users" and request.resolver_match.url_name != "profile",
         },
-                {
+        {
             "name": _("Groups"),
             "url": reverse("users:groups:list"),
             "icon": "people",
             "active_icon": "people-fill",
             "has_permission": request.user.has_perm("auth.view_group"),
             "active": request.resolver_match.app_name == "groups",
+        },
+        {
+            "name": _("Locations"),
+            "url": reverse("locations:list"),
+            "icon": "geo",
+            "active_icon": "geo-fill",
+            "has_permission": request.user.has_perm("locations.view_location"),
+            "active": request.resolver_match.app_name == "locations",
         },
         {
             "name": _("Blacklisted Tokens"),

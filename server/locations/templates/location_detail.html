@@ -1,0 +1,18 @@
+{% extends 'base_detail.html' %}
+{% load i18n %}
+
+{% block content %}
+  <div class="row mb-5">
+    <div class="col-12 col-md-6">
+      <h4>{% trans 'Details' %}</h4>
+      <ul class="mb-5 list-unstyled">
+        <li>
+          <span class="fw-bold text-secondary-emphasis">{% trans 'Name' %}:</span> {{ location.name }}
+        </li>
+        <li>
+          <span class="fw-bold text-secondary-emphasis">{% trans 'Description' %}:</span> {{ location.description }}
+        </li>
+      </ul>
+    </div>
+  </div>
+{% endblock %}

@@ -27,6 +27,13 @@
 <h4>{% trans "Details" %}</h4>
 <ul class="list-unstyled">
 <li><span class="fw-bold text-secondary-emphasis">{% trans "Name" %}:</span> {{ object.name }}<br></li>
+<li><span class="fw-bold text-secondary-emphasis">{% trans "Location" %}:</span> 
+  {% if object.location %}
+    <a href="{% url "locations:detail" object.location.pk %}">{{ object.location }}</a>
+  {% else %}
+  --
+  {% endif %}
+  <br></li>
 <li><span class="fw-bold text-secondary-emphasis">{% trans "Hostname" %}:</span> {{ object.hostname }}<br></li>
 <li><span class="fw-bold text-secondary-emphasis">{% trans "MAC Address" %}:</span> {{ object.mac_address }}<br></li>
 <li><span class="fw-bold text-secondary-emphasis">{% trans "IP Address" %}:</span> {{ object.ip_address }}<br></li>

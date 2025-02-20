@@ -50,18 +50,19 @@ class WeekdayField(models.CharField):
 
 class Machine(TimestampedModel):
     name = models.CharField(max_length=100)
-    mac_address = models.CharField(max_length=17, db_index=True)
-    hostname = models.CharField(max_length=100)
+    location = models.ForeignKey("locations.Location", on_delete=models.SET_NULL, related_name="machines", null=True, blank=True)
     is_active = models.BooleanField(default=True)
     needs_qualification = models.BooleanField(default=True, help_text=_("If disabled, any active user can access this machine."))
     
+    mac_address = models.CharField(max_length=17, db_index=True)
+    hostname = models.CharField(max_length=100)
     ip_address = models.GenericIPAddressField(null=True, blank=True)
     encryption_key = models.CharField(max_length=32, null=True, blank=True, help_text=_("32 character encryption key for secure communication with the machine."))
     chip = models.CharField(max_length=100, default=SUPPORTED_CHIPS[0][0], choices=SUPPORTED_CHIPS)
     firmware_version = models.CharField(max_length=50, null=True, blank=True)
 
-    runtimer = models.IntegerField(default=0)
-    min_power = models.IntegerField(default=0)
+    runtimer = models.DurationField(default=0)
+    min_power = models.IntegerField(default=10)
     control_parameter = models.CharField(max_length=100, null=True, blank=True)
 
     access_control_module = models.IntegerField(default=0, choices=ACCESS_CONTROL_MODULES)

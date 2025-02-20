@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     "access_log",
     "base",
     "firmware",
+    "locations",
     "machines",
     "people",
     "space",

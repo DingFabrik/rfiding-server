@@ -1,0 +1,25 @@
+{% extends base_template %}
+{% load i18n %}
+
+{% block table %}
+    <thead>
+        <tr>
+            <th>{% trans "Name" %}</th>
+            {% if perms.locations.modify_location %}
+            <th width="35"></th>
+            {% endif %}
+        </tr>
+        </thead>
+{% for object in locations %}
+<tr>
+<td><a href="{% url "locations:detail" object.pk %}">{{ object.name }}</a></td>
+{% if perms.locations.modify_location %}
+<td>
+{% if perms.locations.modify_location %}
+<a href="{% url 'locations:update' object.pk %}" data-bs-toggle="tooltip" title="{% trans 'Edit' %}"><i class="bi-pencil-square me-2"></i></a>
+{% endif %}
+</td>
+{% endif %}
+</tr>
+{% endfor %}
+{% endblock %}
