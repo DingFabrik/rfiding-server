@@ -14,12 +14,7 @@
     <div class="row">
         <div class="col-md-6">
             <h4>{% trans "General configuration" %}</h4>
-            {{ form.runtimer | as_crispy_field }}
-            {{ form.min_power | as_crispy_field }}
-            {{ form.control_parameter | as_crispy_field }}
-            {{ form.display_time_remainin | as_crispy_field }}
-            {{ form.display_power_consumption | as_crispy_field }}
-            {{ form.link_relays | as_crispy_field }}
+            {% crispy form %}
         </div>
         <div class="col-md-6">
             <h4>{% trans "Active Times" %}</h4>
@@ -65,21 +60,6 @@
             {% endfor %}
         </div>
     </div>
-    <div class="row">
-        <h4 class="mt-5">{% trans "Modules" %}</h4>
-        <div class="col-md-4">
-            {{ form.access_control_module | as_crispy_field }}
-            {{ form.access_control_module_settings | as_crispy_field }}
-        </div>
-        <div class="col-md-4">
-            {{ form.status_display_module | as_crispy_field }}
-            {{ form.status_display_module_settings | as_crispy_field }}
-        </div>
-        <div class="col-md-4">
-            {{ form.actor_module | as_crispy_field }}
-            {{ form.actor_module_settings | as_crispy_field }}
-        </div>  
-    </div>
 
             <button class="btn btn-primary" type="submit">{% trans "Save" %}</button>
         {% if object and can_delete %}
@@ -88,20 +68,4 @@
             </a>
         {% endif %}
 </form>
-{% endblock %}
-
-{% block script_extra %}
-function link_module_fields (module_field, settings_field) {
-    const initial_value = $(module_field).val();
-    $(settings_field).prop("disabled", initial_value == 0);
-
-    $(module_field).change(function() {
-        var module_id = $(this).val();
-        $(settings_field).prop("disabled", module_id == 0);
-    });
-}
-
-link_module_fields("#id_access_control_module", "#id_access_control_module_settings");
-link_module_fields("#id_status_display_module", "#id_status_display_module_settings");
-link_module_fields("#id_actor_module", "#id_actor_module_settings");
 {% endblock %}

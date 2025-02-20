@@ -61,12 +61,12 @@ class Machine(TimestampedModel):
     chip = models.CharField(max_length=100, default=SUPPORTED_CHIPS[0][0], choices=SUPPORTED_CHIPS)
     firmware_version = models.CharField(max_length=50, null=True, blank=True)
 
-    runtimer = models.DurationField(default=0)
-    min_power = models.IntegerField(default=10)
+    runtimer = models.DurationField(default=0, help_text=_("Time until the machine is locked again when it is not active."))
+    min_power = models.IntegerField(default=10, help_text=_("Minimum power consumption in watts for the machine to be considered active."))
     control_parameter = models.CharField(max_length=100, null=True, blank=True)
-    display_time_countdown = models.BooleanField(default=True)
-    display_power_consumption = models.BooleanField(default=True)
-    link_relays = models.BooleanField(default=False)
+    display_time_countdown = models.BooleanField(default=True, help_text=_("Whether the machine displays the time remaining until it locks again when it is unlocked but not active."))
+    display_power_consumption = models.BooleanField(default=True, help_text=_("If the machine displays the power consumption when it is active."))
+    link_relays = models.BooleanField(default=False, help_text=_("If set, the machine relays are linked and the secondary relay is activated together with the primary relay."))
 
     access_control_module = models.IntegerField(default=0, choices=ACCESS_CONTROL_MODULES)
     access_control_module_settings = models.JSONField(default=dict, blank=True)

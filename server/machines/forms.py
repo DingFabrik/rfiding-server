@@ -1,4 +1,7 @@
 from django import forms
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Layout, Fieldset
+from crispy_forms.bootstrap import AppendedText
 
 from .utils import DAY_CHOICES
 from .models import Machine, MachineTime
@@ -24,21 +27,25 @@ class MachineForm(forms.ModelForm):
 
 
 class ConfigureMachineForm(forms.ModelForm):
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper(self)
+        self.helper.layout = Layout(
+            AppendedText("runtimer", "h:m:s"),
+            AppendedText("min_power", "w"),
+            "display_time_countdown",
+            "display_power_consumption",
+            "link_relays",
+        )
     class Meta:
         model = Machine
         fields = [
             "runtimer",
             "min_power",
-            "control_parameter",
             "display_time_countdown",
             "display_power_consumption",
             "link_relays",
-            "access_control_module",
-            "status_display_module",
-            "actor_module",
-            "access_control_module_settings",
-            "status_display_module_settings",
-            "actor_module_settings",
         ]
 
 
