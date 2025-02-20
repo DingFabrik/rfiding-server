@@ -4,31 +4,14 @@ from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.urls import reverse_lazy
 
 from .models import Location
-from base.views import TitleMixin, PartialListMixin
+from base.views import TitleMixin, BaseListView
 
-class LocationListView(TitleMixin, PartialListMixin, PermissionRequiredMixin, ListView):
+class LocationListView(BaseListView):
     permission_required = "locations.view_location"
-    title = _("Locations")
     
     model = Location
     template_name = "location_list.html"
     context_object_name = "locations"
-    
-    def get_queryset(self):
-        queryset = super().get_queryset()
-        search = self.request.GET.get("search")
-        if search:
-            queryset = queryset.filter(name__icontains=search)
-        return queryset
-    
-    def get_paginate_by(self, queryset):
-        return self.request.user.page_length
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["can_create"] = self.request.user.has_perm("machines.create_machine")
-        context["model"] = self.model
-        return context
 
 class LocationDetailView(TitleMixin, PermissionRequiredMixin, DetailView):
     permission_required = "locations.view_location"
@@ -59,7 +42,7 @@ class LocationUpdateView(TitleMixin, PermissionRequiredMixin, UpdateView):
     fields = ["name", "description", "parent"]
     
     def get_title(self):
-        return _("Edit ${self.object.name}")
+        return _(f"Edit {self.object.name}")
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -76,7 +59,7 @@ class LocationDeleteView(TitleMixin, PermissionRequiredMixin, DeleteView):
     success_url = reverse_lazy("locations:list")
     
     def get_title(self):
-        return _("Delete ${self.object.name}")
+        return _(f"Delete {self.object.name}")
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

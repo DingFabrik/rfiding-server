@@ -16,7 +16,7 @@ from django.shortcuts import redirect, get_object_or_404
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
-from base.views import BaseToggleActiveView, PartialListMixin
+from base.views import BaseToggleActiveView, BaseListView
 from .models import Token, TokenType, UnknownToken, BlacklistedToken
 from .forms import TokenForm
 from people.models import Person
@@ -32,7 +32,7 @@ TOKEN_SORT_CHOICES = (
 
 TOKEN_SORT_CHOICES_KEYS = [choice[0] for choice in TOKEN_SORT_CHOICES]
 
-class TokenListView(PartialListMixin, PermissionRequiredMixin, ListView):
+class TokenListView(BaseListView):
     queryset = Token.objects.select_related("person").select_related("type").filter(archived=None).order_by("id")
     permission_required = "tokens.view_token"
 
@@ -42,21 +42,13 @@ class TokenListView(PartialListMixin, PermissionRequiredMixin, ListView):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        search = self.request.GET.get("search")
-        if search:
-            queryset = queryset.filter(serial__icontains=search)
         sort = self.request.GET.get("sort")
         if sort in TOKEN_SORT_CHOICES_KEYS:
             queryset = queryset.order_by(sort)
         return queryset
 
-    def get_paginate_by(self, queryset):
-        return self.request.user.page_length
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["can_create"] = self.request.user.has_perm("tokens.create_token")
-        context["model"] = self.model
         context["sort_choices"] = TOKEN_SORT_CHOICES
         return context
 
@@ -185,7 +177,7 @@ class BlacklistTokenView(PermissionRequiredMixin, View):
         UnknownToken.objects.filter(serial=serial).delete()
         BlacklistedToken.objects.create(serial=serial)
         return redirect("tokens:blacklisted")
-class BlacklistedTokenListView(PartialListMixin, PermissionRequiredMixin, ListView):
+class BlacklistedTokenListView(BaseListView):
     permission_required = "tokens.view_blacklistedtoken"
 
     model = BlacklistedToken
@@ -221,7 +213,7 @@ class NextFreeTokenLabelView(PermissionRequiredMixin, View):
             label_id = 1
         return HttpResponse(_("Next free label: %s") % label_format_func(label_id))
     
-class TokenTypeListView(PartialListMixin, PermissionRequiredMixin, ListView):
+class TokenTypeListView(BaseListView):
     permission_required = "tokens.view_tokentype"
 
     model = TokenType

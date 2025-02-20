@@ -7,6 +7,25 @@ from django.utils.translation import gettext_lazy as _
 
 from rfiding import settings
 
+class PartialMixin:
+    full_base_template = "base.html"
+    partial_base_template = "partial_base.html"
+    
+    @property
+    def is_partial(self):
+        return self.request.headers.get("HX-Request") == "true"
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["base_template"] = self.partial_base_template if self.is_partial else self.full_base_template
+        context["is_partial"] = self.is_partial
+        return context
+
+
+class PartialListMixin(PartialMixin):
+    full_base_template = "base_list.html"
+    partial_base_template = "partial_base_list.html"  
+
 
 class TitleMixin():
     title = None
@@ -29,6 +48,27 @@ class AboutView(TitleMixin, TemplateView):
         context["python_version"] = platform.python_version()
         context["django_version"] = django.get_version()
         return context
+    
+class BaseListView(PartialListMixin, TitleMixin, PermissionRequiredMixin, ListView):
+    def get_title(self):
+        return self.model._meta.verbose_name_plural
+    
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        if "search" in self.request.GET:
+            queryset = queryset.filter(
+                name__icontains=self.request.GET["search"]
+            )
+        return queryset
+    
+    def get_paginate_by(self, queryset):
+        return self.request.user.page_length
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["model"] = self.model
+        context["can_create"] = self.request.user.has_perm(f"{self.model._meta.app_label}.create_{self.model._meta.model_name}")
+        return context
 
 
 class BaseToggleActiveView(PermissionRequiredMixin, TemplateView):
@@ -42,26 +82,6 @@ class BaseToggleActiveView(PermissionRequiredMixin, TemplateView):
         object.save()
         context["object"] = object
         return context
-
-class PartialMixin:
-    full_base_template = "base.html"
-    partial_base_template = "partial_base.html"
-    
-    @property
-    def is_partial(self):
-        return self.request.headers.get("HX-Request") == "true"
-    
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["base_template"] = self.partial_base_template if self.is_partial else self.full_base_template
-        context["is_partial"] = self.is_partial
-        return context
-
-
-class PartialListMixin(PartialMixin):
-    full_base_template = "base_list.html"
-    partial_base_template = "partial_base_list.html"  
-
 
 class AuditlogView(TitleMixin, PartialListMixin, PermissionRequiredMixin, ListView):
     title = _("Audit Log")

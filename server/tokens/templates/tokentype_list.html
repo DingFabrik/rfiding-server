@@ -1,16 +1,7 @@
 {% extends base_template %}
 {% load i18n %}
 
-{% block title%}
-{% trans "Token Types" %}
-{% endblock %}
-
-{% block top_actions %}
-<a href="{% url 'tokens:types:create' %}" class="btn btn-primary">{% trans "Add Token Type" %}</a>
-{% endblock %}
-
-{% block content %}
-<table class="table table-striped table-bordered">
+{% block table %}
     <thead>
         <tr>
             <th>{% trans "Name" %}</th>
@@ -33,5 +24,4 @@
 {% endif %}
 </tr>
 {% endfor %}
-</table>
 {% endblock %}

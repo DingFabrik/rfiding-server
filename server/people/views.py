@@ -13,7 +13,7 @@ from django.views.generic import (
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 
-from base.views import BaseToggleActiveView, PartialListMixin, PartialMixin, TitleMixin
+from base.views import BaseToggleActiveView, BaseListView, PartialMixin, TitleMixin
 from .models import Person, Qualification, Instructor
 from .forms import PersonForm, QualifyPersonForm, InstructorForm
 
@@ -27,9 +27,8 @@ PEOPLE_SORT_CHOICES = (
 )
 
 PEOPLE_SORT_CHOICES_KEYS = [choice[0] for choice in PEOPLE_SORT_CHOICES]
-class PersonListView(TitleMixin, PartialListMixin, PermissionRequiredMixin, ListView):
+class PersonListView(BaseListView):
     permission_required = "people.view_person"
-    title = _("People")
     
     model = Person
     queryset = Person.objects.values(
@@ -40,21 +39,13 @@ class PersonListView(TitleMixin, PartialListMixin, PermissionRequiredMixin, List
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        search = self.request.GET.get("search")
-        if search:
-            queryset = queryset.filter(name__icontains=search)
         sort = self.request.GET.get("sort")
         if sort in PEOPLE_SORT_CHOICES_KEYS:
             queryset = queryset.order_by(sort)
         return queryset
 
-    def get_paginate_by(self, queryset):
-        return self.request.user.page_length
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["can_create"] = self.request.user.has_perm("people.create_person")
-        context["model"] = self.model
         context["sort_choices"] = PEOPLE_SORT_CHOICES
         return context
 
@@ -106,7 +97,7 @@ class PersonUpdateView(TitleMixin, PermissionRequiredMixin, UpdateView):
     context_object_name = "person"
     
     def get_title(self):
-        return _("Edit ${self.object.name}")
+        return _(f"Edit {self.object.name}")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -122,7 +113,7 @@ class PersonDeleteView(TitleMixin, PermissionRequiredMixin, DeleteView):
     success_url = reverse_lazy("people:list")
     
     def get_title(self):
-        return _("Delete ${self.object.name}")
+        return _(f"Delete {self.object.name}")
 
 
 class PersonToggleActiveView(BaseToggleActiveView):
@@ -138,7 +129,7 @@ class QualifyPersonView(TitleMixin, PermissionRequiredMixin, CreateView):
     form_class = QualifyPersonForm
     
     def get_title(self):
-        return _("Qualify ${self.object.name}")
+        return _(f"Qualify {self.object.name}")
 
     def get_initial(self):
         return {"person": self.kwargs["pk"]}
@@ -161,7 +152,7 @@ class RevokeQualificationPersonView(TitleMixin, PartialMixin, PermissionRequired
     template_name = "revoke_qualification_confirm.html"
     
     def get_title(self):
-        return _("Revoke Qualification for ${self.object.name}")
+        return _(f"Revoke Qualification for {self.object.name}")
 
     def get_object(self, queryset: QuerySet[Any] | None = ...) -> Model:
         return self.model.objects.filter(
@@ -180,7 +171,7 @@ class EditQualificationPersonView(TitleMixin, PermissionRequiredMixin, UpdateVie
     template_name = "qualify_person.html"
     
     def get_title(self):
-        return _("Edit Qualification for ${self.object.name}")
+        return _(f"Edit Qualification for {self.object.name}")
 
     def get_object(self, queryset: QuerySet[Any] | None = ...) -> Model:
         return self.model.objects.filter(
@@ -196,24 +187,27 @@ class EditQualificationPersonView(TitleMixin, PermissionRequiredMixin, UpdateVie
     def get_success_url(self):
         return reverse_lazy("people:detail", kwargs={"pk": self.kwargs["pk"]})
 
-class PersonQualificationsListView(TitleMixin, PartialListMixin, PermissionRequiredMixin, ListView):
+class PersonQualificationsListView(BaseListView):
     permission_required = "people.view_qualification"
     model = Qualification
     template_name = "person_qualifications_list.html"
     
+    object = None
+    def get_object(self):
+        if self.object is None:
+            self.object = Person.objects.get(pk=self.kwargs["pk"])
+        return self.object
+    
     def get_title(self):
-        return _("Qualifications for ${self.object.name}")
+        return _(f"Qualifications for {self.get_object().name}")
 
     def get_queryset(self):
         queryset = Qualification.objects.filter(person=self.kwargs["pk"]).select_related("machine").all()
         return queryset
-
-    def get_paginate_by(self, queryset):
-        return self.request.user.page_length
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["person"] = Person.objects.get(pk=self.kwargs["pk"])
+        context["person"] = self.get_object()
         context["qualifications"] = context["page_obj"]
         return context
 
@@ -225,7 +219,7 @@ class AddInstructorPersonView(TitleMixin, PermissionRequiredMixin, CreateView):
     form_class = InstructorForm
     
     def get_title(self):
-        return _("Make ${self.object.name} Instructor")
+        return _(f"Make {self.object.name} Instructor")
 
     def get_initial(self):
         return {"person": self.kwargs["pk"]}
@@ -248,7 +242,7 @@ class RevokeInstructorPersonView(TitleMixin, PartialMixin, PermissionRequiredMix
     template_name = "revoke_instructor_confirm.html"
     
     def get_title(self):
-        return _("Revoke ${self.object.name} as Instructor")
+        return _(f"Revoke {self.object.name} as Instructor")
 
     def get_object(self, queryset: QuerySet[Any] | None = ...) -> Model:
         return self.model.objects.filter(
@@ -258,25 +252,28 @@ class RevokeInstructorPersonView(TitleMixin, PartialMixin, PermissionRequiredMix
     def get_success_url(self):
         return reverse_lazy("people:detail", kwargs={"pk": self.kwargs["pk"]})
 
-class PersonInstructorListView(TitleMixin, PartialListMixin, PermissionRequiredMixin, ListView):
+class PersonInstructorListView(BaseListView):
     permission_required = "people.view_instructor"
     model = Instructor
     template_name = "person_instructor_list.html"
     context_object_name = "instructors"
     
+    object = None
+    def get_object(self):
+        if self.object is None:
+            self.object = Person.objects.get(pk=self.kwargs["pk"])
+        return self.object
+    
     def get_title(self):
-        return _("Instuctor ${self.object.name}")
+        return _(f"Instuctor {self.get_object().name}")
 
     def get_queryset(self):
         queryset = Instructor.objects.filter(person=self.kwargs["pk"]).select_related("machine").all()
         return queryset
-    
-    def get_paginate_by(self, queryset):
-        return self.request.user.page_length
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["model"] = self.model
-        context["person"] = Person.objects.get(pk=self.kwargs["pk"])
+        context["person"] = self.get_object()
         context["can_instruct"] = context["page_obj"]
         return context

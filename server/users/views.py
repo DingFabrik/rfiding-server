@@ -17,7 +17,7 @@ from django.contrib.auth.models import Group
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 
-from base.views import TitleMixin
+from base.views import TitleMixin, BaseListView
 from tokens.models import Token
 from machines.models import Machine
 from people.models import Person
@@ -65,8 +65,7 @@ class ChangePasswordView(TitleMixin, PasswordChangeView):
     template_name = "change_password.html"
     
 
-class UserListView(TitleMixin, PermissionRequiredMixin, ListView):
-    title = _("Users")
+class UserListView(BaseListView):
     permission_required = "users.view_rfidinguser"
 
     model = RFIDingUser
@@ -93,7 +92,7 @@ class UserUpdateView(TitleMixin, PermissionRequiredMixin, UpdateView):
     success_url = reverse_lazy("users:list")
     
     def get_title(self):
-        return _("Edit ${self.object.name}")
+        return _(f"Edit {self.object.name}")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -119,7 +118,7 @@ class UserDeleteView(TitleMixin, PermissionRequiredMixin, DeleteView):
     permission_required = "users.delete_rfidinguser"
     
     def get_title(self):
-        return _("Delete ${self.object.name}")
+        return _(f"Delete {self.object.name}")
 
     model = RFIDingUser
     template_name = "delete_confirm.html"
@@ -145,7 +144,7 @@ class AdminChangePasswordView(TitleMixin, FormView):
         return context
 
 
-class GroupListView(TitleMixin, PermissionRequiredMixin, ListView):
+class GroupListView(BaseListView):
     permission_required = "auth.view_group"
     title = _("Groups")
 
@@ -173,7 +172,7 @@ class GroupUpdateView(TitleMixin, PermissionRequiredMixin, UpdateView):
     success_url = reverse_lazy("users:groups:list")
     
     def get_title(self):
-        return _("Edit ${self.object.name}")
+        return _(f"Edit {self.object.name}")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -188,4 +187,4 @@ class GroupDeleteView(TitleMixin, PermissionRequiredMixin, DeleteView):
     success_url = reverse_lazy("users:groups:list")
     
     def get_title(self):
-        return _("Delete ${self.object.name}")
+        return _(f"Delete {self.object.name}")

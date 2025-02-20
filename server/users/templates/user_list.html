@@ -1,26 +1,16 @@
-{% extends "base.html" %}
+{% extends base_template %}
 {% load i18n %}
 
-{% block title%}
-{% trans "Users" %}
-{% endblock %}
 
-{% block top_actions %}
-<a href="{% url 'users:create' %}" class="btn btn-primary">{% trans "Add user" %}</a>
-{% endblock %}
-
-{% block content %}
-<table class="table table-striped table-bordered">
+{% block table %}
     <thead>
         <tr>
-            <th>{% trans "ID" %}</th>
             <th>{% trans "Name" %}</th>
             <th>{% trans "E-Mail Address" %}</th>
         </tr>
         </thead>
 {% for user in users %}
 <tr>
-<td>{{ user.pk }}</td>
 {% if perms.users.modify_user %}
 <td><a href="{% url "users:update" user.pk %}">{{ user.name }}</a></td>
 {% else %}
@@ -29,5 +19,4 @@
 <td>{{ user.email }}</td>
 </tr>
 {% endfor %}
-</table>
 {% endblock %}

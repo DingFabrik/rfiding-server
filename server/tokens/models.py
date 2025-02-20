@@ -74,12 +74,22 @@ class UnknownToken(TimestampedModel):
 
     def __str__(self):
         return f"{self.serial}"
+        
+    class Meta:
+        verbose_name = _("Unknown Token")
+        verbose_name_plural = _("Unknown Tokens")
+        ordering = ["serial"]
     
 class BlacklistedToken(TimestampedModel):
     serial = models.CharField(max_length=20)
     
     def __str__(self):
         return f"{self.serial}"
+    
+    class Meta:
+        verbose_name = _("Blacklisted Token")
+        verbose_name_plural = _("Blacklisted Tokens")
+        ordering = ["serial"]
 
 channel_layer = get_channel_layer()
     
