@@ -27,7 +27,7 @@
         {% endif %}
         </li>
         <li class="page-item {% if not page_obj.has_next %}disabled{% endif %}">
-            <a class="page-link" href="{{ page_path|default:request.path }}{% build_url_params request.GET page=page_obj.num_pages %}" aria-label="Last" {% if is_partial %}hx-get="{{ page_path|default:request.path }}{% build_url_params request.GET page=page_obj.num_pages %}" hx-target="#{{ target|default:"list_container" }}" {% if set_history %}hx-push-url="true"{% endif %}{% endif %}>
+            <a class="page-link" href="{{ page_path|default:request.path }}{% build_url_params request.GET page=page_obj.paginator.num_pages %}" aria-label="Last" {% if is_partial %}hx-get="{{ page_path|default:request.path }}{% build_url_params request.GET page=page_obj.paginator.num_pages %}" hx-target="#{{ target|default:"list_container" }}" {% if set_history %}hx-push-url="true"{% endif %}{% endif %}>
                 <i class="bi-chevron-double-right"></i>
             </a>
         </li>
