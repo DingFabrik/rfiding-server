@@ -23,6 +23,12 @@ class MachineForm(forms.ModelForm):
                      "ip_address",
                      "mac_address",
                      css_class="border rounded p-2 mb-3"),
+            Fieldset(_("Logging"),
+                        "log_booted",
+                        "log_enabled",
+                        "log_disabled",
+                        "log_unsuccessful",
+                        css_class="border rounded p-2 mb-3"),
             "chip",
             Fieldset(_("Security"),
                      "encryption_key",
@@ -47,7 +53,11 @@ class MachineForm(forms.ModelForm):
             "is_active",
             "needs_qualification",
             "chip",
-            "encryption_key"
+            "encryption_key",
+            "log_booted",
+            "log_enabled",
+            "log_disabled",
+            "log_unsuccessful",
         ]
         widgets = {
             "encryption_key": forms.PasswordInput(render_value=True),

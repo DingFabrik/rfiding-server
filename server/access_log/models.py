@@ -5,12 +5,13 @@ LOG_TYPE_BOOTED = "booted"
 LOG_TYPE_REGISTERED = "registered"
 LOG_TYPE_ENABLED = "enabled"
 LOG_TYPE_DISABLED = "disabled"
+LOG_TYPE_UNSUCCESSFUL = "unsuccessful"
 
 LOG_TYPES = (
     (LOG_TYPE_BOOTED, _("Booted")),
     (LOG_TYPE_ENABLED, _("Enabled")),
     (LOG_TYPE_DISABLED, _("Disabled")),
-    (LOG_TYPE_REGISTERED, _("Registered")),
+    (LOG_TYPE_UNSUCCESSFUL, _("Unsuccessful")),
 )
 
 class AccessLog(models.Model):

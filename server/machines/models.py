@@ -61,6 +61,11 @@ class Machine(TimestampedModel):
     chip = models.CharField(max_length=100, default=SUPPORTED_CHIPS[0][0], choices=SUPPORTED_CHIPS)
     firmware_version = models.CharField(max_length=50, null=True, blank=True)
 
+    log_booted = models.BooleanField(default=True, help_text=_("Log boot events"))
+    log_enabled = models.BooleanField(default=True, help_text=_("Log successful unlock events"))
+    log_disabled = models.BooleanField(default=False, help_text=_("Log when machine is disabled again"))
+    log_unsuccessful = models.BooleanField(default=False, help_text=_("Log unsuccessful unlock attempts"))
+
     runtimer = models.DurationField(default=0, help_text=_("Time until the machine is locked again when it is not active."))
     min_power = models.IntegerField(default=10, help_text=_("Minimum power consumption in watts for the machine to be considered active."))
     control_parameter = models.CharField(max_length=100, null=True, blank=True)

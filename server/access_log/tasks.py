@@ -5,7 +5,8 @@ from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 import logging
 
-from .models import AccessLog
+from .models import AccessLog, LOG_TYPE_ENABLED, LOG_TYPE_BOOTED, LOG_TYPE_DISABLED, LOG_TYPE_UNSUCCESSFUL
+from machines.models import Machine
 
 logger = logging.getLogger(__name__)
 
@@ -14,12 +15,22 @@ delete_days = settings.ACCESS_LOG_DELETE_DAYS if hasattr(settings, "ACCESS_LOG_D
 anonymize_days = settings.ACCESS_LOG_ANONYMIZE_DAYS if hasattr(settings, "ACCESS_LOG_ANONYMIZE_DAYS") else 0
 
 @shared_task
-def save_access_log(machine_id, token_id, log_type):
+def save_access_log(machine, token_id, log_type):
+    if not isinstance(machine, Machine):
+        machine = Machine.objects.get(pk=machine)
+    if log_type == LOG_TYPE_BOOTED and not machine.log_booted:
+        return
+    if log_type == LOG_TYPE_ENABLED and not machine.log_enabled:
+        return
+    if log_type == LOG_TYPE_DISABLED and not machine.log_disabled:
+        return
+    if log_type == LOG_TYPE_UNSUCCESSFUL and not machine.log_unsuccessful:
+        return
     ago = timezone.now() - timedelta(seconds=seconds_ago)
-    if AccessLog.objects.filter(machine_id=machine_id, token_id=token_id, type=log_type, timestamp__gte=ago).exists():
+    if AccessLog.objects.filter(machine_id=machine.pk, token_id=token_id, type=log_type, timestamp__gte=ago).exists():
         return
     AccessLog.objects.create(
-        machine_id=machine_id,
+        machine_id=machine.pk,
         token_id=token_id,
         type=log_type,
     )
