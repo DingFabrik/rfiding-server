@@ -1,5 +1,4 @@
 {% load i18n %}
-<div class="row pb-5">
     <div class="col-sm pb-5">
         <div class="card border-secondary text-center">
             <div class="card-header">
@@ -8,11 +7,11 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col">
-                        <h4 class="card-title">{{ activeTokenCount }}</h4>
+                        <span class="h3 mb-1 p-0">{{ activeTokenCount }}</span>
                         <p class="card-text text-secondary">{% trans "Active" %}</p>
                     </div>
                     <div class="col">
-                        <h4 class="card-title">{{ tokenCount }}</h4>
+                        <span class="h3 mb-1 p-0">{{ tokenCount }}</span>
                         <p class="card-text text-secondary">{% trans "Total" %}</p>
                     </div>
                 </div>
@@ -27,11 +26,11 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col">
-                        <h4 class="card-title">{{ activePeopleCount }}</h4>
+                        <span class="h3 mb-1 p-0">{{ activePeopleCount }}</span>
                         <p class="card-text text-secondary">{% trans "Active" %}</p>
                     </div>
                     <div class="col">
-                        <h4 class="card-title">{{ peopleCount }}</h4>
+                        <span class="h3 mb-1 p-0">{{ peopleCount }}</span>
                         <p class="card-text text-secondary">{% trans "Total" %}</p>
                     </div>
                 </div>
@@ -46,15 +45,14 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col">
-                        <h4 class="card-title">{{ activeMachineCount }}</h4>
+                        <span class="h3 mb-1 p-0">{{ activeMachineCount }}</span>
                         <p class="card-text text-secondary">{% trans "Active" %}</p>
                     </div>
                     <div class="col">
-                        <h4 class="card-title">{{ machineCount }}</h4>
+                        <span class="h3 mb-1 p-0">{{ machineCount }}</span>
                         <p class="card-text text-secondary">{% trans "Total" %}</p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
