@@ -17,7 +17,17 @@ hx-ext="ws" ws-connect="/ws/machines/{{ machine.mac_address }}/state"
 {% block top_actions %}
 <div class="btn-group" role="group">
 {% if can_edit %}
-<button type="button" data-bs-toggle="modal" data-bs-target="#logModal" class="btn btn-secondary"><i class="bi-pencil-square me-2"></i>{% trans "Logs "%}</button>
+{% if machine.has_api %}
+<button
+  type="button"
+  id="logsButton"
+  data-bs-toggle="modal"
+  data-bs-target="#logModal"
+  class="btn btn-secondary"
+  hx-get="{% url "machines:logs" object.pk %}"
+  hx-target="#logContainer"
+  hx-trigger="click"><i class="bi-pencil-square me-2"></i>{% trans "Logs "%}</button>
+{% endif %}
 <a href="{% url request.resolver_match.namespace|add:':update' object.pk %}" class="btn btn-primary"><i class="bi-pencil-square me-2"></i>{% trans "Edit "%}</a>
 <a href="{% url request.resolver_match.namespace|add:':configure' object.pk %}" class="btn btn-primary"><i class="bi-sliders me-2"></i>{% trans "Configure"%}</a>
 {% endif %}
@@ -135,6 +145,7 @@ hx-ext="ws" ws-connect="/ws/machines/{{ machine.mac_address }}/state"
           </div>
     </div>
 </div>
+{% if machine.has_api %}
 <div class="modal" id="logModal" tabindex="-1">
   <div class="modal-dialog modal-dialog-scrollable modal-xl">
     <div class="modal-content">
@@ -142,13 +153,12 @@ hx-ext="ws" ws-connect="/ws/machines/{{ machine.mac_address }}/state"
         <h5 class="modal-title">Logs</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <div class="modal-body" hx-ext="ws" ws-connect="/ws/machines/{{ machine.mac_address }}/logs">
-        <div id="machine_logs"></div>
-      </div>
+      <div class="modal-body" id="logContainer"></div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
       </div>
     </div>
   </div>
 </div>
+{% endif %}
 {% endblock %}

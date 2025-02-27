@@ -22,6 +22,7 @@ urlpatterns = [
         name="status",
     ),
     path("<int:pk>/delete", views.MachineDeleteView.as_view(), name="delete"),
+    path("<int:pk>/logs", views.MachineLogView.as_view(), name="logs"),
     path("autocomplete", ajax.MachineAutocompleteView.as_view(), name="autocomplete"),
     path(
         "autocomplete/qualify/<int:person>",

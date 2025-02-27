@@ -1,0 +1,8 @@
+<div
+    id="logContainer"
+    class="modal-body"
+    hx-ext="ws"
+    ws-connect="/ws/machines/{{ machine.mac_address }}/logs"
+    hx-trigger="click from:#logsButton">
+    <div id="machine_logs"></div>
+</div>

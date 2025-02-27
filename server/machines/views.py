@@ -198,6 +198,17 @@ class MachineStatusPartialView(PermissionRequiredMixin, DetailView):
         context["status"] = get_socket_data(self.object.pk, "status")
         return context
 
+class MachineLogView(PartialMixin, PermissionRequiredMixin, DetailView):
+    permission_required = "machines.view_machine"
+
+    model = Machine
+    template_name = "machine_log_modal.html"
+    context_object_name = "machine"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
 class MachineToggleActiveView(BaseToggleActiveView):
     permission_required = "machines.change_machine"
     model = Machine
