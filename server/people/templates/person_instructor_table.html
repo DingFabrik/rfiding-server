@@ -42,6 +42,9 @@
     {% url 'people:instructs-for' person.pk as page_path %}
     {% include "base_pagination.html" with page_obj=can_instruct target="can_instruct_container" %}
     {% else %}
-        <div class="alert alert-secondary">{% with name=person.name %}{% blocktrans %}<b>{{ name }}</b> can not instruct people for any machines.{% endblocktrans %}{% endwith %}</div>
+        <div class="alert alert-secondary">
+            <i class="h5 bi-ban me-2"></i>
+            <span class=align-top>{% with name=person.name %}{% blocktrans %}<b>{{ name }}</b> can not instruct people for any machines.{% endblocktrans %}{% endwith %}</span>
+            </div>
     {% endif %}
 </div>

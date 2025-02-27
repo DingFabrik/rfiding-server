@@ -1,5 +1,5 @@
 from django import template
-
+from django.utils.translation import gettext as _
 
 register = template.Library()
 
@@ -59,3 +59,10 @@ def build_url_params(params, **kwargs):
     if len(params) == 0:
         return ""
     return "?" + "&".join([f"{k}={v}" for k, v in params.items()])
+    
+@register.filter(name='translate')
+def translate(text):
+    try:    
+        return _(text)
+    except:
+        return text

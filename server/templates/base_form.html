@@ -8,7 +8,7 @@
 {% block pre_form %}{% endblock %}
 <form action="" method="post">
     {% csrf_token %}
-    {% crispy form %}
+    {{ form|crispy }}
             <button class="btn btn-primary" type="submit">{% trans "Save" %}</button>
         {% if object and can_delete %}
             <a class="btn btn-danger float-end" href="{% url request.resolver_match.namespace|add:':delete' object.pk %}">

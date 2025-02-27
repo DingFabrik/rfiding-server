@@ -1,4 +1,4 @@
-{% load i18n %}
+{% load i18n %}{% load base_extra %}
 <div id="qualifications_container">
   {% if qualifications %}
     <table class="table table-striped table-bordered mb-4 mt-1">
@@ -65,9 +65,11 @@
     {% include 'base_pagination.html' with page_obj=qualifications target='qualifications_container' %}
   {% else %}
     <div class="alert alert-secondary">
-      {% with name=person.name %}
+      <i class="h5 bi-ban me-2"></i>
+      <span class=align-top>{% with name=person.name %}
         {% blocktrans %}<b>{{ name }}</b> is not qualified for any machines.{% endblocktrans %}
       {% endwith %}
+      </span>
     </div>
   {% endif %}
 </div>

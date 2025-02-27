@@ -1,4 +1,4 @@
-{% load i18n %}
+{% load i18n %}{% load base_extra %}
 <div id="qualifications_container">
     {% if qualifications %}
     <table class="table table-striped table-bordered">
@@ -49,6 +49,6 @@
     {% url 'machines:qualifications' machine.pk as page_path %}
     {% include "base_pagination.html" with page_obj=qualifications target="qualifications_container" %}
     {% else %}
-    <div class="alert alert-secondary">{% trans "There are no people qualified for this machine" %}</div>
+    {% include "snippets/empty.html" with icon="ban" message="There are no people qualified for this machine"|translate %}
     {% endif %}
 </div>

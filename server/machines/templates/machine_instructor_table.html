@@ -1,4 +1,4 @@
-{% load i18n %}
+{% load i18n %}{% load base_extra %}
 <div id="cinstructors_container">
     {% if instructors %}
     <table class="table table-striped table-bordered">
@@ -39,6 +39,6 @@
     {% url 'machines:instructors' machine.pk as page_path %}
     {% include "base_pagination.html" with page_obj=instructors target="instructors_container" %}
     {% else %}
-        <div class="alert alert-secondary">{% trans "There are no instructors for this machine" %}</div>
+    {% include "snippets/empty.html" with icon="ban" message="There are no instructors for this machine"|translate %}
     {% endif %}
 </div>
