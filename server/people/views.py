@@ -26,6 +26,12 @@ PEOPLE_SORT_CHOICES = (
     ("-created", _("Created")),
 )
 
+PEOPLE_FILTER_CHOICES = (
+    ("active", _("Active")),
+    ("inactive", _("Inactive")),
+    ("all", _("All")),
+)
+
 PEOPLE_SORT_CHOICES_KEYS = [choice[0] for choice in PEOPLE_SORT_CHOICES]
 class PersonListView(BaseListView):
     permission_required = "people.view_person"
@@ -42,11 +48,19 @@ class PersonListView(BaseListView):
         sort = self.request.GET.get("sort")
         if sort in PEOPLE_SORT_CHOICES_KEYS:
             queryset = queryset.order_by(sort)
+        filter = self.request.GET.get("filter")
+        if filter == "all":
+            queryset = queryset
+        elif filter == "inactive":
+            queryset = queryset.filter(is_active=False)
+        else:
+            queryset = queryset.filter(is_active=True)
         return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["sort_choices"] = PEOPLE_SORT_CHOICES
+        context["filter_choices"] = PEOPLE_FILTER_CHOICES
         return context
 
 

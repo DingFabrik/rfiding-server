@@ -50,6 +50,8 @@ class AboutView(TitleMixin, TemplateView):
         return context
     
 class BaseListView(PartialListMixin, TitleMixin, PermissionRequiredMixin, ListView):
+    search_field = "name"
+    
     def get_title(self):
         return self.model._meta.verbose_name_plural
     
@@ -57,7 +59,7 @@ class BaseListView(PartialListMixin, TitleMixin, PermissionRequiredMixin, ListVi
         queryset = super().get_queryset()
         if "search" in self.request.GET:
             queryset = queryset.filter(
-                name__icontains=self.request.GET["search"]
+                **{f"{self.search_field}__icontains": self.request.GET["search"]}
             )
         return queryset
     

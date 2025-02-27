@@ -30,6 +30,13 @@ TOKEN_SORT_CHOICES = (
     ("-created", _("Created")),
 )
 
+TOKEN_FILTER_CHOICES = (
+    ("active", _("Active")),
+    ("inactive", _("Inactive")),
+    ("all", _("All")),
+    ("archived", _("Archived")),
+)
+
 TOKEN_SORT_CHOICES_KEYS = [choice[0] for choice in TOKEN_SORT_CHOICES]
 
 class TokenListView(BaseListView):
@@ -39,17 +46,28 @@ class TokenListView(BaseListView):
     model = Token
     template_name = "token_list.html"
     context_object_name = "tokens"
+    search_field = "serial"
 
     def get_queryset(self):
         queryset = super().get_queryset()
         sort = self.request.GET.get("sort")
         if sort in TOKEN_SORT_CHOICES_KEYS:
             queryset = queryset.order_by(sort)
+        filter = self.request.GET.get("filter")
+        if filter == "all":
+            queryset = queryset
+        elif filter == "inactive":
+            queryset = queryset.filter(is_active=False)
+        elif filter == "archived":
+            queryset = queryset.filter(archived__isnull=False)
+        else:
+            queryset = queryset.filter(is_active=True)
         return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["sort_choices"] = TOKEN_SORT_CHOICES
+        context["filter_choices"] = TOKEN_FILTER_CHOICES
         return context
 
 

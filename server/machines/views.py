@@ -28,9 +28,13 @@ MACHINE_SORT_CHOICES = (
     ("mac_address", _("MAC Address")),
     ("-updated", _("Last Modified")),
 )
-
 MACHINE_SORT_CHOICES_KEYS = [choice[0] for choice in MACHINE_SORT_CHOICES]
 
+MACHINE_FILTER_CHOICES = (
+    ("active", _("Active")),
+    ("inactive", _("Inactive")),
+    ("all", _("All")),
+)
 class MachineListView(BaseListView):
     permission_required = "machines.view_machine"
     title = _("Machines")
@@ -44,11 +48,19 @@ class MachineListView(BaseListView):
         sort = self.request.GET.get("sort")
         if sort in MACHINE_SORT_CHOICES_KEYS:
             queryset = queryset.order_by(sort)
+        filter = self.request.GET.get("filter")
+        if filter == "all":
+            queryset = queryset
+        elif filter == "inactive":
+            queryset = queryset.filter(is_active=False)
+        else:
+            queryset = queryset.filter(is_active=True)
         return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["sort_choices"] = MACHINE_SORT_CHOICES
+        context["filter_choices"] = MACHINE_FILTER_CHOICES
         return context
 
 

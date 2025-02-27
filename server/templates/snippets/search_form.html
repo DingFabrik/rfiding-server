@@ -9,29 +9,49 @@
     name="search"
     value="{{ request.GET.search }}"
     hx-get="{{ request.path }}"
-    hx-include="#id_sort"
+    hx-include="#id_sort, #id_filter"
     hx-target="#list_container"
     hx-trigger="input changed delay:300ms, search"
     hx-push-url="true">
     </div>
+    {% if filter_choices %}
+    <div class="col-12">
+        <div class="input-group">
+            <span class="input-group-text">{% trans "Filter" %}</span>
+            <select
+            id="id_filter"
+            class="form-select"
+            name="filter"
+            hx-get="{{ request.path }}"
+            hx-include="#id_search, #id_sort"
+            hx-target="#list_container"
+            hx-trigger="change"
+            hx-push-url="true">
+            {% for choice in filter_choices %}
+                <option value="{{ choice.0 }}" {% if choice.0 == request.GET.filter %}selected{% endif %}>{{ choice.1 }}</option>
+            {% endfor %}
+            </select>
+        </div>
+    </div>
+    {% endif %}
     {% if sort_choices %}
     <div class="col-12">
         <div class="input-group">
-        <span class="input-group-text">{% trans "Sort" %}</span>
-        <select
-        id="id_sort"
-        class="form-select"
-        name="sort"
-        hx-get="{{ request.path }}"
-        hx-include="#id_search"
-        hx-target="#list_container"
-        hx-trigger="change"
-        hx-push-url="true">
-        {% for choice in sort_choices %}
-            <option value="{{ choice.0 }}" {% if choice.0 == request.GET.sort %}selected{% endif %}>{{ choice.1 }}</option>
-        {% endfor %}
-        </select>
-    </div>
+            <span class="input-group-text">{% trans "Sort" %}</span>
+            <select
+            id="id_sort"
+            class="form-select"
+            name="sort"
+            hx-get="{{ request.path }}"
+            hx-include="#id_search, #id_filter"
+            hx-target="#list_container"
+            hx-trigger="change"
+            hx-push-url="true">
+            {% for choice in sort_choices %}
+                <option value="{{ choice.0 }}" {% if choice.0 == request.GET.sort %}selected{% endif %}>{{ choice.1 }}</option>
+            {% endfor %}
+            </select>
+        </div>
     </div>
     {% endif %}
 </form>
