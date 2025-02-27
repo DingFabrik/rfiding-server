@@ -1,7 +1,7 @@
 {% load i18n %}
-<h6 class="d-inline">
-{% if status == 'online' %}
-  <small class="badge text-bg-success h5">{% trans 'Online' %}</small>
+<h6 id="machine_state" class="d-inline align-bottom">
+{% if status == 'standby' %}
+  <small class="badge text-bg-success h5">{% trans 'Standby' %}</small>
 {% elif status == 'disconnected' %}
   <span class="badge text-bg-secondary">{% trans 'Offline' %}</span>
 {% elif status == 'enabled' %}
@@ -9,3 +9,4 @@
 {% else %}
   <small class="label label-warning">{% trans 'Unknown' %}</small>
 {% endif %}
+</h6>

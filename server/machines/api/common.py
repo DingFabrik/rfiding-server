@@ -35,15 +35,15 @@ class BaseAPIView(APIView):
         if request.method.lower() == "get" and self.required_get_parameters:
             for param in self.required_get_parameters:
                 if request.GET.get(param, None) is None:
-                    raise ValidationError(f"Missing parameter {param}")
+                    raise ValidationError(f"Missing {param}")
         if request.method.lower() == "post" and self.required_post_parameters:
             for param in self.required_post_parameters:
                 if request.data.get(param, None) is None:
-                    raise ValidationError(f"Missing parameter {param}")
+                    raise ValidationError(f"Missing {param}")
         if request.method.lower() == "delete" and self.required_delete_parameters:
             for param in self.required_delete_parameters:
                 if request.GET.get(param, None) is None:
-                    raise ValidationError(f"Missing parameter {param}")
+                    raise ValidationError(f"Missing {param}")
 
 
 def check_access(machine, tokenID):
@@ -56,14 +56,14 @@ def check_access(machine, tokenID):
     except Token.DoesNotExist:
         if not BlacklistedToken.objects.filter(serial=tokenID).exists():
             UnknownToken.objects.get_or_create(serial=tokenID, machine=machine)
-        raise NotFound("Token does not exist") from None
+        raise NotFound("Invalid Token") from None
 
     if machine.needs_qualification:
         qualification = (
             token.person.qualifications.filter(machine=machine).order_by().first()
         )
         if qualification is None or qualification.permission_level == PERMISSION_LEVELS[2][0]:
-            raise PermissionDenied("Person does not have access to machine")
+            raise PermissionDenied("No Access!")
 
         if qualification.permission_level == PERMISSION_LEVELS[0][0]:
             space_state = SpaceState.objects.first()

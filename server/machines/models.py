@@ -57,7 +57,7 @@ class Machine(TimestampedModel):
     mac_address = models.CharField(max_length=17, db_index=True)
     hostname = models.CharField(max_length=100)
     ip_address = models.GenericIPAddressField(null=True, blank=True)
-    encryption_key = models.CharField(max_length=32, null=True, blank=True, help_text=_("32 character encryption key for secure communication with the machine."))
+    encryption_key = models.CharField(max_length=64, null=True, blank=True, help_text=_("64 character encryption key for secure communication with the machine."))
     chip = models.CharField(max_length=100, default=SUPPORTED_CHIPS[0][0], choices=SUPPORTED_CHIPS)
     firmware_version = models.CharField(max_length=50, null=True, blank=True)
 
@@ -78,7 +78,7 @@ class Machine(TimestampedModel):
     class Meta:
         verbose_name = _("Machine")
         verbose_name_plural = _("Machines")
-        ordering = ["pk"]
+        ordering = ["name"]
 
     def __str__(self):
         return f"{self.name}"

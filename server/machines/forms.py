@@ -1,13 +1,41 @@
 from django import forms
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Fieldset
-from crispy_forms.bootstrap import AppendedText
+from crispy_forms.layout import Layout, Fieldset, Submit, HTML
+from crispy_forms.bootstrap import AppendedText, FormActions
+from django.utils.translation import gettext as _
 
 from .utils import DAY_CHOICES
 from .models import Machine, MachineTime
 
 
 class MachineForm(forms.ModelForm):
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper(self)
+        self.helper.layout = Layout(
+            "name",
+            "location",
+            "is_active",
+            "needs_qualification",
+            Fieldset(_("Network"),
+                     "hostname",
+                     "ip_address",
+                     "mac_address",
+                     css_class="border rounded p-2 mb-3"),
+            "chip",
+            Fieldset(_("Security"),
+                     "encryption_key",
+                     css_class="border rounded p-2 mb-3"),
+            FormActions(
+                Submit("submit", _("Save")),
+                HTML("""{% load i18n %}{% if object and can_delete %}
+            <a class="btn btn-danger float-end" href="{% url request.resolver_match.namespace|add:':delete' object.pk %}">
+                <i class="bi-trash me-1"></i> {% trans 'Delete' %}
+            </a>
+        {% endif %}""")
+            )
+        )
     class Meta:
         model = Machine
         fields = [
@@ -22,7 +50,7 @@ class MachineForm(forms.ModelForm):
             "encryption_key"
         ]
         widgets = {
-            "encryption_key": forms.PasswordInput(),
+            "encryption_key": forms.PasswordInput(render_value=True),
         }
 
 

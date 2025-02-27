@@ -64,7 +64,7 @@ class Token(TimestampedModel):
     class Meta:
         verbose_name = _("Token")
         verbose_name_plural = _("Tokens")
-        ordering = ["pk"]
+        ordering = ["serial"]
         unique_together = ("serial", "archived")
 
 

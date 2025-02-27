@@ -19,11 +19,11 @@ from .forms import PersonForm, QualifyPersonForm, InstructorForm
 
 
 PEOPLE_SORT_CHOICES = (
-    ("pk", _("Default")),
+    ("member_id", _("Member ID")),
     ("name", _("Name")),
     ("email", _("E-Email")),
-    ("member_id", _("Member ID")),
     ("-updated", _("Last Modified")),
+    ("-created", _("Created")),
 )
 
 PEOPLE_SORT_CHOICES_KEYS = [choice[0] for choice in PEOPLE_SORT_CHOICES]

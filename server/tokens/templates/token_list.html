@@ -6,14 +6,15 @@
     {% include "snippets/search_form.html" %}
 </div>
 {% if perms.tokens.create_token %}
-<a href="{% url 'tokens:unknown' %}" class="btn btn-primary"><i class="bi-plus-lg"></i> {% blocktrans %}Assign Token{% endblocktrans %}</a>
+<a href="{% url 'tokens:unknown' %}" class="btn btn-primary"data-bs-toggle="tooltip"
+title="{% trans 'Assign Token' %}"><i class="bi-plus-lg"></i></a>
 {% endif %}
 {% endblock %}
 
 {% block bottom_actions %}
 {% if perms.tokens.create_token %}
-<a href="{% url 'tokens:unknown' %}" class="btn btn-primary"><i class="bi-plus-lg"></i> {% blocktrans %}Assign Token{% endblocktrans %}</a>
-{% endif %}
+<a href="{% url 'tokens:unknown' %}" class="btn btn-primary"data-bs-toggle="tooltip"
+title="{% trans 'Assign Token' %}"><i class="bi-plus-lg"></i></a>{% endif %}
 {% endblock %}
 
 {% block table %}

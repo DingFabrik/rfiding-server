@@ -22,7 +22,6 @@ from people.models import Qualification, Instructor
 from people.forms import QualifyPersonForm, InstructorForm
 
 MACHINE_SORT_CHOICES = (
-    ("pk", _("Default")),
     ("name", _("Name")),
     ("hostname", _("Hostname")),
     ("ip_address", _("IP Address")),

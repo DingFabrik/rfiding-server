@@ -11,13 +11,13 @@
     {% include "snippets/search_form.html" %}
 </div>
 {% if can_create %}
-<a href="{% url request.resolver_match.namespace|add:':create' %}" class="btn btn-primary"><i class="bi-plus-lg"></i> {% with model|verbose_name as modelname %}{% blocktrans %}Add {{ modelname }}{% endblocktrans %}{% endwith %}</a>
+<a href="{% url request.resolver_match.namespace|add:':create' %}" class="btn btn-primary" data-bs-toggle="tooltip" title="{% with model|verbose_name as modelname %}{% blocktrans %}Add {{ modelname }}{% endblocktrans %}{% endwith %}"><i class="bi-plus-lg"></i></a>
 {% endif %}
 {% endblock %}
 
 {% block bottom_actions %}
 {% if can_create %}
-<a href="{% url request.resolver_match.namespace|add:':create' %}" class="btn btn-primary float-end"><i class="bi-plus-lg"></i> {% with model|verbose_name as modelname %}{% blocktrans %}Add {{ modelname }}{% endblocktrans %}{% endwith %}</a>
+<a href="{% url request.resolver_match.namespace|add:':create' %}" class="btn btn-primary" data-bs-toggle="tooltip" title="{% with model|verbose_name as modelname %}{% blocktrans %}Add {{ modelname }}{% endblocktrans %}{% endwith %}"><i class="bi-plus-lg"></i></a>
 {% endif %}
 {% endblock %}
 

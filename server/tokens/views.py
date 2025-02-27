@@ -24,10 +24,10 @@ from .common import clear_unknown_tokens
 
 
 TOKEN_SORT_CHOICES = (
-    ("pk", _("Default")),
     ("serial", _("Serial")),
     ("purpose", _("Purpose")),
     ("-updated", _("Last Modified")),
+    ("-created", _("Created")),
 )
 
 TOKEN_SORT_CHOICES_KEYS = [choice[0] for choice in TOKEN_SORT_CHOICES]

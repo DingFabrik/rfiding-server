@@ -14,35 +14,22 @@ from machines.api.common import check_access
 connections = {}
 
 class ConnectionManager:
-    is_enabled_key = None
+    device_state_key = None
     token_id_key = None
     mac_address_key = None
     error_message_key = None
+    power_consumption_key = None
     
     is_enabled = False
     is_connected = False
     mac_address = None
     
+    on_state_change = None
+    
     def __init__(self, machine):
         self.machine = machine
         self.mac_address = machine.mac_address
-        self.client = APIClient(machine.ip_address, 6053, machine.encryption_key)
-        
-    async def enable_for(self, token_id, mac_address=None):
-        try:
-            machine = self.machine
-            if mac_address is not None:
-                if mac_address != self.machine.mac_address:
-                    machine = await Machine.objects.get(mac_address=mac_address)
-            if machine is None:
-                return
-            response = await sync_to_async(check_access)(self.machine, token_id)
-            if "access" in response and response["access"] == 1:
-                self.client.switch_command(self.is_enabled_key, state=True)
-        except Exception as e:
-            self.client.text_command(self.error_message_key, str(e))
-            print(e)
-            pass
+        self.client = APIClient(machine.ip_address, 6053, None, noise_psk=machine.encryption_key)
         
     def send_command(self, command):
         if not self.is_connected:
@@ -51,38 +38,29 @@ class ConnectionManager:
         self.client.execute_service(service, {})
         
     async def change_callback(self, state):
-        if state.key == self.token_id_key and len(state.state) == 8:
-            token_id = state.state
-            await self.enable_for(token_id)
+        if self.on_state_change is not None:
+            if self.device_state_key == state.key:
+                await self.on_state_change({"state": state.state})
     
     async def setup_entities(self):
         entities = await self.client.list_entities_services()
         for entity in entities[0]:
-            if entity.object_id == "is_enabled":
-                self.is_enabled_key = entity.key
+            if entity.object_id == "device_state":
+                self.device_state_key = entity.key
             if entity.object_id == "token_id":
                 self.token_id_key = entity.key
             if entity.object_id == "error_message":
                 self.error_message_key = entity.key
+            if entity.object_id == "current_power_consumption":
+                self.power_consumption_key = entity.key
     
     async def connect(self):        
         def change_callback(state):
             asyncio.ensure_future(self.change_callback(state))
-        
-        def on_connect():
-            self.is_connected = True
-            print("Connected to", self.machine.name)
-            self.client.subscribe_states(change_callback)
-            asyncio.ensure_future(self.setup_entities())
-            
-        def on_disconnect(is_expected):
-            self.is_connected = False
-            print("Disconnected from", self.machine.name, "expectedly" if is_expected else "unexpectedly")
-        
-        reconnect_logic = ReconnectLogic(client=self.client,
-                                        on_connect=on_connect,
-                                            on_disconnect=on_disconnect)
-        await reconnect_logic.start()
+
+        await self.client.connect(login=True)
+        await self.setup_entities()
+        self.client.subscribe_states(change_callback)
         
     async def disconnect(self):
         self.is_connected = False

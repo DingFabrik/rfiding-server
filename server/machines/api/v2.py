@@ -3,7 +3,7 @@ from rest_framework.exceptions import NotFound, PermissionDenied
 from rest_framework import status, permissions
 
 from .common import formatted_mac, BaseAPIView
-from access_log.models import LOG_TYPE_BOOTED
+from access_log.models import LOG_TYPE_BOOTED, LOG_TYPE_DISABLED
 from access_log.tasks import save_access_log
 from machines.serializers import MachineConfigSerializer
 from machines.socket_helper import send_socket_action
@@ -120,3 +120,13 @@ class CheckMachineAccessView(BaseAPIView):
             return Response({"error": str(e), "access": 0}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             return Response({"error": str(e), "access": 0}, status=status.HTTP_403_FORBIDDEN)
+
+class DisableMachineAccessView(BaseAPIView):
+    permission_classes = [permissions.AllowAny]
+    required_get_parameters = ["mac_address", "tokenUid"]
+
+    def get(self, request, format=None):
+        mac_address = formatted_mac(request.GET.get("mac_address", None))
+        machine = self.get_machine(mac_address)
+        save_access_log.delay(machine.id, None, LOG_TYPE_DISABLED)
+        return Response({})
