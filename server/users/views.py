@@ -45,6 +45,10 @@ class ProfileView(TitleMixin, UpdateView):
 class HomeView(TitleMixin, TemplateView):
     template_name = "home.html"
     title = _("Home")
+    
+@method_decorator(login_required, name="dispatch")
+class HomePartialCountsView(TemplateView):
+    template_name = "home_partial_counts.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

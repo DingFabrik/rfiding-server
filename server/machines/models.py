@@ -16,6 +16,17 @@ SUPPORTED_CHIPS = [
     ("esp32s3", "ESP32-S3"),
 ]
 
+MACHINE_TYPE_PRIMARY = "primary"
+MACHINE_TYPE_SECONDARY = "secondary"
+MACHINE_TYPE_LOCK = "lock"
+MACHINE_TYPE_LOCKBOX = "lockbox"
+MACHINE_TYPES = [
+    (MACHINE_TYPE_PRIMARY, _("Primary")),
+    (MACHINE_TYPE_SECONDARY, _("Secondary")),
+    (MACHINE_TYPE_LOCK, _("Lock")),
+    (MACHINE_TYPE_LOCKBOX, _("Multiple Locks")),
+]
+
 def is_str(obj):
     try:
         return isinstance(obj, basestring)
@@ -50,6 +61,7 @@ class WeekdayField(models.CharField):
 
 class Machine(TimestampedModel):
     name = models.CharField(max_length=100)
+    type = models.CharField(max_length=100, choices=MACHINE_TYPES, default=MACHINE_TYPE_PRIMARY)
     location = models.ForeignKey("locations.Location", on_delete=models.SET_NULL, related_name="machines", null=True, blank=True)
     is_active = models.BooleanField(default=True)
     needs_qualification = models.BooleanField(default=True, help_text=_("If disabled, any active user can access this machine."))

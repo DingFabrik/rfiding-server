@@ -20,7 +20,7 @@ from django.urls import path, include
 from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView, PasswordChangeDoneView
 
 from base.views import AboutView, AuditlogView
-from users.views import HomeView
+from users.views import HomeView, HomePartialCountsView
 from machines.api import v1, v2
 from space.api import APISpaceStatusView
 
@@ -45,6 +45,7 @@ api_urls = api_v1_urls + [
 
 urlpatterns = [
     path("", HomeView.as_view(), name="home"),
+    path("data/counts", HomePartialCountsView.as_view(), name="home_partial_counts"),
     path("admin/", admin.site.urls),
     path("accounts/login/", LoginView.as_view(redirect_authenticated_user=True), name="login"),
     path("accounts/logout/", LogoutView.as_view(), name="logout"),

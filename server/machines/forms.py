@@ -15,6 +15,7 @@ class MachineForm(forms.ModelForm):
         self.helper = FormHelper(self)
         self.helper.layout = Layout(
             "name",
+            "type",
             "location",
             "is_active",
             "needs_qualification",
@@ -46,6 +47,7 @@ class MachineForm(forms.ModelForm):
         model = Machine
         fields = [
             "name",
+            "type",
             "hostname",
             "ip_address",
             "mac_address",
