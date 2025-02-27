@@ -42,12 +42,10 @@ class MachineListView(BaseListView):
     model = Machine
     template_name = "machine_list.html"
     context_object_name = "machines"
+    sort_fields = MACHINE_SORT_CHOICES_KEYS
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        sort = self.request.GET.get("sort")
-        if sort in MACHINE_SORT_CHOICES_KEYS:
-            queryset = queryset.order_by(sort)
         filter = self.request.GET.get("filter")
         if filter == "all":
             queryset = queryset

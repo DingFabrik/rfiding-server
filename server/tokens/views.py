@@ -47,12 +47,10 @@ class TokenListView(BaseListView):
     template_name = "token_list.html"
     context_object_name = "tokens"
     search_field = "serial"
+    sort_fields = TOKEN_SORT_CHOICES_KEYS
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        sort = self.request.GET.get("sort")
-        if sort in TOKEN_SORT_CHOICES_KEYS:
-            queryset = queryset.order_by(sort)
         filter = self.request.GET.get("filter")
         if filter == "all":
             queryset = queryset

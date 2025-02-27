@@ -21,11 +21,9 @@ class PartialMixin:
         context["is_partial"] = self.is_partial
         return context
 
-
 class PartialListMixin(PartialMixin):
     full_base_template = "base_list.html"
     partial_base_template = "partial_base_list.html"  
-
 
 class TitleMixin():
     title = None
@@ -51,9 +49,16 @@ class AboutView(TitleMixin, TemplateView):
     
 class BaseListView(PartialListMixin, TitleMixin, PermissionRequiredMixin, ListView):
     search_field = "name"
+    sort_fields = []
     
     def get_title(self):
         return self.model._meta.verbose_name_plural
+    
+    def sort_queryset(self, queryset):
+        sort = self.request.GET.get("sort")
+        if sort in self.sort_fields:
+            return queryset.order_by(sort)
+        return queryset
     
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -61,7 +66,7 @@ class BaseListView(PartialListMixin, TitleMixin, PermissionRequiredMixin, ListVi
             queryset = queryset.filter(
                 **{f"{self.search_field}__icontains": self.request.GET["search"]}
             )
-        return queryset
+        return self.sort_queryset(queryset)
     
     def get_paginate_by(self, queryset):
         return self.request.user.page_length
@@ -70,6 +75,7 @@ class BaseListView(PartialListMixin, TitleMixin, PermissionRequiredMixin, ListVi
         context = super().get_context_data(**kwargs)
         context["model"] = self.model
         context["can_create"] = self.request.user.has_perm(f"{self.model._meta.app_label}.create_{self.model._meta.model_name}")
+        context["can_edit"] = self.request.user.has_perm(f"{self.model._meta.app_label}.create_{self.model._meta.model_name}")
         return context
 
 

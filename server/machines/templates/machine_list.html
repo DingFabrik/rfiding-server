@@ -8,7 +8,7 @@
             <th>{% trans "MAC-Address" %}</th>
             <th>{% trans "Hostname" %}</th>
             <th>{% trans "Machine Active" %}</th>
-            {% if perms.machines.modify_machine %}
+            {% if can_edit %}
             <th width="62"></th>
             {% endif %}
         </tr>
@@ -19,7 +19,7 @@
     <td>{{ object.mac_address }}</td>
     <td><a href="{% url "machines:detail" object.pk %}">{{ object.hostname }}</a></td>
     <td>{% include "snippets/active_toggle.html" %}</td>
-    {% if perms.people.modify_machine %}
+    {% if can_edit %}
     <td>
     <a href="{% url 'machines:update' object.pk %}" data-bs-toggle="tooltip" title="{% trans 'Edit' %}"><i class="bi-pencil-square me-2"></i></a>
     <a href="{% url "machines:configure" object.pk %}" data-bs-toggle="tooltip" title="{% trans 'Configure' %}"><i class="bi-sliders"></i></a>
