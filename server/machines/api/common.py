@@ -6,7 +6,7 @@ from machines.models import Machine
 from tokens.models import Token, UnknownToken, BlacklistedToken
 from access_log.tasks import save_access_log
 from access_log.models import LOG_TYPE_ENABLED
-from people.models import PERMISSION_LEVELS
+from people.models import PERMISSION_LEVELS, Qualification
 from space.models import SpaceState
 
 def formatted_mac(mac_address):
@@ -26,7 +26,10 @@ class BaseAPIView(APIView):
 
     def get_machine(self, mac_address):
         try:
-            return Machine.objects.get(mac_address__iexact=mac_address, is_active=True)
+            return Machine.objects.values(
+                "id",
+                "needs_qualification",
+                ).get(mac_address=mac_address, is_active=True)
         except Machine.DoesNotExist:
             raise NotFound("Machine does not exist") from None
 
@@ -47,20 +50,25 @@ class BaseAPIView(APIView):
 
 
 def check_access(machine, tokenID):
-    end_time = machine.get_valid_end_time()
+    end_time = Machine.get_valid_end_time_for_machine(machine["id"])
     if end_time is None:
         raise PermissionDenied("Machine is restricted")
 
     try:
-        token = Token.objects.select_related("person").get(serial=tokenID, archived=None, is_active=True, person__is_active=True)
+        token = Token.objects.select_related("person").values("id", "person__id").get(
+            serial=tokenID,
+            archived=None,
+            is_active=True,
+            person__is_active=True
+            )
     except Token.DoesNotExist:
         if not BlacklistedToken.objects.filter(serial=tokenID).exists():
-            UnknownToken.objects.get_or_create(serial=tokenID, machine=machine)
+            UnknownToken.objects.get_or_create(serial=tokenID, machine=machine["id"])
         raise NotFound("Invalid Token") from None
-
-    if machine.needs_qualification:
+    
+    if machine["needs_qualification"]:
         qualification = (
-            token.person.qualifications.filter(machine=machine).order_by().first()
+            Qualification.filter(machine=machine["id"], person=token["person__id"]).order_by().first()
         )
         if qualification is None or qualification.permission_level == PERMISSION_LEVELS[2][0]:
             raise PermissionDenied("No Access!")
@@ -69,7 +77,7 @@ def check_access(machine, tokenID):
             space_state = SpaceState.objects.first()
             if space_state is not None and not space_state.is_open:
                 raise PermissionDenied("Space is closed")
-    save_access_log.delay(machine.id, token.id, LOG_TYPE_ENABLED)
+    save_access_log.delay(machine["id"], token["id"], LOG_TYPE_ENABLED)
 
     now = datetime.datetime.now()
     return {
@@ -77,4 +85,5 @@ def check_access(machine, tokenID):
             "workingtime": int(
                 (datetime.datetime.combine(now, end_time) - now).total_seconds()
             ),
+            "end_time": datetime.datetime.combine(now, end_time).strftime("%H:%M:%S"),
         }

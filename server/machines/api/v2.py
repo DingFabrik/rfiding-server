@@ -1,6 +1,8 @@
 from rest_framework.response import Response
 from rest_framework.exceptions import NotFound, PermissionDenied
 from rest_framework import status, permissions
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 
 from .common import formatted_mac, BaseAPIView
 from access_log.models import LOG_TYPE_BOOTED, LOG_TYPE_DISABLED, LOG_TYPE_UNSUCCESSFUL
@@ -124,7 +126,7 @@ class CheckMachineAccessView(BaseAPIView):
             return Response({"error": str(e), "access": 0}, status=status.HTTP_403_FORBIDDEN)
         finally:
             if not was_successful:
-                save_access_log.delay(machine.id, None, LOG_TYPE_UNSUCCESSFUL)
+                save_access_log.delay(machine["id"], None, LOG_TYPE_UNSUCCESSFUL)
 
 class DisableMachineAccessView(BaseAPIView):
     permission_classes = [permissions.AllowAny]
@@ -133,5 +135,5 @@ class DisableMachineAccessView(BaseAPIView):
     def get(self, request, format=None):
         mac_address = formatted_mac(request.GET.get("mac_address", None))
         machine = self.get_machine(mac_address)
-        save_access_log.delay(machine.id, None, LOG_TYPE_DISABLED)
+        save_access_log.delay(machine["id"], None, LOG_TYPE_DISABLED)
         return Response({})

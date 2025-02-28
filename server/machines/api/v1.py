@@ -14,12 +14,12 @@ class MachineConfigView(BaseAPIView):
         mac_address = formatted_mac(request.GET.get("machine", None))
         machine = self.get_machine(mac_address)
 
-        save_access_log.delay(machine.id, None, LOG_TYPE_BOOTED)
+        save_access_log.delay(machine["id"], None, LOG_TYPE_BOOTED)
         return Response(
             {
-                "runtimer": machine.runtimer,
-                "minPower": machine.min_power,
-                "controlParameter": machine.control_parameter,
+                "runtimer": machine["runtimer"],
+                "minPower": machine["min_power"],
+                "controlParameter": machine["control_parameter"],
             },
             status=status.HTTP_200_OK,
         )

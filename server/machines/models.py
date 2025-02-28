@@ -119,14 +119,15 @@ class Machine(TimestampedModel):
             .filter(end_time__gte=now.time())
             .exists()
         )
-    
-    def get_valid_end_time(self):
-        if not self.times.all():
+        
+    @staticmethod
+    def get_valid_end_time_for_times(times):
+        if not times.all():
             return datetime.time(23, 59, 59)
         now = datetime.datetime.now()
         try:
             return (
-                self.times.filter(weekdays__contains=now.weekday())
+                times.filter(weekdays__contains=now.weekday())
                 .filter(start_time__lte=now.time())
                 .filter(end_time__gte=now.time())
                 .first()
@@ -136,6 +137,14 @@ class Machine(TimestampedModel):
             return None
         except MachineTime.DoesNotExist:
             return None
+        
+    @staticmethod
+    def get_valid_end_time_for_machine(machine_id):
+        query = MachineTime.objects.filter(machine_id=machine_id)
+        return Machine.get_valid_end_time_for_times(query)
+    
+    def get_valid_end_time(self):
+        return Machine.get_valid_end_time_for_times(self.times)
 
 
 class MachineTime(TimestampedModel):
