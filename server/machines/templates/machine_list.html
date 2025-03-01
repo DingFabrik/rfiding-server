@@ -7,7 +7,8 @@
             <th>{% trans "Name" %}</th>
             <th>{% trans "MAC-Address" %}</th>
             <th>{% trans "Hostname" %}</th>
-            <th>{% trans "Machine Active" %}</th>
+            <th>{% trans "Active" %}</th>
+            <th>{% trans "Type" %}</th>
             {% if can_edit %}
             <th width="62"></th>
             {% endif %}
@@ -19,6 +20,7 @@
     <td>{{ object.mac_address }}</td>
     <td><a href="{% url "machines:detail" object.pk %}">{{ object.hostname }}</a></td>
     <td>{% include "snippets/active_toggle.html" %}</td>
+    <td>{{ object.get_type_display }}</td>
     {% if can_edit %}
     <td>
     <a href="{% url 'machines:update' object.pk %}" data-bs-toggle="tooltip" title="{% trans 'Edit' %}"><i class="bi-pencil-square me-2"></i></a>

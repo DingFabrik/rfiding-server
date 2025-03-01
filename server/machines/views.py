@@ -260,7 +260,6 @@ class MachineInstructorListView(BaseListView):
             self.object = Machine.objects.get(pk=self.kwargs["pk"])
         return self.object
     
-    
     def get_title(self):
         return _(f"Instructors for {self.get_object().name}")
 
@@ -352,15 +351,21 @@ class QualifyMachineView(TitleMixin, PermissionRequiredMixin, CreateView):
     template_name = "qualify_person.html"
     form_class = QualifyPersonForm
     
+    object = None
+    def get_object(self):
+        if self.object is None:
+            self.object = Machine.objects.get(pk=self.kwargs["pk"])
+        return self.object
+    
     def get_title(self):
-        return _(f"Qualify for {self.object.name}")
+        return _(f"Qualify for {self.get_object().name}")
 
     def get_initial(self):
         return {"machine": self.kwargs["pk"]}
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["machine"] = Machine.objects.get(pk=self.kwargs["pk"])
+        context["machine"] = self.get_object()
         print(context)
         return context
 
@@ -373,16 +378,22 @@ class AddInstructorMachineView(TitleMixin, PermissionRequiredMixin, CreateView):
     model = Instructor
     template_name = "instructor_person.html"
     form_class = InstructorForm
+    
+    object = None
+    def get_object(self):
+        if self.object is None:
+            self.object = Machine.objects.get(pk=self.kwargs["pk"])
+        return self.object
 
     def get_title(self):
-        return _(f"Add Instructor for {self.object.name}")
+        return _(f"Add Instructor for {self.get_object().name}")
 
     def get_initial(self):
         return {"machine": self.kwargs["pk"]}
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["machine"] = Machine.objects.get(pk=self.kwargs["pk"])
+        context["machine"] = self.get_object()
         return context
 
     def get_success_url(self):

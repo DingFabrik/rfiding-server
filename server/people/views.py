@@ -140,15 +140,21 @@ class QualifyPersonView(TitleMixin, PermissionRequiredMixin, CreateView):
     template_name = "qualify_person.html"
     form_class = QualifyPersonForm
     
+    object = None
+    def get_object(self):
+        if self.object is None:
+            self.object = Person.objects.get(pk=self.kwargs["pk"])
+        return self.object
+    
     def get_title(self):
-        return _(f"Qualify {self.object.name}")
+        return _(f"Qualify {self.get_object().name}")
 
     def get_initial(self):
         return {"person": self.kwargs["pk"]}
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
-        context["person"] = Person.objects.get(pk=self.kwargs["pk"])
+        context["person"] = self.get_object()
         return context
 
     def get_success_url(self):
@@ -163,8 +169,14 @@ class RevokeQualificationPersonView(TitleMixin, PartialMixin, PermissionRequired
     partial_base_template = "partial_base_modal.html"
     template_name = "revoke_qualification_confirm.html"
     
+    person = None
+    def get_person(self):
+        if self.person is None:
+            self.person = Person.objects.get(pk=self.kwargs["pk"])
+        return self.person
+    
     def get_title(self):
-        return _(f"Revoke Qualification for {self.object.name}")
+        return _(f"Revoke Qualification for {self.get_person().name}")
 
     def get_object(self, queryset: QuerySet[Any] | None = ...) -> Model:
         return self.model.objects.filter(
@@ -182,8 +194,14 @@ class EditQualificationPersonView(TitleMixin, PermissionRequiredMixin, UpdateVie
     form_class = QualifyPersonForm
     template_name = "qualify_person.html"
     
+    person = None
+    def get_person(self):
+        if self.person is None:
+            self.person = Person.objects.get(pk=self.kwargs["pk"])
+        return self.person
+    
     def get_title(self):
-        return _(f"Edit Qualification for {self.object.name}")
+        return _(f"Edit Qualification for {self.get_person().name}")
 
     def get_object(self, queryset: QuerySet[Any] | None = ...) -> Model:
         return self.model.objects.filter(
@@ -192,7 +210,7 @@ class EditQualificationPersonView(TitleMixin, PermissionRequiredMixin, UpdateVie
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
-        context["person"] = Person.objects.get(pk=self.kwargs["pk"])
+        context["person"] = self.get_person()
         context["machine"] = context["form"].instance.machine
         return context
 
@@ -230,15 +248,21 @@ class AddInstructorPersonView(TitleMixin, PermissionRequiredMixin, CreateView):
     template_name = "instructor_person.html"
     form_class = InstructorForm
     
+    person = None
+    def get_person(self):
+        if self.person is None:
+            self.person = Person.objects.get(pk=self.kwargs["pk"])
+        return self.person
+    
     def get_title(self):
-        return _(f"Make {self.object.name} Instructor")
+        return _(f"Make {self.get_person().name} Instructor")
 
     def get_initial(self):
         return {"person": self.kwargs["pk"]}
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
-        context["person"] = Person.objects.get(pk=self.kwargs["pk"])
+        context["person"] = self.get_person()
         return context
 
     def get_success_url(self):
@@ -252,9 +276,15 @@ class RevokeInstructorPersonView(TitleMixin, PartialMixin, PermissionRequiredMix
     full_base_template = "base_slim.html"
     partial_base_template = "partial_base_modal.html"
     template_name = "revoke_instructor_confirm.html"
+
+    person = None
+    def get_person(self):
+        if self.person is None:
+            self.person = Person.objects.get(pk=self.kwargs["pk"])
+        return self.person
     
     def get_title(self):
-        return _(f"Revoke {self.object.name} as Instructor")
+        return _(f"Revoke {self.get_person().name} as Instructor")
 
     def get_object(self, queryset: QuerySet[Any] | None = ...) -> Model:
         return self.model.objects.filter(

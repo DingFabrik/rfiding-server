@@ -39,10 +39,10 @@ hx-ext="ws" ws-connect="/ws/machines/{{ machine.mac_address }}/state"
 
 {% block content %}
 <div class="row mb-4">
-<div class="col-md-6">
+<div class="col-md-4">
 <h4>{% trans "Details" %}</h4>
 <ul class="list-unstyled">
-<li><span class="fw-bold text-secondary-emphasis">{% trans "Name" %}:</span> {{ object.name }}<br></li>
+<li><span class="fw-bold text-secondary-emphasis">{% trans "Type" %}:</span> {{ object.get_type_display }}<br></li>
 <li><span class="fw-bold text-secondary-emphasis">{% trans "Location" %}:</span> 
   {% if object.location %}
     <a href="{% url "locations:detail" object.location.pk %}">{{ object.location }}</a>
@@ -50,20 +50,20 @@ hx-ext="ws" ws-connect="/ws/machines/{{ machine.mac_address }}/state"
   --
   {% endif %}
   <br></li>
-<li><span class="fw-bold text-secondary-emphasis">{% trans "Hostname" %}:</span> {{ object.hostname }}<br></li>
-<li><span class="fw-bold text-secondary-emphasis">{% trans "MAC Address" %}:</span> {{ object.mac_address }}<br></li>
-<li><span class="fw-bold text-secondary-emphasis">{% trans "IP Address" %}:</span> {{ object.ip_address }}<br></li>
-<li><span class="fw-bold text-secondary-emphasis">{% trans "Is Active" %}:</span> {% include "snippets/active_toggle.html" %}<br></li>
-<li><span class="fw-bold text-secondary-emphasis">{% trans "Needs Qualification" %}:</span>   {% if object.needs_qualification %}
-    <i class="bi-check-circle-fill text-success" aria-hidden="true"></i>
-    {% else %}
-    <i class="bi-x-circle-fill text-danger" aria-hidden="true"></i>
-    {% endif %}<br></li>
+    <li><span class="fw-bold text-secondary-emphasis">{% trans "Is Active" %}:</span> {% include "snippets/active_toggle.html" %}<br></li>
     <li><span class="fw-bold text-secondary-emphasis">{% trans "Chip" %}:</span> {{ object.get_chip_display }}<br></li>
     <li><span class="fw-bold text-secondary-emphasis">{% trans "Last used" %}:</span> {{ last_access }}<br></li>
 </ul>
 </div>
-<div class="col-md-6">
+<div class="col-md-4">
+    <h4>{% trans "Network" %}</h4>
+    <ul class="list-unstyled">
+      <li><span class="fw-bold text-secondary-emphasis">{% trans "Hostname" %}:</span> {{ object.hostname }}<br></li>
+      <li><span class="fw-bold text-secondary-emphasis">{% trans "MAC Address" %}:</span> {{ object.mac_address }}<br></li>
+      <li><span class="fw-bold text-secondary-emphasis">{% trans "IP Address" %}:</span> {{ object.ip_address }}<br></li>
+    </ul>
+</div>
+<div class="col-md-4">
     <h4>{% trans "Configuration" %}</h4>
     <ul class="list-unstyled">
         <li><span class="fw-bold text-secondary-emphasis">{% trans "Runtimer" %}:</span> {{ object.runtimer }}<br></li>
