@@ -51,6 +51,7 @@ def limit_to(value, arg):
 def limit_to_last(value, arg):
     return value[-arg:]
 
+
 @register.simple_tag
 def build_url_params(params, **kwargs):
     params = params.copy()
@@ -59,10 +60,11 @@ def build_url_params(params, **kwargs):
     if len(params) == 0:
         return ""
     return "?" + "&".join([f"{k}={v}" for k, v in params.items()])
-    
-@register.filter(name='translate')
+
+
+@register.filter(name="translate")
 def translate(text):
-    try:    
+    try:
         return _(text)
-    except:
+    except Exception:
         return text

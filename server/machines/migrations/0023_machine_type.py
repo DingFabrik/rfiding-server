@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("machines", "0022_machine_log_booted_machine_log_disabled_and_more"),
     ]

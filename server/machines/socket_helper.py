@@ -9,20 +9,22 @@ SOCKET_PORT = settings.SOCKET_PORT if hasattr(settings, "SOCKET_PORT") else 6000
 
 logger = logging.getLogger(__name__)
 
+
 def send_socket_action(machine_pk, action):
     if not ENABLE:
         return
     try:
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-                s.connect((SOCKET_IP, SOCKET_PORT))
-                message = {
-                    "action": action,
-                    "pk": machine_pk,
-                }
-                s.sendall(json.dumps(message).encode())
+            s.connect((SOCKET_IP, SOCKET_PORT))
+            message = {
+                "action": action,
+                "pk": machine_pk,
+            }
+            s.sendall(json.dumps(message).encode())
     except Exception as e:
         logger.error(f"Socket error: {e}")
-            
+
+
 def get_socket_data(machine_pk, action):
     if not ENABLE:
         return None

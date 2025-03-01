@@ -5,6 +5,7 @@ from django.conf import settings as SETTINGS
 
 from .common import get_current_space_state, update_space_state
 
+
 class APISpaceStatusView(APIView):
     permission_classes = [permissions.AllowAny]
 

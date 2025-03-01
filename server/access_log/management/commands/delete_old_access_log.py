@@ -10,4 +10,6 @@ class Command(BaseCommand):
     @transaction.atomic
     def handle(self, *args, **kwargs):
         count = delete_old_access_log()
-        self.stdout.write(self.style.SUCCESS(f"Successfully deleted {count} old access log entries"))
+        self.stdout.write(
+            self.style.SUCCESS(f"Successfully deleted {count} old access log entries")
+        )

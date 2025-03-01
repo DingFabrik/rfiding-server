@@ -20,6 +20,7 @@ TOKEN_STATUS = (
 
 logger = logging.getLogger(__name__)
 
+
 class TokenType(TimestampedModel):
     name = models.CharField(max_length=100)
     label_prefix = models.CharField(max_length=10, blank=True)
@@ -29,7 +30,7 @@ class TokenType(TimestampedModel):
 
     def __str__(self):
         return f"{self.name}"
-    
+
     def format_label_id(self, label_id):
         if not label_id:
             return None
@@ -39,6 +40,7 @@ class TokenType(TimestampedModel):
         verbose_name = _("Token Type")
         verbose_name_plural = _("Token Types")
         ordering = ["name"]
+
 
 class Token(TimestampedModel):
     serial = models.CharField(max_length=20, db_index=True)
@@ -55,7 +57,7 @@ class Token(TimestampedModel):
 
     def get_absolute_url(self):
         return reverse("tokens:detail", kwargs={"pk": self.pk})
-    
+
     def format_label(self):
         if self.type and self.label_id:
             return self.type.format_label_id(self.label_id)
@@ -74,30 +76,39 @@ class UnknownToken(TimestampedModel):
 
     def __str__(self):
         return f"{self.serial}"
-        
+
     class Meta:
         verbose_name = _("Unknown Token")
         verbose_name_plural = _("Unknown Tokens")
         ordering = ["-created"]
-    
+
+
 class BlacklistedToken(TimestampedModel):
     serial = models.CharField(max_length=20)
-    
+
     def __str__(self):
         return f"{self.serial}"
-    
+
     class Meta:
         verbose_name = _("Blacklisted Token")
         verbose_name_plural = _("Blacklisted Tokens")
         ordering = ["serial"]
 
+
 channel_layer = get_channel_layer()
-    
+
+
 @receiver(post_save, sender=UnknownToken)
 def signal_unknowntoken_saved(sender, instance, created, **kwargs):
-    logger.info("Unknown token used\nToken ID: %s\nMachine: %s", instance.serial, instance.machine)
+    logger.info(
+        "Unknown token used\nToken ID: %s\nMachine: %s",
+        instance.serial,
+        instance.machine,
+    )
     if created:
-        async_to_sync(channel_layer.group_send)("unknown_tokens", {"type": "unknown_token_list_changed"})
+        async_to_sync(channel_layer.group_send)(
+            "unknown_tokens", {"type": "unknown_token_list_changed"}
+        )
 
 
 auditlog.register(Token, exclude_fields=["created", "updated"])

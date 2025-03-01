@@ -2,8 +2,10 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.conf import settings as SETTINGS
 
+
 def version_processor(request):
-    return { "rfiding_version": SETTINGS.VERSION }
+    return {"rfiding_version": SETTINGS.VERSION}
+
 
 def menu_processor(request):
     menu = [
@@ -38,7 +40,7 @@ def menu_processor(request):
             "active": request.resolver_match.app_name == "access_log",
         },
     ]
-    
+
     side_menu = [
         {
             "name": _("Audit Log"),
@@ -60,7 +62,8 @@ def menu_processor(request):
             "icon": "person-badge",
             "active_icon": "person-badge-fill",
             "has_permission": request.user.has_perm("users.view_rfidinguser"),
-            "active": request.resolver_match.app_name == "users" and request.resolver_match.url_name != "profile",
+            "active": request.resolver_match.app_name == "users"
+            and request.resolver_match.url_name != "profile",
         },
         {
             "name": _("Groups"),
@@ -107,9 +110,7 @@ def menu_processor(request):
             "has_permission": True,
             "active": request.resolver_match.url_name == "about",
         },
-        {
-            "type": "divider"
-        },
+        {"type": "divider"},
         {
             "name": _("Settings"),
             "url": reverse("users:profile"),

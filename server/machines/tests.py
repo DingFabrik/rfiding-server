@@ -121,9 +121,7 @@ class V1CheckMachineTests(APITestCase):
         token.save()
         response = self.client.get(V1CheckMachineTests.url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-        self.assertEqual(
-            response.data["error"], "No Access!"
-        )
+        self.assertEqual(response.data["error"], "No Access!")
 
     def test_qualification(self):
         data = {"machine": "aabbccddeeff", "tokenUid": "456"}

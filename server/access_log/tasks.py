@@ -5,14 +5,33 @@ from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 import logging
 
-from .models import AccessLog, LOG_TYPE_ENABLED, LOG_TYPE_BOOTED, LOG_TYPE_DISABLED, LOG_TYPE_UNSUCCESSFUL
+from .models import (
+    AccessLog,
+    LOG_TYPE_ENABLED,
+    LOG_TYPE_BOOTED,
+    LOG_TYPE_DISABLED,
+    LOG_TYPE_UNSUCCESSFUL,
+)
 from machines.models import Machine
 
 logger = logging.getLogger(__name__)
 
-seconds_ago = settings.ACCESS_LOG_DUPLICATE_SECONDS if hasattr(settings, "ACCESS_LOG_DUPLICATE_SECONDS") else 1
-delete_days = settings.ACCESS_LOG_DELETE_DAYS if hasattr(settings, "ACCESS_LOG_DELETE_DAYS") else 0
-anonymize_days = settings.ACCESS_LOG_ANONYMIZE_DAYS if hasattr(settings, "ACCESS_LOG_ANONYMIZE_DAYS") else 0
+seconds_ago = (
+    settings.ACCESS_LOG_DUPLICATE_SECONDS
+    if hasattr(settings, "ACCESS_LOG_DUPLICATE_SECONDS")
+    else 1
+)
+delete_days = (
+    settings.ACCESS_LOG_DELETE_DAYS
+    if hasattr(settings, "ACCESS_LOG_DELETE_DAYS")
+    else 0
+)
+anonymize_days = (
+    settings.ACCESS_LOG_ANONYMIZE_DAYS
+    if hasattr(settings, "ACCESS_LOG_ANONYMIZE_DAYS")
+    else 0
+)
+
 
 @shared_task
 def save_access_log(machine, token_id, log_type):
@@ -27,7 +46,9 @@ def save_access_log(machine, token_id, log_type):
     if log_type == LOG_TYPE_UNSUCCESSFUL and not machine.log_unsuccessful:
         return
     ago = timezone.now() - timedelta(seconds=seconds_ago)
-    if AccessLog.objects.filter(machine_id=machine.pk, token_id=token_id, type=log_type, timestamp__gte=ago).exists():
+    if AccessLog.objects.filter(
+        machine_id=machine.pk, token_id=token_id, type=log_type, timestamp__gte=ago
+    ).exists():
         return
     AccessLog.objects.create(
         machine_id=machine.pk,
@@ -35,8 +56,10 @@ def save_access_log(machine, token_id, log_type):
         type=log_type,
     )
 
+
 def find_old_access_log(days):
     return AccessLog.objects.filter(timestamp__lt=timezone.now() - timedelta(days=days))
+
 
 @shared_task
 def delete_old_access_log():
@@ -46,11 +69,12 @@ def delete_old_access_log():
     logger.debug(f"Deleted {count} old access log entries")
     return count
 
+
 @shared_task
 def anonymize_old_access_log():
     if anonymize_days == 0:
         raise ImproperlyConfigured("ACCESS_LOG_ANONYMIZE_DAYS is not set")
-    
+
     count = find_old_access_log(anonymize_days).update(token=None)
     logger.debug(f"Anonymized {count} old access log entries")
     print(f"Anonymized {count} old access log entries")

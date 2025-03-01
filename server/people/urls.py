@@ -16,7 +16,11 @@ urlpatterns = [
         name="toggle-active",
     ),
     path("<int:pk>/delete", views.PersonDeleteView.as_view(), name="delete"),
-    path("<int:pk>/qualifications/qualify", views.QualifyPersonView.as_view(), name="qualify"),
+    path(
+        "<int:pk>/qualifications/qualify",
+        views.QualifyPersonView.as_view(),
+        name="qualify",
+    ),
     path(
         "<int:pk>/qualifications/<int:qualification>",
         views.EditQualificationPersonView.as_view(),
@@ -47,7 +51,6 @@ urlpatterns = [
         views.PersonInstructorListView.as_view(),
         name="instructs-for",
     ),
-    
     # AJAX calls
     path(
         "autocomplete/qualify/<int:machine>",

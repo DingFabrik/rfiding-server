@@ -17,7 +17,12 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path, include
-from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView, PasswordChangeDoneView
+from django.contrib.auth.views import (
+    LoginView,
+    LogoutView,
+    PasswordChangeView,
+    PasswordChangeDoneView,
+)
 
 from base.views import AboutView, AuditlogView
 from users.views import HomeView, HomePartialCountsView
@@ -47,10 +52,22 @@ urlpatterns = [
     path("", HomeView.as_view(), name="home"),
     path("data/counts", HomePartialCountsView.as_view(), name="home_partial_counts"),
     path("admin/", admin.site.urls),
-    path("accounts/login/", LoginView.as_view(redirect_authenticated_user=True), name="login"),
+    path(
+        "accounts/login/",
+        LoginView.as_view(redirect_authenticated_user=True),
+        name="login",
+    ),
     path("accounts/logout/", LogoutView.as_view(), name="logout"),
-    path("accounts/change-password/", PasswordChangeView.as_view(), name="password_change"),
-    path("accounts/change-password-done/", PasswordChangeDoneView.as_view(), name="password_change_done"),
+    path(
+        "accounts/change-password/",
+        PasswordChangeView.as_view(),
+        name="password_change",
+    ),
+    path(
+        "accounts/change-password-done/",
+        PasswordChangeDoneView.as_view(),
+        name="password_change_done",
+    ),
     path("access_log/", include("access_log.urls", namespace="access_log")),
     path("locations/", include("locations.urls", namespace="locations")),
     path("machines/", include("machines.urls", namespace="machines")),

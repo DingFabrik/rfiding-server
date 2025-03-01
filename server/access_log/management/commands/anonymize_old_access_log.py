@@ -10,4 +10,8 @@ class Command(BaseCommand):
     @transaction.atomic
     def handle(self, *args, **kwargs):
         count = anonymize_old_access_log()
-        self.stdout.write(self.style.SUCCESS(f"Successfully anonymized {count} old access log entries"))
+        self.stdout.write(
+            self.style.SUCCESS(
+                f"Successfully anonymized {count} old access log entries"
+            )
+        )

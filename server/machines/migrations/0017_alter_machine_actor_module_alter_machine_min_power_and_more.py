@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("machines", "0016_remove_machine_completed_setup_and_more"),
     ]

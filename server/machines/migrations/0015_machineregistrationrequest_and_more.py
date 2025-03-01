@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("machines", "0014_machine_encryption_key_and_more"),
     ]

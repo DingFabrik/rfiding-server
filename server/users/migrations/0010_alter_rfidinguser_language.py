@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("users", "0009_alter_rfidinguser_theme"),
     ]
@@ -13,6 +12,11 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="rfidinguser",
             name="language",
-            field=models.CharField(choices=[("en", "English"), ("de", "Deutsch")], default="en", max_length=10, verbose_name="Langauge"),
+            field=models.CharField(
+                choices=[("en", "English"), ("de", "Deutsch")],
+                default="en",
+                max_length=10,
+                verbose_name="Langauge",
+            ),
         ),
     ]

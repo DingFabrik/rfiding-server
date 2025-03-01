@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("tokens", "0010_token_archived_alter_token_unique_together"),
     ]

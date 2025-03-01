@@ -9,7 +9,6 @@ from .models import Machine, MachineTime
 
 
 class MachineForm(forms.ModelForm):
-    
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper(self)
@@ -18,34 +17,38 @@ class MachineForm(forms.ModelForm):
             "location",
             "is_active",
             "needs_qualification",
-            Fieldset(_("Network"),
-                     "hostname",
-                     "ip_address",
-                     "mac_address",
-                     css_class="border rounded p-2 mb-3"),
-            Fieldset(_("Logging"),
-                        "log_booted",
-                        "log_enabled",
-                        "log_disabled",
-                        "log_unsuccessful",
-                        css_class="border rounded p-2 mb-3"),
-            Fieldset(_("Security"),
-                     "encryption_key",
-                     "api_key",
-                     css_class="border rounded p-2 mb-3"),
-            Fieldset(_("Client"),
-                     "chip",
-                     "type",
-                     css_class="border rounded p-2 mb-3"),
+            Fieldset(
+                _("Network"),
+                "hostname",
+                "ip_address",
+                "mac_address",
+                css_class="border rounded p-2 mb-3",
+            ),
+            Fieldset(
+                _("Logging"),
+                "log_booted",
+                "log_enabled",
+                "log_disabled",
+                "log_unsuccessful",
+                css_class="border rounded p-2 mb-3",
+            ),
+            Fieldset(
+                _("Security"),
+                "encryption_key",
+                "api_key",
+                css_class="border rounded p-2 mb-3",
+            ),
+            Fieldset(_("Client"), "chip", "type", css_class="border rounded p-2 mb-3"),
             FormActions(
                 Submit("submit", _("Save")),
                 HTML("""{% load i18n %}{% if object and can_delete %}
             <a class="btn btn-danger float-end" href="{% url request.resolver_match.namespace|add:':delete' object.pk %}">
                 <i class="bi-trash me-1"></i> {% trans 'Delete' %}
             </a>
-        {% endif %}""")
-            )
+        {% endif %}"""),
+            ),
         )
+
     class Meta:
         model = Machine
         fields = [
@@ -71,7 +74,6 @@ class MachineForm(forms.ModelForm):
 
 
 class ConfigureMachineForm(forms.ModelForm):
-    
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper(self)
@@ -82,6 +84,7 @@ class ConfigureMachineForm(forms.ModelForm):
             "display_power_consumption",
             "link_relays",
         )
+
     class Meta:
         model = Machine
         fields = [

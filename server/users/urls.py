@@ -18,7 +18,11 @@ urlpatterns = [
     path("<int:pk>", views.UserDetailView.as_view(), name="detail"),
     path("<int:pk>/modify", views.UserUpdateView.as_view(), name="update"),
     path("<int:pk>/delete", views.UserDeleteView.as_view(), name="delete"),
-    path("<int:pk>/change-password", views.AdminChangePasswordView.as_view(), name="admin_change_password"),
+    path(
+        "<int:pk>/change-password",
+        views.AdminChangePasswordView.as_view(),
+        name="admin_change_password",
+    ),
     path(
         "change-password/", views.ChangePasswordView.as_view(), name="change_password"
     ),

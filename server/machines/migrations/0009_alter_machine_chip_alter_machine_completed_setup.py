@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("machines", "0008_alter_machine_options_machine_chip_and_more"),
     ]
@@ -13,7 +12,11 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="machine",
             name="chip",
-            field=models.CharField(choices=[("esp32", "ESP32"), ("esp8266", "ESP8266")], default="esp32", max_length=100),
+            field=models.CharField(
+                choices=[("esp32", "ESP32"), ("esp8266", "ESP8266")],
+                default="esp32",
+                max_length=100,
+            ),
         ),
         migrations.AlterField(
             model_name="machine",

@@ -9,6 +9,7 @@ from access_log.models import LOG_TYPE_ENABLED
 from people.models import PERMISSION_LEVELS, Qualification
 from space.models import SpaceState
 
+
 def formatted_mac(mac_address):
     if mac_address is None:
         return None
@@ -26,11 +27,9 @@ class BaseAPIView(APIView):
 
     def get_machine(self, mac_address):
         try:
-            return Machine.objects.values(
-                "id",
-                "needs_qualification",
-                "api_key"
-                ).get(mac_address__iexact=mac_address, is_active=True)
+            return Machine.objects.values("id", "needs_qualification", "api_key").get(
+                mac_address__iexact=mac_address, is_active=True
+            )
         except Machine.DoesNotExist:
             raise NotFound("Machine does not exist") from None
 
@@ -56,22 +55,28 @@ def check_access(machine, tokenID):
         raise PermissionDenied("Machine is restricted")
 
     try:
-        token = Token.objects.select_related("person").values("id", "person__id").get(
-            serial=tokenID,
-            archived=None,
-            is_active=True,
-            person__is_active=True
-            )
+        token = (
+            Token.objects.select_related("person")
+            .values("id", "person__id")
+            .get(serial=tokenID, archived=None, is_active=True, person__is_active=True)
+        )
     except Token.DoesNotExist:
         if not BlacklistedToken.objects.filter(serial=tokenID).exists():
             UnknownToken.objects.get_or_create(serial=tokenID, machine=machine["id"])
         raise NotFound("Invalid Token") from None
-    
+
     if machine["needs_qualification"]:
         qualification = (
-            Qualification.objects.filter(machine=machine["id"], person=token["person__id"]).order_by().first()
+            Qualification.objects.filter(
+                machine=machine["id"], person=token["person__id"]
+            )
+            .order_by()
+            .first()
         )
-        if qualification is None or qualification.permission_level == PERMISSION_LEVELS[2][0]:
+        if (
+            qualification is None
+            or qualification.permission_level == PERMISSION_LEVELS[2][0]
+        ):
             raise PermissionDenied("No Access!")
 
         if qualification.permission_level == PERMISSION_LEVELS[0][0]:
@@ -82,9 +87,9 @@ def check_access(machine, tokenID):
 
     now = datetime.datetime.now()
     return {
-            "access": 1,
-            "workingtime": int(
-                (datetime.datetime.combine(now, end_time) - now).total_seconds()
-            ),
-            "end_time": datetime.datetime.combine(now, end_time).strftime("%H:%M:%S"),
-        }
+        "access": 1,
+        "workingtime": int(
+            (datetime.datetime.combine(now, end_time) - now).total_seconds()
+        ),
+        "end_time": datetime.datetime.combine(now, end_time).strftime("%H:%M:%S"),
+    }

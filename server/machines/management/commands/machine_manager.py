@@ -1,17 +1,15 @@
 from django.core.management.base import BaseCommand
 import asyncio
 from aioesphomeapi import APIClient, UserService
-from aioesphomeapi.reconnect_logic import ReconnectLogic
 import socket
 import selectors
 import types
-from asgiref.sync import sync_to_async
 import json
 
 from machines.models import Machine
-from machines.api.common import check_access
 
 connections = {}
+
 
 class ConnectionManager:
     device_state_key = None
@@ -19,29 +17,31 @@ class ConnectionManager:
     mac_address_key = None
     error_message_key = None
     power_consumption_key = None
-    
+
     is_enabled = False
     is_connected = False
     mac_address = None
-    
+
     on_state_change = None
-    
+
     def __init__(self, machine):
         self.machine = machine
         self.mac_address = machine.mac_address
-        self.client = APIClient(machine.ip_address, 6053, None, noise_psk=machine.encryption_key)
-        
+        self.client = APIClient(
+            machine.ip_address, 6053, None, noise_psk=machine.encryption_key
+        )
+
     def send_command(self, command):
         if not self.is_connected:
             return
         service = UserService(name=command, key=1, args={})
         self.client.execute_service(service, {})
-        
+
     async def change_callback(self, state):
         if self.on_state_change is not None:
             if self.device_state_key == state.key:
                 await self.on_state_change({"state": state.state})
-    
+
     async def setup_entities(self):
         entities = await self.client.list_entities_services()
         for entity in entities[0]:
@@ -53,15 +53,15 @@ class ConnectionManager:
                 self.error_message_key = entity.key
             if entity.object_id == "current_power_consumption":
                 self.power_consumption_key = entity.key
-    
-    async def connect(self):        
+
+    async def connect(self):
         def change_callback(state):
             asyncio.ensure_future(self.change_callback(state))
 
         await self.client.connect(login=True)
         await self.setup_entities()
         self.client.subscribe_states(change_callback)
-        
+
     async def disconnect(self):
         self.is_connected = False
         if self.client is not None:
@@ -70,6 +70,7 @@ class ConnectionManager:
 
 sel = selectors.DefaultSelector()
 
+
 def accept_wrapper(sock):
     conn, addr = sock.accept()  # Should be ready to read
     conn.setblocking(False)
@@ -77,12 +78,14 @@ def accept_wrapper(sock):
     events = selectors.EVENT_READ | selectors.EVENT_WRITE
     sel.register(conn, events, data=data)
 
+
 async def run_connect(machine):
     if machine.pk not in connections:
         connections[machine.pk] = ConnectionManager(machine)
         await asyncio.ensure_future(connections[machine.pk].connect())
         return
-    
+
+
 async def get_and_connect(pk):
     if pk in connections:
         return connections[pk]
@@ -91,6 +94,7 @@ async def get_and_connect(pk):
         return
     await run_connect(machine)
     return connections[pk]
+
 
 async def handle_client(client):
     loop = asyncio.get_event_loop()
@@ -119,29 +123,31 @@ async def handle_client(client):
             await (await get_and_connect(pk)).send_command("restart")
         elif action == "status":
             if pk in connections and connections[pk].is_connected:
-                if connections[pk].is_enabled:                
+                if connections[pk].is_enabled:
                     await loop.sock_sendall(client, b"enabled")
                 else:
                     await loop.sock_sendall(client, b"online")
             else:
                 await loop.sock_sendall(client, b"disconnected")
-        
+
     client.close()
+
 
 async def handle_connections():
     async for machine in Machine.objects.exclude(ip_address__isnull=True):
         await run_connect(machine)
-    
+
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.bind(("127.0.0.1", 6000))
     sock.listen()
     sock.setblocking(False)
-    
+
     loop = asyncio.get_event_loop()
 
     while True:
         client, _ = await loop.sock_accept(sock)
         loop.create_task(handle_client(client))
+
 
 class Command(BaseCommand):
     help = "Handles connections to machines"

@@ -10,8 +10,9 @@ logger = logging.getLogger(__name__)
 
 
 space_name = settings.SPACE_NAME
-class StateReporter:
 
+
+class StateReporter:
     def __init__(self, settings):
         self.settings = settings
 
@@ -21,7 +22,6 @@ class StateReporter:
 
 
 class ConsoleReporter(StateReporter):
-    
     def report(self, state):
         logger.debug(
             f"Reporting new state to console: {'open' if state.is_open else 'closed'}"
@@ -32,6 +32,7 @@ class ConsoleReporter(StateReporter):
 class SlackReporter(StateReporter):
     def __init__(self, settings):
         from slack_sdk import WebClient
+
         self.client = WebClient(token=settings["SLACK_TOKEN"])
         if "SLACK_CHANNEL" in settings:
             self.channel = settings["SLACK_CHANNEL"]
@@ -44,31 +45,40 @@ class SlackReporter(StateReporter):
         )
         self.client.chat_postMessage(
             channel=self.channel,
-            text=_("{} is now {}").format(space_name, _("open") if state.is_open else _("closed")),
+            text=_("{} is now {}").format(
+                space_name, _("open") if state.is_open else _("closed")
+            ),
             attachments=[
                 {
                     "color": "#9BE564" if state.is_open else "#F95738",
-                "blocks": [
-                {
-                    "type": "section",
-                    "text": {
-                    "type": "mrkdwn",
-                    "text": _("{} is now *{}*").format(space_name, _("open") if state.is_open else _("closed"))
-                    }
-                },
-                {
-                    "type": "context",
-                    "elements": [
+                    "blocks": [
                         {
-                            "type": "plain_text",
-                            "text": formats.date_format(timezone.localtime(state.created), "SHORT_DATETIME_FORMAT")
-                        }
-                    ]
+                            "type": "section",
+                            "text": {
+                                "type": "mrkdwn",
+                                "text": _("{} is now *{}*").format(
+                                    space_name,
+                                    _("open") if state.is_open else _("closed"),
+                                ),
+                            },
+                        },
+                        {
+                            "type": "context",
+                            "elements": [
+                                {
+                                    "type": "plain_text",
+                                    "text": formats.date_format(
+                                        timezone.localtime(state.created),
+                                        "SHORT_DATETIME_FORMAT",
+                                    ),
+                                }
+                            ],
+                        },
+                    ],
                 }
-                ]
-            }],
+            ],
             username=self.bot_name,
-            icon_emoji=":door:"
+            icon_emoji=":door:",
         )
 
 

@@ -14,6 +14,7 @@ LOG_TYPES = (
     (LOG_TYPE_UNSUCCESSFUL, _("Unsuccessful")),
 )
 
+
 class AccessLog(models.Model):
     class Meta:
         verbose_name = _("Access Log")

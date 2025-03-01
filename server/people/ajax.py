@@ -9,6 +9,7 @@ from .models import Person
 def get_people(request, term):
     return Person.objects.filter(Q(name__icontains=term) | Q(email__icontains=term))
 
+
 class QualifyablePersonAutocompleteView(APIView):
     queryset = Person.objects.all()
 

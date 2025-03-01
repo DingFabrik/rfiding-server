@@ -5,8 +5,10 @@ from django.db.models import Q
 
 from .models import Machine
 
+
 def get_machines(request, term):
     return Machine.objects.filter(Q(name__icontains=term) | Q(hostname__icontains=term))
+
 
 class MachineAutocompleteView(APIView):
     queryset = Machine.objects.all()
@@ -31,7 +33,10 @@ class QualifyableMachineAutocompleteView(APIView):
         for machine in machines:
             instructors = [
                 {"value": instructor["person__pk"], "label": instructor["person__name"]}
-                for instructor in machine.instructors.select_related("person").order_by("person__name").values("person__pk", "person__name").all()
+                for instructor in machine.instructors.select_related("person")
+                .order_by("person__name")
+                .values("person__pk", "person__name")
+                .all()
             ]
             returned.append(
                 {

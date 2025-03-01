@@ -28,15 +28,17 @@ class QualifyPersonForm(forms.ModelForm):
             ),
             "comment": forms.Textarea(attrs={"rows": 4}),
         }
-        
+
     def __init__(self, *args, **kwargs):
         super(QualifyPersonForm, self).__init__(*args, **kwargs)
 
         if self.instance.pk:
-            instructors = list(self.instance.machine.instructors.select_related("person")
-                               .order_by("person__name")
-                               .values_list("pk", "person__name")
-                               .all())
+            instructors = list(
+                self.instance.machine.instructors.select_related("person")
+                .order_by("person__name")
+                .values_list("pk", "person__name")
+                .all()
+            )
             instructors.insert(0, ("", "---------"))
             self.fields["instructed_by"].choices = instructors
             self.fields["instructed_by"].widget.choices = instructors

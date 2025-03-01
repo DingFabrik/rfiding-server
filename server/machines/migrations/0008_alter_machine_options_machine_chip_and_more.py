@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("machines", "0007_alter_machine_options_machine_needs_qualification"),
     ]
@@ -12,12 +11,20 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AlterModelOptions(
             name="machine",
-            options={"ordering": ["pk"], "verbose_name": "Machine", "verbose_name_plural": "Machines"},
+            options={
+                "ordering": ["pk"],
+                "verbose_name": "Machine",
+                "verbose_name_plural": "Machines",
+            },
         ),
         migrations.AddField(
             model_name="machine",
             name="chip",
-            field=models.CharField(choices=[("esp32", "ESP32"), ("esp8266", "ESP8266")], default="esp8266", max_length=100),
+            field=models.CharField(
+                choices=[("esp32", "ESP32"), ("esp8266", "ESP8266")],
+                default="esp8266",
+                max_length=100,
+            ),
         ),
         migrations.AddField(
             model_name="machine",
@@ -32,6 +39,9 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="machine",
             name="needs_qualification",
-            field=models.BooleanField(default=True, help_text="If disabled, any active user can access this machine."),
+            field=models.BooleanField(
+                default=True,
+                help_text="If disabled, any active user can access this machine.",
+            ),
         ),
     ]

@@ -8,7 +8,11 @@ from django.conf import settings
 from datetime import timedelta
 
 from machines.fields import WeekdayFormField
-from .client_modules import ACCESS_CONTROL_MODULES, STATUS_DISPLAY_MODULES, ACTOR_MODULES
+from .client_modules import (
+    ACCESS_CONTROL_MODULES,
+    STATUS_DISPLAY_MODULES,
+    ACTOR_MODULES,
+)
 
 SUPPORTED_CHIPS = [
     ("esp32", "ESP32"),
@@ -28,6 +32,7 @@ MACHINE_TYPES = [
     (MACHINE_TYPE_LOCK, _("Lock")),
     (MACHINE_TYPE_LOCKBOX, _("Multiple Locks")),
 ]
+
 
 def is_str(obj):
     try:
@@ -61,37 +66,97 @@ class WeekdayField(models.CharField):
         return ",".join([str(x) for x in value or []])
 
 
-ENFORCE_API_KEYS = settings.ENFORCE_API_KEYS if hasattr(settings, "ENFORCE_API_KEYS") else False
+ENFORCE_API_KEYS = (
+    settings.ENFORCE_API_KEYS if hasattr(settings, "ENFORCE_API_KEYS") else False
+)
+
+
 class Machine(TimestampedModel):
     name = models.CharField(max_length=100)
-    type = models.CharField(max_length=100, choices=MACHINE_TYPES, default=MACHINE_TYPE_PRIMARY)
-    location = models.ForeignKey("locations.Location", on_delete=models.SET_NULL, related_name="machines", null=True, blank=True)
+    type = models.CharField(
+        max_length=100, choices=MACHINE_TYPES, default=MACHINE_TYPE_PRIMARY
+    )
+    location = models.ForeignKey(
+        "locations.Location",
+        on_delete=models.SET_NULL,
+        related_name="machines",
+        null=True,
+        blank=True,
+    )
     is_active = models.BooleanField(default=True)
-    needs_qualification = models.BooleanField(default=True, help_text=_("If disabled, any active user can access this machine."))
-    
+    needs_qualification = models.BooleanField(
+        default=True,
+        help_text=_("If disabled, any active user can access this machine."),
+    )
+
     mac_address = models.CharField(max_length=17, db_index=True)
     hostname = models.CharField(max_length=100)
     ip_address = models.GenericIPAddressField(null=True, blank=True)
-    encryption_key = models.CharField(max_length=64, null=True, blank=True, help_text=_("64 character encryption key for secure communication with the machine."))
-    api_key = models.CharField(max_length=64, null=True, blank=True, help_text=_("API Key for authenticated when the machine accesses the API."))
-    chip = models.CharField(max_length=100, default=SUPPORTED_CHIPS[0][0], choices=SUPPORTED_CHIPS)
+    encryption_key = models.CharField(
+        max_length=64,
+        null=True,
+        blank=True,
+        help_text=_(
+            "64 character encryption key for secure communication with the machine."
+        ),
+    )
+    api_key = models.CharField(
+        max_length=64,
+        null=True,
+        blank=True,
+        help_text=_("API Key for authenticated when the machine accesses the API."),
+    )
+    chip = models.CharField(
+        max_length=100, default=SUPPORTED_CHIPS[0][0], choices=SUPPORTED_CHIPS
+    )
     firmware_version = models.CharField(max_length=50, null=True, blank=True)
 
     log_booted = models.BooleanField(default=True, help_text=_("Log boot events"))
-    log_enabled = models.BooleanField(default=True, help_text=_("Log successful unlock events"))
-    log_disabled = models.BooleanField(default=False, help_text=_("Log when machine is disabled again"))
-    log_unsuccessful = models.BooleanField(default=False, help_text=_("Log unsuccessful unlock attempts"))
+    log_enabled = models.BooleanField(
+        default=True, help_text=_("Log successful unlock events")
+    )
+    log_disabled = models.BooleanField(
+        default=False, help_text=_("Log when machine is disabled again")
+    )
+    log_unsuccessful = models.BooleanField(
+        default=False, help_text=_("Log unsuccessful unlock attempts")
+    )
 
-    runtimer = models.DurationField(default=timedelta(), help_text=_("Time until the machine is locked again when it is not active."))
-    min_power = models.IntegerField(default=10, help_text=_("Minimum power consumption in watts for the machine to be considered active."))
+    runtimer = models.DurationField(
+        default=timedelta(),
+        help_text=_("Time until the machine is locked again when it is not active."),
+    )
+    min_power = models.IntegerField(
+        default=10,
+        help_text=_(
+            "Minimum power consumption in watts for the machine to be considered active."
+        ),
+    )
     control_parameter = models.CharField(max_length=100, null=True, blank=True)
-    display_time_countdown = models.BooleanField(default=True, help_text=_("Whether the machine displays the time remaining until it locks again when it is unlocked but not active."))
-    display_power_consumption = models.BooleanField(default=True, help_text=_("If the machine displays the power consumption when it is active."))
-    link_relays = models.BooleanField(default=False, help_text=_("If set, the machine relays are linked and the secondary relay is activated together with the primary relay."))
+    display_time_countdown = models.BooleanField(
+        default=True,
+        help_text=_(
+            "Whether the machine displays the time remaining until it locks again when it is unlocked but not active."
+        ),
+    )
+    display_power_consumption = models.BooleanField(
+        default=True,
+        help_text=_("If the machine displays the power consumption when it is active."),
+    )
+    link_relays = models.BooleanField(
+        default=False,
+        help_text=_(
+            "If set, the machine relays are linked and the secondary relay is activated together with the primary relay."
+        ),
+    )
 
-    access_control_module = models.IntegerField(default=0, choices=ACCESS_CONTROL_MODULES)
+    access_control_module = models.IntegerField(
+        default=0, choices=ACCESS_CONTROL_MODULES
+    )
     access_control_module_settings = models.JSONField(default=dict, blank=True)
-    status_display_module = models.IntegerField(default=0, choices=STATUS_DISPLAY_MODULES)
+    status_display_module = models.IntegerField(
+        default=0, choices=STATUS_DISPLAY_MODULES
+    )
     status_display_module_settings = models.JSONField(default=dict, blank=True)
     actor_module = models.IntegerField(default=0, choices=ACTOR_MODULES)
     actor_module_settings = models.JSONField(default=dict, blank=True)
@@ -103,12 +168,14 @@ class Machine(TimestampedModel):
 
     def __str__(self):
         return f"{self.name}"
-    
+
     @property
     def has_api(self):
-        return (self.encryption_key is not None and
-                len(self.encryption_key) > 0 and
-                self.ip_address is not None)
+        return (
+            self.encryption_key is not None
+            and len(self.encryption_key) > 0
+            and self.ip_address is not None
+        )
 
     def get_absolute_url(self):
         return reverse("machines:detail", kwargs={"pk": self.pk})
@@ -123,7 +190,7 @@ class Machine(TimestampedModel):
             .filter(end_time__gte=now.time())
             .exists()
         )
-        
+
     @staticmethod
     def get_valid_end_time_for_times(times):
         if not times.all():
@@ -141,12 +208,12 @@ class Machine(TimestampedModel):
             return None
         except MachineTime.DoesNotExist:
             return None
-        
+
     @staticmethod
     def get_valid_end_time_for_machine(machine_id):
         query = MachineTime.objects.filter(machine_id=machine_id)
         return Machine.get_valid_end_time_for_times(query)
-    
+
     def get_valid_end_time(self):
         return Machine.get_valid_end_time_for_times(self.times)
 
@@ -156,7 +223,8 @@ class MachineTime(TimestampedModel):
     weekdays = WeekdayField()
     start_time = models.TimeField()
     end_time = models.TimeField()
-    
+
+
 class MachineRegistrationRequest(TimestampedModel):
     mac_address = models.CharField(max_length=17, db_index=True)
     hostname = models.CharField(max_length=100)

@@ -4,7 +4,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("tokens", "0012_tokentype_token_label_id_token_type"),
     ]

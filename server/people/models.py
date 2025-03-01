@@ -86,6 +86,7 @@ class Instructor(TimestampedModel):
         verbose_name_plural = _("Instructors")
         ordering = ["machine", "person"]
 
+
 auditlog.register(Person, mask_fields=["email"], exclude_fields=["created", "updated"])
 auditlog.register(Qualification, exclude_fields=["created", "updated"])
 auditlog.register(Instructor, exclude_fields=["created", "updated"])

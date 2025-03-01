@@ -10,6 +10,7 @@ from tokens.models import Token
 from machines.models import Machine
 from people.models import Person
 
+
 class AccessLogListView(TitleMixin, PartialListMixin, ListView):
     title = _("Access Logs")
     model = AccessLog
@@ -17,9 +18,9 @@ class AccessLogListView(TitleMixin, PartialListMixin, ListView):
     template_name = "access_log_list.html"
     context_object_name = "access_logs"
     ordering = ["-timestamp"]
-    
+
     def get_queryset(self) -> QuerySet[Any]:
-        queryset =  super().get_queryset()
+        queryset = super().get_queryset()
         if "action" in self.request.GET and self.request.GET["action"] != "all":
             queryset = queryset.filter(type=self.request.GET["action"])
         return queryset
@@ -56,6 +57,7 @@ class AccessLogForTokenView(TitleMixin, PartialListMixin, ListView):
         context["token"] = Token.objects.get(pk=self.kwargs["token"])
         return context
 
+
 class AccessLogForPersonView(TitleMixin, PartialListMixin, ListView):
     title = _("Access Logs")
     model = AccessLog
@@ -64,7 +66,12 @@ class AccessLogForPersonView(TitleMixin, PartialListMixin, ListView):
     template_name = "access_log_for_person.html"
 
     def get_queryset(self) -> QuerySet[Any]:
-        return super().get_queryset().select_related("machine").filter(token__person__pk=self.kwargs["person"])
+        return (
+            super()
+            .get_queryset()
+            .select_related("machine")
+            .filter(token__person__pk=self.kwargs["person"])
+        )
 
     def get_paginate_by(self, queryset):
         return self.request.user.page_length

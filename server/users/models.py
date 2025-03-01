@@ -5,6 +5,7 @@ from django.utils.translation import gettext_lazy as _
 from django.conf import settings
 from auditlog.registry import auditlog
 
+
 class UserManager(BaseUserManager):
     """Define a model manager for User model with no username field."""
 
@@ -51,6 +52,7 @@ THEME_COLORS = (
     ("cyan", _("Cyan")),
 )
 
+
 class RFIDingUser(AbstractUser):
     USERNAME_FIELD = "email"
     username = None
@@ -72,7 +74,11 @@ class RFIDingUser(AbstractUser):
         validators=[validators.MinValueValidator(1), validators.MaxValueValidator(300)],
     )
 
-    theme_mode = models.CharField(max_length=10, choices=[("light", _("Light")), ("dark", _("Dark")), ("auto", _("Auto"))], default="auto")
+    theme_mode = models.CharField(
+        max_length=10,
+        choices=[("light", _("Light")), ("dark", _("Dark")), ("auto", _("Auto"))],
+        default="auto",
+    )
     theme = models.CharField(max_length=10, choices=THEME_COLORS, default="default")
 
     objects = UserManager()
@@ -81,5 +87,6 @@ class RFIDingUser(AbstractUser):
         verbose_name = _("User")
         verbose_name_plural = _("Users")
         ordering = ["email"]
+
 
 auditlog.register(RFIDingUser, exclude_fields=["password", "last_login"])

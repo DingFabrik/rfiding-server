@@ -5,6 +5,7 @@ from datetime import datetime, timedelta, timezone
 from .models import SpaceState
 from rfiding import settings
 
+
 class ShowSpaceStatus(TemplateView):
     template_name = "status.html"
 
@@ -21,5 +22,7 @@ class ShowSpaceStatus(TemplateView):
 
             timestamp = context["state"].updated
             if datetime.now(tz=timezone.utc) - timestamp > timedelta(hours=12):
-                context["warning"] = _("Space status might not be accurate anymore! Consider contacting the space.")
+                context["warning"] = _(
+                    "Space status might not be accurate anymore! Consider contacting the space."
+                )
         return context

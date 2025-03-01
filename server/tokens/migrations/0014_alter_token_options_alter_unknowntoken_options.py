@@ -4,7 +4,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("tokens", "0013_alter_blacklistedtoken_options_and_more"),
     ]

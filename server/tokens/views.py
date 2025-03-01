@@ -39,8 +39,14 @@ TOKEN_FILTER_CHOICES = (
 
 TOKEN_SORT_CHOICES_KEYS = [choice[0] for choice in TOKEN_SORT_CHOICES]
 
+
 class TokenListView(BaseListView):
-    queryset = Token.objects.select_related("person").select_related("type").filter(archived=None).order_by("id")
+    queryset = (
+        Token.objects.select_related("person")
+        .select_related("type")
+        .filter(archived=None)
+        .order_by("id")
+    )
     permission_required = "tokens.view_token"
 
     model = Token
@@ -75,11 +81,13 @@ class UnknownTokenListView(PermissionRequiredMixin, ListView):
     model = UnknownToken
     template_name = "unknown_token_list.html"
     context_object_name = "tokens"
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["can_create_token"] = self.request.user.has_perm("tokens.create_token")
-        context["can_create_blacklistedtoken"] = self.request.user.has_perm("tokens.create_blacklistedtoken")
+        context["can_create_blacklistedtoken"] = self.request.user.has_perm(
+            "tokens.create_blacklistedtoken"
+        )
         return context
 
 
@@ -158,14 +166,14 @@ class TokenArchiveView(PermissionRequiredMixin, DeleteView):
     model = Token
     template_name = "archive_confirm.html"
     success_url = reverse_lazy("tokens:list")
-    
+
     def handle(self):
         token = self.get_object()
         token.is_active = False
         token.archived = timezone.now()
         token.save()
         return redirect(self.success_url)
-    
+
     def delete(self, request: HttpRequest, *args: str, **kwargs: Any) -> HttpResponse:
         return self.handle()
 
@@ -177,6 +185,7 @@ class TokenToggleActiveView(BaseToggleActiveView):
     permission_required = "tokens.change_token"
     model = Token
 
+
 class PersonForTokenPopoverView(PermissionRequiredMixin, TemplateView):
     permission_required = "people.view_person"
     template_name = "person_popover.html"
@@ -184,13 +193,13 @@ class PersonForTokenPopoverView(PermissionRequiredMixin, TemplateView):
 
     def get_queryset(self) -> QuerySet[Any]:
         return Person.objects.filter(token__pk=self.request.GET["token_pk"])
-    
+
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
         context["object"] = self.get_queryset().get()
         return context
-    
-    
+
+
 class BlacklistTokenView(PermissionRequiredMixin, View):
     permission_required = "tokens.create_blacklistedtoken"
 
@@ -199,28 +208,33 @@ class BlacklistTokenView(PermissionRequiredMixin, View):
         UnknownToken.objects.filter(serial=serial).delete()
         BlacklistedToken.objects.create(serial=serial)
         return redirect("tokens:blacklisted")
+
+
 class BlacklistedTokenListView(BaseListView):
     permission_required = "tokens.view_blacklistedtoken"
 
     model = BlacklistedToken
     template_name = "blacklisted_token_list.html"
     context_object_name = "tokens"
-    
+
+
 class BlacklistedTokenDeleteView(PermissionRequiredMixin, DeleteView):
     permission_required = "tokens.delete_blacklistedtoken"
-    
+
     model = BlacklistedToken
     template_name = "delete_confirm.html"
     success_url = reverse_lazy("tokens:blacklisted")
-    
+
 
 class NextFreeTokenLabelView(PermissionRequiredMixin, View):
     permission_required = "tokens.view_token"
 
     def get(self, request: HttpRequest, *args: str, **kwargs: Any) -> HttpResponse:
         tokens = Token.objects.filter(label_id__isnull=False)
+
         def default_label_format_func(x):
             return f"{x}"
+
         label_format_func = default_label_format_func
         if "type" in request.GET and len(request.GET["type"]) > 0:
             token_type = get_object_or_404(TokenType, pk=request.GET["type"])
@@ -234,17 +248,19 @@ class NextFreeTokenLabelView(PermissionRequiredMixin, View):
         else:
             label_id = 1
         return HttpResponse(_("Next free label: %s") % label_format_func(label_id))
-    
+
+
 class TokenTypeListView(BaseListView):
     permission_required = "tokens.view_tokentype"
 
     model = TokenType
     template_name = "tokentype_list.html"
     context_object_name = "types"
-    
+
     def get_paginate_by(self, queryset):
         return self.request.user.page_length
-    
+
+
 class TokenTypeCreateView(PermissionRequiredMixin, CreateView):
     permission_required = "tokens.add_tokentype"
 
@@ -252,6 +268,7 @@ class TokenTypeCreateView(PermissionRequiredMixin, CreateView):
     template_name = "tokentype_form.html"
     fields = ["name", "description", "label_prefix", "label_id_padding"]
     success_url = reverse_lazy("tokens:types:list")
+
 
 class TokenTypeUpdateView(PermissionRequiredMixin, UpdateView):
     permission_required = "tokens.change_tokentype"
@@ -261,6 +278,7 @@ class TokenTypeUpdateView(PermissionRequiredMixin, UpdateView):
     fields = ["name", "description", "label_prefix", "label_id_padding"]
     context_object_name = "type"
     success_url = reverse_lazy("tokens:types:list")
+
 
 class TokenTypeDeleteView(PermissionRequiredMixin, DeleteView):
     permission_required = "tokens.delete_tokentype"

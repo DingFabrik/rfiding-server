@@ -11,7 +11,7 @@ urlpatterns = [
         views.AccessLogForTokenView.as_view(),
         name="for-token",
     ),
-path(
+    path(
         "person/<int:person>",
         views.AccessLogForPersonView.as_view(),
         name="for-person",

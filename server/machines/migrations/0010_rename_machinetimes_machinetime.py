@@ -4,7 +4,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("machines", "0009_alter_machine_chip_alter_machine_completed_setup"),
     ]

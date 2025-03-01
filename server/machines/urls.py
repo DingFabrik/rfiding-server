@@ -16,7 +16,7 @@ urlpatterns = [
         views.MachineToggleActiveView.as_view(),
         name="toggle-active",
     ),
-        path(
+    path(
         "<int:pk>/status",
         views.MachineStatusPartialView.as_view(),
         name="status",
@@ -39,7 +39,11 @@ urlpatterns = [
         views.MachineQualificationsListView.as_view(),
         name="qualifications",
     ),
-    path("<int:pk>/qualifications/qualify", views.QualifyMachineView.as_view(), name="qualify"),
+    path(
+        "<int:pk>/qualifications/qualify",
+        views.QualifyMachineView.as_view(),
+        name="qualify",
+    ),
     path(
         "<int:pk>/instructor/add",
         views.AddInstructorMachineView.as_view(),
@@ -55,5 +59,9 @@ urlpatterns = [
         views.MachineStatisticsView.as_view(),
         name="statistics",
     ),
-    path("requests/<int:pk>/delete", views.MachineRegistrationRequestDeleteView.as_view(), name="delete-request"),
+    path(
+        "requests/<int:pk>/delete",
+        views.MachineRegistrationRequestDeleteView.as_view(),
+        name="delete-request",
+    ),
 ]

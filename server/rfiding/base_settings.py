@@ -14,7 +14,11 @@ if pyproject_toml_file.exists() and pyproject_toml_file.is_file():
     if "project" in data and "version" in data["project"]:
         VERSION = data["project"]["version"]
     # check tool.poetry.version
-    elif "tool" in data and "poetry" in data["tool"] and "version" in data["tool"]["poetry"]:
+    elif (
+        "tool" in data
+        and "poetry" in data["tool"]
+        and "version" in data["tool"]["poetry"]
+    ):
         VERSION = data["tool"]["poetry"]["version"]
 
 # SECURITY WARNING: keep the secret key used in production secret!
@@ -40,9 +44,8 @@ INSTALLED_APPS = [
     "crispy_forms",
     "crispy_bootstrap5",
     "django_celery_results",
-    'django_celery_beat',
+    "django_celery_beat",
     "auditlog",
-
     "access_log",
     "base",
     "firmware",
@@ -96,10 +99,12 @@ DATABASES = {
 }
 
 AUTH_PASSWORD_VALIDATORS = [
-    { "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator" },
-    { "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator" },
-    { "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator" },
-    { "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator" },
+    {
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"
+    },
+    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
+    {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
+    {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
 
 
@@ -161,10 +166,12 @@ ASGI_APPLICATION = "rfiding.asgi.application"
 
 CELERY_RESULT_BACKEND = "django-db"
 
+
 def filter_unknown_token(record):
     if record.msg.startswith("Unknown token used"):
         return True
     return False
+
 
 LOGGING = {
     "version": 1,
@@ -189,23 +196,23 @@ LOGGING = {
         "filter_unknown_tokens": {
             "()": "django.utils.log.CallbackFilter",
             "callback": filter_unknown_token,
-        }
+        },
     },
     "handlers": {
         "console": {
             "filters": ["require_debug_true"],
             "class": "logging.StreamHandler",
-            "formatter": "simple"
+            "formatter": "simple",
         },
         "console_verbose": {
             "filters": ["require_debug_true"],
             "class": "logging.StreamHandler",
-            "formatter": "verbose"
+            "formatter": "verbose",
         },
         "mail_admins": {
             "filters": ["require_debug_false"],
             "class": "django.utils.log.AdminEmailHandler",
-        }
+        },
     },
     "loggers": {
         "django": {
@@ -216,7 +223,7 @@ LOGGING = {
             "filters": ["filter_unknown_tokens"],
             "handlers": ["console_verbose", "mail_admins"],
             "level": "INFO",
-        }
+        },
     },
 }
 
