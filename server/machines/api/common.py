@@ -29,7 +29,8 @@ class BaseAPIView(APIView):
             return Machine.objects.values(
                 "id",
                 "needs_qualification",
-                ).get(mac_address=mac_address, is_active=True)
+                "api_key"
+                ).get(mac_address__iexact=mac_address, is_active=True)
         except Machine.DoesNotExist:
             raise NotFound("Machine does not exist") from None
 
@@ -68,7 +69,7 @@ def check_access(machine, tokenID):
     
     if machine["needs_qualification"]:
         qualification = (
-            Qualification.filter(machine=machine["id"], person=token["person__id"]).order_by().first()
+            Qualification.objects.filter(machine=machine["id"], person=token["person__id"]).order_by().first()
         )
         if qualification is None or qualification.permission_level == PERMISSION_LEVELS[2][0]:
             raise PermissionDenied("No Access!")

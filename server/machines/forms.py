@@ -15,7 +15,6 @@ class MachineForm(forms.ModelForm):
         self.helper = FormHelper(self)
         self.helper.layout = Layout(
             "name",
-            "type",
             "location",
             "is_active",
             "needs_qualification",
@@ -30,9 +29,13 @@ class MachineForm(forms.ModelForm):
                         "log_disabled",
                         "log_unsuccessful",
                         css_class="border rounded p-2 mb-3"),
-            "chip",
             Fieldset(_("Security"),
                      "encryption_key",
+                     "api_key",
+                     css_class="border rounded p-2 mb-3"),
+            Fieldset(_("Client"),
+                     "chip",
+                     "type",
                      css_class="border rounded p-2 mb-3"),
             FormActions(
                 Submit("submit", _("Save")),
@@ -56,6 +59,7 @@ class MachineForm(forms.ModelForm):
             "needs_qualification",
             "chip",
             "encryption_key",
+            "api_key",
             "log_booted",
             "log_enabled",
             "log_disabled",

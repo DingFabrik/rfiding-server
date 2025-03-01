@@ -4,6 +4,7 @@ from base.models import TimestampedModel
 from django.utils.translation import gettext as _
 from django.urls import reverse
 from auditlog.registry import auditlog
+from django.conf import settings
 
 from machines.fields import WeekdayFormField
 from .client_modules import ACCESS_CONTROL_MODULES, STATUS_DISPLAY_MODULES, ACTOR_MODULES
@@ -59,6 +60,7 @@ class WeekdayField(models.CharField):
         return ",".join([str(x) for x in value or []])
 
 
+ENFORCE_API_KEYS = settings.ENFORCE_API_KEYS if hasattr(settings, "ENFORCE_API_KEYS") else False
 class Machine(TimestampedModel):
     name = models.CharField(max_length=100)
     type = models.CharField(max_length=100, choices=MACHINE_TYPES, default=MACHINE_TYPE_PRIMARY)
@@ -70,6 +72,7 @@ class Machine(TimestampedModel):
     hostname = models.CharField(max_length=100)
     ip_address = models.GenericIPAddressField(null=True, blank=True)
     encryption_key = models.CharField(max_length=64, null=True, blank=True, help_text=_("64 character encryption key for secure communication with the machine."))
+    api_key = models.CharField(max_length=64, null=True, blank=True, help_text=_("API Key for authenticated when the machine accesses the API."))
     chip = models.CharField(max_length=100, default=SUPPORTED_CHIPS[0][0], choices=SUPPORTED_CHIPS)
     firmware_version = models.CharField(max_length=50, null=True, blank=True)
 
