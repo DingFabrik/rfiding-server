@@ -5,6 +5,7 @@ from django.utils.translation import gettext as _
 from django.urls import reverse
 from auditlog.registry import auditlog
 from django.conf import settings
+from datetime import timedelta
 
 from machines.fields import WeekdayFormField
 from .client_modules import ACCESS_CONTROL_MODULES, STATUS_DISPLAY_MODULES, ACTOR_MODULES
@@ -81,7 +82,7 @@ class Machine(TimestampedModel):
     log_disabled = models.BooleanField(default=False, help_text=_("Log when machine is disabled again"))
     log_unsuccessful = models.BooleanField(default=False, help_text=_("Log unsuccessful unlock attempts"))
 
-    runtimer = models.DurationField(default=0, help_text=_("Time until the machine is locked again when it is not active."))
+    runtimer = models.DurationField(default=timedelta(), help_text=_("Time until the machine is locked again when it is not active."))
     min_power = models.IntegerField(default=10, help_text=_("Minimum power consumption in watts for the machine to be considered active."))
     control_parameter = models.CharField(max_length=100, null=True, blank=True)
     display_time_countdown = models.BooleanField(default=True, help_text=_("Whether the machine displays the time remaining until it locks again when it is unlocked but not active."))

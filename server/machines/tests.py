@@ -58,7 +58,7 @@ class V1CheckMachineTests(APITestCase):
         )
         machine.save()
         response = self.client.get(V1CheckMachineTests.url, data, format="json")
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_inactive_machine(self):
         """
@@ -89,7 +89,7 @@ class V1CheckMachineTests(APITestCase):
         token = Token.objects.create(serial="456", person=person, is_active=False)
         token.save()
         response = self.client.get(V1CheckMachineTests.url, data, format="json")
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_inactive_person(self):
         """
@@ -107,7 +107,7 @@ class V1CheckMachineTests(APITestCase):
         token = Token.objects.create(serial="456", person=person)
         token.save()
         response = self.client.get(V1CheckMachineTests.url, data, format="json")
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_no_qualification(self):
         data = {"machine": "aabbccddeeff", "tokenUid": "456"}
@@ -122,7 +122,7 @@ class V1CheckMachineTests(APITestCase):
         response = self.client.get(V1CheckMachineTests.url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(
-            response.data["error"], "Person does not have access to machine"
+            response.data["error"], "No Access!"
         )
 
     def test_qualification(self):
@@ -177,7 +177,7 @@ class V1CheckMachineTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(response.data["access"], 0)
 
-    def test_qualification_if_always_alow_closed(self):
+    def test_qualification_if_always_allow_closed(self):
         data = {"machine": "aabbccddeeff", "tokenUid": "456"}
         machine = Machine.objects.create(
             mac_address="aa:bb:cc:dd:ee:ff", hostname="test", name="test"
