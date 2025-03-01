@@ -9,7 +9,7 @@
 <div class="row pb-5"
     hx-get="{% url "home_partial_counts" %}"
     hx-trigger="load">
-    <div class="col-sm pb-5">
+    <div class="col-md mb-3">
         <div class="card border-secondary text-center">
             <div class="card-header">
                 <a href="{% url 'tokens:list' %}">{% trans "Tokens" %}</a>
@@ -28,7 +28,7 @@
             </div>
         </div>
     </div>
-    <div class="col-sm mb-3">
+    <div class="col-md mb-3">
         <div class="card border-secondary text-center">
             <div class="card-header">
                 <a href="{% url 'people:list' %}">{% trans "People" %}</a>
@@ -47,7 +47,7 @@
             </div>
         </div>
     </div>
-    <div class="col-sm mb-3">
+    <div class="col-md mb-3">
         <div class="card border-secondary text-center">
             <div class="card-header">
                 <a href="{% url 'machines:list' %}">{% trans "Machines" %}</a>
