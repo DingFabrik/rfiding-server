@@ -1,0 +1,12 @@
+{% extends base_template %}
+{% load i18n %}
+
+{% block form_url %}{{ form_url }}{% endblock %}
+
+{% block title %}
+{% if object %}
+{% blocktrans %}Edit {{ object }}{% endblocktrans %}
+{% else %}
+{% blocktrans %}Add widget{% endblocktrans %}
+{% endif %}
+{% endblock %}

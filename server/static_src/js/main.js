@@ -47,7 +47,10 @@ window.addEventListener('htmx:beforeRequest', function(event) {
 
 window.addEventListener('htmx:beforeSwap', function(event) {
     if (event.detail.xhr.status >= 400) {
-        event.detail.target.querySelector('.alert').classList.remove('invisible');
+        console.log('Error', event.detail.xhr.status);
+        if (event.detail.target.querySelector('.alert')) {
+            event.detail.target.querySelector('.alert').classList.remove('invisible');
+        }
     }
 });
 

@@ -1,70 +1,67 @@
 {% extends "base.html" %}
-{% load i18n %}
+{% load i18n %}{% load base_extra %}
 
 {% block title %}
 {% trans "Welcome to RfiDing" %}
 {% endblock title %}
 
+{% block top_actions %}
+<a href="#" class="btn btn-primary btn-sm only-edit-mode"
+    hx-get="{% url "users:widgets:create" %}"
+    hx-target="#widget-modal .modal-body"
+    hx-trigger="click"
+    hx-swap="innerHTML"
+    onclick="showModal()"><i class="bi-plus"></i></a>
+<a href="#" class="btn btn-secondary btn-sm" onclick="toggleEditMode()"><i class="bi-pencil-fill"></i></a>
+{% endblock %}
+
 {% block content %}
-<div class="row pb-5"
-    hx-get="{% url "home_partial_counts" %}"
+<div class="row justify-content-md-start pb-5" id="widgets"
+    hx-get="{% url "users:widgets:home" %}"
     hx-trigger="load">
-    <div class="col-md mb-3">
-        <div class="card border-secondary text-center">
-            <div class="card-header">
-                <a href="{% url 'tokens:list' %}">{% trans "Tokens" %}</a>
-            </div>
-            <div class="card-body">
-                <div class="row placeholder-glow">
-                    <div class="col">
-                        <span class="h3 mb-1 p-0 placeholder col-2" style="margin-top:1px;"></span>
-                        <p class="card-text text-secondary">{% trans "Active" %}</p>
-                    </div>
-                    <div class="col">
-                        <span class="h3 mb-1 p-0 placeholder col-2" style="margin-top:1px;"></span>
-                        <p class="card-text text-secondary">{% trans "Total" %}</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-md mb-3">
-        <div class="card border-secondary text-center">
-            <div class="card-header">
-                <a href="{% url 'people:list' %}">{% trans "People" %}</a>
-            </div>
-            <div class="card-body">
-                <div class="row placeholder-glow">
-                    <div class="col">
-                        <span class="h3 mb-1 p-0 placeholder col-2" style="margin-top:1px;"></span>
-                        <p class="card-text text-secondary">{% trans "Active" %}</p>
-                    </div>
-                    <div class="col">
-                        <span class="h3 mb-1 p-0 placeholder col-2" style="margin-top:1px;"></span>
-                        <p class="card-text text-secondary">{% trans "Total" %}</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-md mb-3">
-        <div class="card border-secondary text-center">
-            <div class="card-header">
-                <a href="{% url 'machines:list' %}">{% trans "Machines" %}</a>
-            </div>
-            <div class="card-body">
-                <div class="row placeholder-glow">
-                    <div class="col">
-                        <span class="h3 mb-1 p-0 placeholder col-2" style="margin-top:1px;"></span>
-                        <p class="card-text text-secondary">{% trans "Active" %}</p>
-                    </div>
-                    <div class="col">
-                        <span class="h3 mb-1 p-0 placeholder col-2" style="margin-top:1px;"></span>
-                        <p class="card-text text-secondary">{% trans "Total" %}</p>
-                    </div>
-                </div>
-            </div>
+    {% for widget in widgets %}
+    {% include widget.template with title=widget.title placeholder=True %}
+    {% endfor %}
+</div>
+{% endblock content %}
+
+{% block extra_content %}
+<div id="widget-modal"
+    class="modal modal-blur fade"
+    style="display: none"
+    aria-hidden="false"
+    tabindex="-1">
+    <div
+    class="modal-dialog modal-dialog-centered"
+    role="document"
+    hx-boost="true"
+    hx-push-url="false"
+    hx-target="#widgets">
+        <div class="modal-content">
+            <div class="modal-body"></div>
         </div>
     </div>
 </div>
-{% endblock content %}
+{% endblock %}
+
+{% block script_extra %}
+function toggleEditMode() {
+    var main = document.getElementById("main");
+    if (main.className.indexOf("edit-mode") == -1) {
+        main.className += " edit-mode";
+    } else {
+        main.className = main.className.replace(" edit-mode", "");
+    }
+}
+var modal = new bootstrap.Modal(document.getElementById('widget-modal'));
+function showModal() {
+    modal.show();
+}
+
+htmx.on("htmx:afterRequest", function(evt) {
+    if (evt.detail.elt.nodeName === "FORM") {
+        console.log(modal)
+        modal.hide();
+    }
+});
+{% endblock %}

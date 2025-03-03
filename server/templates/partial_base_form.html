@@ -1,0 +1,20 @@
+{% extends 'partial_base.html' %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+{% block pre_form %}{% endblock %}
+<form action="{% block form_url %}{% endblock %}" method="post">
+    {% csrf_token %}
+    {{ form|crispy }}
+            <button class="btn btn-primary" type="submit">{% trans "Save" %}</button>
+        {% if object and can_delete %}
+            <a class="btn btn-danger float-end" href="{% url request.resolver_match.namespace|add:':delete' object.pk %}">
+                <i class="bi-trash me-1"></i> {% trans 'Delete' %}
+            </a>
+        {% endif %}
+        {% block extra_form_buttons %}
+        {% endblock %}
+</form>
+{% block post_form %}{% endblock %}
+{% endblock %}

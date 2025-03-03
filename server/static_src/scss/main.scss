@@ -147,3 +147,20 @@ body {
     opacity: 1;
   }
 }
+
+.only-edit-mode {
+  display: none;
+}
+
+.edit-mode .only-edit-mode {
+  display: inline-block;
+}
+
+.edit-mode .not-edit-mode {
+  display: none;
+}
+
+.width.htmx-swapping {
+  opacity: 0;
+  transition: opacity 1s ease-out;
+}

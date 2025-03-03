@@ -19,6 +19,7 @@ class AccessLog(models.Model):
     class Meta:
         verbose_name = _("Access Log")
         verbose_name_plural = _("Access Logs")
+        ordering = ("-timestamp",)
 
     timestamp = models.DateTimeField(auto_now_add=True)
     token = models.ForeignKey(

@@ -1,0 +1,42 @@
+{% load i18n %}
+<div id="widget-{{ widget.pk }}" class="col-md-{{ widget.width|default:4 }} mb-3 widget">
+    <div class="card border-secondary">
+        <div class="card-header text-center">
+            <div class="float-end ">
+                {% block header_actions %}{% endblock %}
+                <button
+                    href="#"
+                    class="btn btn-sm p-0 not-edit-mode"
+                    hx-get="{% url "users:widgets:home" %}?widget_id={{ widget.pk }}"
+                    hx-target="closest .widget"
+                    hx-swap="outerHTML"
+                    hx-trigger="click">
+                    <i class="bi-arrow-clockwise"></i>
+                </a>
+                <button class="btn btn-sm p-0 me-2 only-edit-mode"
+                    hx-get="{% url "users:widgets:update" widget.pk %}"
+                    hx-target="#widget-modal .modal-body"
+                    hx-trigger="click"
+                    hx-swap="innerHTML"
+                    onclick="showModal()">
+                    <i class="bi-gear"></i>
+                </a>
+                <button
+                    class="btn btn-sm text-danger p-0 only-edit-mode"
+                    hx-delete="{% url 'users:widgets:delete' widget.pk %}"
+                    hx-confirm="{% trans "Are you sure?" %}"
+                    hx-target="closest .widget">
+                    <i class="bi-trash"></i>
+                </button>
+            </div>
+            {% block title %}
+            <a>{{ widget.title }}</a>
+            {% endblock %}
+        </div>
+        {% block card_body_outer %}
+        <div class="card-body">
+            {% block content %}{% endblock %}
+        </div>
+        {% endblock %}
+    </div>
+</div>

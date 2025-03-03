@@ -35,10 +35,7 @@ MACHINE_TYPES = [
 
 
 def is_str(obj):
-    try:
-        return isinstance(obj, basestring)
-    except NameError:
-        return isinstance(obj, str)
+    return isinstance(obj, str)
 
 
 class WeekdayField(models.CharField):

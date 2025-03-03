@@ -11,6 +11,13 @@ groups_patterns = [
     path("<int:pk>/delete", views.GroupDeleteView.as_view(), name="delete"),
 ]
 
+widgets_patterns = [
+    path("", views.HomeWidgetsView.as_view(), name="home"),
+    path("add", views.WidgetCreateView.as_view(), name="create"),
+    path("<int:pk>", views.WidgetUpdateView.as_view(), name="update"),
+    path("<int:pk>/delete", views.WidgetDeleteView.as_view(), name="delete"),
+]
+
 urlpatterns = [
     path("profile", views.ProfileView.as_view(), name="profile"),
     path("", views.UserListView.as_view(), name="list"),
@@ -27,4 +34,5 @@ urlpatterns = [
         "change-password/", views.ChangePasswordView.as_view(), name="change_password"
     ),
     path("groups/", include((groups_patterns, "groups"), namespace="groups")),
+    path("widgets/", include((widgets_patterns, "widgets"), namespace="widgets")),
 ]

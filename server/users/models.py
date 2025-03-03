@@ -87,6 +87,43 @@ class RFIDingUser(AbstractUser):
         verbose_name = _("User")
         verbose_name_plural = _("Users")
         ordering = ["email"]
+        
+USER_WIDGETS = [
+    ("token_counts", _("Token Counts")),
+    ("people_counts", _("People Counts")),
+    ("machine_counts", _("Machine Counts")),
+    ("access_log_latest", _("Latest Access Log")),
+]
+
+class UserWidget(models.Model):
+    user = models.ForeignKey(RFIDingUser, on_delete=models.CASCADE, related_name="widgets")
+    widget = models.CharField(max_length=100, choices=USER_WIDGETS)
+    position = models.IntegerField(default=-1)
+    width = models.IntegerField(default=4, validators=[validators.MinValueValidator(2), validators.MaxValueValidator(12)])
+    settings = models.JSONField(default=dict, blank=True)
+
+    class Meta:
+        verbose_name = _("User Widget")
+        verbose_name_plural = _("User Widgets")
+        ordering = ["user", "position"]
+        
+    @property
+    def template(self):
+        if self.widget == "token_counts" or self.widget == "people_counts" or self.widget == "machine_counts":
+            return "widgets/count.html"
+        if self.widget == "access_log_latest":
+            return "widgets/access_log_latest.html"
+        
+    @property
+    def title(self):
+        if self.widget == "token_counts":
+            return _("Tokens")
+        if self.widget == "people_counts":
+            return _("People")
+        if self.widget == "machine_counts":
+            return _("Machines")
+        if self.widget == "access_log_latest":
+            return _("Latest Access Log")
 
 
 auditlog.register(RFIDingUser, exclude_fields=["password", "last_login"])

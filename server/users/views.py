@@ -1,4 +1,5 @@
 from django.forms.forms import BaseForm
+from django.http import HttpResponse
 from django.views.generic import (
     TemplateView,
     UpdateView,
@@ -15,12 +16,11 @@ from django.contrib.auth.views import PasswordChangeView
 from django.contrib.auth.models import Group
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
+from django.shortcuts import render
 
-from base.views import TitleMixin, BaseListView
-from tokens.models import Token
-from machines.models import Machine
-from people.models import Person
-from users.models import RFIDingUser
+from base.views import TitleMixin, BaseListView, PartialMixin
+from .widgets import WidgetDataProvider
+from users.models import RFIDingUser, UserWidget
 from .forms import UserForm, GroupForm
 
 
@@ -45,21 +45,25 @@ class ProfileView(TitleMixin, UpdateView):
 class HomeView(TitleMixin, TemplateView):
     template_name = "home.html"
     title = _("Home")
-
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["widgets"] = self.request.user.widgets.all()
+        return context
 
 @method_decorator(login_required, name="dispatch")
-class HomePartialCountsView(TemplateView):
-    template_name = "home_partial_counts.html"
+class HomeWidgetsView(TemplateView):
+    template_name = "home_widgets.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["activeTokenCount"] = Token.objects.filter(is_active=True).count()
-        context["tokenCount"] = Token.objects.count()
-        context["activeMachineCount"] = Machine.objects.filter(is_active=True).count()
-        context["machineCount"] = Machine.objects.count()
-        context["activePeopleCount"] = Person.objects.filter(is_active=True).count()
-        context["peopleCount"] = Person.objects.count()
-        context["user"] = self.request.user
+        if "widget_id" in self.request.GET:
+            widgets = UserWidget.objects.filter(pk=self.request.GET["widget_id"])
+        else:
+            widgets = self.request.user.widgets.all()
+        data_provider = WidgetDataProvider()
+        data_provider.provide_for_widgets(widgets)
+        context["widgets"] = widgets
         return context
 
 
@@ -198,3 +202,83 @@ class GroupDeleteView(TitleMixin, PermissionRequiredMixin, DeleteView):
 
     def get_title(self):
         return _(f"Delete {self.object.name}")
+    
+@method_decorator(login_required, name="dispatch")
+class WidgetCreateView(TitleMixin, PartialMixin, CreateView):
+    title = _("Add Widget")
+
+    model = UserWidget
+    template_name = "widget_form.html"
+    fields = ["widget", "width"]
+    success_url = reverse_lazy("home")
+    partial_base_template = "partial_base_form.html"
+    full_base_template = "base_form.html"
+    
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        redirect = super().form_valid(form)
+        widget = self.object
+        if self.is_partial:
+            context = {}
+            context["widget"] = widget
+            provider = WidgetDataProvider()
+            provider.provide_for_widgets([widget])
+            
+            response = render(self.request, widget.template, context)
+            response["HX-Reswap"] = "beforeend"
+            return response
+        return redirect
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["form_url"] = reverse_lazy("users:widgets:create")
+        return context
+    
+@method_decorator(login_required, name="dispatch")
+class WidgetUpdateView(TitleMixin, PartialMixin, UpdateView):
+    title = _("Add Widget")
+
+    model = UserWidget
+    template_name = "widget_form.html"
+    fields = ["width"]
+    success_url = reverse_lazy("home")
+    partial_base_template = "partial_base_form.html"
+    full_base_template = "base_form.html"
+    
+    def form_valid(self, form):
+        redirect = super().form_valid(form)
+        widget = self.object
+        if self.is_partial:
+            context = {}
+            provider = WidgetDataProvider()
+            provider.provide_for_widgets([widget])
+            context["widget"] = widget
+            
+            response = render(self.request, widget.template, context)
+            response["HX-Retarget"] = "#widget-" + str(widget.pk)
+            response["HX-Reswap"] = "outerHTML"
+            return response
+        return redirect
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        print(context)
+        context["form_url"] = reverse_lazy("users:widgets:update", kwargs={"pk": self.kwargs["pk"]})
+        return context
+
+@method_decorator(login_required, name="dispatch")
+class WidgetDeleteView(TitleMixin, DeleteView):
+    model = UserWidget
+    template_name = "delete_confirm.html"
+    success_url = reverse_lazy("home")
+
+    def get_title(self):
+        return _(f"Delete {self.object.name}")
+    
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        return self.form_valid(self.get_form())
+    
+    def form_valid(self, form):
+        self.object.delete()
+        return HttpResponse(status=200)
