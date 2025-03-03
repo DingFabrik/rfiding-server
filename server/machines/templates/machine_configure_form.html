@@ -60,12 +60,6 @@
             {% endfor %}
         </div>
     </div>
-
-            <button class="btn btn-primary" type="submit">{% trans "Save" %}</button>
-        {% if object and can_delete %}
-            <a class="btn btn-danger float-end" href="{% url request.resolver_match.namespace|add:':delete' object.pk %}">
-                <i class="bi-trash me-1"></i> {% trans 'Delete' %}
-            </a>
-        {% endif %}
+    <button class="btn btn-primary" type="submit">{% trans "Save" %}</button>
 </form>
 {% endblock %}
