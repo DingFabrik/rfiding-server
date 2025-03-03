@@ -45,7 +45,8 @@ class SlackReporter(StateReporter):
         )
         self.client.chat_postMessage(
             channel=self.channel,
-            text=_("{} is now {}").format(
+            text=_("{} {} is now {}").format(
+                "🟢" if state.is_open else "🔴",
                 space_name, _("open") if state.is_open else _("closed")
             ),
             attachments=[
