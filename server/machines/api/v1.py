@@ -20,7 +20,7 @@ class MachineConfigView(BaseAPIView):
             {
                 "runtimer": machine["runtimer"].seconds * 1000,
                 "minPower": machine["min_power"],
-                "controlParameter": machine["control_parameter"],
+                "controlParameter": machine["control_parameter"] if machine["control_parameter"] else "",
             },
             status=status.HTTP_200_OK,
         )
