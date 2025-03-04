@@ -83,7 +83,7 @@ class MachineConfigView(BaseAPIView):
     required_post_parameters = ["mac_address"]
 
     def get(self, request, format=None):
-        save_access_log.delay(self.machine.id, None, LOG_TYPE_BOOTED)
+        save_access_log.delay(self.machine["id"], None, LOG_TYPE_BOOTED)
         return Response(
             MachineConfigSerializer(
                 {
@@ -111,11 +111,11 @@ class MachineConfigView(BaseAPIView):
         if was_changed:
             self.machine.save()
 
-        save_access_log.delay(self.machine.id, None, LOG_TYPE_BOOTED)
+        save_access_log.delay(self.machine["id"], None, LOG_TYPE_BOOTED)
         return Response(
             MachineConfigSerializer(
                 {
-                    "runtimer": self.machine.runtimer,
+                    "runtimer": self.machine["runtimer"],
                     "minPower": self.machine.min_power,
                     "display_time_countdown": self.machine.display_time_countdown,
                     "display_power_consumption": self.machine.display_power_consumption,
