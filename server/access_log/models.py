@@ -23,7 +23,7 @@ class AccessLog(models.Model):
 
     timestamp = models.DateTimeField(auto_now_add=True)
     token = models.ForeignKey(
-        "tokens.Token", on_delete=models.CASCADE, null=True, blank=True
+        "tokens.Token", on_delete=models.SET_NULL, null=True, blank=True
     )
     machine = models.ForeignKey("machines.Machine", on_delete=models.CASCADE)
     type = models.CharField(max_length=20, choices=LOG_TYPES)
