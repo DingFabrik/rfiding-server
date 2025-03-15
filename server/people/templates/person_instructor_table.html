@@ -17,7 +17,7 @@
             {% for instructor in can_instruct %}
             <tr>
                 <td><a href="{% url "machines:detail" instructor.machine.pk %}">{{ instructor.machine.hostname }}</a></td>
-                <td><a href="{% url "machines:detail" instructor.machine.pk %}">{{ instructor.machine.name }}</a></td>
+                <td>{% include "machine_cell.html" with machine=instructor.machine %}</td>
                 <td>{{ instructor.created|date:"DATE_FORMAT" }}</td>
                 {% if perms.people.change_instructor %}
                     <td>

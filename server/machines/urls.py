@@ -64,4 +64,9 @@ urlpatterns = [
         views.MachineRegistrationRequestDeleteView.as_view(),
         name="delete-request",
     ),
+    path(
+        "popover",
+        views.MachinePopoverView.as_view(),
+        name="popover",
+    ),
 ]

@@ -36,6 +36,23 @@ window.updateTooltips = function () {
             return '<div id="'+ token_pk +'">Loading...</div>';
         }
     }));
+
+    const machinePopoverTriggerList = document.querySelectorAll('[data-bs-toggle="machine-popover"]')
+    const machinePopovers = [...machinePopoverTriggerList].map(popoverTriggerEl =>
+        new bs.Popover(popoverTriggerEl, {
+        "html": true,
+        "delay": 200,
+        "content": function (e) {
+            const machine_pk = e.getAttribute('data-machine-pk');
+            $.ajax({
+                url: window.urlMap['machine-popover'] + '?machine_pk=' + machine_pk,
+                success: function(response){
+                    jquery('#'+machine_pk).html(response);
+                }
+            });
+            return '<div id="'+ machine_pk +'">Loading...</div>';
+        }
+    }));
 }
 
 window.addEventListener('htmx:beforeRequest', function(event) {

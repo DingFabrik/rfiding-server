@@ -28,7 +28,7 @@
     {% for object in object_list %}
     <tr>
         <td>{% include "snippets/timestamp.html" with timestamp=object.timestamp %}</td>
-        <td><a href="{% url 'machines:detail' object.machine.pk %}">{{ object.machine }}</a></td>
+        <td>{% include "machine_cell.html" with machine=object.machine %}</td>
         <td>{{ object.get_type_display }}</td>
     </tr>
     {% endfor %}

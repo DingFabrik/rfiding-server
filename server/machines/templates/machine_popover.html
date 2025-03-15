@@ -1,0 +1,9 @@
+{% load i18n %}<div class="machine-popover">
+    <h6>{{ object.name }}</h6>
+    <ul class="list-unstyled">
+        <li><span class="fw-bold text-secondary">{% trans "Hostname" %}:</span> {{ object.hostname }}</li>
+        <li><span class="fw-bold text-secondary">{% trans "Location" %}:</span> {{ object.location|default:"--" }}</li>
+        <li><span class="fw-bold text-secondary">{% trans "Is Active" %}:</span> {% include "snippets/active_toggle.html" %}</li>
+        <li><span class="fw-bold text-secondary">{% trans "Last Access" %}:</span> {{ last_access.timestamp|default:"--" }}</li>
+    </ul>
+</div>

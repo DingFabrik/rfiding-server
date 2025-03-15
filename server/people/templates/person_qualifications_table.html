@@ -27,9 +27,7 @@
       <tbody>
         {% for qualification in qualifications %}
           <tr class="align-middle">
-            <td>
-              <a href="{% url 'machines:detail' qualification.machine.id %}">{{ qualification.machine.name }}</a>
-            </td>
+            <td>{% include "machine_cell.html" with machine=qualification.machine %}</td>
             <td>
               {% if qualification.instructed_by %}
                 <a href="{% url 'people:detail' qualification.instructed_by.pk %}">{{ qualification.instructed_by }}</a>

@@ -4,6 +4,7 @@ from django.views.generic import (
     CreateView,
     UpdateView,
     DeleteView,
+    TemplateView,
 )
 from django.core.paginator import Paginator
 from django.urls import reverse_lazy
@@ -201,6 +202,19 @@ class MachineDeleteView(TitleMixin, PermissionRequiredMixin, DeleteView):
     def get_title(self):
         return _(f"Delete {self.object.name}")
 
+class MachinePopoverView(PermissionRequiredMixin, TemplateView):
+    permission_required = "machines.view_machine"
+    template_name = "machine_popover.html"
+    model = Machine
+    
+    def get_queryset(self):
+        return Machine.objects.filter(pk=self.request.GET["machine_pk"])
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["object"] = self.get_queryset().get()
+        context["last_access"] = AccessLog.objects.filter(machine=context["object"]).latest("timestamp")
+        return context
 
 class MachineStatusPartialView(PermissionRequiredMixin, DetailView):
     permission_required = "machines.view_machine"
