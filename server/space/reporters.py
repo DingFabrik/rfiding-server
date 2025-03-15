@@ -54,16 +54,6 @@ class SlackReporter(StateReporter):
                     "color": "#9BE564" if state.is_open else "#F95738",
                     "blocks": [
                         {
-                            "type": "section",
-                            "text": {
-                                "type": "mrkdwn",
-                                "text": _("{} is now *{}*").format(
-                                    space_name,
-                                    _("open") if state.is_open else _("closed"),
-                                ),
-                            },
-                        },
-                        {
                             "type": "context",
                             "elements": [
                                 {
