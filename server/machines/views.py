@@ -78,7 +78,7 @@ class MachineDetailView(TitleMixin, PermissionRequiredMixin, DetailView):
         context["can_edit"] = self.request.user.has_perm("machines.change_machine")
         context["can_delete"] = self.request.user.has_perm("machines.delete_machine")
         try:
-            access = AccessLog.objects.filter(machine=self.object).latest("-timestamp")
+            access = AccessLog.objects.filter(machine=self.object).latest("timestamp")
             context["last_access"] = access.timestamp
         except AccessLog.DoesNotExist:
             context["last_access"] = None

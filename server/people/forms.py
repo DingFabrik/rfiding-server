@@ -36,7 +36,7 @@ class QualifyPersonForm(forms.ModelForm):
             instructors = list(
                 self.instance.machine.instructors.select_related("person")
                 .order_by("person__name")
-                .values_list("pk", "person__name")
+                .values_list("person__pk", "person__name")
                 .all()
             )
             instructors.insert(0, ("", "---------"))

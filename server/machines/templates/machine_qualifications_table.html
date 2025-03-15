@@ -21,7 +21,7 @@
                 <td>{{ qualification.get_permission_level_display }}</td>
                 <td style="max-width: 600px;">{{ qualification.comment }}</td>
                 <td>{% if qualification.instructed_by %}
-                    <a href="{% url "people:detail" qualification.instructed_by.pk %}">{{ qualification.instructed_by}}</a>
+                    <a href="{% url "people:detail" qualification.instructed_by.pk %}">{{ qualification.instructed_by }}</a>
                     {% else %}--{% endif %}
                 </td>
                 <td>{{ qualification.created|date:"DATE_FORMAT" }}</td>
