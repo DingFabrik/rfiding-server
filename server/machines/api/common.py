@@ -62,7 +62,7 @@ def check_access(machine, tokenID):
         )
     except Token.DoesNotExist:
         if not BlacklistedToken.objects.filter(serial=tokenID).exists():
-            UnknownToken.objects.get_or_create(serial=tokenID, machine=machine["id"])
+            UnknownToken.objects.get_or_create(serial=tokenID, machine_id=machine["id"])
         raise NotFound("Invalid Token") from None
 
     if machine["needs_qualification"]:
