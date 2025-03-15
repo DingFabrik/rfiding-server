@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-10-28 15:48+0000\n"
-"PO-Revision-Date: 2024-10-28 16:48+0100\n"
+"POT-Creation-Date: 2025-03-15 18:59+0000\n"
+"PO-Revision-Date: 2025-03-15 20:01+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -19,35 +19,41 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 3.5\n"
 
-#: server/access_log/forms.py:8
+#: server/access_log/forms.py:9 server/machines/views.py:35
+#: server/people/views.py:31 server/tokens/views.py:36
 msgid "All"
 msgstr "Alle"
 
-#: server/access_log/models.py:10
+#: server/access_log/models.py:11
 msgid "Booted"
 msgstr "Gestartet"
 
-#: server/access_log/models.py:11
+#: server/access_log/models.py:12
+#: server/machines/templates/machine_status_partial.html:8
 msgid "Enabled"
 msgstr "Aktiviert"
 
-#: server/access_log/models.py:12
+#: server/access_log/models.py:13
 msgid "Disabled"
 msgstr "Deaktiviert"
 
-#: server/access_log/models.py:13
-msgid "Registered"
-msgstr "Registriert"
+#: server/access_log/models.py:14
+msgid "Unsuccessful"
+msgstr "Nicht Erfolgreich"
 
 #: server/access_log/models.py:20
 #: server/access_log/templates/access_log_for_machine.html:17
 #: server/access_log/templates/access_log_for_person.html:17
 #: server/access_log/templates/access_log_for_token.html:17
-#: server/base/processors.py:32
+#: server/base/processors.py:36
+#: server/machines/templates/machine_detail.html:104
+#: server/people/templates/person_detail.html:63
 msgid "Access Log"
 msgstr "Zugriffs Log"
 
-#: server/access_log/models.py:21
+#: server/access_log/models.py:21 server/access_log/views.py:15
+#: server/access_log/views.py:42 server/access_log/views.py:62
+#: server/access_log/views.py:87
 msgid "Access Logs"
 msgstr "Zugriffs Logs"
 
@@ -65,26 +71,29 @@ msgstr "Zu Machine gehen"
 #: server/access_log/templates/access_log_for_machine.html:23
 #: server/access_log/templates/access_log_for_person.html:23
 #: server/access_log/templates/access_log_for_token.html:23
-#: server/access_log/templates/access_log_list.html:25
-#: server/machines/templates/machine_detail.html:60
-#: server/machines/templates/machine_detail.html:97
-#: server/people/templates/person_detail.html:58
-#: server/people/templates/person_detail.html:103
+#: server/access_log/templates/access_log_list.html:28
+#: server/machines/templates/machine_instructor_table.html:9
+#: server/machines/templates/machine_qualifications_table.html:11
+#: server/people/templates/person_instructor_table.html:10
+#: server/people/templates/person_qualifications_table.html:20
+#: server/users/templates/widgets/access_log_latest.html:8
 msgid "Date"
 msgstr "Datum"
 
 #: server/access_log/templates/access_log_for_machine.html:24
 #: server/access_log/templates/access_log_for_person.html:25
-#: server/access_log/templates/access_log_list.html:28
-#: server/tokens/models.py:32
+#: server/access_log/templates/access_log_list.html:31
+#: server/tokens/models.py:67
+#: server/users/templates/widgets/access_log_latest.html:11
 msgid "Token"
 msgstr "Token"
 
 #: server/access_log/templates/access_log_for_machine.html:25
 #: server/access_log/templates/access_log_for_person.html:26
 #: server/access_log/templates/access_log_for_token.html:25
-#: server/access_log/templates/access_log_list.html:27
+#: server/access_log/templates/access_log_list.html:30
 #: server/templates/auditlog/logentry_list.html:14
+#: server/users/templates/widgets/access_log_latest.html:10
 msgid "Action"
 msgstr "Aktion"
 
@@ -98,9 +107,10 @@ msgstr "Zu Person gehen"
 
 #: server/access_log/templates/access_log_for_person.html:24
 #: server/access_log/templates/access_log_for_token.html:24
-#: server/access_log/templates/access_log_list.html:26
-#: server/machines/models.py:72 server/people/forms.py:14
-#: server/people/forms.py:33 server/tokens/templates/unknown_token_list.html:20
+#: server/access_log/templates/access_log_list.html:29
+#: server/machines/models.py:162 server/people/forms.py:14
+#: server/people/forms.py:48 server/tokens/templates/unknown_token_table.html:5
+#: server/users/templates/widgets/access_log_latest.html:9
 msgid "Machine"
 msgstr "Maschine"
 
@@ -116,24 +126,135 @@ msgstr "Zu Token gehen"
 msgid "This token has not been used yet"
 msgstr "Dieser Token wurde noch nicht genutzt"
 
-#: server/base/processors.py:11 server/people/templates/person_detail.html:21
-#: server/tokens/models.py:33 server/users/templates/home.html:13
+#: server/access_log/templates/access_log_list.html:6
+#: server/templates/snippets/search_form.html:20
+msgid "Filter"
+msgstr "Filter"
+
+#: server/base/admin.py:5
+msgid "Mark selected items as active"
+msgstr ""
+
+#: server/base/admin.py:10
+msgid "Mark selected items as inactive"
+msgstr ""
+
+#: server/base/processors.py:13 server/people/templates/person_detail.html:30
+#: server/tokens/models.py:68 server/users/models.py:120
 msgid "Tokens"
 msgstr "Tokens"
 
-#: server/base/processors.py:18 server/people/models.py:20
-#: server/users/templates/home.html:32
+#: server/base/processors.py:20 server/people/models.py:20
+#: server/users/models.py:122
 msgid "People"
 msgstr "Personen"
 
-#: server/base/processors.py:25 server/machines/models.py:73
-#: server/users/templates/home.html:51
+#: server/base/processors.py:28 server/machines/models.py:163
+#: server/machines/views.py:41 server/users/models.py:124
 msgid "Machines"
 msgstr "Maschinen"
 
-#: server/base/processors.py:39
+#: server/base/processors.py:46 server/base/views.py:110
 msgid "Audit Log"
 msgstr "Audit Log"
+
+#: server/base/processors.py:60 server/users/models.py:88
+msgid "Users"
+msgstr "Benutzer*innen"
+
+#: server/base/processors.py:69 server/users/views.py:162
+msgid "Groups"
+msgstr "Gruppen"
+
+#: server/base/processors.py:77 server/locations/models.py:18
+msgid "Locations"
+msgstr "Orte"
+
+#: server/base/processors.py:85 server/tokens/models.py:94
+msgid "Blacklisted Tokens"
+msgstr "Gesperrte Tokens"
+
+#: server/base/processors.py:92 server/tokens/models.py:41
+msgid "Token Types"
+msgstr "Token Typen"
+
+#: server/base/processors.py:99
+msgid "Django Admin"
+msgstr "Django Admin"
+
+#: server/base/processors.py:106 server/base/views.py:49
+#: server/templates/about.html:5
+msgid "About"
+msgstr "Über"
+
+#: server/base/processors.py:115
+msgid "Settings"
+msgstr "Einstellungen"
+
+#: server/locations/models.py:17 server/locations/views.py:25
+#: server/machines/templates/machine_detail.html:46
+msgid "Location"
+msgstr "Ort"
+
+#: server/locations/templates/location_detail.html:7
+#: server/machines/templates/machine_detail.html:43
+#: server/people/templates/person_detail.html:7
+#: server/tokens/templates/token_detail.html:16
+#: server/users/templates/user_detail.html:9
+msgid "Details"
+msgstr "Details"
+
+#: server/locations/templates/location_detail.html:10
+#: server/locations/templates/location_list.html:7
+#: server/machines/templates/machine_instructor_table.html:7
+#: server/machines/templates/machine_list.html:7
+#: server/machines/templates/machine_qualifications_table.html:7
+#: server/machines/views.py:24 server/people/templates/person_detail.html:13
+#: server/people/templates/person_instructor_table.html:9
+#: server/people/templates/person_list.html:8
+#: server/people/templates/person_qualifications_table.html:8
+#: server/people/views.py:22 server/tokens/templates/tokentype_list.html:7
+#: server/users/models.py:64 server/users/templates/group_list.html:7
+#: server/users/templates/user_list.html:8
+msgid "Name"
+msgstr "Name"
+
+#: server/locations/templates/location_detail.html:13
+msgid "Description"
+msgstr "Beschreibung"
+
+#: server/locations/templates/location_form.html:7
+#, fuzzy, python-format
+#| msgid "Edit <span class=\"text-primary-emphasis\">%(token)s</span>"
+msgid "Edit <span class=\"text-primary-emphasis\">%(location)s</span>"
+msgstr "<span class=“text-primary-emphasis”>%(token)s</span> editieren"
+
+#: server/locations/templates/location_form.html:9
+#, fuzzy
+#| msgid "Add a new machine"
+msgid "Add a new location"
+msgstr "Neue Maschine hinzufügen"
+
+#: server/locations/templates/location_list.html:19
+#: server/machines/templates/machine_list.html:26
+#: server/machines/templates/machine_qualifications_table.html:30
+#: server/people/templates/person_list.html:25
+#: server/people/templates/person_qualifications_table.html:45
+#: server/tokens/templates/token_list.html:45
+msgid "Edit"
+msgstr "Editieren"
+
+#: server/locations/views.py:37
+msgid "Create Location"
+msgstr "Ort Erstellen"
+
+#: server/locations/views.py:46
+msgid "Edit Location"
+msgstr "Ort Bearbeiten"
+
+#: server/locations/views.py:63
+msgid "Delete Location"
+msgstr "Ort Löschen"
 
 #: server/machines/client_modules.py:4 server/machines/client_modules.py:9
 #: server/machines/client_modules.py:18
@@ -172,13 +293,109 @@ msgstr "Relay"
 msgid "Relay with power meter"
 msgstr "Relay mit Strommessung"
 
-#: server/machines/client_modules.py:21
+#: server/machines/client_modules.py:21 server/machines/models.py:32
 msgid "Lock"
 msgstr "Schloss"
 
-#: server/machines/models.py:53
+#: server/machines/forms.py:21 server/machines/templates/machine_detail.html:59
+msgid "Network"
+msgstr "Netzwerk"
+
+#: server/machines/forms.py:28
+msgid "Logging"
+msgstr "Logging"
+
+#: server/machines/forms.py:36
+msgid "Security"
+msgstr "Sicherheit"
+
+#: server/machines/forms.py:41
+msgid "Client"
+msgstr "Client"
+
+#: server/machines/forms.py:43
+#: server/machines/templates/machine_configure_form.html:63
+#: server/people/templates/instructor_person.html:30
+#: server/people/templates/qualify_person.html:35
+#: server/templates/base_form.html:12
+#: server/templates/partial_base_form.html:10
+#: server/tokens/templates/token_form.html:42
+#: server/users/templates/profile.html:13
+msgid "Save"
+msgstr "Speichern"
+
+#: server/machines/models.py:30
+msgid "Primary"
+msgstr "Primär"
+
+#: server/machines/models.py:31
+msgid "Secondary"
+msgstr "Sekundär"
+
+#: server/machines/models.py:33
+msgid "Multiple Locks"
+msgstr ""
+
+#: server/machines/models.py:86
 msgid "If disabled, any active user can access this machine."
 msgstr "Alle aktiven. Personen sind qualifiziert diese Maschine zu nutzen."
+
+#: server/machines/models.py:97
+msgid "64 character encryption key for secure communication with the machine."
+msgstr ""
+
+#: server/machines/models.py:104
+msgid "API Key for authenticated when the machine accesses the API."
+msgstr ""
+
+#: server/machines/models.py:111
+msgid "Log boot events"
+msgstr ""
+
+#: server/machines/models.py:113
+msgid "Log successful unlock events"
+msgstr ""
+
+#: server/machines/models.py:116
+msgid "Log when machine is disabled again"
+msgstr ""
+
+#: server/machines/models.py:119
+msgid "Log unsuccessful unlock attempts"
+msgstr ""
+
+#: server/machines/models.py:124
+msgid "Time until the machine is locked again when it is not active."
+msgstr ""
+
+#: server/machines/models.py:129
+msgid ""
+"Minimum power consumption in watts for the machine to be considered active."
+msgstr ""
+
+#: server/machines/models.py:136
+msgid ""
+"Whether the machine displays the time remaining until it locks again when it "
+"is unlocked but not active."
+msgstr ""
+
+#: server/machines/models.py:141
+msgid "If the machine displays the power consumption when it is active."
+msgstr ""
+
+#: server/machines/models.py:146
+msgid ""
+"If set, the machine relays are linked and the secondary relay is activated "
+"together with the primary relay."
+msgstr ""
+
+#: server/machines/models.py:231
+msgid "Registration Request"
+msgstr ""
+
+#: server/machines/models.py:232
+msgid "Registration Requests"
+msgstr ""
 
 #: server/machines/templates/machine_configure_form.html:8
 #, python-format
@@ -189,211 +406,173 @@ msgstr "<span class=“text-primary-emphasis”>%(machine)s</span> konfigurieren
 msgid "General configuration"
 msgstr "Generelle Konfiguration"
 
-#: server/machines/templates/machine_configure_form.html:22
+#: server/machines/templates/machine_configure_form.html:20
 msgid "Active Times"
 msgstr "Aktive Zeiten"
 
-#: server/machines/templates/machine_configure_form.html:31
+#: server/machines/templates/machine_configure_form.html:29
 msgid "Mo"
 msgstr "Mo"
 
-#: server/machines/templates/machine_configure_form.html:34
+#: server/machines/templates/machine_configure_form.html:32
 msgid "Tu"
 msgstr "Di"
 
-#: server/machines/templates/machine_configure_form.html:37
+#: server/machines/templates/machine_configure_form.html:35
 msgid "We"
 msgstr "Mi"
 
-#: server/machines/templates/machine_configure_form.html:40
+#: server/machines/templates/machine_configure_form.html:38
 msgid "Th"
 msgstr "Do"
 
-#: server/machines/templates/machine_configure_form.html:43
+#: server/machines/templates/machine_configure_form.html:41
 msgid "Fr"
 msgstr "Fr"
 
-#: server/machines/templates/machine_configure_form.html:46
+#: server/machines/templates/machine_configure_form.html:44
 msgid "Sa"
 msgstr "Sa"
 
-#: server/machines/templates/machine_configure_form.html:49
+#: server/machines/templates/machine_configure_form.html:47
 msgid "Su"
 msgstr "So"
 
-#: server/machines/templates/machine_configure_form.html:66
-#: server/machines/templates/machine_detail.html:41
-msgid "Modules"
-msgstr "Module"
+#: server/machines/templates/machine_detail.html:29
+msgid "Logs "
+msgstr ""
 
-#: server/machines/templates/machine_configure_form.html:81
-#: server/people/templates/instructor_person.html:19
-#: server/people/templates/qualify_person.html:30
-#: server/templates/base_form.html:11 server/users/templates/profile.html:13
-msgid "Save"
-msgstr "Speichern"
-
-#: server/machines/templates/machine_configure_form.html:84
-#: server/machines/templates/machine_detail.html:11
-#: server/templates/base_detail.html:14 server/templates/base_form.html:14
-#: server/templates/delete_confirm.html:18
-#: server/templates/modals/delete_confirm.html:17
-msgid "Delete"
-msgstr "Löschen"
-
-#: server/machines/templates/machine_detail.html:7
+#: server/machines/templates/machine_detail.html:31
 #: server/templates/base_detail.html:11
 #: server/tokens/templates/token_detail.html:7
 msgid "Edit "
 msgstr "Editieren "
 
-#: server/machines/templates/machine_detail.html:8
-#: server/machines/templates/machine_list.html:13
+#: server/machines/templates/machine_detail.html:32
+#: server/machines/templates/machine_list.html:27
 msgid "Configure"
 msgstr "Konfigurieren"
 
-#: server/machines/templates/machine_detail.html:19
-#: server/people/templates/person_detail.html:7
-#: server/tokens/templates/token_detail.html:16
-#: server/users/templates/user_detail.html:9
-msgid "Details"
-msgstr "Details"
+#: server/machines/templates/machine_detail.html:35
+#: server/machines/templates/machine_form.html:27
+#: server/templates/base_detail.html:14 server/templates/base_form.html:15
+#: server/templates/delete_confirm.html:18
+#: server/templates/modals/delete_confirm.html:17
+#: server/templates/partial_base_form.html:13
+#: server/templates/partial_delete_confirm.html:18
+msgid "Delete"
+msgstr "Löschen"
 
-#: server/machines/templates/machine_detail.html:21
-#: server/machines/templates/machine_detail.html:56
-#: server/machines/templates/machine_detail.html:96
-#: server/machines/templates/machine_list.html:9 server/machines/views.py:20
-#: server/people/templates/person_detail.html:10
-#: server/people/templates/person_detail.html:54
-#: server/people/templates/person_detail.html:102
-#: server/people/templates/person_list.html:8 server/people/views.py:22
-#: server/users/models.py:62 server/users/templates/user_list.html:17
-msgid "Name"
-msgstr "Name"
+#: server/machines/templates/machine_detail.html:45
+#: server/machines/templates/machine_list.html:11
+#: server/tokens/templates/token_detail.html:20
+#: server/tokens/templates/token_list.html:25
+msgid "Type"
+msgstr "Typ"
 
-#: server/machines/templates/machine_detail.html:22
-#: server/machines/templates/machine_list.html:7 server/machines/views.py:21
-#: server/people/templates/person_detail.html:101
-msgid "Hostname"
-msgstr "Hostname"
-
-#: server/machines/templates/machine_detail.html:23 server/machines/views.py:23
-msgid "MAC Address"
-msgstr "MAC-Adresse"
-
-#: server/machines/templates/machine_detail.html:24 server/machines/views.py:22
-msgid "IP Address"
-msgstr "IP Adresse"
-
-#: server/machines/templates/machine_detail.html:25
-#: server/people/templates/person_detail.html:12
-#: server/tokens/templates/token_detail.html:21
+#: server/machines/templates/machine_detail.html:53
+#: server/people/templates/person_detail.html:19
+#: server/tokens/templates/token_detail.html:22
 msgid "Is Active"
 msgstr "Ist Aktiv"
 
-#: server/machines/templates/machine_detail.html:26
-msgid "Needs Qualification"
-msgstr "Braucht Qualifikation"
-
-#: server/machines/templates/machine_detail.html:31
+#: server/machines/templates/machine_detail.html:54
 msgid "Chip"
 msgstr "Chip"
 
-#: server/machines/templates/machine_detail.html:32
+#: server/machines/templates/machine_detail.html:55
 msgid "Last used"
 msgstr "Zuletzt genutzt"
 
-#: server/machines/templates/machine_detail.html:36
+#: server/machines/templates/machine_detail.html:61
+#: server/machines/templates/machine_form.html:30
+#: server/machines/templates/machine_list.html:9 server/machines/views.py:25
+#: server/people/templates/person_instructor_table.html:8
+msgid "Hostname"
+msgstr "Hostname"
+
+#: server/machines/templates/machine_detail.html:62
+#: server/machines/templates/machine_form.html:31 server/machines/views.py:27
+msgid "MAC Address"
+msgstr "MAC-Adresse"
+
+#: server/machines/templates/machine_detail.html:63
+#: server/machines/templates/machine_form.html:32 server/machines/views.py:26
+msgid "IP Address"
+msgstr "IP Adresse"
+
+#: server/machines/templates/machine_detail.html:67
 msgid "Configuration"
 msgstr "Konfiguration"
 
-#: server/machines/templates/machine_detail.html:38
+#: server/machines/templates/machine_detail.html:69
 msgid "Runtimer"
 msgstr "Laufzeit"
 
-#: server/machines/templates/machine_detail.html:39
+#: server/machines/templates/machine_detail.html:70
 msgid "Min Power"
 msgstr "Min Power"
 
-#: server/machines/templates/machine_detail.html:40
+#: server/machines/templates/machine_detail.html:71
 msgid "Control Parameter"
 msgstr "Kontrollparameter"
 
-#: server/machines/templates/machine_detail.html:42
-#, fuzzy
-#| msgid "Access Log"
+#: server/machines/templates/machine_detail.html:73
+msgid "Modules"
+msgstr "Module"
+
+#: server/machines/templates/machine_detail.html:74
 msgid "Access Control"
 msgstr "Zugriffs Log"
 
-#: server/machines/templates/machine_detail.html:43
+#: server/machines/templates/machine_detail.html:75
 msgid "Status Display"
 msgstr ""
 
-#: server/machines/templates/machine_detail.html:44
+#: server/machines/templates/machine_detail.html:76
 msgid "Actor"
 msgstr ""
 
-#: server/machines/templates/machine_detail.html:50 server/people/models.py:67
-#: server/people/templates/person_detail.html:44
+#: server/machines/templates/machine_detail.html:86 server/people/models.py:67
+#: server/people/templates/person_detail.html:56
 msgid "Qualifications"
 msgstr "Qualifikationen"
 
-#: server/machines/templates/machine_detail.html:52
+#: server/machines/templates/machine_detail.html:90 server/people/models.py:86
+msgid "Instructors"
+msgstr "Einweisende"
+
+#: server/machines/templates/machine_detail.html:117
+msgid "Statistics"
+msgstr ""
+
+#: server/machines/templates/machine_detail.html:123
 #, python-format
 msgid "%(qualifications_count)s people are qualified to use this machine:"
 msgstr ""
 "%(qualifications_count)s Personen sind qualifiziert diese Maschine zu nutzen:"
 
-#: server/machines/templates/machine_detail.html:57
-msgid "Access Type"
-msgstr "Zugriffstyp"
+#: server/machines/templates/machine_detail.html:125
+#, fuzzy
+#| msgid "Qualify"
+msgid "Qualify Person"
+msgstr "Qualifizieren"
 
-#: server/machines/templates/machine_detail.html:58
-msgid "Qualification Comment"
-msgstr "Qualifikationskommentar"
-
-#: server/machines/templates/machine_detail.html:59 server/people/models.py:84
-msgid "Instructor"
-msgstr "Einweisend"
-
-#: server/machines/templates/machine_detail.html:76
-#: server/people/templates/person_detail.html:77
-msgid "Edit"
-msgstr "Editieren"
-
-#: server/machines/templates/machine_detail.html:77
-#: server/machines/templates/machine_detail.html:98
-#: server/people/templates/person_detail.html:78
-#: server/people/templates/person_detail.html:105
-#: server/people/templates/revoke_qualification_confirm.html:19
-msgid "Revoke"
-msgstr "Entziehen"
-
-#: server/machines/templates/machine_detail.html:85
+#: server/machines/templates/machine_detail.html:130
 msgid "All active users are qualified to use this machine"
 msgstr "Alle aktiven. Personen sind qualifiziert diese Maschine zu nutzen"
 
-#: server/machines/templates/machine_detail.html:90 server/people/models.py:85
-msgid "Instructors"
-msgstr "Einweisende"
-
-#: server/machines/templates/machine_detail.html:91
+#: server/machines/templates/machine_detail.html:136
 #, python-format
 msgid "%(instructors_count)s people can instruct on usage of this machine:"
 msgstr ""
 "%(instructors_count)s Personen können Einweisungen für diese Maschine geben:"
 
-#: server/machines/templates/machine_detail.html:95
-#: server/people/templates/person_detail.html:9
-#: server/people/templates/person_list.html:7 server/people/views.py:24
-msgid "Member ID"
-msgstr "Mitglieds ID"
-
-#: server/machines/templates/machine_detail.html:120
-#: server/people/templates/person_detail.html:134
-#: server/tokens/templates/token_detail.html:34
-msgid "Load Access Log"
-msgstr "Zugriffslog laden"
+#: server/machines/templates/machine_detail.html:138
+#, fuzzy
+#| msgid "Add as instructor"
+msgid "Add instructor"
+msgstr "Als einweisende Person hinzufügen"
 
 #: server/machines/templates/machine_form.html:7
 #, python-format
@@ -404,69 +583,170 @@ msgstr "<span class=“text-primary-emphasis”>%(machine.name)s</span> editiere
 msgid "Add a new machine"
 msgstr "Neue Maschine hinzufügen"
 
+#: server/machines/templates/machine_form.html:21
+msgid "Pending registration requests"
+msgstr ""
+
+#: server/machines/templates/machine_form.html:26
+msgid "Create"
+msgstr ""
+
+#: server/machines/templates/machine_instructor_list.html:5
+#: server/people/templates/person_instructor_list.html:5
+#, fuzzy, python-format
+#| msgid "<b>%(name)s</b> can instruct people for the following machines:"
+msgid "%(name)s can instruct for these Machines"
+msgstr "<b>%(name)s</b> kann Personen für die folgenden Maschinen einweisen:"
+
+#: server/machines/templates/machine_instructor_table.html:8
+#: server/people/templates/person_detail.html:10
+#: server/people/templates/person_list.html:7 server/people/views.py:21
+msgid "Member ID"
+msgstr "Mitglieds ID"
+
+#: server/machines/templates/machine_instructor_table.html:10
+#: server/machines/templates/machine_instructor_table.html:23
+#: server/machines/templates/machine_qualifications_table.html:33
+#: server/people/templates/person_instructor_table.html:12
+#: server/people/templates/person_instructor_table.html:26
+#: server/people/templates/person_qualifications_table.html:48
+#: server/people/templates/revoke_qualification_confirm.html:22
+#: server/people/templates/revoke_qualification_confirm.html:35
+msgid "Revoke"
+msgstr "Entziehen"
+
 #: server/machines/templates/machine_list.html:8
 msgid "MAC-Address"
 msgstr "MAC-Adresse"
 
-#: server/machines/templates/machine_list.html:10
-msgid "Machine Active"
-msgstr "Maschine Aktiv"
+#: server/machines/templates/machine_list.html:10 server/machines/views.py:33
+#: server/people/templates/person_list.html:10 server/people/views.py:29
+#: server/tokens/templates/token_list.html:26 server/tokens/views.py:34
+#: server/users/templates/widgets/count.html:7
+msgid "Active"
+msgstr "Aktiv"
 
-#: server/machines/templates/machine_list.html:12
-#: server/people/templates/person_list.html:12
-#: server/tokens/templates/token_list.html:27
-msgid "Modify"
-msgstr "Modifizieren"
+#: server/machines/templates/machine_qualifications_list.html:5
+#: server/people/templates/person_qualifications_list.html:5
+#, fuzzy, python-format
+#| msgid "Qualification Comment"
+msgid "Qualifications for %(name)s"
+msgstr "Qualifikationskommentar"
 
-#: server/machines/utils.py:4
+#: server/machines/templates/machine_qualifications_table.html:8
+msgid "Access Type"
+msgstr "Zugriffstyp"
+
+#: server/machines/templates/machine_qualifications_table.html:9
+msgid "Qualification Comment"
+msgstr "Qualifikationskommentar"
+
+#: server/machines/templates/machine_qualifications_table.html:10
+#: server/people/templates/person_qualifications_table.html:11
+msgid "Instructed by"
+msgstr "Eingewiesen von"
+
+#: server/machines/templates/machine_statistics.html:7
+#, python-format
+msgid "Access by day (last %(day_count)s days)"
+msgstr ""
+
+#: server/machines/templates/machine_statistics.html:23
+#, python-format
+msgid "Access by hour (last %(day_count)s days)"
+msgstr ""
+
+#: server/machines/templates/machine_statistics.html:25
+#, python-format
+msgid "Access by Weekday (last %(day_count)s days)"
+msgstr ""
+
+#: server/machines/templates/machine_status_partial.html:4
+msgid "Standby"
+msgstr ""
+
+#: server/machines/templates/machine_status_partial.html:6
+msgid "Offline"
+msgstr ""
+
+#: server/machines/templates/machine_status_partial.html:10
+#, fuzzy
+#| msgid "Unknown tokens"
+msgid "Unknown"
+msgstr "Unbekannte Tokens"
+
+#: server/machines/utils.py:4 server/machines/views.py:359
 msgid "Monday"
 msgstr "Montag"
 
-#: server/machines/utils.py:5
+#: server/machines/utils.py:5 server/machines/views.py:360
 msgid "Tuesday"
 msgstr "Dienstag"
 
-#: server/machines/utils.py:6
+#: server/machines/utils.py:6 server/machines/views.py:361
 msgid "Wednesday"
 msgstr "Mittwoch"
 
-#: server/machines/utils.py:7
+#: server/machines/utils.py:7 server/machines/views.py:362
 msgid "Thursday"
 msgstr "Donnerstag"
 
-#: server/machines/utils.py:8
+#: server/machines/utils.py:8 server/machines/views.py:363
 msgid "Friday"
 msgstr "Freitag"
 
-#: server/machines/utils.py:9
+#: server/machines/utils.py:9 server/machines/views.py:364
 msgid "Saturday"
 msgstr "Samstag"
 
-#: server/machines/utils.py:10
+#: server/machines/utils.py:10 server/machines/views.py:365
 msgid "Sunday"
 msgstr "Sonntag"
 
-#: server/machines/views.py:19 server/people/views.py:21
-#: server/tokens/views.py:26
-#, fuzzy
-#| msgid "Default (Blue)"
-msgid "Default"
-msgstr "Standard (Blau)"
-
-#: server/machines/views.py:24 server/people/views.py:25
+#: server/machines/views.py:28 server/people/views.py:24
 #: server/tokens/views.py:29
 #, fuzzy
 #| msgid "Last used"
 msgid "Last Modified"
 msgstr "Zuletzt genutzt"
 
-#: server/people/forms.py:25 server/people/forms.py:44
-msgid "Machine name or hostname"
-msgstr "Maschinenname oder Hostname"
+#: server/machines/views.py:34 server/people/views.py:30
+#: server/tokens/views.py:35
+#, fuzzy
+#| msgid "Active"
+msgid "Inactive"
+msgstr "Aktiv"
 
+#: server/machines/views.py:109
+#, fuzzy
+#| msgid "Machine"
+msgid "Create Machine"
+msgstr "Maschine"
+
+#: server/machines/views.py:375
+msgid "7 Days"
+msgstr ""
+
+#: server/machines/views.py:376
+msgid "30 Days"
+msgstr ""
+
+#: server/machines/views.py:377
+msgid "90 Days"
+msgstr ""
+
+#: server/machines/views.py:378
+msgid "365 Days"
+msgstr ""
+
+#: server/people/forms.py:15 server/people/forms.py:49
 #: server/people/models.py:19
 msgid "Person"
 msgstr "Person"
+
+#: server/people/forms.py:26 server/people/forms.py:60
+msgid "Machine name or hostname"
+msgstr "Maschinenname oder Hostname"
 
 #: server/people/models.py:37
 msgid "If space is open"
@@ -484,7 +764,11 @@ msgstr "Nie"
 msgid "Qualification"
 msgstr "Qualifikation"
 
-#: server/people/templates/instructor_person.html:7
+#: server/people/models.py:85
+msgid "Instructor"
+msgstr "Einweisend"
+
+#: server/people/templates/instructor_person.html:8
 #, python-format
 msgid ""
 "Add <span class=\"text-primary-emphasis\">%(person)s</span> as instructor"
@@ -492,64 +776,39 @@ msgstr ""
 "<span class=“text-primary-emphasis”>%(person)s</span> als einweisende Person "
 "hinzufügen"
 
-#: server/people/templates/person_detail.html:11
+#: server/people/templates/instructor_person.html:10
+#, fuzzy, python-format
+#| msgid "Configure <span class=\"text-primary-emphasis\">%(machine)s</span>"
+msgid ""
+"Add instructor for <span class=\"text-primary-emphasis\">%(machine)s</span>"
+msgstr "<span class=“text-primary-emphasis”>%(machine)s</span> konfigurieren"
+
+#: server/people/templates/person_detail.html:16
 #: server/people/templates/person_list.html:9
 msgid "E-Mail"
 msgstr "E-Mail"
 
-#: server/people/templates/person_detail.html:14
-#: server/tokens/templates/token_detail.html:26
+#: server/people/templates/person_detail.html:23
+#: server/tokens/templates/token_detail.html:27
 msgid "Notes"
 msgstr "Notizen"
 
-#: server/people/templates/person_detail.html:32
+#: server/people/templates/person_detail.html:41
 #, python-format
 msgid "<b>%(name)s</b> has no tokens."
 msgstr "<b>%(name)s</b> hat keine Tokens."
 
-#: server/people/templates/person_detail.html:46
-msgid "Add Qualification"
-msgstr "Qualifikation hinzufügen"
-
-#: server/people/templates/person_detail.html:50
-#, python-format
-msgid "<b>%(name)s</b> is qualified for the following machines:"
-msgstr "<b>%(name)s</b> ist für die folgenden Maschinen qualifiziert:"
-
-#: server/people/templates/person_detail.html:55
-msgid "Instructed by"
-msgstr "Eingewiesen von"
-
-#: server/people/templates/person_detail.html:56
-msgid "Permission Level"
-msgstr "Zugriffsstufe"
-
-#: server/people/templates/person_detail.html:57
-msgid "Comment"
-msgstr "Kommentar"
-
-#: server/people/templates/person_detail.html:86
-#, python-format
-msgid "<b>%(name)s</b> is not qualified for any machines."
-msgstr "<b>%(name)s</b> ist für keine Maschine qualifiziert."
-
-#: server/people/templates/person_detail.html:91
+#: server/people/templates/person_detail.html:59
 msgid "Instructor for"
 msgstr "Einweisend für"
 
-#: server/people/templates/person_detail.html:93
+#: server/people/templates/person_detail.html:70
+msgid "Add Qualification"
+msgstr "Qualifikation hinzufügen"
+
+#: server/people/templates/person_detail.html:76
 msgid "Add as instructor"
 msgstr "Als einweisende Person hinzufügen"
-
-#: server/people/templates/person_detail.html:97
-#, python-format
-msgid "<b>%(name)s</b> can instruct people for the following machines:"
-msgstr "<b>%(name)s</b> kann Personen für die folgenden Maschinen einweisen:"
-
-#: server/people/templates/person_detail.html:125
-#, python-format
-msgid "<b>%(name)s</b> can not instruct people for any machines."
-msgstr "<b>%(name)s</b> kann keine Einweisungen geben."
 
 #: server/people/templates/person_form.html:7
 #, python-format
@@ -560,16 +819,32 @@ msgstr "<span class=“text-primary-emphasis”>%(person)s</span> editieren"
 msgid "Add a new person"
 msgstr "Neue Person hinzufügen"
 
-#: server/people/templates/person_list.html:10
-#: server/tokens/templates/token_list.html:24
-#: server/users/templates/home.html:19 server/users/templates/home.html:38
-#: server/users/templates/home.html:57
-msgid "Active"
-msgstr "Aktiv"
+#: server/people/templates/person_instructor_table.html:4
+#, python-format
+msgid "<b>%(name)s</b> can instruct people for the following machines:"
+msgstr "<b>%(name)s</b> kann Personen für die folgenden Maschinen einweisen:"
 
-#: server/people/templates/person_list.html:15
+#: server/people/templates/person_instructor_table.html:47
+#, python-format
+msgid "<b>%(name)s</b> can not instruct people for any machines."
+msgstr "<b>%(name)s</b> kann keine Einweisungen geben."
+
+#: server/people/templates/person_list.html:28
 msgid "Qualify"
 msgstr "Qualifizieren"
+
+#: server/people/templates/person_qualifications_table.html:14
+msgid "Permission Level"
+msgstr "Zugriffsstufe"
+
+#: server/people/templates/person_qualifications_table.html:17
+msgid "Comment"
+msgstr "Kommentar"
+
+#: server/people/templates/person_qualifications_table.html:70
+#, python-format
+msgid "<b>%(name)s</b> is not qualified for any machines."
+msgstr "<b>%(name)s</b> ist für keine Maschine qualifiziert."
 
 #: server/people/templates/qualify_person.html:10
 #, python-format
@@ -588,26 +863,37 @@ msgstr ""
 "Qualifikation für <span class=“text-primary-emphasis”>%(person)s</span> "
 "hinzufügen"
 
-#: server/people/templates/revoke_instructor_confirm.html:11
+#: server/people/templates/qualify_person.html:14
+#, fuzzy, python-format
+#| msgid "Configure <span class=\"text-primary-emphasis\">%(machine)s</span>"
+msgid ""
+"Qualify Person for <span class=\"text-primary-emphasis\">%(machine)s</span>"
+msgstr "<span class=“text-primary-emphasis”>%(machine)s</span> konfigurieren"
+
+#: server/people/templates/revoke_instructor_confirm.html:13
 #, python-format
 msgid "Remove <b>%(person)s</b> as instructor for <b>%(machine)s</b>?"
 msgstr ""
 "<b>%(person)s</b> als einweisende Person von <b>%(machine)s</b> entfernen?"
 
-#: server/people/templates/revoke_instructor_confirm.html:18
-#: server/people/templates/revoke_qualification_confirm.html:18
+#: server/people/templates/revoke_instructor_confirm.html:21
+#: server/people/templates/revoke_instructor_confirm.html:34
+#: server/people/templates/revoke_qualification_confirm.html:21
+#: server/people/templates/revoke_qualification_confirm.html:34
 #: server/templates/archive_confirm.html:16
 #: server/templates/delete_confirm.html:17
 #: server/templates/modals/archive_confirm.html:11
 #: server/templates/modals/delete_confirm.html:14
+#: server/templates/partial_delete_confirm.html:14
 msgid "No"
 msgstr "Nein"
 
-#: server/people/templates/revoke_instructor_confirm.html:19
+#: server/people/templates/revoke_instructor_confirm.html:22
+#: server/people/templates/revoke_instructor_confirm.html:35
 msgid "Remove"
 msgstr "Entfernen"
 
-#: server/people/templates/revoke_qualification_confirm.html:11
+#: server/people/templates/revoke_qualification_confirm.html:13
 #, python-format
 msgid ""
 "Revoke the qualification that <b>%(person)s</b> has on <b>%(machine)s</b>?"
@@ -617,6 +903,17 @@ msgstr "Qualifikation die <b>%(person)s</b> für <b>%(machine)s</b> entfernen?"
 msgid "E-Email"
 msgstr ""
 
+#: server/people/views.py:25 server/templates/auditlog/logentry_list.html:31
+#: server/tokens/views.py:30
+msgid "Created"
+msgstr ""
+
+#: server/people/views.py:96
+#, fuzzy
+#| msgid "Person"
+msgid "Create Person"
+msgstr "Person"
+
 #: server/space/models.py:12
 msgid "Open"
 msgstr "Offen"
@@ -625,17 +922,23 @@ msgstr "Offen"
 msgid "Closed"
 msgstr "Geschlossen"
 
-#: server/space/reporters.py:52
-msgid "{} is now *{}*"
-msgstr "{} ist nun *{}*"
+#: server/space/reporters.py:48
+msgid "{} {} is now {}"
+msgstr "{} {} ist nun {}"
 
-#: server/space/reporters.py:52 server/space/views.py:19
+#: server/space/reporters.py:50 server/space/reporters.py:62
+#: server/space/views.py:20
 msgid "open"
 msgstr "Offen"
 
-#: server/space/reporters.py:52 server/space/views.py:19
+#: server/space/reporters.py:50 server/space/reporters.py:62
+#: server/space/views.py:20
 msgid "closed"
 msgstr "Geschlossen"
+
+#: server/space/reporters.py:60
+msgid "{} is now *{}*"
+msgstr "{} ist nun *{}*"
 
 #: server/space/templates/status.html:18
 #, python-format
@@ -651,14 +954,10 @@ msgstr "Kontakt"
 msgid "This state was set %(time)s"
 msgstr "Der Status wurde %(time)s gesetzt"
 
-#: server/space/views.py:24
+#: server/space/views.py:26
 msgid ""
 "Space status might not be accurate anymore! Consider contacting the space."
 msgstr "Status könnte nicht mehr korrekt sein! Kontaktiere eventuell den Raum."
-
-#: server/templates/about.html:5 server/templates/base.html:49
-msgid "About"
-msgstr "Über"
 
 #: server/templates/about.html:12
 msgid "Version"
@@ -688,7 +987,7 @@ msgstr "Archivieren"
 msgid "Timestamp"
 msgstr "Zeitstempel"
 
-#: server/templates/auditlog/logentry_list.html:13 server/users/models.py:81
+#: server/templates/auditlog/logentry_list.html:13 server/users/models.py:87
 msgid "User"
 msgstr "Benutzer*in"
 
@@ -697,24 +996,32 @@ msgid "Object"
 msgstr "Objekt"
 
 #: server/templates/auditlog/logentry_list.html:16
-#: server/templates/auditlog/logentry_list.html:31
 msgid "Changes"
 msgstr "Änderungen"
 
-#: server/templates/auditlog/logentry_list.html:31
+#: server/templates/auditlog/logentry_list.html:33
+msgid "Updated"
+msgstr ""
+
+#: server/templates/auditlog/logentry_list.html:35
+#, fuzzy
+#| msgid "Delete"
+msgid "Deleted"
+msgstr "Löschen"
+
+#: server/templates/auditlog/logentry_list.html:41
+#, fuzzy, python-format
+#| msgid "Changes"
+msgid "1 change"
+msgid_plural "%(count)s changes"
+msgstr[0] "Änderungen"
+msgstr[1] "Änderungen"
+
+#: server/templates/auditlog/logentry_list.html:42
 msgid "and"
 msgstr "und"
 
-#: server/templates/base.html:47 server/users/models.py:82
-#: server/users/templates/user_list.html:5
-msgid "Users"
-msgstr "Benutzer*innen"
-
-#: server/templates/base.html:51
-msgid "Settings"
-msgstr "Einstellungen"
-
-#: server/templates/base.html:55
+#: server/templates/base.html:67
 msgid "Sign out"
 msgstr "Abmelden"
 
@@ -725,12 +1032,14 @@ msgstr "%(modelname)s hinzufügen"
 
 #: server/templates/delete_confirm.html:10
 #: server/templates/modals/delete_confirm.html:7
+#: server/templates/partial_delete_confirm.html:8
 #, python-format
 msgid "Do you really want to delete <b>%(object)s</b>?"
 msgstr "Soll <b>%(object)s </b> wirklich gelöscht werden?"
 
 #: server/templates/delete_confirm.html:11
 #: server/templates/modals/delete_confirm.html:11
+#: server/templates/partial_delete_confirm.html:11
 msgid "Deleting an object permanently removes it and can not be undone"
 msgstr ""
 "Objekte zu löschen ist permanent und kann nicht rückgängig gemacht werden"
@@ -757,8 +1066,8 @@ msgid "E-Mail Address or password incorrect"
 msgstr "E-Mail Adresse oder Passwort inkorrekt"
 
 #: server/templates/registration/login.html:21
-#: server/templates/registration/login.html:22 server/users/models.py:60
-#: server/users/templates/user_list.html:18
+#: server/templates/registration/login.html:22 server/users/models.py:62
+#: server/users/templates/user_list.html:9
 msgid "E-Mail Address"
 msgstr "E-Mail Adresse"
 
@@ -767,30 +1076,69 @@ msgstr "E-Mail Adresse"
 msgid "Password"
 msgstr "Passwort"
 
+#: server/templates/snippets/async_button.html:13
+msgid "Could not load data."
+msgstr ""
+
 #: server/templates/snippets/search_form.html:8
 msgid "Search"
 msgstr "Suchen"
 
-#: server/tokens/templates/token_card.html:16
-#: server/tokens/templates/token_detail.html:23
-msgid "Archived"
-msgstr "Archiviert"
+#: server/templates/snippets/search_form.html:40
+msgid "Sort"
+msgstr ""
 
+#: server/tokens/models.py:40
+#, fuzzy
+#| msgid "Token"
+msgid "Token Type"
+msgstr "Token"
+
+#: server/tokens/models.py:81
+#, fuzzy
+#| msgid "Unknown tokens"
+msgid "Unknown Token"
+msgstr "Unbekannte Tokens"
+
+#: server/tokens/models.py:82
+#, fuzzy
+#| msgid "Unknown tokens"
+msgid "Unknown Tokens"
+msgstr "Unbekannte Tokens"
+
+#: server/tokens/models.py:93
+msgid "Blacklisted Token"
+msgstr ""
+
+#: server/tokens/templates/blacklisted_token_list.html:8
+msgid "Blacklisted tokens do not appear in Unknown Tokens"
+msgstr ""
+
+#: server/tokens/templates/blacklisted_token_list.html:12
 #: server/tokens/templates/token_detail.html:18
-#: server/tokens/templates/token_list.html:22
-#: server/tokens/templates/unknown_token_list.html:19 server/tokens/views.py:27
+#: server/tokens/templates/token_list.html:23
+#: server/tokens/templates/unknown_token_table.html:4 server/tokens/views.py:27
 msgid "Serial"
 msgstr "Serial"
 
-#: server/tokens/templates/token_detail.html:19
-#: server/tokens/templates/token_list.html:23 server/tokens/views.py:28
-msgid "Purpose"
-msgstr "Zweck"
+#: server/tokens/templates/token_card.html:16
+#: server/tokens/templates/token_detail.html:24 server/tokens/views.py:37
+msgid "Archived"
+msgstr "Archiviert"
 
-#: server/tokens/templates/token_detail.html:20
-#: server/tokens/templates/token_list.html:25
+#: server/tokens/templates/token_detail.html:19
+#: server/tokens/templates/token_list.html:24
+msgid "Label"
+msgstr ""
+
+#: server/tokens/templates/token_detail.html:21
+#: server/tokens/templates/token_list.html:27
 msgid "Owner"
 msgstr "Besitzer*in"
+
+#: server/tokens/templates/token_detail.html:32
+msgid "Load Access Log"
+msgstr "Zugriffslog laden"
 
 #: server/tokens/templates/token_form.html:7
 #, python-format
@@ -798,8 +1146,8 @@ msgid "Edit <span class=\"text-primary-emphasis\">%(token)s</span>"
 msgstr "<span class=“text-primary-emphasis”>%(token)s</span> editieren"
 
 #: server/tokens/templates/token_form.html:9
-#: server/tokens/templates/token_list.html:9
-#: server/tokens/templates/token_list.html:15
+#: server/tokens/templates/token_list.html:10
+#: server/tokens/templates/token_list.html:17
 msgid "Assign Token"
 msgstr "Token zuweisen"
 
@@ -807,27 +1155,52 @@ msgstr "Token zuweisen"
 msgid "Add a new Token"
 msgstr "Neuen Token hinzufügen"
 
-#: server/tokens/templates/unknown_token_list.html:7
-msgid "Unknown tokens"
-msgstr "Unbekannte Tokens"
+#: server/tokens/templates/tokentype_form.html:6
+#: server/users/templates/group_form.html:6
+#: server/users/templates/user_form.html:6
+#: server/users/templates/widget_form.html:8
+#, fuzzy, python-format
+#| msgid "Edit %(model)s"
+msgid "Edit %(object)s"
+msgstr "%(model)s editieren"
 
-#: server/tokens/templates/unknown_token_list.html:11
+#: server/tokens/templates/tokentype_form.html:8
+#, fuzzy
+#| msgid "Add a new Token"
+msgid "Add a new token type"
+msgstr "Neuen Token hinzufügen"
+
+#: server/tokens/templates/tokentype_list.html:8
+msgid "Label Prefix"
+msgstr ""
+
+#: server/tokens/templates/unknown_token_list.html:15
 msgid "Clear list"
 msgstr "Liste leeren"
 
-#: server/tokens/templates/unknown_token_list.html:21
+#: server/tokens/templates/unknown_token_list.html:18
+msgid "Unknown tokens"
+msgstr "Unbekannte Tokens"
+
+#: server/tokens/templates/unknown_token_table.html:6
 msgid "Seen"
 msgstr "Gesehen"
 
-#: server/tokens/templates/unknown_token_list.html:23
+#: server/tokens/templates/unknown_token_table.html:20
 msgid "Assign"
 msgstr "Zuweisen"
 
-#: server/tokens/templates/unknown_token_list.html:42
+#: server/tokens/templates/unknown_token_table.html:23
+#, fuzzy
+#| msgid "Clear list"
+msgid "Blacklist"
+msgstr "Liste leeren"
+
+#: server/tokens/templates/unknown_tokens_empty.html:4
 msgid "No Tokens found."
 msgstr "Keine Tokens gefunden."
 
-#: server/tokens/templates/unknown_token_list.html:43
+#: server/tokens/templates/unknown_tokens_empty.html:5
 msgid ""
 "Any token that is tappen on a reader and not known to the database will show "
 "up here."
@@ -835,77 +1208,118 @@ msgstr ""
 "Jeder Token der an einen Leser gehalten wird und nicht in der Datenbank ist, "
 "taucht hier auf."
 
-#: server/users/admin.py:14
+#: server/tokens/views.py:28
+msgid "Purpose"
+msgstr "Zweck"
+
+#: server/tokens/views.py:250
+#, python-format
+msgid "Next free label: %s"
+msgstr ""
+
+#: server/users/admin.py:12
 msgid "Personal info"
 msgstr "Persönliche Informationen"
 
-#: server/users/admin.py:16
+#: server/users/admin.py:14
 msgid "Permissions"
 msgstr "Berechtigungen"
 
-#: server/users/admin.py:27
+#: server/users/admin.py:25
 msgid "Important dates"
 msgstr "Wichtige Daten"
 
-#: server/users/models.py:43
+#: server/users/models.py:44
 msgid "Default (Blue)"
 msgstr "Standard (Blau)"
 
-#: server/users/models.py:44
+#: server/users/models.py:45
 msgid "Purple"
 msgstr "Lila"
 
-#: server/users/models.py:45
+#: server/users/models.py:46
 msgid "Red"
 msgstr "Rot"
 
-#: server/users/models.py:46
+#: server/users/models.py:47
 msgid "Orange"
 msgstr "Orange"
 
-#: server/users/models.py:47
+#: server/users/models.py:48
 msgid "Yellow"
 msgstr "Gelb"
 
-#: server/users/models.py:48
+#: server/users/models.py:49
 msgid "Green"
 msgstr "Grün"
 
-#: server/users/models.py:49
+#: server/users/models.py:50
 msgid "Pink"
 msgstr "Pink"
 
-#: server/users/models.py:50
+#: server/users/models.py:51
 msgid "Teal"
 msgstr "Türkis"
 
-#: server/users/models.py:51
+#: server/users/models.py:52
 msgid "Cyan"
 msgstr "Cyan"
 
-#: server/users/models.py:66
+#: server/users/models.py:68
 msgid "Langauge"
 msgstr "Sprache"
 
-#: server/users/models.py:69
+#: server/users/models.py:71
 msgid "Page Length"
 msgstr "Seitenlänge"
 
-#: server/users/models.py:71
+#: server/users/models.py:73
 msgid "Number of items to show per page"
 msgstr "Anzahl an Einträgen pro Seite"
 
-#: server/users/models.py:75
+#: server/users/models.py:79
 msgid "Light"
 msgstr "Hell"
 
-#: server/users/models.py:75
+#: server/users/models.py:79
 msgid "Dark"
 msgstr "Dunkel"
 
-#: server/users/models.py:75
+#: server/users/models.py:79
 msgid "Auto"
 msgstr "Auto"
+
+#: server/users/models.py:92
+#, fuzzy
+#| msgid "Tokens"
+msgid "Token Counts"
+msgstr "Tokens"
+
+#: server/users/models.py:93
+#, fuzzy
+#| msgid "People"
+msgid "People Counts"
+msgstr "Personen"
+
+#: server/users/models.py:94
+#, fuzzy
+#| msgid "Machines"
+msgid "Machine Counts"
+msgstr "Maschinen"
+
+#: server/users/models.py:95 server/users/models.py:126
+#, fuzzy
+#| msgid "Load Access Log"
+msgid "Latest Access Log"
+msgstr "Zugriffslog laden"
+
+#: server/users/models.py:106
+msgid "User Widget"
+msgstr ""
+
+#: server/users/models.py:107
+msgid "User Widgets"
+msgstr ""
 
 #: server/users/templates/change_password.html:7
 #, python-format
@@ -915,39 +1329,87 @@ msgstr "Passwort für %(object)s ändern"
 #: server/users/templates/change_password.html:9
 #: server/users/templates/change_password.html:14
 #: server/users/templates/profile.html:17
-#: server/users/templates/user_form.html:15
+#: server/users/templates/user_form.html:15 server/users/views.py:71
+#: server/users/views.py:139
 msgid "Change Password"
 msgstr "Passwort ändern"
+
+#: server/users/templates/group_form.html:8
+#, fuzzy
+#| msgid "Add a new person"
+msgid "Add a new group"
+msgstr "Neue Person hinzufügen"
 
 #: server/users/templates/home.html:5
 msgid "Welcome to RfiDing"
 msgstr "Willkommen bei RFIDing"
 
-#: server/users/templates/home.html:23 server/users/templates/home.html:42
-#: server/users/templates/home.html:61
-msgid "Total"
-msgstr "Insgesamt"
-
-#: server/users/templates/profile.html:6
+#: server/users/templates/profile.html:6 server/users/views.py:29
 msgid "Profile"
 msgstr "Profil"
-
-#: server/users/templates/user_form.html:6
-#, python-format
-msgid "Edit %(model)s"
-msgstr "%(model)s editieren"
 
 #: server/users/templates/user_form.html:8
 msgid "Add a new user"
 msgstr "Neue Benutzer*in hinzufügen"
 
-#: server/users/templates/user_list.html:9
-msgid "Add user"
-msgstr "Benutzer*in hinzufügen"
+#: server/users/templates/widget_form.html:10
+msgid "Add widget"
+msgstr ""
 
-#: server/users/templates/user_list.html:16
-msgid "ID"
-msgstr "ID"
+#: server/users/templates/widgets/access_log_latest.html:25
+msgid "More"
+msgstr ""
+
+#: server/users/templates/widgets/base.html:27
+msgid "Are you sure?"
+msgstr ""
+
+#: server/users/templates/widgets/count.html:11
+msgid "Total"
+msgstr "Insgesamt"
+
+#: server/users/views.py:47
+msgid "Home"
+msgstr ""
+
+#: server/users/views.py:86
+msgid "Create User"
+msgstr ""
+
+#: server/users/views.py:171
+msgid "Create Group"
+msgstr ""
+
+#: server/users/views.py:208 server/users/views.py:239
+msgid "Add Widget"
+msgstr ""
+
+#~ msgid "Registered"
+#~ msgstr "Registriert"
+
+#~ msgid "Needs Qualification"
+#~ msgstr "Braucht Qualifikation"
+
+#~ msgid "Machine Active"
+#~ msgstr "Maschine Aktiv"
+
+#~ msgid "Modify"
+#~ msgstr "Modifizieren"
+
+#, fuzzy
+#~| msgid "Default (Blue)"
+#~ msgid "Default"
+#~ msgstr "Standard (Blau)"
+
+#, python-format
+#~ msgid "<b>%(name)s</b> is qualified for the following machines:"
+#~ msgstr "<b>%(name)s</b> ist für die folgenden Maschinen qualifiziert:"
+
+#~ msgid "Add user"
+#~ msgstr "Benutzer*in hinzufügen"
+
+#~ msgid "ID"
+#~ msgstr "ID"
 
 #~ msgid "{space_name} is now *{'open' if state.is_open else 'closed'}*"
 #~ msgstr ""
@@ -967,9 +1429,6 @@ msgstr "ID"
 
 #~ msgid "Theme"
 #~ msgstr "Thema"
-
-#~ msgid "Delete "
-#~ msgstr "Löschen"
 
 #~ msgid "Configure "
 #~ msgstr "Konfigurieren"
