@@ -27,7 +27,7 @@ class BaseAPIView(APIView):
 
     def get_machine(self, mac_address):
         try:
-            return Machine.objects.values("id", "needs_qualification", "api_key").get(
+            return Machine.objects.values("id", "needs_qualification", "api_key", "runtimer", "min_power", "control_parameter", "display_time_countdown", "display_power_consumption", "link_relays").get(
                 mac_address__iexact=mac_address, is_active=True
             )
         except Machine.DoesNotExist:
