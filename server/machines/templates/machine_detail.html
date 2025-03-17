@@ -26,6 +26,7 @@ hx-ext="ws" ws-connect="/ws/machines/{{ machine.mac_address }}/state"
   class="btn btn-secondary"
   hx-get="{% url "machines:logs" object.pk %}"
   hx-target="#logContainer"
+  hx-swap="outerHTML"
   hx-trigger="click"><i class="bi-pencil-square me-2"></i>{% trans "Logs "%}</button>
 {% endif %}
 <a href="{% url request.resolver_match.namespace|add:':update' object.pk %}" class="btn btn-primary"><i class="bi-pencil-square me-2"></i>{% trans "Edit "%}</a>
@@ -158,10 +159,39 @@ hx-ext="ws" ws-connect="/ws/machines/{{ machine.mac_address }}/state"
       </div>
       <div class="modal-body" id="logContainer"></div>
       <div class="modal-footer">
+        <div class="form-check ">
+          <input class="form-check-input" type="checkbox" id="autoscrollCheckbox" checked>
+          <label class="form-check-label" for="autoscrollCheckbox">
+            {% trans "Auto Scroll" %}
+          </label>
+        </div>
+        <div class="flex-fill"></div>
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
       </div>
     </div>
   </div>
 </div>
+{% endif %}
+{% endblock %}
+
+{% block script_extra %}
+{% if machine.has_api %}
+const autoScrollCheckbox = document.getElementById("autoscrollCheckbox");
+
+function scrollLogToBottom() {
+  if (!autoScrollCheckbox.checked) {
+    return;
+  }
+  var logContainer = document.getElementById("logContainer");
+  logContainer.scrollTo(0, logContainer.scrollHeight);
+}
+
+const logModal = document.getElementById("logModal");
+logModal.addEventListener("hidden.bs.modal", event => {
+  var logContainer = document.getElementById("logContainer");
+  const n = document.createElement("div")
+  n.setAttribute("id", "logContainer");
+  logContainer.replaceWith(n);
+});
 {% endif %}
 {% endblock %}

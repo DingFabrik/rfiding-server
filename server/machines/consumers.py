@@ -2,6 +2,8 @@ from channels.generic.websocket import AsyncJsonWebsocketConsumer
 import logging
 from django.template.loader import render_to_string
 import asyncio
+import datetime
+import re
 
 from .management.commands.machine_manager import ConnectionManager
 from .models import Machine
@@ -41,6 +43,13 @@ class MachineStateConsumer(AsyncJsonWebsocketConsumer):
         )
         await self.send(html)
 
+def parse_log_message(message):
+    try:
+        decoded = message.decode("utf-8")
+        decoded = re.sub(r"\x1b\[[0-9;]*m", "", decoded)
+        return decoded
+    except UnicodeDecodeError:
+        return message.hex()
 
 class MachineLogConsumer(AsyncJsonWebsocketConsumer):
     async def connect(self):
@@ -57,7 +66,7 @@ class MachineLogConsumer(AsyncJsonWebsocketConsumer):
         def log_update(log):
             asyncio.ensure_future(self.state_update(log))
 
-        self.manager.client.subscribe_logs(log_update, 5)
+        self.manager.client.subscribe_logs(log_update, 5, True)
 
     async def disconnect(self, code):
         logger.debug("websocket client disconnected")
@@ -66,11 +75,13 @@ class MachineLogConsumer(AsyncJsonWebsocketConsumer):
         return await super().disconnect(code)
 
     async def state_update(self, log):
+        print(log)
         html = render_to_string(
             "machine_log_partial.html",
             {
-                "message": log.message.decode("utf-8"),
+                "timestamp": datetime.datetime.now(),
+                "level": log.level,
+                "message": parse_log_message(log.message),
             },
         )
-        print(html)
         await self.send(html)

@@ -1,8 +1,9 @@
 <div
     id="logContainer"
-    class="modal-body"
+    class="modal-body p-0"
     hx-ext="ws"
     ws-connect="/ws/machines/{{ machine.mac_address }}/logs"
+    hx-on:htmx:ws-after-message="scrollLogToBottom()"
     hx-trigger="click from:#logsButton">
-    <div id="machine_logs"></div>
+    <div id="machine_logs" class="font-monospace machine-logs"></div>
 </div>

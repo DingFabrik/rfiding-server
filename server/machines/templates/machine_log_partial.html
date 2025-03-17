@@ -1,3 +1,7 @@
 <div id="machine_logs" hx-swap-oob="beforeend">
-    <p>{{ message }}</p>
+    <span class="log-line">
+        <span>[{% now "H:i:s" %}]</span>
+        <span class="log-level-{{ level }}">{{ message }}</span>
+        <br />
+    </span>
 </div>
