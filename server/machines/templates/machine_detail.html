@@ -53,6 +53,7 @@ hx-ext="ws" ws-connect="/ws/machines/{{ machine.mac_address }}/state"
   <br></li>
     <li><span class="fw-bold text-secondary-emphasis">{% trans "Is Active" %}:</span> {% include "snippets/active_toggle.html" %}<br></li>
     <li><span class="fw-bold text-secondary-emphasis">{% trans "Chip" %}:</span> {{ object.get_chip_display }}<br></li>
+    {% if object.firmware_version %}<li><span class="fw-bold text-secondary-emphasis">{% trans "Firmware Version" %}:</span> {{ object.firmware_version }}<br></li>{% endif %}
     <li><span class="fw-bold text-secondary-emphasis">{% trans "Last used" %}:</span> {{ last_access }}<br></li>
 </ul>
 </div>
