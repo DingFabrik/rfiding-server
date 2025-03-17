@@ -23,6 +23,7 @@ from django.contrib.auth.views import (
     PasswordChangeView,
     PasswordChangeDoneView,
 )
+from django.conf import settings
 
 from base.views import AboutView, AuditlogView
 from users.views import HomeView
@@ -43,10 +44,17 @@ api_v2_urls = [
     path("space/status", APISpaceStatusView.as_view(), name="space_status"),
 ]
 
-api_urls = api_v1_urls + [
-    path("v1/", include((api_v1_urls, "v1"), namespace="v1")),
-    path("v2/", include((api_v2_urls, "v2"), namespace="v2")),
-]
+api_urls = []
+
+ENABLE_API_V1 = getattr(settings, "ENABLE_API_V1", True)
+ENABLE_API_V2 = getattr(settings, "ENABLE_API_V2", True)
+
+if ENABLE_API_V1:
+    api_urls += api_v1_urls
+    api_urls.append(path("v1/", include((api_v1_urls, "v1"), namespace="v1")))
+
+if ENABLE_API_V2:
+    api_urls.append(path("v2/", include((api_v2_urls, "v2"), namespace="v2")))
 
 urlpatterns = [
     path("", HomeView.as_view(), name="home"),
