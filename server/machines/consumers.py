@@ -4,6 +4,7 @@ from django.template.loader import render_to_string
 import asyncio
 import datetime
 import re
+from asgiref.sync import sync_to_async
 
 from .management.commands.machine_manager import ConnectionManager
 from .models import Machine
@@ -13,6 +14,10 @@ logger = logging.getLogger(__name__)
 
 class MachineStateConsumer(AsyncJsonWebsocketConsumer):
     async def connect(self):
+        user = self.scope["user"]
+        if not user.is_authenticated and await sync_to_async(user.has_perm)("machines.view_machine_state"):
+            return await self.close()
+        self.scope["can_send_commands"] = await sync_to_async(user.has_perm)("machines.send_machine_commands")
         await self.accept()
 
         mac_address = self.scope["url_route"]["kwargs"]["mac_address"]
@@ -33,6 +38,8 @@ class MachineStateConsumer(AsyncJsonWebsocketConsumer):
     async def receive_json(self, content, **kwargs):
         logger.debug("Received websocket data:", content)
         if "command" in content:
+            if not self.scope["can_send_commands"]:
+                return
             self.manager.send_command(content["command"])
 
     async def state_update(self, state):
@@ -76,7 +83,6 @@ class MachineLogConsumer(AsyncJsonWebsocketConsumer):
         return await super().disconnect(code)
 
     async def state_update(self, log):
-        print(log)
         html = render_to_string(
             "machine_log_partial.html",
             {

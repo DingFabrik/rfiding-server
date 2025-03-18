@@ -54,6 +54,7 @@ class ConnectionManager:
         self.client.execute_service(service, {})
 
     async def change_callback(self, state):
+        print(state)
         if self.on_state_change is not None:
             if self.device_state_key == state.key:
                 await self.on_state_change({"state": state.state})

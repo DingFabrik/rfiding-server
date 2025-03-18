@@ -162,6 +162,10 @@ class Machine(TimestampedModel):
         verbose_name = _("Machine")
         verbose_name_plural = _("Machines")
         ordering = ["name"]
+        permissions = (("view_machine_state", _("View Machine State")),
+                       ("view_machine_logs", _("View Machine Logs")),
+                       ("send_machine_commands", _("Send Machine Commands")))
+
 
     def __str__(self):
         return f"{self.name}"
