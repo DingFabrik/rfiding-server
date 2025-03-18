@@ -27,7 +27,7 @@ class BaseAPIView(APIView):
 
     def get_machine(self, mac_address):
         try:
-            return Machine.objects.values("id", "needs_qualification", "api_key", "runtimer", "min_power", "control_parameter", "display_time_countdown", "display_power_consumption", "link_relays").get(
+            return Machine.objects.get(
                 mac_address__iexact=mac_address, is_active=True
             )
         except Machine.DoesNotExist:
@@ -50,7 +50,7 @@ class BaseAPIView(APIView):
 
 
 def check_access(machine, tokenID):
-    end_time = Machine.get_valid_end_time_for_machine(machine["id"])
+    end_time = Machine.get_valid_end_time_for_machine(machine.id)
     if end_time is None:
         raise PermissionDenied("Machine is restricted")
 
@@ -62,13 +62,13 @@ def check_access(machine, tokenID):
         )
     except Token.DoesNotExist:
         if not BlacklistedToken.objects.filter(serial=tokenID).exists():
-            UnknownToken.objects.get_or_create(serial=tokenID, machine_id=machine["id"])
+            UnknownToken.objects.get_or_create(serial=tokenID, machine_id=machine.id)
         raise NotFound("Invalid Token") from None
 
-    if machine["needs_qualification"]:
+    if machine.needs_qualification:
         qualification = (
             Qualification.objects.filter(
-                machine=machine["id"], person=token["person__id"]
+                machine=machine.id, person=token["person__id"]
             )
             .order_by()
             .first()
@@ -83,7 +83,7 @@ def check_access(machine, tokenID):
             space_state = SpaceState.objects.first()
             if space_state is not None and not space_state.is_open:
                 raise PermissionDenied("Space is closed")
-    save_access_log.delay(machine["id"], token["id"], LOG_TYPE_ENABLED)
+    save_access_log.delay(machine.id, token["id"], LOG_TYPE_ENABLED)
 
     now = datetime.datetime.now()
     return {

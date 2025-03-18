@@ -19,11 +19,11 @@ ENFORCE_API_KEYS = (
 class MachineApiKeyPermission(permissions.BasePermission):
     def has_permission(self, request, view):
         mac_address = formatted_mac(
-            request.GET.get("mac_address", request.POST.get("mac_address", None))
+            request.GET.get("mac_address", request.data.get("mac_address", None))
         )
         view.machine = view.get_machine(mac_address)
-        if view.machine["api_key"] is not None:
-            return request.META.get("api-key", None) == view.machine["api_key"]
+        if view.machine.api_key is not None:
+            return request.META.get("api-key", None) == view.machine.api_key
         return True
 
 
@@ -83,12 +83,15 @@ class MachineConfigView(BaseAPIView):
     required_post_parameters = ["mac_address"]
 
     def get(self, request, format=None):
-        save_access_log.delay(self.machine["id"], None, LOG_TYPE_BOOTED)
+        save_access_log.delay(self.machine.id, None, LOG_TYPE_BOOTED)
         return Response(
             MachineConfigSerializer(
                 {
                     "runtimer": self.machine.runtimer,
                     "minPower": self.machine.min_power,
+                    "display_time_countdown": self.machine.display_time_countdown,
+                    "display_power_consumption": self.machine.display_power_consumption,
+                    "link_relays": self.machine.link_relays,
                 }
             ).data,
             status=status.HTTP_200_OK,
@@ -111,11 +114,11 @@ class MachineConfigView(BaseAPIView):
         if was_changed:
             self.machine.save()
 
-        save_access_log.delay(self.machine["id"], None, LOG_TYPE_BOOTED)
+        save_access_log.delay(self.machine.id, None, LOG_TYPE_BOOTED)
         return Response(
             MachineConfigSerializer(
                 {
-                    "runtimer": self.machine["runtimer"],
+                    "runtimer": self.machine.runtimer,
                     "minPower": self.machine.min_power,
                     "display_time_countdown": self.machine.display_time_countdown,
                     "display_power_consumption": self.machine.display_power_consumption,
@@ -152,7 +155,7 @@ class CheckMachineAccessView(BaseAPIView):
             )
         finally:
             if not was_successful:
-                save_access_log.delay(self.machine["id"], None, LOG_TYPE_UNSUCCESSFUL)
+                save_access_log.delay(self.machine.id, None, LOG_TYPE_UNSUCCESSFUL)
 
 
 class DisableMachineAccessView(BaseAPIView):
@@ -160,5 +163,5 @@ class DisableMachineAccessView(BaseAPIView):
     required_get_parameters = ["mac_address", "tokenUid"]
 
     def get(self, request, format=None):
-        save_access_log.delay(self.machine["id"], None, LOG_TYPE_DISABLED)
+        save_access_log.delay(self.machine.id, None, LOG_TYPE_DISABLED)
         return Response({})
