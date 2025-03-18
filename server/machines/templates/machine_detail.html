@@ -15,9 +15,17 @@ hx-ext="ws" ws-connect="/ws/machines/{{ machine.mac_address }}/state"
 {% endblock%}
 
 {% block top_actions %}
-<div class="btn-group" role="group">
-{% if can_edit %}
 {% if machine.has_api %}
+<div class="btn-group" role="group">
+  <div id="command_dropdown" class="dropdown">
+    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+      {% trans "Send Command" %}
+    </button>
+    <ul id="commands_menu" class="dropdown-menu">
+    </ul>
+  </div>
+</div>
+<div class="btn-group" role="group">
 <button
   type="button"
   id="logsButton"
@@ -28,7 +36,11 @@ hx-ext="ws" ws-connect="/ws/machines/{{ machine.mac_address }}/state"
   hx-target="#logContainer"
   hx-swap="outerHTML"
   hx-trigger="click"><i class="bi-pencil-square me-2"></i>{% trans "Logs "%}</button>
+</div>
 {% endif %}
+<div class="btn-group" role="group">
+{% if can_edit %}
+
 <a href="{% url request.resolver_match.namespace|add:':update' object.pk %}" class="btn btn-primary"><i class="bi-pencil-square me-2"></i>{% trans "Edit "%}</a>
 <a href="{% url request.resolver_match.namespace|add:':configure' object.pk %}" class="btn btn-primary"><i class="bi-sliders me-2"></i>{% trans "Configure"%}</a>
 {% endif %}
@@ -155,7 +167,7 @@ hx-ext="ws" ws-connect="/ws/machines/{{ machine.mac_address }}/state"
   <div class="modal-dialog modal-dialog-scrollable modal-xl">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Logs</h5>
+        <h5 class="modal-title">{% trans "Logs" %}</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body" id="logContainer"></div>

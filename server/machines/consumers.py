@@ -26,13 +26,14 @@ class MachineStateConsumer(AsyncJsonWebsocketConsumer):
 
     async def disconnect(self, code):
         logger.debug("websocket client disconnected")
-        print("disconnecting", self.manager)
         if self.manager is not None:
             await self.manager.disconnect()
         return await super().disconnect(code)
 
-    async def receive(self, text_data=None, bytes_data=None):
-        logger.debug("Received websocket data:", text_data)
+    async def receive_json(self, content, **kwargs):
+        logger.debug("Received websocket data:", content)
+        if "command" in content:
+            self.manager.send_command(content["command"])
 
     async def state_update(self, state):
         html = render_to_string(

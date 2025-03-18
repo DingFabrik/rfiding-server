@@ -17,6 +17,11 @@ class ConnectionManager:
     mac_address_key = None
     error_message_key = None
     power_consumption_key = None
+    
+    reload_config_action_key = None
+    restart_action_key = None
+    enable_action_key = None
+    disable_action_key = None
 
     is_enabled = False
     is_connected = False
@@ -34,7 +39,18 @@ class ConnectionManager:
     def send_command(self, command):
         if not self.is_connected:
             return
-        service = UserService(name=command, key=1, args={})
+        key = None
+        if command == "reload_config":
+            key = self.reload_config_action_key
+        elif command == "restart":
+            key = self.restart_action_key
+        elif command == "enable":
+            key = self.enable_action_key
+        elif command == "disable":
+            key = self.disable_action_key
+        if key is None:
+            return
+        service = UserService(name=command, key=key, args={})
         self.client.execute_service(service, {})
 
     async def change_callback(self, state):
@@ -47,18 +63,28 @@ class ConnectionManager:
         for entity in entities[0]:
             if entity.object_id == "device_state":
                 self.device_state_key = entity.key
-            if entity.object_id == "token_id":
+            elif entity.object_id == "token_id":
                 self.token_id_key = entity.key
-            if entity.object_id == "error_message":
+            elif entity.object_id == "error_message":
                 self.error_message_key = entity.key
-            if entity.object_id == "current_power_consumption":
+            elif entity.object_id == "current_power_consumption":
                 self.power_consumption_key = entity.key
+        for service in entities[1]:
+            if service.name == "reload_config":
+                self.reload_config_action_key = service.key
+            elif service.name == "restart":
+                self.restart_action_key = service.key
+            elif service.name == "enable":
+                self.enable_action_key = service.key
+            elif service.name == "disable":
+                self.disable_action_key = service.key
 
     async def connect(self):
         def change_callback(state):
             asyncio.ensure_future(self.change_callback(state))
 
         await self.client.connect(login=True)
+        self.is_connected = True
         await self.setup_entities()
         self.client.subscribe_states(change_callback)
 
