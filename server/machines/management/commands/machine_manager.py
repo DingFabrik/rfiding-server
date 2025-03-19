@@ -54,7 +54,6 @@ class ConnectionManager:
         self.client.execute_service(service, {})
 
     async def change_callback(self, state):
-        print(state)
         if self.on_state_change is not None:
             if self.device_state_key == state.key:
                 await self.on_state_change({"state": state.state})
@@ -84,7 +83,10 @@ class ConnectionManager:
         def change_callback(state):
             asyncio.ensure_future(self.change_callback(state))
 
-        await self.client.connect(login=True)
+        def on_stop(expected):
+            self.is_connected = False
+        
+        await self.client.connect(login=True, on_stop=on_stop)
         self.is_connected = True
         await self.setup_entities()
         self.client.subscribe_states(change_callback)

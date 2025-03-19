@@ -27,7 +27,12 @@ class MachineStateConsumer(AsyncJsonWebsocketConsumer):
 
         self.manager = ConnectionManager(machine)
         self.manager.on_state_change = self.state_update
-        await self.manager.connect()
+        try:
+            await self.manager.connect()
+        except Exception as e:
+            logger.error(f"Failed to connect to {mac_address}: {e}")
+            await self.state_update({"state": "disconnected"})
+            return await self.close()
 
     async def disconnect(self, code):
         logger.debug("websocket client disconnected")
