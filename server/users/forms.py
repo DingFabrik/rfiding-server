@@ -7,6 +7,47 @@ from django.utils.translation import gettext as _
 
 from .models import RFIDingUser
 
+class ProfileForm(forms.ModelForm):
+    
+    def __init__(self, *args, **kwargs):
+        super(ProfileForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper(self)
+        self.helper.layout = Layout(
+            "name",
+            "email",
+            "language",
+            Fieldset(
+                _("Display"),
+                "theme_mode",
+                "theme",
+                css_class="border rounded p-2 mb-3",
+            ),
+            Fieldset(
+                _("Lists"),
+                "page_length",
+                "default_token_filter",
+                "default_people_filter",
+                "default_machines_filter",
+                css_class="border rounded p-2 mb-3",
+            ),
+            FormActions(
+                Submit("submit", _("Save"))
+            )
+        )
+        
+    class Meta:
+        model = RFIDingUser
+        fields = [
+            "name",
+            "email",
+            "language",
+            "page_length",
+            "default_token_filter",
+            "default_people_filter",
+            "default_machines_filter",
+            "theme_mode",
+            "theme",
+        ]
 
 class UserForm(forms.ModelForm):
     

@@ -5,6 +5,7 @@ from django.utils.translation import gettext_lazy as _
 from django.conf import settings
 from auditlog.registry import auditlog
 
+from base.filters import TOKEN_FILTER_CHOICES, PEOPLE_FILTER_CHOICES, MACHINE_FILTER_CHOICES
 
 class UserManager(BaseUserManager):
     """Define a model manager for User model with no username field."""
@@ -72,6 +73,25 @@ class RFIDingUser(AbstractUser):
         help_text=_("Number of items to show per page"),
         validators=[validators.MinValueValidator(1), validators.MaxValueValidator(300)],
     )
+    default_token_filter = models.CharField(
+        _("Default Token Filter"),
+        max_length=20,
+        default=TOKEN_FILTER_CHOICES[0][0],
+        choices=[(choice[0], choice[1]) for choice in TOKEN_FILTER_CHOICES],
+    )
+    default_people_filter = models.CharField(
+        _("Default People Filter"),
+        max_length=20,
+        default=PEOPLE_FILTER_CHOICES[0][0],
+        choices=[(choice[0], choice[1]) for choice in PEOPLE_FILTER_CHOICES],
+    )
+    default_machines_filter = models.CharField(
+        _("Default Machine Filter"),
+        max_length=100,
+        default=MACHINE_FILTER_CHOICES[0][0],
+        choices=[(choice[0], choice[1]) for choice in MACHINE_FILTER_CHOICES],
+    )
+    
 
     theme_mode = models.CharField(
         max_length=10,

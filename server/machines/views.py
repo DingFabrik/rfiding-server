@@ -20,6 +20,7 @@ from .models import Machine, MachineRegistrationRequest
 from .forms import MachineForm, ConfigureMachineForm, MachineTimeFormset
 from people.models import Qualification, Instructor
 from people.forms import QualifyPersonForm, InstructorForm
+from base.filters import MACHINE_FILTER_CHOICES
 
 MACHINE_SORT_CHOICES = (
     ("name", _("Name")),
@@ -29,13 +30,6 @@ MACHINE_SORT_CHOICES = (
     ("-updated", _("Last Modified")),
 )
 MACHINE_SORT_CHOICES_KEYS = [choice[0] for choice in MACHINE_SORT_CHOICES]
-
-MACHINE_FILTER_CHOICES = (
-    ("active", _("Active")),
-    ("inactive", _("Inactive")),
-    ("all", _("All")),
-)
-
 
 class MachineListView(BaseListView):
     permission_required = "machines.view_machine"
@@ -48,7 +42,7 @@ class MachineListView(BaseListView):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        filter = self.request.GET.get("filter")
+        filter = self.request.GET.get("filter", self.request.user.default_machines_filter)
         if filter == "all":
             queryset = queryset
         elif filter == "inactive":
@@ -61,6 +55,7 @@ class MachineListView(BaseListView):
         context = super().get_context_data(**kwargs)
         context["sort_choices"] = MACHINE_SORT_CHOICES
         context["filter_choices"] = MACHINE_FILTER_CHOICES
+        context["filter_default"] = self.request.user.default_machines_filter
         return context
 
 

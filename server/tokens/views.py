@@ -21,6 +21,7 @@ from .models import Token, TokenType, UnknownToken, BlacklistedToken
 from .forms import TokenForm
 from people.models import Person
 from .common import clear_unknown_tokens
+from base.filters import TOKEN_FILTER_CHOICES
 
 
 TOKEN_SORT_CHOICES = (
@@ -30,12 +31,6 @@ TOKEN_SORT_CHOICES = (
     ("-created", _("Created")),
 )
 
-TOKEN_FILTER_CHOICES = (
-    ("active", _("Active")),
-    ("inactive", _("Inactive")),
-    ("all", _("All")),
-    ("archived", _("Archived")),
-)
 
 TOKEN_SORT_CHOICES_KEYS = [choice[0] for choice in TOKEN_SORT_CHOICES]
 
@@ -57,7 +52,7 @@ class TokenListView(BaseListView):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        filter = self.request.GET.get("filter")
+        filter = self.request.GET.get("filter", self.request.user.default_token_filter)
         if filter == "all":
             queryset = queryset
         elif filter == "inactive":
@@ -72,6 +67,7 @@ class TokenListView(BaseListView):
         context = super().get_context_data(**kwargs)
         context["sort_choices"] = TOKEN_SORT_CHOICES
         context["filter_choices"] = TOKEN_FILTER_CHOICES
+        context["filter_default"] = self.request.user.default_token_filter
         return context
 
 

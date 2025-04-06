@@ -15,6 +15,7 @@ from django.utils.translation import gettext_lazy as _
 from base.views import BaseToggleActiveView, BaseListView, PartialMixin, TitleMixin
 from .models import Person, Qualification, Instructor
 from .forms import PersonForm, QualifyPersonForm, InstructorForm
+from base.filters import PEOPLE_FILTER_CHOICES
 
 
 PEOPLE_SORT_CHOICES = (
@@ -23,12 +24,6 @@ PEOPLE_SORT_CHOICES = (
     ("email", _("E-Email")),
     ("-updated", _("Last Modified")),
     ("-created", _("Created")),
-)
-
-PEOPLE_FILTER_CHOICES = (
-    ("active", _("Active")),
-    ("inactive", _("Inactive")),
-    ("all", _("All")),
 )
 
 PEOPLE_SORT_CHOICES_KEYS = [choice[0] for choice in PEOPLE_SORT_CHOICES]
@@ -47,7 +42,7 @@ class PersonListView(BaseListView):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        filter = self.request.GET.get("filter")
+        filter = self.request.GET.get("filter", self.request.user.default_people_filter)
         if filter == "all":
             queryset = queryset
         elif filter == "inactive":
@@ -60,6 +55,7 @@ class PersonListView(BaseListView):
         context = super().get_context_data(**kwargs)
         context["sort_choices"] = PEOPLE_SORT_CHOICES
         context["filter_choices"] = PEOPLE_FILTER_CHOICES
+        context["filter_default"] = self.request.user.default_people_filter
         return context
 
 

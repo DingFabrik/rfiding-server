@@ -21,7 +21,7 @@ from django.shortcuts import render
 from base.views import TitleMixin, BaseListView, PartialMixin
 from .widgets import WidgetDataProvider
 from users.models import RFIDingUser, UserWidget
-from .forms import UserForm, GroupForm
+from .forms import UserForm, GroupForm, ProfileForm
 
 
 @method_decorator(login_required, name="dispatch")
@@ -29,7 +29,7 @@ class ProfileView(TitleMixin, UpdateView):
     title = _("Profile")
     model = RFIDingUser
     template_name = "profile.html"
-    fields = ["name", "email", "language", "page_length", "theme_mode", "theme"]
+    form_class = ProfileForm
     success_url = reverse_lazy("users:profile")
 
     def get_object(self):

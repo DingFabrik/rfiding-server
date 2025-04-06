@@ -3,14 +3,12 @@
 {% load crispy_forms_tags %}
 
 {% block title %}
-{% trans "Profile" %}
+{% trans "Settings" %}
 {% endblock %}
 
 {% block content %}
 <form action="" method="post">
-{% csrf_token %}
-{{ form | crispy }}
-<button class="btn btn-primary btn-block" type="submit">{% trans "Save" %}</button>
+{% crispy form %}
 </form>
 
 <hr class="my-5" />

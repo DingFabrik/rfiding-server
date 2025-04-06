@@ -27,9 +27,11 @@
             hx-target="#list_container"
             hx-trigger="change"
             hx-push-url="true">
+            {% with filter=request.GET.filter|default:filter_default %}
             {% for choice in filter_choices %}
-                <option value="{{ choice.0 }}" {% if choice.0 == request.GET.filter %}selected{% endif %}>{{ choice.1 }}</option>
+                <option value="{{ choice.0 }}" {% if choice.0 == filter %}selected{% endif %}>{{ choice.1 }}</option>
             {% endfor %}
+            {% endwith %}
             </select>
         </div>
     </div>
