@@ -29,6 +29,6 @@
     {% endblock %}
     </table>
     {% endblock %}
-    {% include "base_pagination.html" with set_history=True %}
+    {% include "base_pagination.html" with set_history=set_history|default:True %}
 </div>
 {% endblock %}

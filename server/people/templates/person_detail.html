@@ -69,13 +69,13 @@
           {% if perms.people.qualify_person %}
             <a class="btn btn-primary btn-sm float-end mb-2" href="{% url 'people:qualify' person.pk %}">{% trans 'Add Qualification' %}</a>
           {% endif %}
-          {% include 'person_qualifications_table.html' with is_partial=True %}
+          {% include 'person_qualifications_table.html' with is_partial=True set_history=False %}
         </div>
         <div class="tab-pane" id="instructor-tab-pane" role="tabpanel" aria-labelledby="instructor-tab" tabindex="0">
           {% if perms.people.change_person %}
             <a class="btn btn-primary btn-sm float-end mb-2" href="{% url 'people:add-instructor' person.pk %}">{% trans 'Add as instructor' %}</a>
           {% endif %}
-          {% include 'person_instructor_table.html' with is_partial=True %}
+          {% include 'person_instructor_table.html' with is_partial=True set_history=False %}
         </div>
         {% if perms.access_log.view_access_log %}
           <div class="tab-pane" id="accesslog-tab-pane" role="tabpanel" aria-labelledby="accesslog-tab" tabindex="0">{% include "snippets/spinner.html" %}</div>
