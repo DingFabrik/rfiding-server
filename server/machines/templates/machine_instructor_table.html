@@ -7,7 +7,9 @@
                 <th>{% trans "Name" %}</th>
                 <th>{% trans "Member ID" %}</th>
                 <th>{% trans "Date" %}</th>
-                <th>{% trans "Revoke" %}</th>
+                {% if perms.people.change_instructor %}
+                <th width="30"></th>
+                {% endif %}
             </tr>
         </thead>
         <tbody>
@@ -16,7 +18,7 @@
                 <td><a href="{% url "people:detail" instructor.person.id %}">{{ instructor.person.name }}</a></td>
                 <td><a href="{% url "people:detail" instructor.person.id %}">{{ instructor.person.member_id }}</a></td>
                 <td>{{ instructor.created|date:"DATE_FORMAT" }}</td>
-                {% if perms.people.qualify_person %}
+                {% if perms.people.change_instructor %}
                 <td>
                 <div class="d-inline"
                 data-bs-toggle="tooltip"
