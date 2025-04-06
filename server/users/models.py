@@ -52,7 +52,6 @@ THEME_COLORS = (
     ("cyan", _("Cyan")),
 )
 
-
 class RFIDingUser(AbstractUser):
     USERNAME_FIELD = "email"
     username = None
@@ -65,7 +64,7 @@ class RFIDingUser(AbstractUser):
     REQUIRED_FIELDS = []
 
     language = models.CharField(
-        _("Langauge"), max_length=10, default="en", choices=settings.LANGUAGES
+        _("Language"), max_length=10, default="en", choices=settings.LANGUAGES
     )
     page_length = models.IntegerField(
         _("Page Length"),

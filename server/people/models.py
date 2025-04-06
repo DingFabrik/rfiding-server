@@ -19,7 +19,7 @@ class Person(TimestampedModel):
         verbose_name = _("Person")
         verbose_name_plural = _("People")
         ordering = ["member_id"]
-        permissions = (("change_instructor", "Can manage instructors"),)
+        permissions = (("change_instructor", _("Can manage instructors")),)
 
     def get_absolute_url(self):
         return reverse("people:detail", kwargs={"pk": self.pk})
@@ -60,12 +60,12 @@ class Qualification(TimestampedModel):
     )
 
     def __str__(self):
-        return f"{self.person} qualified on {self.machine}"
+        return _(f"{self.person} qualified on {self.machine}")
 
     class Meta:
         verbose_name = _("Qualification")
         verbose_name_plural = _("Qualifications")
-        permissions = (("qualify_person", "Can manage qualifications"),)
+        permissions = (("qualify_person", _("Can manage qualifications")),)
         ordering = ["machine", "person__name"]
 
 
@@ -79,7 +79,7 @@ class Instructor(TimestampedModel):
     comment = models.TextField(null=True, blank=True)
 
     def __str__(self):
-        return f"{self.person} is instructor on {self.machine}"
+        return _(f"{self.person} is instructor on {self.machine}")
 
     class Meta:
         verbose_name = _("Instructor")
