@@ -134,7 +134,7 @@ hx-ext="ws" ws-connect="/ws/machines/{{ machine.mac_address }}/state"
           <div class="tab-content mt-4" id="myTabContent">
             <div class="tab-pane show active" id="qualifications-tab-pane" role="tabpanel" aria-labelledby="qualifications-tab" tabindex="0">
                 {% if machine.needs_qualification %}
-                  <div class="text-body-secondary mb-3">{% blocktrans %}{{ qualifications_count }} people are qualified to use this machine:{% endblocktrans %}
+                  <div class="text-body-secondary clearfix">{% blocktrans %}{{ qualifications_count }} people are qualified to use this machine:{% endblocktrans %}
                     {% if perms.people.qualify_person %}
                     <a class="btn btn-primary btn-sm float-end mb-2" href="{% url 'machines:qualify' machine.pk %}">{% trans 'Qualify Person' %}</a>
                   {% endif %}
@@ -146,8 +146,7 @@ hx-ext="ws" ws-connect="/ws/machines/{{ machine.mac_address }}/state"
             </div>
             {% if machine.needs_qualification %}
             <div class="tab-pane" id="instructor-tab-pane" role="tabpanel" aria-labelledby="instructor-tab" tabindex="0">
-
-                <div class="text-body-secondary mb-3">{% blocktrans %}{{ instructors_count }} people can instruct on usage of this machine:{% endblocktrans %}
+                <div class="text-body-secondary clearfix">{% blocktrans %}{{ instructors_count }} people can instruct on usage of this machine:{% endblocktrans %}
                   {% if perms.people.change_person %}
                   <a class="btn btn-primary btn-sm float-end mb-2" href="{% url 'machines:add-instructor' machine.pk %}">{% trans 'Add instructor' %}</a>
                 {% endif %}

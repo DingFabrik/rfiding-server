@@ -67,14 +67,18 @@
       <div class="tab-content mt-4">
         <div class="tab-pane show active" id="qualifications-tab-pane" role="tabpanel" aria-labelledby="qualifications-tab" tabindex="0">
           {% if perms.people.qualify_person %}
-            <a class="btn btn-primary btn-sm float-end mb-2" href="{% url 'people:qualify' person.pk %}">{% trans 'Add Qualification' %}</a>
+            <div class="clearfix">
+              <a class="btn btn-primary btn-sm float-end mb-2" href="{% url 'people:qualify' person.pk %}">{% trans 'Add Qualification' %}</a>
+            </div>
           {% endif %}
           {% include 'person_qualifications_table.html' with is_partial=True set_history=False %}
         </div>
         <div class="tab-pane" id="instructor-tab-pane" role="tabpanel" aria-labelledby="instructor-tab" tabindex="0">
           {% if perms.people.change_person %}
+          <div class="clearfix">
             <a class="btn btn-primary btn-sm float-end mb-2" href="{% url 'people:add-instructor' person.pk %}">{% trans 'Add as instructor' %}</a>
-          {% endif %}
+          </div>
+            {% endif %}
           {% include 'person_instructor_table.html' with is_partial=True set_history=False %}
         </div>
         {% if perms.access_log.view_access_log %}
