@@ -27,7 +27,7 @@
       <tbody>
         {% for qualification in qualifications %}
           <tr class="align-middle">
-            <td>{% include "machine_cell.html" with machine=qualification.machine %}</td>
+            <td>{% include "cells/machine.html" with machine=qualification.machine %}</td>
             <td>
               {% if qualification.instructed_by %}
                 <a href="{% url 'people:detail' qualification.instructed_by.pk %}">{{ qualification.instructed_by }}</a>

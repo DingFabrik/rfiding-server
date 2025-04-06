@@ -29,8 +29,8 @@
     {% for object in object_list %}
     <tr>
         <td>{% include "snippets/timestamp.html" with timestamp=object.timestamp %}</td>
-        <td>{% include "machine_cell.html" with machine=object.machine %}</td>
-        <td>{% include "token_cell.html" with token=object.token %}</td>
+        <td>{% include "cells/machine.html" with machine=object.machine %}</td>
+        <td>{% include "cells/token.html" with token=object.token %}</td>
         <td>{{ object.get_type_display }}</td>
     </tr>
     {% endfor %}
