@@ -9,6 +9,21 @@ from .models import Person
 def get_people(request, term):
     return Person.objects.filter(Q(name__icontains=term) | Q(email__icontains=term))
 
+class PersonAutocompleteView(APIView):
+    queryset = Person.objects.all()
+
+    def get(self, request, machine=None):
+        people = get_people(request, request.GET.get("term", None))
+        people = people.filter(is_active=True)
+        returned = []
+        for person in people:
+            returned.append(
+                {
+                    "value": person.id,
+                    "label": f"{person.name} ({person.email})",
+                }
+            )
+        return Response(returned, status=status.HTTP_200_OK)
 
 class QualifyablePersonAutocompleteView(APIView):
     queryset = Person.objects.all()

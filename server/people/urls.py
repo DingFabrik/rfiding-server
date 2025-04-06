@@ -53,6 +53,11 @@ urlpatterns = [
     ),
     # AJAX calls
     path(
+        "autocomplete/person",
+        ajax.PersonAutocompleteView.as_view(),
+        name="autocomplete",
+    ),
+    path(
         "autocomplete/qualify/<int:machine>",
         ajax.QualifyablePersonAutocompleteView.as_view(),
         name="autocomplete-qualifyable",
