@@ -29,7 +29,7 @@
     <tr>
         <td>{% include "snippets/timestamp.html" with timestamp=object.timestamp %}</td>
         <td>{% include "cells/token.html" with token=object.token %}</td>
-        <td>{% include "cells/access_log_type" %}</td>
+        <td>{% include "cells/access_log_type.html" %}</td>
     </tr>
     {% endfor %}
     </table>
