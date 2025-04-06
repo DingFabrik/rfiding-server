@@ -30,6 +30,12 @@ class LocationDetailView(TitleMixin, PermissionRequiredMixin, DetailView):
 
     def get_title(self):
         return self.get_object().name
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["can_edit"] = self.request.user.has_perm("locations.change_location")
+        context["can_delete"] = self.request.user.has_perm("locations.delete_location")
+        return context
 
 
 class LocationCreateView(TitleMixin, PermissionRequiredMixin, CreateView):
