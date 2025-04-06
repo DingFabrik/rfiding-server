@@ -1,5 +1,5 @@
 {% extends "base_form.html" %}
-{% load i18n %}
+{% load i18n %}{% load crispy_forms_tags %}
 
 {% block title %}
 {% if object %}
@@ -9,13 +9,12 @@
 {% endif %}
 {% endblock %}
 
-{% block extra_form_buttons %}
-{% if object and request.user.is_superuser %}
-    <a class="btn btn-warning float-end me-3" href="{% url 'users:admin_change_password' object.pk %}">
-        <i class="bi-key me-1"></i> {% trans 'Change Password' %}
-    </a>
-{% endif %}
+{% block content %}
+{% block pre_form %}{% endblock %}
+    {% crispy form %}
+{% block post_form %}{% endblock %}
 {% endblock %}
+
 {% block script_extra %}
 const superuserElement = document.getElementById("id_is_superuser");
 $("#id_user_permissions").prop("disabled", superuserElement.checked);
