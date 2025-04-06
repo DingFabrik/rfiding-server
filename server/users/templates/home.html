@@ -16,7 +16,7 @@
 {% endblock %}
 
 {% block content %}
-<div class="row justify-content-md-start pb-5" id="widgets"
+<div class="row justify-content-md-start" id="widgets"
     hx-get="{% url "users:widgets:home" %}"
     hx-trigger="load">
     {% for widget in widgets %}

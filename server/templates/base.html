@@ -1,7 +1,7 @@
 {% load static %}
 {% load i18n %}
 <!doctype html>
-<html lang="en">
+<html lang="en" class="h-100">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -13,7 +13,7 @@
     <link href="{% static "css/main.css" %}" rel="stylesheet">
   </head>
   <body
-    class="bg-body-tertiary"
+    class="bg-body-tertiary d-flex flex-column h-100"
     data-bs-themecolor="{{ user.theme|default:"blue" }}"
     data-bs-theme="{{ user.theme_mode|default:"auto" }}"
     hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
@@ -74,7 +74,7 @@
       </div>
     </nav>
     {% endif %}
-<main id="main" role="main" class="container mb-5 {% block container_classes %}{% endblock %}" {% block container_div %}{% endblock %}>
+<main id="main" role="main" class="container mb-3 flex-shrink-0 {% block container_classes %}{% endblock %}" {% block container_div %}{% endblock %}>
   {% block main %}
   <div class="mb-3 clearfix">
     {% block pre_title %}{% endblock %}
@@ -85,9 +85,9 @@
       {% endblock content %}
       <div class="mb-3 clearfix">
         <div class="float-end">{% block bottom_actions %}{% endblock %}</div>
-    </div>
+  </div>
   {% endblock %}
-  </main>
+</main>
 
   {% block extra_content %}
   {% endblock %}
@@ -100,7 +100,7 @@
           <div class="modal-content"></div>
       </div>
   </div>
-    <footer class="py-3 my-4">
+    <footer class="mt-auto py-3">
       <ul class="nav justify-content-center border-bottom pb-3 mb-3">
       </ul>
       <p class="text-center text-body-secondary">© 2025 <a class="text-body-secondary" href="https://dingfabrik.de" target="_window">Dingfabrik e.V.</a> | Version: <a class="text-body-secondary" href="https://github.com/DingFabrik/rfiding-server" target="_window">{{ rfiding_version }}</a></p>
