@@ -32,10 +32,10 @@
                         data-bs-toggle="tooltip"
                         title="{% trans 'Revoke' %}">
                         <a
-                        href="{% url 'people:revoke-qualification' qualification.person.pk qualification.pk %}"
+                        href="{% url 'people:revoke-qualification' qualification.person.pk qualification.pk %}?next={{ request.path }}"
                         data-bs-toggle="modal"
                         data-bs-target="#hx_delete_modals"
-                        hx-get="{% url 'people:revoke-qualification' qualification.person.pk qualification.pk %}"
+                        hx-get="{% url 'people:revoke-qualification' qualification.person.pk qualification.pk %}?next={{ request.path }}"
                         hx-target="#hx_delete_modals"
                         hx-trigger="click"
                         >{% include 'snippets/hoverable_revoke.html' %}</a>

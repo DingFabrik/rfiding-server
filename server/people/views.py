@@ -189,6 +189,8 @@ class RevokeQualificationPersonView(
         ).first()
 
     def get_success_url(self):
+        if self.request.GET.get("next"):
+            return self.request.GET.get("next")
         return reverse_lazy("people:detail", kwargs={"pk": self.kwargs["pk"]})
 
 
@@ -309,6 +311,8 @@ class RevokeInstructorPersonView(
         ).first()
 
     def get_success_url(self):
+        if self.request.GET.get("next"):
+            return self.request.GET.get("next")
         return reverse_lazy("people:detail", kwargs={"pk": self.kwargs["pk"]})
 
 

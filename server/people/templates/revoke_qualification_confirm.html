@@ -28,7 +28,7 @@
 {% endblock %}
 
 {% block buttons %}
-<form action="{{ request.path }}" method="post">
+<form action="{{ request.path }}?next={{ request.GET.next }}" method="post">
     {% csrf_token %}
     <div class="text-right">
         <a data-bs-dismiss="modal" class="btn btn-secondary me-3">{% trans "No" %}</a>
