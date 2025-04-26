@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.models import Group
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Fieldset, Submit, HTML
-from crispy_forms.bootstrap import AppendedText, FormActions
+from crispy_forms.bootstrap import FormActions
 from django.utils.translation import gettext as _
 
 from .models import RFIDingUser

@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from django.utils.translation import gettext
 from django.urls import reverse
 from auditlog.registry import auditlog
 
@@ -60,7 +61,7 @@ class Qualification(TimestampedModel):
     )
 
     def __str__(self):
-        return _(f"{self.person} qualified on {self.machine}")
+        return gettext(f"{self.person} qualified on {self.machine}")
 
     class Meta:
         verbose_name = _("Qualification")
@@ -79,7 +80,7 @@ class Instructor(TimestampedModel):
     comment = models.TextField(null=True, blank=True)
 
     def __str__(self):
-        return _(f"{self.person} is instructor on {self.machine}")
+        return gettext(f"{self.person} is instructor on {self.machine}")
 
     class Meta:
         verbose_name = _("Instructor")
