@@ -15,7 +15,6 @@ ENFORCE_API_KEYS = (
     settings.ENFORCE_API_KEYS if hasattr(settings, "ENFORCE_API_KEYS") else False
 )
 
-
 class MachineApiKeyPermission(permissions.BasePermission):
     def has_permission(self, request, view):
         mac_address = formatted_mac(
@@ -165,3 +164,32 @@ class DisableMachineAccessView(BaseAPIView):
     def get(self, request, format=None):
         save_access_log.delay(self.machine.id, None, LOG_TYPE_DISABLED)
         return Response({})
+
+class MachineControlView(BaseAPIView):
+    permission_classes = [MachineApiKeyPermission]
+    required_post_parameters = ["mac_address", "action", "control_key"]
+
+    def post(self, request, format=None):
+        if not self.machine.has_api:
+            return Response(
+                {"error": "Machine does not have API enabled"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        if not self.machine.control_keys.filter(key=request.data["control_key"]).exists():
+            return Response(
+                {"error": "Invalid control key"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        action = request.GET.get("action", None)
+        if action not in ["enable", "disable", "restart", "reload_config"]:
+            return Response(
+                {"error": "Invalid action"}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+        send_socket_action(self.machine.pk, action)
+
+        return Response(
+            {
+            },
+            status=status.HTTP_200_OK,
+        )

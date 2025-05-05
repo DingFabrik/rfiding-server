@@ -1,4 +1,5 @@
 import datetime
+import uuid
 from django.db import models
 from base.models import TimestampedModel
 from django.utils.translation import gettext as _
@@ -168,7 +169,7 @@ class Machine(TimestampedModel):
 
 
     def __str__(self):
-        return f"{self.name}"
+        return self.name
 
     @property
     def has_api(self):
@@ -237,8 +238,43 @@ class MachineRegistrationRequest(TimestampedModel):
         ordering = ["-created"]
 
     def __str__(self):
-        return f"{self.mac_address}"
+        return self.mac_address
+    
+
+class MachineControlKey(TimestampedModel):
+    machine = models.ForeignKey(
+        Machine, on_delete=models.CASCADE, related_name="control_keys"
+    )
+    key = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    purpose = models.CharField(max_length=100)
+    last_used = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        verbose_name = _("Control Key")
+        verbose_name_plural = _("Control Keys")
+        ordering = ["-created"]
+
+    def __str__(self):
+        return self.purpose
+
+class MachineConnection(TimestampedModel):
+    primary_machine = models.ForeignKey(
+        Machine, on_delete=models.CASCADE, related_name="as_primary_machine"
+    )
+    secondary_machine = models.ForeignKey(
+        Machine, on_delete=models.CASCADE, related_name="as_secondary_machine"
+    )
+    
+    class Meta:
+        verbose_name = _("Machine Connection")
+        verbose_name_plural = _("Machine Connections")
+        ordering = ["-created"]
+        
+    def __str__(self):
+        return f"{self.primary_machine} -> {self.secondary_machine}"
 
 
 auditlog.register(Machine, exclude_fields=["created", "updated"])
 auditlog.register(MachineTime, exclude_fields=["created", "updated"])
+auditlog.register(MachineControlKey, exclude_fields=["created", "updated", "last_used"])
+auditlog.register(MachineConnection, exclude_fields=["created", "updated"])

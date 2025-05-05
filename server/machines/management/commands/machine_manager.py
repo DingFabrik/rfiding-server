@@ -141,8 +141,9 @@ async def handle_client(client):
         if action == "connect":
             await get_and_connect(pk)
         elif action == "enable":
-            token_id = json_data["token_id"]
-            await (await get_and_connect(pk)).enable_for(token_id)
+            await (await get_and_connect(pk)).send_command("enable")
+        elif action == "disable":
+            await (await get_and_connect(pk)).send_command("disable")
         elif action == "disconnect":
             await (await get_and_connect(pk)).disconnect()
             connections.pop(pk)

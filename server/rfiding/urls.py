@@ -41,6 +41,7 @@ api_v2_urls = [
     path("machine/config", v2.MachineConfigView.as_view(), name="machine_config"),
     path("machine/register", v2.MachineRegisterView.as_view(), name="machine_register"),
     path("machine/connect", v2.MachineConnectView.as_view(), name="machine_connect"),
+    path("machine/control", v2.MachineControlView.as_view(), name="machine_control"),
     path("space/status", APISpaceStatusView.as_view(), name="space_status"),
 ]
 
