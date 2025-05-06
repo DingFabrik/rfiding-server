@@ -9,11 +9,14 @@ from .models import Machine, MachineTime
 
 
 class MachineForm(forms.ModelForm):
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper(self)
         self.helper.layout = Layout(
             "name",
+            "type",
+            "parent",
             "location",
             "is_active",
             "needs_qualification",
@@ -23,6 +26,7 @@ class MachineForm(forms.ModelForm):
                 "ip_address",
                 "mac_address",
                 css_class="border rounded p-2 mb-3",
+                css_id="network-fieldset",
             ),
             Fieldset(
                 _("Logging"),
@@ -31,21 +35,29 @@ class MachineForm(forms.ModelForm):
                 "log_disabled",
                 "log_unsuccessful",
                 css_class="border rounded p-2 mb-3",
+                css_id="logging-fieldset",
             ),
             Fieldset(
                 _("Security"),
                 "encryption_key",
                 "api_key",
                 css_class="border rounded p-2 mb-3",
+                css_id="security-fieldset",
             ),
-            Fieldset(_("Client"), "chip", "type", css_class="border rounded p-2 mb-3"),
+            Fieldset(_("Client"),
+                     "chip",
+                     css_class="border rounded p-2 mb-3",
+                     css_id="client-fieldset",
+                     ),
             FormActions(
                 Submit("submit", _("Save")),
-                HTML("""{% load i18n %}{% if object and can_delete %}
+                HTML(
+                    """{% load i18n %}{% if object and can_delete %}
             <a class="btn btn-danger float-end" href="{% url request.resolver_match.namespace|add:':delete' object.pk %}">
                 <i class="bi-trash me-1"></i> {% trans 'Delete' %}
             </a>
-        {% endif %}"""),
+        {% endif %}"""
+                ),
             ),
         )
 
@@ -54,6 +66,7 @@ class MachineForm(forms.ModelForm):
         fields = [
             "name",
             "type",
+            "parent",
             "hostname",
             "ip_address",
             "mac_address",

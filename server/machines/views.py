@@ -126,6 +126,11 @@ class MachineCreateView(TitleMixin, PermissionRequiredMixin, CreateView):
         if f.exists():
             f.delete()
         return super().form_valid(form)
+    
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        form.fields["parent"].queryset = Machine.objects.filter(type="lock_group")
+        return form
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -144,6 +149,11 @@ class MachineUpdateView(TitleMixin, PermissionRequiredMixin, UpdateView):
     template_name = "machine_form.html"
     form_class = MachineForm
     context_object_name = "machine"
+    
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        form.fields["parent"].queryset = Machine.objects.filter(type="lock_group")
+        return form
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

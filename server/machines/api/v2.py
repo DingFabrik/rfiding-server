@@ -9,7 +9,7 @@ from access_log.tasks import save_access_log
 from machines.serializers import MachineConfigSerializer
 from machines.socket_helper import send_socket_action
 from machines.api.common import check_access
-from machines.models import MachineRegistrationRequest
+from machines.models import Machine, MachineRegistrationRequest
 
 ENFORCE_API_KEYS = (
     settings.ENFORCE_API_KEYS if hasattr(settings, "ENFORCE_API_KEYS") else False
@@ -134,10 +134,11 @@ class CheckMachineAccessView(BaseAPIView):
 
     def get(self, request, format=None):
         tokenID = request.GET.get("tokenUid", None).lower()
+        compartmentID = request.GET.get("compartmentID", None)
 
         was_successful = False
         try:
-            return_data = check_access(self.machine, tokenID)
+            return_data = check_access(self.machine, tokenID, compartmentID)
             was_successful = True
             return Response(return_data, status=status.HTTP_200_OK)
         except PermissionDenied as e:
@@ -162,6 +163,12 @@ class DisableMachineAccessView(BaseAPIView):
     required_get_parameters = ["mac_address", "tokenUid"]
 
     def get(self, request, format=None):
+        compartmentID = request.GET.get("compartmentID", None)
+        if compartmentID is not None:
+            try:
+                self.machine = self.machine.children.get(id=compartmentID)
+            except Machine.DoesNotExist:
+                raise NotFound("Machine does not exist") from None
         save_access_log.delay(self.machine.id, None, LOG_TYPE_DISABLED)
         return Response({})
 

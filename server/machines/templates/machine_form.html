@@ -35,3 +35,59 @@
 {% endfor %}
 {% endif %}
 {% endblock %}
+
+{% block script_extra %}
+const parentFormGroup = document.querySelector("#div_id_parent");
+const typeSelect = document.querySelector("#id_type");
+const typeHelpText = document.querySelector("#id_type_helptext");
+const locationFormGroup = document.querySelector("#div_id_location");
+const isActiveFormGroup = document.querySelector("#div_id_is_active");
+const needsQualificationFormGroup = document.querySelector("#div_id_needs_qualification");
+
+const networkFieldset = document.querySelector("#network-fieldset");
+const securityFieldset = document.querySelector("#security-fieldset");
+const clientFieldset = document.querySelector("#client-fieldset");
+
+function updateMachineTypeFormElements () {
+
+    const selectedOption = typeSelect.options[typeSelect.selectedIndex];
+
+    if (selectedOption.value === "primary") {
+        typeHelpText.innerHTML = "{% trans "Primary machines are machines with access control that are directly used by people" %}";
+    } else if (selectedOption.value === "secondary") {
+        typeHelpText.innerHTML = "{% trans "Secondary machines do not have access control and can be linked with primary machines. For example for dust extraction" %}";
+    } else if (selectedOption.value === "lock") {
+        typeHelpText.innerHTML = "{% trans "Single lock that opens p.e. a door" %}";
+    } else if (selectedOption.value === "lock_group") {
+        typeHelpText.innerHTML = "{% trans "Meta device for p.e. a locker. Does not have its own access control." %}";
+    } else if (selectedOption.value === "compartment") {
+        typeHelpText.innerHTML = "{% trans "Compartment within a locker." %}";
+    }
+
+    if (selectedOption.value === "compartment") {
+        parentFormGroup.classList.remove("d-none");
+        networkFieldset.classList.add("d-none");
+        securityFieldset.classList.add("d-none");
+        clientFieldset.classList.add("d-none");
+        locationFormGroup.classList.add("d-none");
+    } else {
+        parentFormGroup.classList.add("d-none");
+        networkFieldset.classList.remove("d-none");
+        securityFieldset.classList.remove("d-none");
+        clientFieldset.classList.remove("d-none");
+        locationFormGroup.classList.remove("d-none");
+    }
+
+    if (selectedOption.value === "lock_group") {
+        isActiveFormGroup.classList.add("d-none");
+        needsQualificationFormGroup.classList.add("d-none");
+    } else {
+        isActiveFormGroup.classList.remove("d-none");
+        needsQualificationFormGroup.classList.remove("d-none");
+    }
+}
+updateMachineTypeFormElements();
+document.querySelector("#id_type").addEventListener("change", function() {
+    updateMachineTypeFormElements();
+});
+{% endblock %}

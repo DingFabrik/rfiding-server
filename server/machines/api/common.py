@@ -49,8 +49,16 @@ class BaseAPIView(APIView):
                     raise ValidationError(f"Missing {param}")
 
 
-def check_access(machine, tokenID):
-    end_time = Machine.get_valid_end_time_for_machine(machine.id)
+def check_access(machine, tokenID, compartmentID=None):
+    checked_machine = machine
+    if compartmentID is not None:
+        try:
+            checked_machine = machine.children.get(id=compartmentID)
+        except Machine.DoesNotExist:
+            raise NotFound("Machine does not exist") from None
+    if checked_machine.type == "lock_group":
+        raise PermissionDenied("Machine is a lock group")
+    end_time = Machine.get_valid_end_time_for_machine(checked_machine.id)
     if end_time is None:
         raise PermissionDenied("Machine is restricted")
 
@@ -62,13 +70,13 @@ def check_access(machine, tokenID):
         )
     except Token.DoesNotExist:
         if not BlacklistedToken.objects.filter(serial=tokenID).exists():
-            UnknownToken.objects.get_or_create(serial=tokenID, machine_id=machine.id)
+            UnknownToken.objects.get_or_create(serial=tokenID, machine_id=checked_machine.id)
         raise NotFound("Invalid Token") from None
 
-    if machine.needs_qualification:
+    if checked_machine.needs_qualification:
         qualification = (
             Qualification.objects.filter(
-                machine=machine.id, person=token["person__id"]
+                machine=checked_machine.id, person=token["person__id"]
             )
             .order_by()
             .first()

@@ -26,12 +26,14 @@ SUPPORTED_CHIPS = [
 MACHINE_TYPE_PRIMARY = "primary"
 MACHINE_TYPE_SECONDARY = "secondary"
 MACHINE_TYPE_LOCK = "lock"
-MACHINE_TYPE_LOCKBOX = "lockbox"
+MACHINE_TYPE_LOCK_GROUP = "lock_group"
+MACHINE_TYPE_COMPARTMENT = "compartment"
 MACHINE_TYPES = [
     (MACHINE_TYPE_PRIMARY, _("Primary")),
     (MACHINE_TYPE_SECONDARY, _("Secondary")),
     (MACHINE_TYPE_LOCK, _("Lock")),
-    (MACHINE_TYPE_LOCKBOX, _("Multiple Locks")),
+    (MACHINE_TYPE_LOCK_GROUP, _("Locker")),
+    (MACHINE_TYPE_COMPARTMENT, _("Compartment")),
 ]
 
 
@@ -72,7 +74,16 @@ ENFORCE_API_KEYS = (
 class Machine(TimestampedModel):
     name = models.CharField(max_length=100)
     type = models.CharField(
-        max_length=100, choices=MACHINE_TYPES, default=MACHINE_TYPE_PRIMARY
+        max_length=100, choices=MACHINE_TYPES, default=MACHINE_TYPE_PRIMARY,
+        help_text=_("Type of machine. Primary machines are the main machines."),
+    )
+    parent = models.ForeignKey(
+        "self",
+        on_delete=models.SET_NULL,
+        related_name="children",
+        null=True,
+        blank=True,
+        help_text=_("If this is a compartment in a locker, select the locker here."),
     )
     location = models.ForeignKey(
         "locations.Location",
@@ -87,8 +98,8 @@ class Machine(TimestampedModel):
         help_text=_("If disabled, any active user can access this machine."),
     )
 
-    mac_address = models.CharField(max_length=17, db_index=True)
-    hostname = models.CharField(max_length=100)
+    mac_address = models.CharField(max_length=17, db_index=True, null=True, blank=True)
+    hostname = models.CharField(max_length=100, null=True, blank=True)
     ip_address = models.GenericIPAddressField(null=True, blank=True)
     encryption_key = models.CharField(
         max_length=64,
@@ -166,7 +177,6 @@ class Machine(TimestampedModel):
         permissions = (("view_machine_state", _("View Machine State")),
                        ("view_machine_logs", _("View Machine Logs")),
                        ("send_machine_commands", _("Send Machine Commands")))
-
 
     def __str__(self):
         return self.name
