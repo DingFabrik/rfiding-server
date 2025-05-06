@@ -53,7 +53,7 @@ def check_access(machine, tokenID, compartmentID=None):
     checked_machine = machine
     if compartmentID is not None:
         try:
-            checked_machine = machine.children.get(id=compartmentID)
+            checked_machine = machine.children.get(compartment_id=compartmentID)
         except Machine.DoesNotExist:
             raise NotFound("Machine does not exist") from None
     if checked_machine.type == "lock_group":

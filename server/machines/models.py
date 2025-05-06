@@ -85,6 +85,7 @@ class Machine(TimestampedModel):
         blank=True,
         help_text=_("If this is a compartment in a locker, select the locker here."),
     )
+    compartment_id = models.CharField(max_length=20, null=True, blank=True)
     location = models.ForeignKey(
         "locations.Location",
         on_delete=models.SET_NULL,

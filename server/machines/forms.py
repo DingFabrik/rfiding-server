@@ -17,6 +17,7 @@ class MachineForm(forms.ModelForm):
             "name",
             "type",
             "parent",
+            "compartment_id"
             "location",
             "is_active",
             "needs_qualification",
@@ -67,6 +68,7 @@ class MachineForm(forms.ModelForm):
             "name",
             "type",
             "parent",
+            "compartment_id",
             "hostname",
             "ip_address",
             "mac_address",

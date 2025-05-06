@@ -40,6 +40,7 @@
 const parentFormGroup = document.querySelector("#div_id_parent");
 const typeSelect = document.querySelector("#id_type");
 const typeHelpText = document.querySelector("#id_type_helptext");
+const compartmentIdFormGroup = document.querySelector("#div_id_compartment_id");
 const locationFormGroup = document.querySelector("#div_id_location");
 const isActiveFormGroup = document.querySelector("#div_id_is_active");
 const needsQualificationFormGroup = document.querySelector("#div_id_needs_qualification");
@@ -66,12 +67,14 @@ function updateMachineTypeFormElements () {
 
     if (selectedOption.value === "compartment") {
         parentFormGroup.classList.remove("d-none");
+        compartmentIdFormGroup.classList.remove("d-none");
         networkFieldset.classList.add("d-none");
         securityFieldset.classList.add("d-none");
         clientFieldset.classList.add("d-none");
         locationFormGroup.classList.add("d-none");
     } else {
         parentFormGroup.classList.add("d-none");
+        compartmentIdFormGroup.classList.add("d-none");
         networkFieldset.classList.remove("d-none");
         securityFieldset.classList.remove("d-none");
         clientFieldset.classList.remove("d-none");

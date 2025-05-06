@@ -166,7 +166,7 @@ class DisableMachineAccessView(BaseAPIView):
         compartmentID = request.GET.get("compartmentID", None)
         if compartmentID is not None:
             try:
-                self.machine = self.machine.children.get(id=compartmentID)
+                self.machine = self.machine.children.get(compartment_id=compartmentID)
             except Machine.DoesNotExist:
                 raise NotFound("Machine does not exist") from None
         save_access_log.delay(self.machine.id, None, LOG_TYPE_DISABLED)

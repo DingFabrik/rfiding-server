@@ -487,14 +487,43 @@ class V2CheckMachineTests(APITestCase):
         )
         machine.save()
         compartment = Machine.objects.create(
-            hostname="test2", name="test2", type="compartment", parent=machine
+            hostname="test2", name="test2", type="compartment", parent=machine, compartment_id="1"
         )
         compartment.save()
-        data = {"mac_address": "aabbccddeeff", "tokenUid": "456", "compartmentID": compartment.id}
+        data = {"mac_address": "aabbccddeeff", "tokenUid": "456", "compartmentID": "1"}
         person = Person.objects.create(name="test", email="test@example.com")
         person.save()
         qualification = Qualification.objects.create(
             machine=machine, person=person, permission_level="always"
+        )
+        qualification.save()
+        token = Token.objects.create(serial="456", person=person)
+        token.save()
+        state = SpaceState.objects.create(is_open=False)
+        state.save()
+        response = self.client.get(V2CheckMachineTests.url, data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.data["error"], "No Access!")
+        self.assertEqual(response.data["access"], 0)
+        
+    def test_compartment_no_qualification_other_compartment(self):
+        machine = Machine.objects.create(
+            mac_address="aa:bb:cc:dd:ee:ff", hostname="test", name="test", type="lock_group"
+        )
+        machine.save()
+        compartment = Machine.objects.create(
+            hostname="test2", name="test2", type="compartment", parent=machine, compartment_id="1"
+        )
+        compartment.save()
+        compartment2 = Machine.objects.create(
+            hostname="test2", name="test2", type="compartment", parent=machine, compartment_id="2"
+        )
+        compartment2.save()
+        data = {"mac_address": "aabbccddeeff", "tokenUid": "456", "compartmentID": "1"}
+        person = Person.objects.create(name="test", email="test@example.com")
+        person.save()
+        qualification = Qualification.objects.create(
+            machine=compartment2, person=person, permission_level="always"
         )
         qualification.save()
         token = Token.objects.create(serial="456", person=person)
@@ -512,10 +541,10 @@ class V2CheckMachineTests(APITestCase):
         )
         machine.save()
         compartment = Machine.objects.create(
-            hostname="test2", name="test2", type="compartment", parent=machine
+            hostname="test2", name="test2", type="compartment", parent=machine, compartment_id="1"
         )
         compartment.save()
-        data = {"mac_address": "aabbccddeeff", "tokenUid": "456", "compartmentID": compartment.id}
+        data = {"mac_address": "aabbccddeeff", "tokenUid": "456", "compartmentID": "1"}
         person = Person.objects.create(name="test", email="test@example.com")
         person.save()
         qualification = Qualification.objects.create(
