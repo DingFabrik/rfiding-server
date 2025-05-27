@@ -11,7 +11,7 @@
     {% include "snippets/search_form.html" %}
 </div>
 {% if can_create %}
-<a href="{% url request.resolver_match.namespace|add:':create' %}" class="btn btn-primary" data-bs-toggle="tooltip" title="{% with model|verbose_name as modelname %}{% blocktrans %}Add {{ modelname }}{% endblocktrans %}{% endwith %}"><i class="bi-plus-lg"></i></a>
+<a href="{% url request.resolver_match.namespace|add:':create' %}" class="btn btn-primary mt-2 mt-md-0" data-bs-toggle="tooltip" title="{% with model|verbose_name as modelname %}{% blocktrans %}Add {{ modelname }}{% endblocktrans %}{% endwith %}"><i class="bi-plus-lg"></i></a>
 {% endif %}
 {% endblock %}
 
@@ -23,12 +23,14 @@
 
 {% block content %}
 <div id="list_container">
+    <div class="table-responsive">
     {% block table_outer %}
     <table class="table table-bordered table-hover">
     {% block table %}
     {% endblock %}
     </table>
     {% endblock %}
+</div>
     {% include "base_pagination.html" with set_history=set_history|default:True %}
 </div>
 {% endblock %}

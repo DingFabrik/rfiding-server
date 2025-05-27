@@ -43,7 +43,7 @@
           </ul>
           <ul class="navbar-nav ms-auto">
             {% if space_state %}
-            <div class="d-flex align-items-center">
+            <div class="d-flex align-items-center d-none d-md-block">
               <a href="{% url "space:status" %}" class="align-middle me-4 badge text-bg-{% if space_state.is_open %}success{% else %}danger{% endif %}">{{ space_state }}</a>
             </div>
             {% endif %}
@@ -88,7 +88,6 @@
   </div>
   {% endblock %}
 </main>
-
   {% block extra_content %}
   {% endblock %}
   <div id="hx_delete_modals"

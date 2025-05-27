@@ -1,5 +1,5 @@
 {% load i18n %}
-<div class="card {% if token.is_active %}border-success{% elif token.archived %}border-secondary{% else %}border-danger{% endif %}">
+<div class="card {% if token.is_active %}border-success{% elif token.archived %}border-secondary{% else %}border-danger{% endif %} mb-2">
     <div class="card-header">
         <i class="{% if token.is_active %}text-success{% else %}text-danger{% endif %} bi-broadcast"></i>
         <a href="{% url 'tokens:detail' token.id %}">
