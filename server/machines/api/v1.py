@@ -18,7 +18,7 @@ class MachineConfigView(BaseAPIView):
         save_access_log.delay(machine.id, None, LOG_TYPE_BOOTED)
         return Response(
             {
-                "runtimer": machine.runtimer.seconds * 1000,
+                "runtimer": machine.runtimer.seconds * 1000 + machine.runtimer.microseconds // 1000,
                 "minPower": machine.min_power,
                 "controlParameter": machine.control_parameter if machine.control_parameter else "",
             },
