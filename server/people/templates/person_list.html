@@ -15,7 +15,7 @@
         </thead>
 {% for object in people %}
 <tr>
-<td>{{ object.member_id }}</td>
+<td>{{ object.member_id | default:"--" }}</td>
 <td><a href="{% url "people:detail" object.pk %}">{{ object.name }}</a></td>
 <td>{{ object.email }}</td>
 <td>{% include 'snippets/active_toggle.html' %}</td>
