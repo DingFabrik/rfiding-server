@@ -85,6 +85,10 @@ class HttpReporter(StateReporter):
         logger.debug(
             f"Reporting new state to http: {'open' if state.is_open else 'closed'}"
         )
+        specific_url = "OPEN_URL" if state.is_open else "CLOSE_URL"
+        if settings.get(specific_url, None) is not None:
+            requests.get(settings[specific_url])
+            return
         params = self.settings.get("PARAMS", {})
         params["state"] = "1" if state.is_open else "0"
         requests.get(self.settings["URL"], params=params)
