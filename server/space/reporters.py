@@ -86,8 +86,8 @@ class HttpReporter(StateReporter):
             f"Reporting new state to http: {'open' if state.is_open else 'closed'}"
         )
         specific_url = "OPEN_URL" if state.is_open else "CLOSE_URL"
-        if settings.get(specific_url, None) is not None:
-            requests.get(settings[specific_url])
+        if self.settings.get(specific_url, None) is not None:
+            requests.get(self.settings[specific_url])
             return
         params = self.settings.get("PARAMS", {})
         params["state"] = "1" if state.is_open else "0"
