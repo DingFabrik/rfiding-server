@@ -1,4 +1,4 @@
 {% load i18n base_extra %}
 {% for widget in widgets %}
-    {% include widget.template %}
+    {% include widget.template with title=widget.title placeholder=True %}
 {% endfor %}
