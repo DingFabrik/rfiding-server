@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 class MachineStateConsumer(AsyncJsonWebsocketConsumer):
     async def connect(self):
         user = self.scope["user"]
-        if not user.is_authenticated and await sync_to_async(user.has_perm)("machines.view_machine_state"):
+        if not user.is_authenticated or not await sync_to_async(user.has_perm)("machines.view_machine_state"):
             return await self.close()
         self.scope["can_send_commands"] = await sync_to_async(user.has_perm)("machines.send_machine_commands")
         await self.accept()
@@ -29,6 +29,7 @@ class MachineStateConsumer(AsyncJsonWebsocketConsumer):
         self.manager.on_state_change = self.state_update
         try:
             await self.manager.connect()
+            logger.debug("websocket client connected")
         except Exception as e:
             logger.error(f"Failed to connect to {mac_address}: {e}")
             await self.state_update({"state": "disconnected"})
@@ -66,6 +67,10 @@ def parse_log_message(message):
 
 class MachineLogConsumer(AsyncJsonWebsocketConsumer):
     async def connect(self):
+        user = self.scope["user"]
+        if not user.is_authenticated or not await sync_to_async(user.has_perm)("machines.view_machine_state"):
+            logger.warning("Unauthorized websocket connection attempt")
+            return await self.close()
         await self.accept()
 
         mac_address = self.scope["url_route"]["kwargs"]["mac_address"]
@@ -80,6 +85,7 @@ class MachineLogConsumer(AsyncJsonWebsocketConsumer):
             asyncio.ensure_future(self.state_update(log))
 
         self.manager.client.subscribe_logs(log_update, 5, True)
+        logger.debug("websocket client connected")
 
     async def disconnect(self, code):
         logger.debug("websocket client disconnected")
