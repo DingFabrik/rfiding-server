@@ -63,7 +63,7 @@
         </li>
         {% if object.type != "lock_group" %}
         <li>
-          <span class="fw-bold text-secondary-emphasis">{% trans 'Is Active' %}:</span> {% include 'snippets/active_toggle.html' %}
+          <span class="fw-bold text-secondary-emphasis">{% trans 'State' %}:</span> {% include "machine_state_label.html" with object=object %}
         </li>
         {% endif %}
         {% if object.type != "compartment" %}

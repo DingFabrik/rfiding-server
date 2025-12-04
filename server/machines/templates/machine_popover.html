@@ -3,7 +3,7 @@
     <ul class="list-unstyled">
         <li><span class="fw-bold text-secondary">{% trans "Hostname" %}:</span> {{ object.hostname }}</li>
         <li><span class="fw-bold text-secondary">{% trans "Location" %}:</span> {{ object.location|default:"--" }}</li>
-        <li><span class="fw-bold text-secondary">{% trans "Is Active" %}:</span> {% include "snippets/active_toggle.html" %}</li>
+        <li><span class="fw-bold text-secondary">{% trans "State" %}:</span> {{ object.get_state_display }}</li>
         <li><span class="fw-bold text-secondary">{% trans "Last Access" %}:</span> {{ last_access.timestamp|default:"--" }}</li>
     </ul>
 </div>

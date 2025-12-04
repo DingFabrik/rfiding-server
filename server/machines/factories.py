@@ -11,4 +11,4 @@ class MachineFactory(DjangoModelFactory):
     name = factory.Sequence(lambda n: f"Machine {n}")
     hostname = factory.Sequence(lambda n: f"machine{n}")
     mac_address = factory.Faker("mac_address")
-    is_active = True
+    state = Machine.MachineStatus.ACTIVE

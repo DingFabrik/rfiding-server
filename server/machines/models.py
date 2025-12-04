@@ -15,28 +15,6 @@ from .client_modules import (
     ACTOR_MODULES,
 )
 
-SUPPORTED_CHIPS = [
-    ("esp32", "ESP32"),
-    ("esp8266", "ESP8266"),
-    ("esp32s2", "ESP32-S2"),
-    ("esp32c3", "ESP32-C3"),
-    ("esp32s3", "ESP32-S3"),
-]
-
-MACHINE_TYPE_PRIMARY = "primary"
-MACHINE_TYPE_SECONDARY = "secondary"
-MACHINE_TYPE_LOCK = "lock"
-MACHINE_TYPE_LOCK_GROUP = "lock_group"
-MACHINE_TYPE_COMPARTMENT = "compartment"
-MACHINE_TYPES = [
-    (MACHINE_TYPE_PRIMARY, _("Primary")),
-    (MACHINE_TYPE_SECONDARY, _("Secondary")),
-    (MACHINE_TYPE_LOCK, _("Lock")),
-    (MACHINE_TYPE_LOCK_GROUP, _("Locker")),
-    (MACHINE_TYPE_COMPARTMENT, _("Compartment")),
-]
-
-
 def is_str(obj):
     return isinstance(obj, str)
 
@@ -72,9 +50,29 @@ ENFORCE_API_KEYS = (
 
 
 class Machine(TimestampedModel):
+    class SupportedChips(models.TextChoices):
+        ESP32 = "esp32", _("ESP32")
+        ESP8266 = "esp8266", _("ESP8266")
+        ESP32S2 = "esp32s2", _("ESP32-S2")
+        ESP32C3 = "esp32c3", _("ESP32-C3")
+        ESP32S3 = "esp32s3", _("ESP32-S3")
+
+    class MachineType(models.TextChoices):
+        PRIMARY = "primary", _("Primary")
+        SECONDARY = "secondary", _("Secondary")
+        LOCK = "lock", _("Lock")
+        LOCK_GROUP = "lock_group", _("Locker")
+        COMPARTMENT = "compartment", _("Compartment")
+        
+    class MachineStatus(models.TextChoices):
+        ACTIVE = "active", _("Active")
+        INACTIVE = "inactive", _("Inactive")
+        MAINTENANCE = "maintenance", _("Maintenance")
+
+
     name = models.CharField(max_length=100)
     type = models.CharField(
-        max_length=100, choices=MACHINE_TYPES, default=MACHINE_TYPE_PRIMARY,
+        max_length=100, choices=MachineType.choices, default=MachineType.PRIMARY,
         help_text=_("Type of machine. Primary machines are the main machines."),
     )
     parent = models.ForeignKey(
@@ -93,7 +91,7 @@ class Machine(TimestampedModel):
         null=True,
         blank=True,
     )
-    is_active = models.BooleanField(default=True)
+    state = models.CharField(max_length=20, default=MachineStatus.ACTIVE, choices=MachineStatus.choices)
     needs_qualification = models.BooleanField(
         default=True,
         help_text=_("If disabled, any active user can access this machine."),
@@ -117,7 +115,7 @@ class Machine(TimestampedModel):
         help_text=_("API Key for authenticated when the machine accesses the API."),
     )
     chip = models.CharField(
-        max_length=100, default=SUPPORTED_CHIPS[0][0], choices=SUPPORTED_CHIPS
+        max_length=100, default=SupportedChips.ESP32, choices=SupportedChips.choices
     )
     firmware_version = models.CharField(max_length=50, null=True, blank=True)
 
@@ -197,6 +195,10 @@ class Machine(TimestampedModel):
     @property
     def maintainers(self):
         return self.qualified_people.filter(is_maintainer=True)
+    
+    @property
+    def is_active(self):
+        return self.state == Machine.MachineStatus.ACTIVE
 
     def get_absolute_url(self):
         return reverse("machines:detail", kwargs={"pk": self.pk})

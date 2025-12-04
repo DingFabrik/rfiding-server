@@ -42,7 +42,7 @@ const typeSelect = document.querySelector("#id_type");
 const typeHelpText = document.querySelector("#id_type_helptext");
 const compartmentIdFormGroup = document.querySelector("#div_id_compartment_id");
 const locationFormGroup = document.querySelector("#div_id_location");
-const isActiveFormGroup = document.querySelector("#div_id_is_active");
+const stateFormGroup = document.querySelector("#div_id_state");
 const needsQualificationFormGroup = document.querySelector("#div_id_needs_qualification");
 
 const networkFieldset = document.querySelector("#network-fieldset");
@@ -82,10 +82,10 @@ function updateMachineTypeFormElements () {
     }
 
     if (selectedOption.value === "lock_group") {
-        isActiveFormGroup.classList.add("d-none");
+        stateFormGroup.classList.add("d-none");
         needsQualificationFormGroup.classList.add("d-none");
     } else {
-        isActiveFormGroup.classList.remove("d-none");
+        stateFormGroup.classList.remove("d-none");
         needsQualificationFormGroup.classList.remove("d-none");
     }
 }

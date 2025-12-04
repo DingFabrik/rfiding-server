@@ -12,11 +12,6 @@ urlpatterns = [
     path("<int:pk>/modify", views.MachineUpdateView.as_view(), name="update"),
     path("<int:pk>/configure", views.MachineConfigureView.as_view(), name="configure"),
     path(
-        "<int:pk>/toggle_active",
-        views.MachineToggleActiveView.as_view(),
-        name="toggle-active",
-    ),
-    path(
         "<int:pk>/status",
         views.MachineStatusPartialView.as_view(),
         name="status",
@@ -28,11 +23,6 @@ urlpatterns = [
         "autocomplete/qualify/<int:person>",
         ajax.QualifyableMachineAutocompleteView.as_view(),
         name="autocomplete-qualifyable",
-    ),
-    path(
-        "autocomplete/instructor/<int:person>",
-        ajax.InstructorMachineAutocompleteView.as_view(),
-        name="autocomplete-instructor",
     ),
     path(
         "<int:pk>/qualifications",

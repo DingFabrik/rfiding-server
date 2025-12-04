@@ -26,7 +26,7 @@ class V1CheckMachineTests(APITestCase):
             mac_address="dd:bb:cc:dd:ee:ff",
             hostname="test",
             name="test",
-            is_active=False,
+            state=Machine.MachineStatus.INACTIVE,
         )
         machine.save()
         response = self.client.get(V1CheckMachineTests.url, data, format="json")
@@ -69,7 +69,7 @@ class V1CheckMachineTests(APITestCase):
             mac_address="aa:bb:cc:dd:ee:ff",
             hostname="test",
             name="test",
-            is_active=False,
+            state=Machine.MachineStatus.INACTIVE,
         )
         machine.save()
         response = self.client.get(V1CheckMachineTests.url, data, format="json")
@@ -138,22 +138,43 @@ class V1CheckMachineTests(APITestCase):
         response = self.client.get(V1CheckMachineTests.url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["access"], 1)
+        
+    def test_qualification_maintenance_maintainer(self):
+        data = {"machine": "aabbccddeeff", "tokenUid": "456"}
+        machine = Machine.objects.create(
+            mac_address="aa:bb:cc:dd:ee:ff", hostname="test", name="test",
+            state=Machine.MachineStatus.MAINTENANCE
+        )
+        person = Person.objects.create(name="test", email="test@example.com")
+        Qualification.objects.create(machine=machine, person=person, is_maintainer=True)
+        Token.objects.create(serial="456", person=person)
+        response = self.client.get(V1CheckMachineTests.url, data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["access"], 1)
+        
+    def test_qualification_maintenance_not_maintainer(self):
+        data = {"machine": "aabbccddeeff", "tokenUid": "456"}
+        machine = Machine.objects.create(
+            mac_address="aa:bb:cc:dd:ee:ff", hostname="test", name="test",
+            state=Machine.MachineStatus.MAINTENANCE
+        )
+        person = Person.objects.create(name="test", email="test@example.com")
+        Qualification.objects.create(machine=machine, person=person, is_maintainer=False)
+        Token.objects.create(serial="456", person=person)
+        response = self.client.get(V1CheckMachineTests.url, data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.data["access"], 0)        
 
     def test_qualification_if_open_allows(self):
         data = {"machine": "aabbccddeeff", "tokenUid": "456"}
         machine = Machine.objects.create(
             mac_address="aa:bb:cc:dd:ee:ff", hostname="test", name="test"
         )
-        machine.save()
         person = Person.objects.create(name="test", email="test@example.com")
-        person.save()
-        qualification = Qualification.objects.create(machine=machine, person=person)
-        qualification.save()
-        token = Token.objects.create(serial="456", person=person)
-        token.save()
+        Qualification.objects.create(machine=machine, person=person)
+        Token.objects.create(serial="456", person=person)
         response = self.client.get(V1CheckMachineTests.url, data, format="json")
-        state = SpaceState.objects.create(is_open=True)
-        state.save()
+        SpaceState.objects.create(is_open=True)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["access"], 1)
 
@@ -287,7 +308,7 @@ class V2CheckMachineTests(APITestCase):
             mac_address="dd:bb:cc:dd:ee:ff",
             hostname="test",
             name="test",
-            is_active=False,
+            state=Machine.MachineStatus.INACTIVE,
         )
         machine.save()
         response = self.client.get(V2CheckMachineTests.url, data, format="json")
@@ -334,7 +355,7 @@ class V2CheckMachineTests(APITestCase):
             mac_address="aa:bb:cc:dd:ee:ff",
             hostname="test",
             name="test",
-            is_active=False,
+            state=Machine.MachineStatus.INACTIVE,
         )
         machine.save()
         response = self.client.get(V2CheckMachineTests.url, data, format="json")

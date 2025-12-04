@@ -1,6 +1,7 @@
 import datetime
 from rest_framework.views import APIView
 from rest_framework.exceptions import ValidationError, NotFound, PermissionDenied
+from django.db.models import Q
 
 from machines.models import Machine
 from tokens.models import Token, UnknownToken, BlacklistedToken
@@ -28,7 +29,8 @@ class BaseAPIView(APIView):
     def get_machine(self, mac_address):
         try:
             return Machine.objects.get(
-                mac_address__iexact=mac_address, is_active=True
+                ~Q(state=Machine.MachineStatus.INACTIVE),
+                mac_address__iexact=mac_address
             )
         except Machine.DoesNotExist:
             raise NotFound("Machine does not exist") from None
@@ -74,10 +76,13 @@ def check_access(machine, tokenID, compartmentID=None):
         raise NotFound("Invalid Token") from None
 
     if checked_machine.needs_qualification:
-        qualification = (
-            Qualification.objects.filter(
+        qualifications = Qualification.objects.filter(
                 machine=checked_machine.id, person=token["person__id"]
             )
+        if checked_machine.state == Machine.MachineStatus.MAINTENANCE:
+            qualifications = qualifications.filter(is_maintainer=True)
+        qualification = (
+            qualifications
             .order_by()
             .first()
         )

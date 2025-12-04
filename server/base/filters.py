@@ -3,6 +3,7 @@ from django.utils.translation import gettext_lazy as _
 MACHINE_FILTER_CHOICES = (
     ("active", _("Active")),
     ("inactive", _("Inactive")),
+    ("maintenance", _("Maintenance")),
     ("all", _("All")),
 )
 

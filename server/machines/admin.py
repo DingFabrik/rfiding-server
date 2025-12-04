@@ -5,9 +5,9 @@ from base.admin import mark_active, mark_inactive
 
 
 class MachineAdmin(admin.ModelAdmin):
-    list_display = ("name", "hostname", "is_active", "chip")
+    list_display = ("name", "hostname", "state", "chip")
     search_fields = ("name", "hostname")
-    list_filter = ("is_active", "chip")
+    list_filter = ("state", "chip")
 
     actions = [mark_active, mark_inactive]
 

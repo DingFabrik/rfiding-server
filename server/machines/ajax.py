@@ -26,7 +26,7 @@ class QualifyableMachineAutocompleteView(APIView):
 
     def get(self, request, person=None):
         machines = get_machines(request, request.GET.get("term", None))
-        machines = machines.filter(needs_qualification=True, is_active=True)
+        machines = machines.filter(needs_qualification=True, state=Machine.MachineStatus.ACTIVE)
         machines = machines.exclude(qualified_people__person__id=person)
         machines.select_related("instructors")
         returned = []
@@ -46,19 +46,3 @@ class QualifyableMachineAutocompleteView(APIView):
                 }
             )
         return Response(returned, status=status.HTTP_200_OK)
-
-
-class InstructorMachineAutocompleteView(APIView):
-    queryset = Machine.objects.all()
-
-    def get(self, request, person=None):
-        machines = get_machines(request, request.GET.get("term", None))
-        machines = machines.filter(needs_qualification=True, is_active=True)
-        machines = machines.exclude(instructors__person__id=person)
-        return Response(
-            [
-                {"value": machine.id, "label": f"{machine.name} ({machine.hostname})"}
-                for machine in machines
-            ],
-            status=status.HTTP_200_OK,
-        )

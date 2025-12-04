@@ -14,7 +14,7 @@ from django.db.models import Count
 from datetime import datetime, timedelta
 
 from access_log.models import AccessLog, LOG_TYPE_ENABLED
-from base.views import BaseToggleActiveView, BaseListView, PartialMixin, TitleMixin
+from base.views import BaseListView, PartialMixin, TitleMixin
 from machines.socket_helper import get_socket_data
 from .models import Machine, MachineRegistrationRequest
 from .forms import MachineForm, ConfigureMachineForm, MachineTimeFormset
@@ -46,9 +46,11 @@ class MachineListView(BaseListView):
         if filter == "all":
             queryset = queryset
         elif filter == "inactive":
-            queryset = queryset.filter(is_active=False)
+            queryset = queryset.filter(state=Machine.MachineStatus.INACTIVE)
+        elif filter == 'maintenance':
+            queryset = queryset.filter(state=Machine.MachineStatus.MAINTENANCE)
         else:
-            queryset = queryset.filter(is_active=True)
+            queryset = queryset.filter(state=Machine.MachineStatus.ACTIVE)
         return queryset
 
     def get_context_data(self, **kwargs):
@@ -238,12 +240,6 @@ class MachineLogView(PartialMixin, PermissionRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         return context
-
-
-class MachineToggleActiveView(BaseToggleActiveView):
-    permission_required = "machines.change_machine"
-    model = Machine
-
 
 class MachineQualificationsListView(BaseListView):
     permission_required = "people.view_qualification"

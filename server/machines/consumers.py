@@ -22,7 +22,7 @@ class MachineStateConsumer(AsyncJsonWebsocketConsumer):
 
         mac_address = self.scope["url_route"]["kwargs"]["mac_address"]
         machine = await Machine.objects.aget(
-            mac_address__iexact=mac_address, is_active=True
+            mac_address__iexact=mac_address, state=Machine.MachineStatus.ACTIVE
         )
 
         self.manager = ConnectionManager(machine)
@@ -75,7 +75,7 @@ class MachineLogConsumer(AsyncJsonWebsocketConsumer):
 
         mac_address = self.scope["url_route"]["kwargs"]["mac_address"]
         machine = await Machine.objects.aget(
-            mac_address__iexact=mac_address, is_active=True
+            mac_address__iexact=mac_address, state=Machine.MachineStatus.ACTIVE
         )
 
         self.manager = ConnectionManager(machine)

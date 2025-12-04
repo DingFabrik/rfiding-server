@@ -19,7 +19,7 @@ class MachineForm(forms.ModelForm):
             "parent",
             "compartment_id"
             "location",
-            "is_active",
+            "state",
             "needs_qualification",
             Fieldset(
                 _("Network"),
@@ -73,7 +73,7 @@ class MachineForm(forms.ModelForm):
             "ip_address",
             "mac_address",
             "location",
-            "is_active",
+            "state",
             "needs_qualification",
             "chip",
             "encryption_key",
