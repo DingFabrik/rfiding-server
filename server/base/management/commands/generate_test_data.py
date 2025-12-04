@@ -1,11 +1,11 @@
 from django.db import transaction
 from django.core.management.base import BaseCommand
 
-from people.models import Person, Qualification, Instructor
+from people.models import Person, Qualification
 from machines.models import Machine
 from tokens.models import Token
 
-from people.factories import PersonFactory, QualificationFactory, InstructorFactory
+from people.factories import PersonFactory, QualificationFactory
 from machines.factories import MachineFactory
 from tokens.factories import TokenFactory
 from access_log.factories import AccessLogFactory
@@ -21,7 +21,7 @@ class Command(BaseCommand):
     @transaction.atomic
     def handle(self, *args, **kwargs):
         self.stdout.write("Deleting old data...")
-        models = [Machine, Person, Token, Qualification, Instructor]
+        models = [Machine, Person, Token, Qualification]
         for m in models:
             m.objects.all().delete()
 
@@ -30,5 +30,4 @@ class Command(BaseCommand):
         PersonFactory.create_batch(NUM_PEOPLE)
         TokenFactory.create_batch(NUM_PEOPLE)
         QualificationFactory.create_batch(NUM_PEOPLE * NUM_MACHINES)
-        InstructorFactory.create_batch(NUM_PEOPLE)
         AccessLogFactory.create_batch(NUM_LOGS)

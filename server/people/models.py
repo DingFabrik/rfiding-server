@@ -59,6 +59,9 @@ class Qualification(TimestampedModel):
         blank=True,
         related_name="instructed_qualifications",
     )
+    
+    is_instructor = models.BooleanField(default=False, help_text=_("Instructors can give safety briefings and qualify other people on this machine."))
+    is_maintainer = models.BooleanField(default=False, help_text=_("Maintainers can perform maintenance on this machine and activate it in maintenance state."))
 
     def __str__(self):
         return gettext(f"{self.person} qualified on {self.machine}")
@@ -69,25 +72,5 @@ class Qualification(TimestampedModel):
         permissions = (("qualify_person", _("Can manage qualifications")),)
         ordering = ["machine", "person__name"]
 
-
-class Instructor(TimestampedModel):
-    person = models.ForeignKey(
-        Person, on_delete=models.CASCADE, related_name="can_instruct"
-    )
-    machine = models.ForeignKey(
-        Machine, on_delete=models.CASCADE, related_name="instructors"
-    )
-    comment = models.TextField(null=True, blank=True)
-
-    def __str__(self):
-        return gettext(f"{self.person} is instructor on {self.machine}")
-
-    class Meta:
-        verbose_name = _("Instructor")
-        verbose_name_plural = _("Instructors")
-        ordering = ["machine", "person"]
-
-
 auditlog.register(Person, mask_fields=["email"], exclude_fields=["created", "updated"])
 auditlog.register(Qualification, exclude_fields=["created", "updated"])
-auditlog.register(Instructor, exclude_fields=["created", "updated"])

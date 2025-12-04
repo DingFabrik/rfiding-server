@@ -1,7 +1,7 @@
 from django import forms
 from django.utils.translation import gettext_lazy as _
 
-from .models import Person, Qualification, Instructor
+from .models import Person, Qualification
 
 
 class PersonForm(forms.ModelForm):
@@ -16,7 +16,7 @@ class QualifyPersonForm(forms.ModelForm):
 
     class Meta:
         model = Qualification
-        fields = ["machine", "person", "instructed_by", "permission_level", "comment"]
+        fields = ["machine", "person", "instructed_by", "permission_level", "is_instructor", "is_maintainer", "comment"]
         widgets = {
             "person": forms.HiddenInput(),
             "machine": forms.HiddenInput(),
@@ -42,22 +42,3 @@ class QualifyPersonForm(forms.ModelForm):
             instructors.insert(0, ("", "---------"))
             self.fields["instructed_by"].choices = instructors
             self.fields["instructed_by"].widget.choices = instructors
-
-
-class InstructorForm(forms.ModelForm):
-    machine_autocomplete = forms.CharField(label=_("Machine"), required=False)
-    person_autocomplete = forms.CharField(label=_("Person"), required=False)
-
-    class Meta:
-        model = Instructor
-        fields = ["machine", "person"]
-        widgets = {
-            "person": forms.HiddenInput(),
-            "machine": forms.HiddenInput(),
-            "machine_autocomplete": forms.TextInput(
-                attrs={
-                    "class": "form-control",
-                    "placeholder": _("Machine name or hostname"),
-                }
-            ),
-        }

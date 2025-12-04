@@ -189,6 +189,14 @@ class Machine(TimestampedModel):
             and len(self.encryption_key) > 0
             and self.ip_address is not None
         )
+        
+    @property
+    def instructors(self):
+        return self.qualified_people.filter(is_instructor=True)
+    
+    @property
+    def maintainers(self):
+        return self.qualified_people.filter(is_maintainer=True)
 
     def get_absolute_url(self):
         return reverse("machines:detail", kwargs={"pk": self.pk})

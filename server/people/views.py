@@ -13,8 +13,8 @@ from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 
 from base.views import BaseToggleActiveView, BaseListView, PartialMixin, TitleMixin
-from .models import Person, Qualification, Instructor
-from .forms import PersonForm, QualifyPersonForm, InstructorForm
+from .models import Person, Qualification
+from .forms import PersonForm, QualifyPersonForm
 from base.filters import PEOPLE_FILTER_CHOICES
 
 
@@ -82,9 +82,6 @@ class PersonDetailView(TitleMixin, PermissionRequiredMixin, DetailView):
             qualifications, self.request.user.page_length
         )
         context["qualifications"] = qualifications_paginator.get_page(1)
-        can_instruct = self.object.can_instruct.select_related("machine").all()
-        can_instruct_paginator = Paginator(can_instruct, self.request.user.page_length)
-        context["can_instruct"] = can_instruct_paginator.get_page(1)
         return context
 
 
@@ -249,96 +246,4 @@ class PersonQualificationsListView(BaseListView):
         context = super().get_context_data(**kwargs)
         context["person"] = self.get_object()
         context["qualifications"] = context["page_obj"]
-        return context
-
-
-class AddInstructorPersonView(TitleMixin, PermissionRequiredMixin, CreateView):
-    permission_required = "people.change_instructors"
-
-    model = Instructor
-    template_name = "instructor_person.html"
-    form_class = InstructorForm
-
-    person = None
-
-    def get_person(self):
-        if self.person is None:
-            self.person = Person.objects.get(pk=self.kwargs["pk"])
-        return self.person
-
-    def get_title(self):
-        return _(f"Make {self.get_person().name} Instructor")
-
-    def get_initial(self):
-        return {"person": self.kwargs["pk"]}
-
-    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
-        context = super().get_context_data(**kwargs)
-        context["person"] = self.get_person()
-        return context
-
-    def get_success_url(self):
-        return reverse_lazy("people:detail", kwargs={"pk": self.kwargs["pk"]})
-
-
-class RevokeInstructorPersonView(
-    TitleMixin, PartialMixin, PermissionRequiredMixin, DeleteView
-):
-    permission_required = "people.change_instructors"
-
-    model = Instructor
-    full_base_template = "base_slim.html"
-    partial_base_template = "partial_base_modal.html"
-    template_name = "revoke_instructor_confirm.html"
-
-    person = None
-
-    def get_person(self):
-        if self.person is None:
-            self.person = Person.objects.get(pk=self.kwargs["pk"])
-        return self.person
-
-    def get_title(self):
-        return _(f"Revoke {self.get_person().name} as Instructor")
-
-    def get_object(self, queryset: QuerySet[Any] | None = ...) -> Model:
-        return self.model.objects.filter(
-            person=self.kwargs["pk"], pk=self.kwargs["instructor"]
-        ).first()
-
-    def get_success_url(self):
-        if self.request.GET.get("next"):
-            return self.request.GET.get("next")
-        return reverse_lazy("people:detail", kwargs={"pk": self.kwargs["pk"]})
-
-
-class PersonInstructorListView(BaseListView):
-    permission_required = "people.view_instructor"
-    model = Instructor
-    template_name = "person_instructor_list.html"
-    context_object_name = "instructors"
-
-    object = None
-
-    def get_object(self):
-        if self.object is None:
-            self.object = Person.objects.get(pk=self.kwargs["pk"])
-        return self.object
-
-    def get_title(self):
-        return _(f"Instuctor {self.get_object().name}")
-
-    def get_queryset(self):
-        queryset = (
-            Instructor.objects.filter(person=self.kwargs["pk"])
-            .select_related("machine")
-            .all()
-        )
-        return queryset
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["model"] = self.model
-        context["person"] = self.get_object()
-        context["can_instruct"] = context["page_obj"]
         return context

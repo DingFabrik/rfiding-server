@@ -1,7 +1,7 @@
 import factory
 from factory.django import DjangoModelFactory
 
-from .models import Person, Qualification, Instructor, PERMISSION_LEVELS
+from .models import Person, Qualification, PERMISSION_LEVELS
 from machines.models import Machine
 
 
@@ -25,11 +25,3 @@ class QualificationFactory(DjangoModelFactory):
         [PERMISSION_LEVELS[0][0], PERMISSION_LEVELS[1][0], PERMISSION_LEVELS[2][0]]
     )
     comment = factory.Faker("text")
-
-
-class InstructorFactory(DjangoModelFactory):
-    class Meta:
-        model = Instructor
-
-    person = factory.Iterator(Person.objects.all())
-    machine = factory.Iterator(Machine.objects.all())

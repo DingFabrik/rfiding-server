@@ -36,21 +36,6 @@ urlpatterns = [
         views.PersonQualificationsListView.as_view(),
         name="qualifications",
     ),
-    path(
-        "<int:pk>/instructor/add",
-        views.AddInstructorPersonView.as_view(),
-        name="add-instructor",
-    ),
-    path(
-        "<int:pk>/instructor/revoke/<int:instructor>",
-        views.RevokeInstructorPersonView.as_view(),
-        name="revoke-instructor",
-    ),
-    path(
-        "<int:pk>/instructor",
-        views.PersonInstructorListView.as_view(),
-        name="instructs-for",
-    ),
     # AJAX calls
     path(
         "autocomplete/person",

@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Person, Qualification, Instructor
+from .models import Person, Qualification
 from base.admin import mark_active, mark_inactive
 
 
@@ -15,11 +15,5 @@ class PersonAdmin(admin.ModelAdmin):
 class QualificationAdmin(admin.ModelAdmin):
     pass
 
-
-class InstructorAdmin(admin.ModelAdmin):
-    pass
-
-
 admin.site.register(Person, PersonAdmin)
 admin.site.register(Qualification, QualificationAdmin)
-admin.site.register(Instructor, InstructorAdmin)

@@ -18,8 +18,8 @@ from base.views import BaseToggleActiveView, BaseListView, PartialMixin, TitleMi
 from machines.socket_helper import get_socket_data
 from .models import Machine, MachineRegistrationRequest
 from .forms import MachineForm, ConfigureMachineForm, MachineTimeFormset
-from people.models import Qualification, Instructor
-from people.forms import QualifyPersonForm, InstructorForm
+from people.models import Qualification
+from people.forms import QualifyPersonForm
 from base.filters import MACHINE_FILTER_CHOICES
 
 MACHINE_SORT_CHOICES = (
@@ -89,12 +89,6 @@ class MachineDetailView(TitleMixin, PermissionRequiredMixin, DetailView):
             )
             context["qualifications"] = qualifications_paginator.get_page(1)
             context["qualifications_count"] = qualifications_paginator.count
-            instructors = self.object.instructors.select_related("person").all()
-            instructors_paginator = Paginator(
-                instructors, self.request.user.page_length
-            )
-            context["instructors"] = instructors_paginator.get_page(1)
-            context["instructors_count"] = instructors_paginator.count
         return context
 
 
@@ -283,7 +277,7 @@ class MachineQualificationsListView(BaseListView):
 
 class MachineInstructorListView(BaseListView):
     permission_required = "people.view_instructor"
-    model = Instructor
+    model = Qualification
     template_name = "machine_instructor_list.html"
     context_object_name = "instructors"
 
@@ -299,7 +293,7 @@ class MachineInstructorListView(BaseListView):
 
     def get_queryset(self):
         queryset = (
-            Instructor.objects.filter(machine=self.kwargs["pk"])
+            Qualification.objects.filter(machine=self.kwargs["pk"], is_instructor=True)
             .select_related("person")
             .all()
         )
@@ -427,36 +421,6 @@ class QualifyMachineView(TitleMixin, PermissionRequiredMixin, CreateView):
 
     def get_success_url(self):
         return reverse_lazy("machines:detail", kwargs={"pk": self.kwargs["pk"]})
-
-
-class AddInstructorMachineView(TitleMixin, PermissionRequiredMixin, CreateView):
-    permission_required = "people.change_instructors"
-
-    model = Instructor
-    template_name = "instructor_person.html"
-    form_class = InstructorForm
-
-    object = None
-
-    def get_object(self):
-        if self.object is None:
-            self.object = Machine.objects.get(pk=self.kwargs["pk"])
-        return self.object
-
-    def get_title(self):
-        return _(f"Add Instructor for {self.get_object().name}")
-
-    def get_initial(self):
-        return {"machine": self.kwargs["pk"]}
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["machine"] = self.get_object()
-        return context
-
-    def get_success_url(self):
-        return reverse_lazy("machines:detail", kwargs={"pk": self.kwargs["pk"]})
-
 
 class MachineRegistrationRequestDeleteView(
     TitleMixin, PermissionRequiredMixin, DeleteView

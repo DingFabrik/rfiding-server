@@ -139,11 +139,6 @@
         <li class="nav-item" role="presentation">
           <button class="nav-link active" id="qualifications-tab" data-bs-toggle="tab" data-bs-target="#qualifications-tab-pane" type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">{% trans 'Qualifications' %}</button>
         </li>
-        {% if machine.needs_qualification %}
-          <li class="nav-item" role="presentation">
-            <button class="nav-link" id="instructor-tab" data-bs-toggle="tab" data-bs-target="#instructor-tab-pane" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">{% trans 'Instructors' %}</button>
-          </li>
-        {% endif %}
         {% if perms.access_log.view_access_log %}
           <li class="nav-item" role="presentation">
             <button class="nav-link" id="accesslog-tab" hx-get="{% url 'access_log:for-machine' object.pk %}" hx-target="#accesslog-tab-pane" data-bs-toggle="tab" data-bs-target="#accesslog-tab-pane" type="button" role="tab" aria-controls="accesslog-tab-pane" aria-selected="false">{% trans 'Access Log' %}</button>
@@ -169,17 +164,6 @@
             </div>
           {% endif %}
         </div>
-        {% if machine.needs_qualification %}
-          <div class="tab-pane" id="instructor-tab-pane" role="tabpanel" aria-labelledby="instructor-tab" tabindex="0">
-            <div class="text-body-secondary clearfix">
-              {% blocktrans %}{{ instructors_count }} people can instruct on usage of this machine:{% endblocktrans %}
-              {% if perms.people.change_person %}
-                <a class="btn btn-primary btn-sm float-end mb-2" href="{% url 'machines:add-instructor' machine.pk %}">{% trans 'Add instructor' %}</a>
-              {% endif %}
-            </div>
-            {% include 'machine_instructor_table.html' with is_partial=True %}
-          </div>
-        {% endif %}
         {% if perms.access_log.view_access_log %}
           <div class="tab-pane" id="accesslog-tab-pane" role="tabpanel" aria-labelledby="accesslog-tab" tabindex="0">
             {% include 'snippets/spinner.html' %}
