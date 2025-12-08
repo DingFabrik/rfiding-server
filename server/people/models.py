@@ -15,6 +15,7 @@ class Person(TimestampedModel):
     notes = models.TextField(null=True, blank=True)
     member_id = models.IntegerField(null=True, blank=True, unique=True)
     is_active = models.BooleanField(default=True)
+    is_system_maintainer = models.BooleanField(default=False, help_text=_("System maintainers have access to all machines in maintenance mode."))
 
     class Meta:
         verbose_name = _("Person")

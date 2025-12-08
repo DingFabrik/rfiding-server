@@ -7,7 +7,7 @@ from machines.models import Machine
 from tokens.models import Token, UnknownToken, BlacklistedToken
 from access_log.tasks import save_access_log
 from access_log.models import LOG_TYPE_ENABLED
-from people.models import PERMISSION_LEVELS, Qualification
+from people.models import PERMISSION_LEVELS, Person, Qualification
 from space.models import SpaceState
 
 
@@ -76,8 +76,9 @@ def check_access(machine, tokenID, compartmentID=None):
         raise NotFound("Invalid Token") from None
 
     if checked_machine.needs_qualification:
+        person = token["person__id"]
         qualifications = Qualification.objects.filter(
-                machine=checked_machine.id, person=token["person__id"]
+                machine=checked_machine.id, person=person
             )
         if checked_machine.state == Machine.MachineStatus.MAINTENANCE:
             qualifications = qualifications.filter(is_maintainer=True)
@@ -90,7 +91,15 @@ def check_access(machine, tokenID, compartmentID=None):
             qualification is None
             or qualification.permission_level == PERMISSION_LEVELS[2][0]
         ):
-            raise PermissionDenied("No Access!")
+            if checked_machine.state == Machine.MachineStatus.MAINTENANCE:
+                is_system_maintainer = Person.objects.filter(
+                    id=person,
+                    is_system_maintainer=True
+                ).exists()
+                if not is_system_maintainer:
+                    raise PermissionDenied("Machine in maintenance")
+            else:
+                raise PermissionDenied("No Access!")
 
         if qualification.permission_level == PERMISSION_LEVELS[0][0]:
             space_state = SpaceState.objects.first()

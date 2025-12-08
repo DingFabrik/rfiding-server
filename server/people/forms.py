@@ -7,7 +7,7 @@ from .models import Person, Qualification
 class PersonForm(forms.ModelForm):
     class Meta:
         model = Person
-        fields = ["member_id", "name", "email", "is_active", "notes"]
+        fields = ["member_id", "name", "email", "is_active", "is_system_maintainer", "notes"]
 
 
 class QualifyPersonForm(forms.ModelForm):
