@@ -9,11 +9,6 @@ from django.conf import settings
 from datetime import timedelta
 
 from machines.fields import WeekdayFormField
-from .client_modules import (
-    ACCESS_CONTROL_MODULES,
-    STATUS_DISPLAY_MODULES,
-    ACTOR_MODULES,
-)
 
 def is_str(obj):
     return isinstance(obj, str)

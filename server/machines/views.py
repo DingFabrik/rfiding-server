@@ -47,7 +47,7 @@ class MachineListView(BaseListView):
             queryset = queryset
         elif filter == "inactive":
             queryset = queryset.filter(state=Machine.MachineStatus.INACTIVE)
-        elif filter == 'maintenance':
+        elif filter == "maintenance":
             queryset = queryset.filter(state=Machine.MachineStatus.MAINTENANCE)
         else:
             queryset = queryset.filter(state=Machine.MachineStatus.ACTIVE)

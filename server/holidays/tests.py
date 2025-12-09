@@ -1,7 +1,7 @@
 from django.test import TestCase
 
 from .models import Holiday
-from .utils import get_holiday_by_date, is_holiday, is_today_holiday, cached_date, cached_holiday
+from .utils import get_holiday_by_date, is_holiday, is_today_holiday
 from django.utils import timezone
 
 class HolidayModelTests(TestCase):
