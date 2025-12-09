@@ -69,7 +69,7 @@ class LocationDeleteView(TitleMixin, PermissionRequiredMixin, DeleteView):
     title = _("Delete Location")
 
     model = Location
-    template_name = "location_confirm_delete.html"
+    template_name = "delete_confirm.html"
     success_url = reverse_lazy("locations:list")
 
     def get_title(self):

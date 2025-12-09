@@ -1,40 +1,40 @@
 [tool.poetry]
 name = "rfiding-server"
-version = "1.0-beta1"
-description = "Rfiding is a project to restrict access to machines and doors in our hackerspace."
+version = "1.1"
+description = "Rfiding is a project to restrict access to machines and doors in our makerspace."
 authors = ["Phillip Thelen <phillip@thelen.space>"]
 readme = "README.md"
 package-mode = false
 
 [tool.poetry.dependencies]
-python = "^3.10"
+python = "^3.12"
 django = "^6.0"
 djangorestframework = "^3.16.1"
 django-crispy-forms = "^2.5"
 crispy-bootstrap5 = "^2025.6"
 django-autocomplete-light = "^3.11.0"
-django-auditlog = "^3.3.0"
+django-auditlog = "^3.4.0"
 toml = "^0.10.2"
 django-webpack-loader = "^3.2.2"
 channels = {extras = ["daphne"], version = "^4.3.2"}
-aioesphomeapi = "^43.0.0"
+aioesphomeapi = "^43.1.0"
 celery = {extras = ["redis"], version = "^5.6.0"}
-django-celery-beat = "^2.8.1"
+django-celery-beat = { git = "https://github.com/celery/django-celery-beat.git" }
 django-celery-results = "^2.6.0"
 
 [tool.poetry.group.dev.dependencies]
 django-debug-toolbar = "^4.4.6"
-freezegun = "^1.5.1"
+freezegun = "^1.5.5"
 factory-boy = "^3.3.1"
-sphinx = "^8.0.2"
+sphinx = "^8.2.3"
 sphinxcontrib-httpdomain = "^1.8.1"
-furo = "^2024.8.6"
+furo = "^2025.9.25"
 
 [tool.poetry.group.slack.dependencies]
 slack-sdk = "^3.33.2"
 
 [tool.ruff]
-target-version = "py312"
+target-version = "py313"
 
 [tool.ruff.lint]
 select = ["E4", "E7", "E9", "F", "B", "Q"]

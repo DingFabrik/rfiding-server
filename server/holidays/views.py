@@ -1,5 +1,4 @@
 from django.views.generic import (
-    DetailView,
     CreateView,
     UpdateView,
     DeleteView,
@@ -53,7 +52,7 @@ class HolidayDeleteView(TitleMixin, PermissionRequiredMixin, DeleteView):
     title = _("Delete Holiday")
 
     model = Holiday
-    template_name = "holiday_confirm_delete.html"
+    template_name = "delete_confirm.html"
     success_url = reverse_lazy("holidays:list")
 
     def get_title(self):
