@@ -4,6 +4,7 @@ from rest_framework.exceptions import ValidationError, NotFound, PermissionDenie
 from django.db.models import Q
 
 from machines.models import Machine
+from holidays.utils import is_today_holiday
 from tokens.models import Token, UnknownToken, BlacklistedToken
 from access_log.tasks import save_access_log
 from access_log.models import LOG_TYPE_ENABLED
@@ -60,6 +61,8 @@ def check_access(machine, tokenID, compartmentID=None):
             raise NotFound("Machine does not exist") from None
     if checked_machine.type == "lock_group":
         raise PermissionDenied("Machine is a lock group")
+    if not checked_machine.allowed_on_holidays and is_today_holiday():
+        raise PermissionDenied("Machine is restricted on holidays")
     end_time = Machine.get_valid_end_time_for_machine(checked_machine.id)
     if end_time is None:
         raise PermissionDenied("Machine is restricted")

@@ -14,7 +14,7 @@ def get_verbose_name(object):
 @register.simple_tag
 def get_verbose_name_plural(object):
     if hasattr(object, "_meta"):
-        return object._meta.verbose_name_plural
+        return object._meta.verbose_name_plural.capitalize()
     return object
 
 

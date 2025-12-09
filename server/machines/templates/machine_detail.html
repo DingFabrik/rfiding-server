@@ -114,20 +114,9 @@
         <li>
           <span class="fw-bold text-secondary-emphasis">{% trans 'Control Parameter' %}:</span> {{ object.control_parameter|default:'--' }}
         </li>
-        {% if object.access_control_module or object.status_display_module or object.actor_module_display %}
-          <li class="mt-3 mb-0 h5">
-            {% trans 'Modules' %}
-          </li>
-          <li>
-            <span class="fw-bold text-secondary-emphasis">{% trans 'Access Control' %}:</span> {{ object.get_access_control_module_display|default:'--' }}
-          </li>
-          <li>
-            <span class="fw-bold text-secondary-emphasis">{% trans 'Status Display' %}:</span> {{ object.get_status_display_module_display|default:'--' }}
-          </li>
-          <li>
-            <span class="fw-bold text-secondary-emphasis">{% trans 'Actor' %}:</span> {{ object.get_actor_module_display|default:'--' }}
-          </li>
-        {% endif %}
+        <li>
+          <span class="fw-bold text-secondary-emphasis">{% trans 'Allowed on Holidays' %}:</span> {{ object.allowed_on_holidays|yesno:_("Yes,No") }}
+        </li>
       </ul>
     </div>
   </div>

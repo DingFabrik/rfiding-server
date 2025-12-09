@@ -14,10 +14,11 @@
     <div class="row">
         <div class="col-md-6">
             <h4>{% trans "General configuration" %}</h4>
-            {{ form|crispy }}
+            {% crispy form %}
         </div>
         <div class="col-md-6">
             <h4>{% trans "Active Times" %}</h4>
+            {{ form.allowed_on_holidays | as_crispy_field }}
             {{ formset.management_form }}
             {% for timeform in formset %}
             <div class="row g-3">

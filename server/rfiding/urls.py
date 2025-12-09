@@ -77,6 +77,7 @@ urlpatterns = [
         name="password_change_done",
     ),
     path("access_log/", include("access_log.urls", namespace="access_log")),
+    path("holidays/", include("holidays.urls", namespace="holidays")),
     path("locations/", include("locations.urls", namespace="locations")),
     path("machines/", include("machines.urls", namespace="machines")),
     path("people/", include("people.urls", namespace="people")),

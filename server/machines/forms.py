@@ -95,19 +95,15 @@ class ConfigureMachineForm(forms.ModelForm):
         self.helper.layout = Layout(
             AppendedText("runtimer", "h:m:s"),
             AppendedText("min_power", "w"),
-            "display_time_countdown",
-            "display_power_consumption",
-            "link_relays",
         )
+        self.helper.form_tag = False
 
     class Meta:
         model = Machine
         fields = [
             "runtimer",
             "min_power",
-            "display_time_countdown",
-            "display_power_consumption",
-            "link_relays",
+            "allowed_on_holidays"
         ]
 
 

@@ -74,6 +74,14 @@ def menu_processor(request):
             "active": request.resolver_match.app_name == "groups",
         },
         {
+            "name": _("Holidays"),
+            "url": reverse("holidays:list"),
+            "icon": "calendar-event",
+            "active_icon": "calendar-event-fill",
+            "has_permission": request.user.has_perm("holidays.view_holiday"),
+            "active": request.resolver_match.app_name == "holidays",
+        },
+        {
             "name": _("Locations"),
             "url": reverse("locations:list"),
             "icon": "geo",

@@ -157,18 +157,11 @@ class Machine(TimestampedModel):
             "If set, the machine relays are linked and the secondary relay is activated together with the primary relay."
         ),
     )
-
-    access_control_module = models.IntegerField(
-        default=0, choices=ACCESS_CONTROL_MODULES
+    allowed_on_holidays = models.BooleanField(
+        default=True,
+        help_text=_("If set, the machine can be used on holidays."),
     )
-    access_control_module_settings = models.JSONField(default=dict, blank=True)
-    status_display_module = models.IntegerField(
-        default=0, choices=STATUS_DISPLAY_MODULES
-    )
-    status_display_module_settings = models.JSONField(default=dict, blank=True)
-    actor_module = models.IntegerField(default=0, choices=ACTOR_MODULES)
-    actor_module_settings = models.JSONField(default=dict, blank=True)
-
+    
     class Meta:
         verbose_name = _("Machine")
         verbose_name_plural = _("Machines")

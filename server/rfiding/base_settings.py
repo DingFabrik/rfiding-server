@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     "access_log",
     "base",
     "firmware",
+    "holidays",
     "locations",
     "machines",
     "people",

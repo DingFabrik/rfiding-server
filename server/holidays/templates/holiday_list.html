@@ -1,0 +1,27 @@
+{% extends base_template %}
+{% load i18n %}
+
+{% block table %}
+    <thead>
+        <tr>
+            <th>{% trans "Name" %}</th>
+            <th>{% trans "Date" %}</th>
+            {% if perms.holidays.modify_holiday %}
+            <th width="35"></th>
+            {% endif %}
+        </tr>
+        </thead>
+{% for object in holidays %}
+<tr>
+<td>{{ object.name }}</td>
+<td>{{ object.date|date:"DATE_FORMAT" }}</td>
+{% if perms.holidays.modify_holiday %}
+<td>
+{% if perms.holidays.modify_holiday %}
+<a href="{% url 'holidays:update' object.pk %}" data-bs-toggle="tooltip" title="{% trans 'Edit' %}"><i class="bi-pencil-square me-2"></i></a>
+{% endif %}
+</td>
+{% endif %}
+</tr>
+{% endfor %}
+{% endblock %}
