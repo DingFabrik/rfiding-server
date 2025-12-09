@@ -54,6 +54,22 @@ THEME_COLORS = (
 )
 
 class RFIDingUser(AbstractUser):
+    class TimeFormat(models.TextChoices):
+        LOCALE = "locale", _("Locale Default")
+        H12 = "12", _("12-hour")
+        H24 = "24", _("24-hour")
+        
+    class DateFormat(models.TextChoices):
+        LOCALE = "locale", _("Locale Default")
+        DMY = "d.m.Y", _("Day-Month-Year (DD.MM.YYYY)")
+        DMYS = "d.m.y", _("Day-Month-Year (DD.MM.YY)")
+        MDY = "m/d/Y", _("Month-Day-Year (MM/DD/YYYY)")
+        MDYS = "m/d/y", _("Month-Day-Year (MM/DD/YY)")
+        YMD = "Y-m-d", _("Year-Month-Day (YYYY-MM-DD)")
+        YSMD = "y-m-d", _("Year-Month-Day (YY-MM-DD)")
+        WMDY = "M d, Y", _("Month Day, Year (Month DD, YYYY)")
+        DWMY = "d M Y", _("Day Month Year (DD Month YYYY)")
+    
     USERNAME_FIELD = "email"
     username = None
     first_name = None
@@ -67,6 +83,8 @@ class RFIDingUser(AbstractUser):
     language = models.CharField(
         _("Language"), max_length=10, default="en", choices=settings.LANGUAGES
     )
+    date_format = models.CharField(_("Date format"), max_length=10, choices=DateFormat.choices, default=DateFormat.LOCALE)
+    time_format = models.CharField(_("Time format"), max_length=10, choices=TimeFormat.choices, default=TimeFormat.LOCALE)
     page_length = models.IntegerField(
         _("Page Length"),
         default=50,

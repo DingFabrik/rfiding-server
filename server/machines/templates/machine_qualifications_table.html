@@ -22,13 +22,13 @@
                 <td><a href="{% url "people:detail" qualification.person.id %}">{{ qualification.person.name }}</a></td>
                 <td>{{ qualification.get_permission_level_display }}</td>
                 <td>{{ qualification.is_instructor|yesno:_("Yes,No") }}</td>
-                <td>{{ qualification.is_maintainer|yesno:_("Yes,No") }}</
+                <td>{{ qualification.is_maintainer|yesno:_("Yes,No") }}</td>
                 <td style="max-width: 600px;">{{ qualification.comment }}</td>
                 <td>{% if qualification.instructed_by %}
                     <a href="{% url "people:detail" qualification.instructed_by.pk %}">{{ qualification.instructed_by }}</a>
                     {% else %}--{% endif %}
                 </td>
-                <td>{{ qualification.created|date:"DATE_FORMAT" }}</td>
+                <td>{% user_date qualification.created "DATE_FORMAT" %}</td>
                 {% if perms.people.qualify_person %}
                     <td>
                         <a href="{% url "people:edit-qualification" qualification.person.pk qualification.pk %}" data-bs-toggle="tooltip" title="{% trans 'Edit' %}"><i class="bi-pencil-square me-2"></i></a>

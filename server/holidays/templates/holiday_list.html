@@ -1,24 +1,27 @@
 {% extends base_template %}
-{% load i18n %}
+{% load i18n %}{% load base_extra %}
 
 {% block table %}
     <thead>
         <tr>
             <th>{% trans "Name" %}</th>
             <th>{% trans "Date" %}</th>
+            <th>{% trans "Repeats Annually" %}</th>
             {% if perms.holidays.modify_holiday %}
-            <th width="35"></th>
+            <th width="70"></th>
             {% endif %}
         </tr>
         </thead>
 {% for object in holidays %}
 <tr>
 <td>{{ object.name }}</td>
-<td>{{ object.date|date:"DATE_FORMAT" }}</td>
+<td>{% user_date object.date "DATE_FORMAT" %}</td>
+<td>{{ object.repeats_annually|yesno:_("Yes,No") }}</td>
 {% if perms.holidays.modify_holiday %}
 <td>
-{% if perms.holidays.modify_holiday %}
 <a href="{% url 'holidays:update' object.pk %}" data-bs-toggle="tooltip" title="{% trans 'Edit' %}"><i class="bi-pencil-square me-2"></i></a>
+{% if perms.holidays.delete_holiday %}
+<a href="{% url 'holidays:delete' object.pk %}" data-bs-toggle="tooltip" title="{% trans 'Delete' %}"><i class="bi-trash text-danger"></i></a>
 {% endif %}
 </td>
 {% endif %}

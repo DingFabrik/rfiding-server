@@ -16,6 +16,8 @@ class ProfileForm(forms.ModelForm):
             "name",
             "email",
             "language",
+            "date_format",
+            "time_format",
             Fieldset(
                 _("Display"),
                 "theme_mode",
@@ -41,6 +43,8 @@ class ProfileForm(forms.ModelForm):
             "name",
             "email",
             "language",
+            "date_format",
+            "time_format",
             "page_length",
             "default_token_filter",
             "default_people_filter",

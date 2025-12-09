@@ -1,5 +1,8 @@
 from django import template
 from django.utils.translation import gettext as _
+from django.utils import formats
+
+from users.models import RFIDingUser
 
 register = template.Library()
 
@@ -68,3 +71,31 @@ def translate(text):
         return _(text)
     except Exception:
         return text
+
+@register.simple_tag(name="user_date", takes_context=True)
+def user_date(context, date, format="DATE_FORMAT"):
+    if format in context:
+        print("Cached format", context[format])
+        return formats.date_format(date, context[format])
+    add_time = False
+    used_format = format
+    if "DATETIME" in used_format:
+        add_time = True
+        used_format = used_format.replace("DATETIME", "DATE").strip()
+    if date is None:
+        return None
+    user = context["request"].user
+    if user.date_format != RFIDingUser.DateFormat.LOCALE:
+        date_format = user.date_format
+    else:
+        date_format = formats.get_format(used_format, lang=user.language)
+    if add_time:
+        if user.time_format == RFIDingUser.TimeFormat.H24:
+            time_format = "H:i"
+        elif user.time_format == RFIDingUser.TimeFormat.H12:
+            time_format = "h:i A"
+        else:
+            time_format = formats.get_format("TIME_FORMAT", lang=user.language)
+        date_format = f"{date_format} {time_format}"
+    context[format] = date_format
+    return formats.date_format(date, date_format)

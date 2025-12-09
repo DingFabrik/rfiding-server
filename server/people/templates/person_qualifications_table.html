@@ -41,7 +41,7 @@
             </td>
             <td>{{ qualification.get_permission_level_display }}</td>
             <td>{{ qualification.comment|default:'' }}</td>
-            <td>{{ qualification.created|date:'DATE_FORMAT' }}</td>
+            <td>{% user_date qualification.created "DATE_FORMAT" %}</td>
             {% if perms.people.qualify_person %}
               <td>
                 <a href="{% url 'people:edit-qualification' qualification.person.pk qualification.pk %}" data-bs-toggle="tooltip" title="{% trans 'Edit' %}"><i class="bi-pencil-square me-2"></i></a>
