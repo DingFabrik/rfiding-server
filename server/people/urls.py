@@ -52,4 +52,9 @@ urlpatterns = [
         ajax.InstructorPersonAutocompleteView.as_view(),
         name="autocomplete-instructor",
     ),
+    path(
+        "person-popover",
+        views.PersonPopoverView.as_view(),
+        name="person-popover",
+    ),
 ]

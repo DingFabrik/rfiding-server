@@ -74,6 +74,10 @@ def translate(text):
 
 @register.simple_tag(name="user_date", takes_context=True)
 def user_date(context, date, format="DATE_FORMAT"):
+    if date is None:
+        return None
+    if isinstance(date, str):
+        return date
     if format in context:
         print("Cached format", context[format])
         return formats.date_format(date, context[format])
@@ -82,8 +86,6 @@ def user_date(context, date, format="DATE_FORMAT"):
     if "DATETIME" in used_format:
         add_time = True
         used_format = used_format.replace("DATETIME", "DATE").strip()
-    if date is None:
-        return None
     user = context["request"].user
     if user.date_format != RFIDingUser.DateFormat.LOCALE:
         date_format = user.date_format

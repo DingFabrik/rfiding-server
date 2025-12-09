@@ -1,7 +1,6 @@
 import * as bs from 'bootstrap'
 import * as htmx from './htmx.min.js'
 global.htmx = htmx;
-import * as htmxws from './htmx-ws.js'
 
 import Chart from 'chart.js/auto';
 
@@ -51,6 +50,23 @@ window.updateTooltips = function () {
                 }
             });
             return '<div id="'+ machine_pk +'">Loading...</div>';
+        }
+    }));
+
+    const personPopoverTriggerList = document.querySelectorAll('[data-bs-toggle="person-popover"]')
+    console.log('Found person popovers:', personPopoverTriggerList.length);
+    const personPopoverList = [...personPopoverTriggerList].map(popoverTriggerEl => new bs.Popover(popoverTriggerEl, {
+        "html": true,
+        "delay": 200,
+        "content": function (e) {
+            const person_pk = e.getAttribute('data-person-pk');
+            $.ajax({
+                url: window.urlMap['person-popover'] + '?person_pk=' + person_pk,
+                success: function(response){
+                    jquery('#'+person_pk).html(response);
+                }
+            });
+            return '<div id="'+ person_pk +'">Loading...</div>';
         }
     }));
 }

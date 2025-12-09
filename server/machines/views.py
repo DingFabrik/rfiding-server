@@ -214,7 +214,10 @@ class MachinePopoverView(PermissionRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["object"] = self.get_queryset().get()
-        context["last_access"] = AccessLog.objects.filter(machine=context["object"]).latest("timestamp")
+        try:
+            context["last_access"] = AccessLog.objects.filter(machine=context["object"]).latest("timestamp")
+        except AccessLog.DoesNotExist:
+            context["last_access"] = None
         return context
 
 class MachineStatusPartialView(PermissionRequiredMixin, DetailView):

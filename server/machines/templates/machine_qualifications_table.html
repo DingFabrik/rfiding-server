@@ -19,7 +19,7 @@
         <tbody>
             {% for qualification in qualifications %}
             <tr class="align-middle">
-                <td><a href="{% url "people:detail" qualification.person.id %}">{{ qualification.person.name }}</a></td>
+                <td>{% include "cells/person.html" with person=qualification.person %}</td>
                 <td>{{ qualification.get_permission_level_display }}</td>
                 <td>{{ qualification.is_instructor|yesno:_("Yes,No") }}</td>
                 <td>{{ qualification.is_maintainer|yesno:_("Yes,No") }}</td>

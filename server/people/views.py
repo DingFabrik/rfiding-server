@@ -8,6 +8,7 @@ from django.views.generic import (
     CreateView,
     UpdateView,
     DeleteView,
+    TemplateView,
 )
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
@@ -246,4 +247,17 @@ class PersonQualificationsListView(BaseListView):
         context = super().get_context_data(**kwargs)
         context["person"] = self.get_object()
         context["qualifications"] = context["page_obj"]
+        return context
+
+class PersonPopoverView(PermissionRequiredMixin, TemplateView):
+    permission_required = "people.view_person"
+    template_name = "person_popover.html"
+    model = Person
+
+    def get_queryset(self) -> QuerySet[Any]:
+        return Person.objects.filter(pk=self.request.GET["person_pk"])
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context["object"] = self.get_queryset().get()
         return context
