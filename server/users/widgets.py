@@ -15,7 +15,9 @@ class WidgetDataProvider():
     
     def prepare_machine_counts(self):
         if "activeMachineCount" not in self.data:
-            self.data["activeMachineCount"] = Machine.objects.filter(is_active=True).count()
+            self.data["activeMachineCount"] = Machine.objects.filter(state="active").count()
+        if "maintenanceMachineCount" not in self.data:
+            self.data["maintenanceMachineCount"] = Machine.objects.filter(state="maintenance").count()
         if "machineCount" not in self.data:
             self.data["machineCount"] = Machine.objects.count()
     
@@ -41,6 +43,7 @@ class WidgetDataProvider():
                 self.prepare_machine_counts()
                 widget.data = {
                     "active_count": self.data["activeMachineCount"],
+                    "maintenance_count": self.data["maintenanceMachineCount"],
                     "total_count": self.data["machineCount"]
                 }
             elif widget.widget == "people_counts":

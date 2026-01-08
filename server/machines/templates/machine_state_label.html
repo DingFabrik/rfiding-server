@@ -1,9 +1,0 @@
-{% if object.state == "maintenance" %}
-<b class="text-warning"><i class="bi-wrench-adjustable-circle-fill me-1" aria-hidden="true"></i>{{ object.get_state_display }}</b>
-{% elif object.state == "inactive" %}
-<b class="text-muted"><i class="bi-x-circle-fill me-1" aria-hidden="true"></i>{{ object.get_state_display }}</b>
-{% elif object.state == "active" %}
-<b class="text-success"><i class="bi-check-circle-fill me-1" aria-hidden="true"></i>{{ object.get_state_display }}</b>
-{% else %}
-<b>{{ object.get_state_display }}</b>
-{% endif %}

@@ -3,7 +3,7 @@
     <ul class="list-unstyled">
         <li><span class="fw-bold text-secondary">{% trans "Hostname" %}:</span> {{ object.hostname }}</li>
         <li><span class="fw-bold text-secondary">{% trans "Location" %}:</span> {{ object.location|default:"--" }}</li>
-        <li><span class="fw-bold text-secondary">{% trans "State" %}:</span> {% include "machine_state_label.html" with object=object %}</li>
+        <li><span class="fw-bold text-secondary">{% trans "State" %}:</span> {% include "snippets/machine_state_label.html" with object=object %}</li>
         <li><span class="fw-bold text-secondary">{% trans "Last Access" %}:</span> {% user_date last_access.timestamp|default:"---" "SHORT_DATETIME_FORMAT" %}</li>
     </ul>
 </div>

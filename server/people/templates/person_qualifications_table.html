@@ -30,8 +30,8 @@
         {% for qualification in qualifications %}
           <tr class="align-middle">
             <td>{% include "cells/machine.html" with machine=qualification.machine %}</td>
-            <td>{{ qualification.is_instructor|yesno:_("Yes,No") }}</td>
-            <td>{{ qualification.is_maintainer|yesno:_("Yes,No") }}</td>
+            <td>{% include "snippets/boolean.html" with object=qualification.is_instructor %}</td>
+            <td>{% include "snippets/boolean.html" with object=qualification.is_maintainer %}</td>
             <td>
               {% if qualification.instructed_by %}
                 <a href="{% url 'people:detail' qualification.instructed_by.pk %}">{{ qualification.instructed_by }}</a>
@@ -39,7 +39,7 @@
                 --
               {% endif %}
             </td>
-            <td>{{ qualification.get_permission_level_display }}</td>
+            <td>{% include "cells/permission_level.html" with permission_level=qualification.permission_level %}</td>
             <td>{{ qualification.comment|default:'' }}</td>
             <td>{% user_date qualification.created "DATE_FORMAT" %}</td>
             {% if perms.people.qualify_person %}

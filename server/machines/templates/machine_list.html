@@ -19,7 +19,7 @@
     <td><a href="{% url "machines:detail" object.pk %}">{{ object.name }}</a></td>
     <td>{{ object.mac_address }}</td>
     <td><a href="{% url "machines:detail" object.pk %}">{{ object.hostname }}</a></td>
-    <td>{% include "machine_state_label.html" with object=object %}</td>
+    <td>{% include "snippets/machine_state_label.html" with object=object %}</td>
     <td>{{ object.get_type_display }}</td>
     {% if can_edit %}
     <td>

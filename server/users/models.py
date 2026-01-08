@@ -146,8 +146,10 @@ class UserWidget(models.Model):
         
     @property
     def template(self):
-        if self.widget == "token_counts" or self.widget == "people_counts" or self.widget == "machine_counts":
+        if self.widget == "token_counts" or self.widget == "people_counts":
             return "widgets/count.html"
+        if self.widget == "machine_counts":
+            return "widgets/machine_count.html"
         if self.widget == "access_log_latest":
             return "widgets/access_log_latest.html"
         
