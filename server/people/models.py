@@ -3,6 +3,7 @@ from django.utils.translation import gettext_lazy as _
 from django.utils.translation import gettext
 from django.urls import reverse
 from auditlog.registry import auditlog
+from django.contrib.contenttypes.fields import GenericRelation
 
 from base.models import TimestampedModel
 
@@ -16,11 +17,14 @@ class Person(TimestampedModel):
     member_id = models.IntegerField(null=True, blank=True, unique=True)
     is_active = models.BooleanField(default=True)
     is_system_maintainer = models.BooleanField(default=False, help_text=_("System maintainers have access to all machines in maintenance mode."))
-
+    comments = GenericRelation("comments.Comment")
     class Meta:
         verbose_name = _("Person")
         verbose_name_plural = _("People")
         ordering = ["member_id"]
+        indexes = [
+            models.Index(fields=["name"]),
+        ]
         permissions = (("change_instructor", _("Can manage instructors")),)
 
     def get_absolute_url(self):

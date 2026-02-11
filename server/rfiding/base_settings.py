@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     "space",
     "tokens",
     "users",
+    "comments",
 ]
 
 MIDDLEWARE = [

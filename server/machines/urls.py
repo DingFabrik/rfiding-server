@@ -54,4 +54,9 @@ urlpatterns = [
         views.MachinePopoverView.as_view(),
         name="popover",
     ),
+    path(
+        "<int:pk>/comments/add",
+        views.MachineCommentCreateView.as_view(),
+        name="add-comment",
+    ),
 ]

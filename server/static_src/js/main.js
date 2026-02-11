@@ -3,13 +3,13 @@ import * as htmx from './htmx.min.js'
 global.htmx = htmx;
 
 import Chart from 'chart.js/auto';
+import './keyboardshortcuts.js';
 
 window.Chart = Chart;
 
 var jquery = require("jquery");
 window.$ = window.jQuery = jquery; // notice the definition of global variables here
 require("jquery-ui/dist/jquery-ui.js");
-
 window.bootstrap = bs
 
 window.urlMap = {
@@ -90,3 +90,7 @@ window.addEventListener('htmx:beforeSwap', function(event) {
 window.addEventListener('htmx:afterSwap', function(event) {
     updateTooltips();
 })
+
+window.addEventListener('htmx:responseError', function(event) {
+    event.detail.target.innerHTML = '<div class="alert alert-danger" role="alert"><h4 class="alert-heading">An error occurred.</h4><span>' + event.detail.xhr.statusText + '</span></div>';
+});

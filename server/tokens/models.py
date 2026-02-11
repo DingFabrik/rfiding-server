@@ -8,6 +8,7 @@ from django.dispatch import receiver
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 import logging
+from django.contrib.contenttypes.fields import GenericRelation
 
 from machines.models import Machine
 from people.models import Person
@@ -51,6 +52,7 @@ class Token(TimestampedModel):
     notes = models.TextField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
     archived = models.DateTimeField(null=True, blank=True)
+    comments = GenericRelation("comments.Comment")
 
     def __str__(self):
         return f"{self.serial}"
@@ -68,6 +70,9 @@ class Token(TimestampedModel):
         verbose_name_plural = _("Tokens")
         ordering = ["serial"]
         unique_together = ("serial", "archived")
+        indexes = [
+            models.Index(fields=["serial"]),
+        ]
 
 
 class UnknownToken(TimestampedModel):

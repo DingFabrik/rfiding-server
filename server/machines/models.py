@@ -7,6 +7,7 @@ from django.urls import reverse
 from auditlog.registry import auditlog
 from django.conf import settings
 from datetime import timedelta
+from django.contrib.contenttypes.fields import GenericRelation
 
 from machines.fields import WeekdayFormField
 
@@ -157,10 +158,16 @@ class Machine(TimestampedModel):
         help_text=_("If set, the machine can be used on holidays."),
     )
     
+    comments = GenericRelation("comments.Comment")
+    
     class Meta:
         verbose_name = _("Machine")
         verbose_name_plural = _("Machines")
         ordering = ["name"]
+        indexes = [
+            models.Index(fields=["mac_address"]),
+            models.Index(fields=["name"]),
+        ]
         permissions = (("view_machine_state", _("View Machine State")),
                        ("view_machine_logs", _("View Machine Logs")),
                        ("send_machine_commands", _("Send Machine Commands")))

@@ -16,11 +16,13 @@ from datetime import datetime, timedelta
 from access_log.models import AccessLog, LOG_TYPE_ENABLED
 from base.views import BaseListView, PartialMixin, TitleMixin
 from machines.socket_helper import get_socket_data
+from comments.forms import CommentForm
 from .models import Machine, MachineRegistrationRequest
 from .forms import MachineForm, ConfigureMachineForm, MachineTimeFormset
 from people.models import Qualification
 from people.forms import QualifyPersonForm
 from base.filters import MACHINE_FILTER_CHOICES
+from comments.models import Comment
 
 MACHINE_SORT_CHOICES = (
     ("name", _("Name")),
@@ -75,6 +77,7 @@ class MachineDetailView(TitleMixin, PermissionRequiredMixin, DetailView):
         context = super().get_context_data(**kwargs)
         context["can_edit"] = self.request.user.has_perm("machines.change_machine")
         context["can_delete"] = self.request.user.has_perm("machines.delete_machine")
+        context["comment_form"] = CommentForm()
         try:
             access = AccessLog.objects.filter(machine=self.object).latest("timestamp")
             context["last_access"] = access.timestamp
@@ -432,3 +435,24 @@ class MachineRegistrationRequestDeleteView(
 
     def get_title(self):
         return _(f"Delete {self.object.name}")
+
+class MachineCommentCreateView(TitleMixin, PermissionRequiredMixin, CreateView):
+    permission_required = "machines.view_machine"
+
+    model = Comment
+    template_name = "machine_comment_form.html"
+    form_class = CommentForm
+
+    def get_title(self):
+        return _(f"Add Comment to {self.get_machine().name}")
+
+    def get_machine(self):
+        return Machine.objects.get(pk=self.kwargs["pk"])
+
+    def form_valid(self, form):
+        form.instance.content_object = self.get_machine()
+        form.instance.author = self.request.user
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy("machines:detail", kwargs={"pk": self.kwargs["pk"]})

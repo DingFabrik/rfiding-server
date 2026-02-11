@@ -9,8 +9,9 @@ from django.http import HttpRequest
 from django.utils.cache import get_cache_key
 
 from rfiding import settings
-
-
+from machines.models import Machine
+from people.models import Person
+from tokens.models import Token
 class PartialMixin:
     full_base_template = "base.html"
     partial_base_template = "partial_base.html"
@@ -137,3 +138,15 @@ def expire_page(path):
     key = get_cache_key(request)
     if cache.has_key(key):
         cache.delete(key)
+
+class UniversalSearchView(TitleMixin, TemplateView):
+    title = _("Search")
+    template_name = "search_universal_results.html"
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        m = Machine.objects.filter(name__icontains=self.request.GET["search"])[:10]
+        p = Person.objects.filter(name__icontains=self.request.GET["search"])[:10]
+        t = Token.objects.filter(serial__icontains=self.request.GET["search"])[:10]
+        context["objects"] = list(m) + list(p) + list(t)
+        return context

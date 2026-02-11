@@ -1,0 +1,29 @@
+{% load i18n %}
+<div class="modal fade" id="searchUniversalModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <form role="search" class="w-100">
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-search"></i></span>
+            <input
+              class="form-control"
+              type="search"
+              placeholder="{% trans "Search" %}"
+              name="search"
+              value="{{ request.GET.search }}"
+              hx-get="{% url "search-universal" %}"
+              hx-target="#search_universal_results"
+              hx-trigger="input changed delay:300ms, search" />
+          </div>
+        </form>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div id="search_universal_results">
+          <span class="text-muted">{% trans "Type to search" %}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
