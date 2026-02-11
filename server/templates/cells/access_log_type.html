@@ -1,9 +1,9 @@
 {% if object.type == "booted" %}
-<i class="bi bi-rocket-takeoff-fill me-2 text-primary"></i><span class="text-warning-emphasis">{{ object.get_type_display }}</span>
+<i class="bi bi-rocket-takeoff-fill me-2 text-primary"></i><span class="text-warning-emphasis d-none d-md-inline">{{ object.get_type_display }}</span>
 {% elif object.type == "enabled" %}
-<i class="bi bi-play-circle-fill me-2 text-success"></i><span class="text-success-emphasis">{{ object.get_type_display }}</span>
+<i class="bi bi-play-circle-fill me-2 text-success"></i><span class="text-success-emphasis d-none d-md-inline">{{ object.get_type_display }}</span>
 {% elif object.type == "disabled" %}
-<i class="bi bi-stop-circle-fill me-2 text-secondary"></i><span class="text-secondary-emphasis">{{ object.get_type_display }}</span>
+<i class="bi bi-stop-circle-fill me-2 text-secondary"></i><span class="text-secondary-emphasis d-none d-md-inline">{{ object.get_type_display }}</span>
 {% elif object.type == "unsuccessful" %}
-<i class="bi bi-x-circle-fill me-2 text-danger"></i><span class="text-danger-emphasis">{{ object.get_type_display }}</span>
+<i class="bi bi-x-circle-fill me-2 text-danger"></i><span class="text-danger-emphasis d-none d-md-inline">{{ object.get_type_display }}</span>
 {% endif %}

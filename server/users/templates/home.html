@@ -60,7 +60,6 @@ function showModal() {
 
 htmx.on("htmx:afterRequest", function(evt) {
     if (evt.detail.elt.nodeName === "FORM") {
-        console.log(modal)
         modal.hide();
     }
 });
