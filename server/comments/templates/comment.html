@@ -1,0 +1,10 @@
+<div class="card mb-3">
+
+  <div class="card-body">
+    <div class="card-title">
+      <strong>{{ comment.author }}</strong>
+      <span class="text-body-secondary float-end">{% include 'snippets/timestamp.html' with timestamp=comment.created %}</span>
+    </div>
+    <span class="card-text">{{ comment.text|linebreaksbr }}</span>
+  </div>
+</div>

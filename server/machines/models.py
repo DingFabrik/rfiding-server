@@ -170,7 +170,9 @@ class Machine(TimestampedModel):
         ]
         permissions = (("view_machine_state", _("View Machine State")),
                        ("view_machine_logs", _("View Machine Logs")),
-                       ("send_machine_commands", _("Send Machine Commands")))
+                       ("send_machine_commands", _("Send Machine Commands")),
+                       ("comment_machine", _("Can comment on machines")),
+        )
 
     def __str__(self):
         return self.name

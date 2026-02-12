@@ -1,0 +1,19 @@
+{% load crispy_forms_tags %}{% load i18n %}<div class="row">
+  <div class="col-md-6">
+  {% for comment in object.comments.all %}
+    {% include "comment.html" %}
+    {% empty %}
+    <div class="col">
+      <div class="col alert alert-secondary">
+        {% trans "No comments yet." %}
+      </div>
+    </div>
+  {% endfor %}
+</div>
+<div class="col-md-6">
+    <form class="mb-3" method="post" action="{% url comment_url object.pk %}" hx-target="#comments-tab-pane" hx-swap="outerHTML">
+    {% csrf_token %}
+    {{ comment_form|crispy }}
+    <button type="submit" class="btn btn-primary">{% trans 'Post' %}</button>
+  </form>
+</div>

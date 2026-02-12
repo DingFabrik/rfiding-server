@@ -1,5 +1,6 @@
 {% extends 'base_detail.html' %}
 {% load i18n %}
+{% load crispy_forms_tags %}
 
 {% block content %}
   <div class="row mb-5">
@@ -60,6 +61,11 @@
             <button class="nav-link" id="accesslog-tab" hx-get="{% url 'access_log:for-person' object.pk %}" hx-target="#accesslog-tab-pane" data-bs-toggle="tab" data-bs-target="#accesslog-tab-pane" type="button" role="tab" aria-controls="contact-tab-pane" aria-selected="false">{% trans 'Access Log' %}</button>
           </li>
         {% endif %}
+        {% if perms.people.comment_person %}
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="comments-tab" data-bs-toggle="tab" data-bs-target="#comments-tab-pane" type="button" role="tab" aria-controls="comments-tab-pane" aria-selected="false">{% trans 'Comments' %}</button>
+          </li>
+        {% endif %}
       </ul>
       <div class="tab-content mt-4">
         <div class="tab-pane show active" id="qualifications-tab-pane" role="tabpanel" aria-labelledby="qualifications-tab" tabindex="0">
@@ -72,6 +78,11 @@
         </div>
         {% if perms.access_log.view_access_log %}
           <div class="tab-pane" id="accesslog-tab-pane" role="tabpanel" aria-labelledby="accesslog-tab" tabindex="0">{% include "snippets/spinner.html" %}</div>
+        {% endif %}
+        {% if perms.people.comment_person %}
+        <div class="tab-pane" id="comments-tab-pane" role="tabpanel" aria-labelledby="comments-tab" tabindex="0">
+          {% include "comment_display.html" with comment_url='people:add-comment' %}
+        </div>
         {% endif %}
       </div>
     </div>

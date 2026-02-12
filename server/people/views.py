@@ -1,3 +1,4 @@
+from multiprocessing import context
 from typing import Any
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.db.models.base import Model as Model
@@ -14,6 +15,8 @@ from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 
 from base.views import BaseToggleActiveView, BaseListView, PartialMixin, TitleMixin
+from comments.views import CommentCreateView
+from server.comments.forms import CommentForm
 from .models import Person, Qualification
 from .forms import PersonForm, QualifyPersonForm
 from base.filters import PEOPLE_FILTER_CHOICES
@@ -74,6 +77,7 @@ class PersonDetailView(TitleMixin, PermissionRequiredMixin, DetailView):
         context = super().get_context_data(**kwargs)
         context["can_edit"] = self.request.user.has_perm("people.change_person")
         context["can_delete"] = self.request.user.has_perm("people.delete_person")
+        context["comment_form"] = CommentForm()
         qualifications = (
             self.object.qualifications.select_related("machine")
             .select_related("instructed_by")
@@ -261,3 +265,7 @@ class PersonPopoverView(PermissionRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         context["object"] = self.get_queryset().get()
         return context
+    
+class PersonCommentCreateView(CommentCreateView):
+    permission_required = "people.comment_person"
+    content_model = Person

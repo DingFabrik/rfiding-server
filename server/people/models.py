@@ -25,7 +25,10 @@ class Person(TimestampedModel):
         indexes = [
             models.Index(fields=["name"]),
         ]
-        permissions = (("change_instructor", _("Can manage instructors")),)
+        permissions = (
+            ("change_instructor", _("Can manage instructors")),
+            ("comment_person", _("Can comment on people")),
+            )
 
     def get_absolute_url(self):
         return reverse("people:detail", kwargs={"pk": self.pk})

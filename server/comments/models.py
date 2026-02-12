@@ -14,9 +14,6 @@ class Comment(TimestampedModel):
     object_id = models.PositiveBigIntegerField()
     content_object = GenericForeignKey("content_type", "object_id")
 
-    def __str__(self):
-        return self.tag
-
     class Meta:
         verbose_name = _("Comment")
         verbose_name_plural = _("Comments")

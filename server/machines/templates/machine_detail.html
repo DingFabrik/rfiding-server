@@ -136,9 +136,11 @@
         <li class="nav-item" role="presentation">
           <button class="nav-link" id="statistics-tab" hx-get="{% url 'machines:statistics' object.pk %}" hx-target="#statistics-tab-pane" data-bs-toggle="tab" data-bs-target="#statistics-tab-pane" type="button" role="tab" aria-controls="statistics-tab-pane" aria-selected="false">{% trans 'Statistics' %}</button>
         </li>
+        {% if perms.machines.comment_machine %}
         <li class="nav-item" role="presentation">
           <button class="nav-link" id="comments-tab" data-bs-toggle="tab" data-bs-target="#comments-tab-pane" type="button" role="tab" aria-controls="comments-tab-pane" aria-selected="false">{% trans 'Comments' %}</button>
         </li>
+        {% endif %}
       </ul>
       <div class="tab-content mt-4" id="myTabContent">
         <div class="tab-pane show active" id="qualifications-tab-pane" role="tabpanel" aria-labelledby="qualifications-tab" tabindex="0">
@@ -165,24 +167,7 @@
           {% include 'snippets/spinner.html' %}
         </div>
         <div class="tab-pane" id="comments-tab-pane" role="tabpanel" aria-labelledby="comments-tab" tabindex="0">
-          <div class="col-md-6">
-            <form class="mb-3" method="post" action="{% url 'machines:add-comment' machine.pk %}" hx-target="#comments-tab-pane" hx-swap="outerHTML">
-              {% csrf_token %}
-              {{ comment_form|crispy }}
-              <button type="submit" class="btn btn-primary">{% trans 'Add Comment' %}</button>
-            </form>
-            {% for comment in object.comments.all %}
-              <div class="card mb-3">
-                <div class="card-header">
-                  <strong>{{ comment.author }}</strong>
-                  <span class="text-body-secondary float-end">{% include 'snippets/timestamp.html' with timestamp=comment.created %}</span>
-                </div>
-                <div class="card-body">
-                  <p class="card-text">{{ comment.text|linebreaks }}</p>
-                </div>
-              </div>
-            {% endfor %}
-          </div>
+          {% include "comment_display.html" with comment_url='machines:add-comment' %}
         </div>
       </div>
     </div>

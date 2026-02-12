@@ -57,4 +57,9 @@ urlpatterns = [
         views.PersonPopoverView.as_view(),
         name="person-popover",
     ),
+    path(
+        "<int:pk>/comments/add",
+        views.PersonCommentCreateView.as_view(),
+        name="add-comment",
+    ),
 ]

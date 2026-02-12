@@ -1,0 +1,9 @@
+{% extends "base_form.html" %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+{% block pre_form %}{% endblock %}
+    {% crispy form %}
+{% block post_form %}{% endblock %}
+{% endblock %}
