@@ -23,7 +23,6 @@ from .forms import MachineForm, ConfigureMachineForm, MachineTimeFormset
 from people.models import Qualification
 from people.forms import QualifyPersonForm
 from base.filters import MACHINE_FILTER_CHOICES
-from comments.models import Comment
 
 MACHINE_SORT_CHOICES = (
     ("name", _("Name")),

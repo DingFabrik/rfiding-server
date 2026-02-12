@@ -26,4 +26,7 @@ class Holiday(models.Model):
         update_fields=None,):
         Holiday.cache["date"] = None
         Holiday.cache["holiday"] = None
-        return super().save(force_insert, force_update, using, update_fields)
+        return super().save(force_insert=force_insert,
+                            force_update=force_update,
+                            using=using,
+                            update_fields=update_fields)
