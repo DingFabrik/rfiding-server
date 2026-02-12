@@ -16,7 +16,7 @@ from django.utils.translation import gettext_lazy as _
 
 from base.views import BaseToggleActiveView, BaseListView, PartialMixin, TitleMixin
 from comments.views import CommentCreateView
-from server.comments.forms import CommentForm
+from comments.forms import CommentForm
 from .models import Person, Qualification
 from .forms import PersonForm, QualifyPersonForm
 from base.filters import PEOPLE_FILTER_CHOICES
