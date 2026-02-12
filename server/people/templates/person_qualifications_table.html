@@ -9,12 +9,8 @@
           </th>
           <th>{% trans "Is Instructor" %}</th>
           <th>{% trans "Is Maintainer" %}</th>
-          <th>
-            {% trans 'Instructed by' %}
-          </th>
-          <th>
-            {% trans 'Permission Level' %}
-          </th>
+          <th>{% trans 'Permission Level' %}</th>
+          <th>{% trans 'Instructed by' %}</th>
           <th>
             {% trans 'Comment' %}
           </th>
@@ -32,6 +28,7 @@
             <td>{% include "cells/machine.html" with machine=qualification.machine %}</td>
             <td>{% include "snippets/boolean.html" with object=qualification.is_instructor %}</td>
             <td>{% include "snippets/boolean.html" with object=qualification.is_maintainer %}</td>
+            <td>{% include "cells/permission_level.html" with permission_level=qualification.permission_level %}</td>
             <td>
               {% if qualification.instructed_by %}
                 <a href="{% url 'people:detail' qualification.instructed_by.pk %}">{{ qualification.instructed_by }}</a>
@@ -39,7 +36,6 @@
                 --
               {% endif %}
             </td>
-            <td>{% include "cells/permission_level.html" with permission_level=qualification.permission_level %}</td>
             <td>{{ qualification.comment|default:'' }}</td>
             <td>{% user_date qualification.created "DATE_FORMAT" %}</td>
             {% if perms.people.qualify_person %}

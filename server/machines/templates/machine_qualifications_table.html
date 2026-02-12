@@ -5,9 +5,9 @@
         <thead>
             <tr>
                 <th>{% trans "Name" %}</th>
-                <th>{% trans "Access Type" %}
                 <th>{% trans "Is Instructor" %}</th>
                 <th>{% trans "Is Maintainer" %}</th>
+                <th>{% trans "Access Type" %}
                 <th style="max-width: 40%;">{% trans "Comment" %}</th>
                 <th>{% trans "Instructed by" %}</th>
                 <th>{% trans "Date" %}</th>
@@ -20,9 +20,9 @@
             {% for qualification in qualifications %}
             <tr class="align-middle">
                 <td>{% include "cells/person.html" with person=qualification.person %}</td>
-                <td>{{ qualification.get_permission_level_display }}</td>
                 <td>{% include "snippets/boolean.html" with object=qualification.is_instructor %}</td>
                 <td>{% include "snippets/boolean.html" with object=qualification.is_maintainer %}</td>
+                <td>{% include "cells/permission_level.html" with permission_level=qualification.permission_level %}</td>
                 <td style="max-width: 600px;">{{ qualification.comment }}</td>
                 <td>{% if qualification.instructed_by %}
                     <a href="{% url "people:detail" qualification.instructed_by.pk %}">{{ qualification.instructed_by }}</a>
