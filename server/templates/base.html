@@ -147,6 +147,11 @@
       urlMap['person-for-token-popover'] = '{% url "tokens:person-for-token-popover" %}';
       urlMap['person-popover'] = '{% url "people:person-popover" %}';
       urlMap['machine-popover'] = '{% url "machines:popover" %}';
+
+      $('#searchUniversalModal').on('shown.bs.modal', function() {
+        $('#search_universal_input').focus();
+        console.log("Give Focus");
+      })
     </script>
   </body>
 </html>
