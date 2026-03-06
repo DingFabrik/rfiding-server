@@ -17,7 +17,7 @@ class MachineForm(forms.ModelForm):
             "name",
             "type",
             "parent",
-            "compartment_id"
+            "compartment_id",
             "location",
             "state",
             "needs_qualification",

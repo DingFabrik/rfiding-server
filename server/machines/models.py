@@ -44,7 +44,6 @@ ENFORCE_API_KEYS = (
     settings.ENFORCE_API_KEYS if hasattr(settings, "ENFORCE_API_KEYS") else False
 )
 
-
 class Machine(TimestampedModel):
     class SupportedChips(models.TextChoices):
         ESP32 = "esp32", _("ESP32")
