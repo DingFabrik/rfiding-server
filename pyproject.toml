@@ -11,23 +11,23 @@ python = "^3.12"
 django = "^6.0"
 djangorestframework = "^3.16.1"
 django-crispy-forms = "^2.5"
-crispy-bootstrap5 = "^2025.6"
-django-autocomplete-light = "^3.11.0"
+crispy-bootstrap5 = "^2026.3"
+django-autocomplete-light = "^4.0.1"
 django-auditlog = "^3.4.0"
 toml = "^0.10.2"
 django-webpack-loader = "^3.2.2"
 channels = {extras = ["daphne"], version = "^4.3.2"}
-aioesphomeapi = "^43.1.0"
+aioesphomeapi = "^45.3.1"
 celery = {extras = ["redis"], version = "^5.6.0"}
 django-celery-beat = { git = "https://github.com/celery/django-celery-beat.git" }
 django-celery-results = "^2.6.0"
 
 [tool.poetry.group.dev.dependencies]
-django-debug-toolbar = "^4.4.6"
+django-debug-toolbar = "^6.3.0"
 freezegun = "^1.5.5"
 factory-boy = "^3.3.1"
-sphinx = "^8.2.3"
-sphinxcontrib-httpdomain = "^1.8.1"
+sphinx = "^9.1.0"
+sphinxcontrib-httpdomain = "^2.0.0"
 furo = "^2025.9.25"
 
 [tool.poetry.group.slack.dependencies]
