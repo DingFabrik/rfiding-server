@@ -12,9 +12,13 @@ title="{% trans 'Assign Token' %}"><i class="bi-plus-lg"></i></a>
 {% endblock %}
 
 {% block bottom_actions %}
-{% if perms.tokens.create_token %}
+{% if perms.tokens.create_token and paginator.count > 1 %}
 <a href="{% url 'tokens:unknown' %}" class="btn btn-primary"data-bs-toggle="tooltip"
 title="{% trans 'Assign Token' %}"><i class="bi-plus-lg"></i></a>{% endif %}
+{% endblock %}
+
+{% block empty_state %}
+{% include "snippets/empty_list.html" with model=model icon="broadcast" can_create=can_create %}
 {% endblock %}
 
 {% block table %}

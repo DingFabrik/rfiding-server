@@ -22,6 +22,10 @@
 {% block bottom_actions %}
 {% endblock %}
 
+{% block empty_state %}
+{% include "snippets/empty_list.html" with model=model icon="card-list" can_create=False %}
+{% endblock %}
+
 {% block table %}
     <thead>
         <tr>

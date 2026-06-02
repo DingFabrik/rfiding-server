@@ -1,6 +1,10 @@
 {% extends base_template %}
 {% load i18n %}
 
+{% block empty_state %}
+{% include "snippets/empty_list.html" with model=model icon="person" %}
+{% endblock %}
+
 {% block table %}
     <thead>
         <tr>

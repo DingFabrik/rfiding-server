@@ -4,6 +4,10 @@
 {% block top_actions %}
 {% endblock %}
 
+{% block empty_state %}
+{% include "snippets/empty_list.html" with model=model icon="broadcast" can_create=can_create %}
+{% endblock %}
+
 {% block table_outer %}
 <small class="text-secondary">{% trans "Blacklisted tokens do not appear in Unknown Tokens" %}</small>
 <table class="table table-bordered table-hover mt-2">

@@ -1,6 +1,10 @@
 {% extends base_template %}
 {% load i18n %}{% load base_extra %}
 
+{% block empty_state %}
+{% include "snippets/empty_list.html" with model=model icon="calendar-event" can_create=can_create %}
+{% endblock %}
+
 {% block table %}
     <thead>
         <tr>

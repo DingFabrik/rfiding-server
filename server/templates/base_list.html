@@ -16,21 +16,27 @@
 {% endblock %}
 
 {% block bottom_actions %}
-{% if can_create %}
+{% if can_create and paginator.count > 1 %}
 <a href="{% url request.resolver_match.namespace|add:':create' %}" class="btn btn-primary" data-bs-toggle="tooltip" title="{% with model|verbose_name as modelname %}{% blocktrans %}Add {{ modelname }}{% endblocktrans %}{% endwith %}"><i class="bi-plus-lg"></i></a>
 {% endif %}
 {% endblock %}
 
 {% block content %}
+{% if paginator.count == 0 %}
+{% block empty_state %}
+{% include "snippets/empty_list.html" with model=model %}
+{% endblock %}
+{% else %}
 <div id="list_container">
     <div class="table-responsive">
-    {% block table_outer %}
-    <table class="table table-bordered table-hover">
-    {% block table %}
-    {% endblock %}
-    </table>
-    {% endblock %}
-</div>
+        {% block table_outer %}
+            <table class="table table-bordered table-hover">
+                {% block table %}
+                {% endblock %}
+            </table>
+        {% endblock %}
+    </div>
     {% include "base_pagination.html" with set_history=set_history|default:True %}
 </div>
+{% endif %}
 {% endblock %}
