@@ -123,6 +123,7 @@ LANGUAGES = [
 TIME_ZONE = "UTC"
 
 USE_I18N = True
+TIME_FORMAT = "H:i"
 
 USE_TZ = True
 

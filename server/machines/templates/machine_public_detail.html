@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{{ machine.name }}{% endblock %}
+
+{% block content %}
+  <div class="row mb-4">
+    <div class="col-md-6">
+      <h4>{% trans 'Details' %}</h4>
+      <ul class="list-unstyled">
+        <li>
+          <span class="fw-bold text-secondary-emphasis">{% trans 'Type' %}:</span> {{ machine.get_type_display }}
+        </li>
+        {% if machine.location %}
+          <li>
+            <span class="fw-bold text-secondary-emphasis">{% trans 'Location' %}:</span> {{ machine.location }}
+          </li>
+        {% elif machine.parent.location %}
+          <li>
+            <span class="fw-bold text-secondary-emphasis">{% trans 'Location' %}:</span> {{ machine.parent.location }}
+          </li>
+        {% endif %}
+        {% if machine.type != "lock_group" %}
+          <li>
+            <span class="fw-bold text-secondary-emphasis">{% trans 'State' %}:</span>{% include "snippets/machine_state_label.html" with object=machine %}
+          </li>
+        {% endif %}
+        <li>
+          <span class="fw-bold text-secondary-emphasis">{% trans 'Allowed on Holidays' %}:</span> {{ machine.allowed_on_holidays|yesno:_("Yes,No") }}
+        </li>
+        <li>
+          <span class="fw-bold text-secondary-emphasis">{% trans 'Usage Times' %}</span>
+          {% if machine.times.exists %}
+            <ul>
+              {% for time in machine.times.all %}
+                <li>{{ time }}</li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            <span class="text-body-secondary ms-2">{% trans 'No specific usage times defined.' %}</span>
+          {% endif %}
+        </li>
+      </ul>
+    </div>
+  </div>
+
+    <div class="row">
+      <div class="col-12">
+        <h4>{% trans 'Instructors' %}</h4>
+        {% if machine.needs_qualification %}
+          {% if instructors %}
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>{% trans 'Name' %}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for qualification in instructors %}
+                  <tr>
+                    <td>{{ qualification.person.name }}</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          {% else %}
+            <p class="text-body-secondary">{% trans 'No instructors are currently assigned to this machine.' %}</p>
+          {% endif %}
+        {% else %}
+            <p class="text-body-secondary">{% trans 'This machine does not require qualification, so there are no instructors assigned.' %}</p>
+        {% endif %}
+      </div>
+    </div>
+{% endblock %}

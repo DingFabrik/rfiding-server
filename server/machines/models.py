@@ -8,6 +8,7 @@ from auditlog.registry import auditlog
 from django.conf import settings
 from datetime import timedelta
 from django.contrib.contenttypes.fields import GenericRelation
+from django.utils import formats
 
 from machines.fields import WeekdayFormField
 
@@ -242,6 +243,36 @@ class MachineTime(TimestampedModel):
     weekdays = WeekdayField()
     start_time = models.TimeField()
     end_time = models.TimeField()
+    
+    def __str__(self):
+        
+        return f"{self.get_weekdays_display()} {formats.time_format(self.start_time)} - {formats.time_format(self.end_time)}"
+    
+    def get_weekdays_display(self):
+        if not self.weekdays or len(self.weekdays) == 7:
+            return _("Everyday")
+        if self.weekdays == [0,1,2,3,4]: 
+            return _("Weekdays")
+        if self.weekdays == [5,6]:
+            return _("Weekends")
+        days = []
+        print(self.weekdays)
+        for day in self.weekdays:
+            if day == 0:
+                days.append(_("Monday"))
+            elif day == 1:
+                days.append(_("Tuesday"))
+            elif day == 2:
+                days.append(_("Wednesday"))
+            elif day == 3:
+                days.append(_("Thursday"))
+            elif day == 4:
+                days.append(_("Friday"))
+            elif day == 5:
+                days.append(_("Saturday"))
+            elif day == 6:
+                days.append(_("Sunday"))
+        return ", ".join(days)
 
 
 class MachineRegistrationRequest(TimestampedModel):

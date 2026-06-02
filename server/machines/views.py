@@ -63,12 +63,38 @@ class MachineListView(BaseListView):
         return context
 
 
+class MachinePublicDetailView(TitleMixin, DetailView):
+    model = Machine
+    template_name = "machine_public_detail.html"
+    context_object_name = "machine"
+
+    def get_title(self):
+        return self.object.name
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if self.object.needs_qualification:
+            context["instructors"] = (
+                self.object.qualified_people.filter(is_instructor=True)
+                .select_related("person")
+                .all()
+            )
+        else:
+            context["instructors"] = None
+        return context
+
+
 class MachineDetailView(TitleMixin, PermissionRequiredMixin, DetailView):
     permission_required = "machines.view_machine"
 
     model = Machine
     template_name = "machine_detail.html"
     context_object_name = "machine"
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return MachinePublicDetailView.as_view()(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
     def get_title(self):
         return self.object.name
