@@ -5,7 +5,7 @@ from crispy_forms.layout import Layout, Fieldset, Submit, HTML
 from crispy_forms.bootstrap import FormActions
 from django.utils.translation import gettext as _
 
-from .models import RFIDingUser
+from .models import RFIDingUser, UserWidget
 
 class ProfileForm(forms.ModelForm):
     
@@ -111,3 +111,14 @@ class GroupForm(forms.ModelForm):
         widgets = {
             "permissions": forms.SelectMultiple(attrs={"size": "17"}),
         }
+
+class UserWidgetForm(forms.ModelForm):
+    class Meta:
+        model = UserWidget
+        fields = ["widget", "width"]
+        widgets = {
+            "widget": forms.RadioSelect()
+        }
+        
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)

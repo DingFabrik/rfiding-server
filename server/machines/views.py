@@ -92,7 +92,7 @@ class MachineDetailView(TitleMixin, PermissionRequiredMixin, DetailView):
     context_object_name = "machine"
 
     def dispatch(self, request, *args, **kwargs):
-        if not request.user.is_authenticated:
+        if not request.user.is_authenticated or not request.user.has_perm("machines.view_machine") or request.GET.get("public", "false").lower() == "true":
             return MachinePublicDetailView.as_view()(request, *args, **kwargs)
         return super().dispatch(request, *args, **kwargs)
 

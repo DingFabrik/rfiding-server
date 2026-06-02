@@ -21,7 +21,7 @@ from django.shortcuts import render
 from base.views import TitleMixin, BaseListView, PartialMixin
 from .widgets import WidgetDataProvider
 from users.models import RFIDingUser, UserWidget
-from .forms import UserForm, GroupForm, ProfileForm
+from .forms import UserForm, GroupForm, ProfileForm, UserWidgetForm
 
 
 @method_decorator(login_required, name="dispatch")
@@ -208,8 +208,8 @@ class WidgetCreateView(TitleMixin, PartialMixin, CreateView):
     title = _("Add Widget")
 
     model = UserWidget
+    form_class = UserWidgetForm
     template_name = "widget_form.html"
-    fields = ["widget", "width"]
     success_url = reverse_lazy("home")
     partial_base_template = "partial_base_form.html"
     full_base_template = "base_form.html"

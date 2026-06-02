@@ -13,7 +13,7 @@
             <th width="62"></th>
             {% endif %}
         </tr>
-        </thead>
+    </thead>
 {% for object in machines %}
 <tr>
     <td><a href="{% url "machines:detail" object.pk %}">{{ object.name }}</a></td>
@@ -22,10 +22,10 @@
     <td>{% include "snippets/machine_state_label.html" with object=object %}</td>
     <td>{{ object.get_type_display }}</td>
     {% if can_edit %}
-    <td>
-    <a href="{% url 'machines:update' object.pk %}" data-bs-toggle="tooltip" title="{% trans 'Edit' %}"><i class="bi-pencil-square me-2"></i></a>
-    <a href="{% url "machines:configure" object.pk %}" data-bs-toggle="tooltip" title="{% trans 'Configure' %}"><i class="bi-sliders"></i></a>
-    </td>
+        <td>
+            <a href="{% url 'machines:update' object.pk %}" data-bs-toggle="tooltip" title="{% trans 'Edit' %}"><i class="bi-pencil-square me-2"></i></a>
+            <a href="{% url "machines:configure" object.pk %}" data-bs-toggle="tooltip" title="{% trans 'Configure' %}"><i class="bi-sliders"></i></a>
+        </td>
     {% endif %}
 </tr>
 {% endfor %}
