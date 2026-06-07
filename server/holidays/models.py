@@ -2,9 +2,9 @@ from django.db import models
 from django.utils.translation import gettext as _
 
 class Holiday(models.Model):
-    name = models.CharField(max_length=100)
-    date = models.DateField(unique=True)
-    repeats_annually = models.BooleanField(default=False)
+    name = models.CharField(max_length=100, verbose_name=_("Name"))
+    date = models.DateField(unique=True, verbose_name=_("Date"))
+    repeats_annually = models.BooleanField(default=False, verbose_name=_("Repeats Annually"))
 
     class Meta:
         verbose_name = _("Holiday")

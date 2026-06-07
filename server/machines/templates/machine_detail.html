@@ -23,7 +23,7 @@
       </div>
     </div>
     <div class="btn-group" role="group">
-      <button type="button" id="logsButton" data-bs-toggle="modal" data-bs-target="#logModal" class="btn btn-secondary" hx-get="{% url 'machines:logs' object.pk %}" hx-target="#logContainer" hx-swap="outerHTML" hx-trigger="click"><i class="bi-pencil-square me-2"></i>{% trans 'Logs ' %}</button>
+      <button type="button" id="logsButton" data-bs-toggle="modal" data-bs-target="#logModal" class="btn btn-secondary" hx-get="{% url 'machines:logs' object.pk %}" hx-target="#logContainer" hx-swap="outerHTML" hx-trigger="click"><i class="bi-pencil-square me-2"></i>{% trans 'Logs' %}</button>
     </div>
   {% endif %}
   <div class="btn-group" role="group">
@@ -94,7 +94,7 @@
           <span class="fw-bold text-secondary-emphasis">{% trans 'MAC Address' %}:</span> {{ object.mac_address }}
         </li>
         <li>
-          <span class="fw-bold text-secondary-emphasis">{% trans 'IP Address' %}:</span> {{ object.ip_address }}
+          <span class="fw-bold text-secondary-emphasis">{% trans 'IP-Address' %}:</span> {{ object.ip_address }}
         </li>
       </ul>
     </div>

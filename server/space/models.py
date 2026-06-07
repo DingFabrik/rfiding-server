@@ -13,3 +13,5 @@ class SpaceState(TimestampedModel):
 
     class Meta:
         ordering = ["-created"]
+        verbose_name = _("Space State")
+        verbose_name_plural = _("Space States")

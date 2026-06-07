@@ -21,12 +21,18 @@ class AccessLog(models.Model):
         verbose_name_plural = _("Access Logs")
         ordering = ("-timestamp",)
 
-    timestamp = models.DateTimeField(auto_now_add=True)
+    timestamp = models.DateTimeField(auto_now_add=True, verbose_name=_("Timestamp"))
     token = models.ForeignKey(
-        "tokens.Token", on_delete=models.SET_NULL, null=True, blank=True
+        "tokens.Token",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name=_("Token"),
     )
-    machine = models.ForeignKey("machines.Machine", on_delete=models.CASCADE)
-    type = models.CharField(max_length=20, choices=LOG_TYPES)
+    machine = models.ForeignKey(
+        "machines.Machine", on_delete=models.CASCADE, verbose_name=_("Machine")
+    )
+    type = models.CharField(max_length=20, choices=LOG_TYPES, verbose_name=_("Type"))
 
     def __str__(self):
         return f"{self.timestamp} {self.token} {self.machine}"

@@ -46,10 +46,10 @@ class MachineForm(forms.ModelForm):
                 css_id="security-fieldset",
             ),
             Fieldset(_("Client"),
-                     "chip",
-                     css_class="border rounded p-2 mb-3",
-                     css_id="client-fieldset",
-                     ),
+                    "chip",
+                    css_class="border rounded p-2 mb-3",
+                    css_id="client-fieldset",
+                    ),
             FormActions(
                 Submit("submit", _("Save")),
                 HTML(

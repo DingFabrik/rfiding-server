@@ -27,7 +27,7 @@ from base.filters import MACHINE_FILTER_CHOICES
 MACHINE_SORT_CHOICES = (
     ("name", _("Name")),
     ("hostname", _("Hostname")),
-    ("ip_address", _("IP Address")),
+    ("ip_address", _("IP-Address")),
     ("mac_address", _("MAC Address")),
     ("-updated", _("Last Modified")),
 )

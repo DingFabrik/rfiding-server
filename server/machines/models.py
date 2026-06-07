@@ -2,7 +2,7 @@ import datetime
 import uuid
 from django.db import models
 from base.models import TimestampedModel
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 from django.urls import reverse
 from auditlog.registry import auditlog
 from django.conf import settings
@@ -11,6 +11,7 @@ from django.contrib.contenttypes.fields import GenericRelation
 from django.utils import formats
 
 from machines.fields import WeekdayFormField
+
 
 def is_str(obj):
     return isinstance(obj, str)
@@ -45,6 +46,7 @@ ENFORCE_API_KEYS = (
     settings.ENFORCE_API_KEYS if hasattr(settings, "ENFORCE_API_KEYS") else False
 )
 
+
 class Machine(TimestampedModel):
     class SupportedChips(models.TextChoices):
         ESP32 = "esp32", _("ESP32")
@@ -59,16 +61,18 @@ class Machine(TimestampedModel):
         LOCK = "lock", _("Lock")
         LOCK_GROUP = "lock_group", _("Locker")
         COMPARTMENT = "compartment", _("Compartment")
-        
+
     class MachineStatus(models.TextChoices):
         ACTIVE = "active", _("Active")
         INACTIVE = "inactive", _("Inactive")
         MAINTENANCE = "maintenance", _("Maintenance")
 
-
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, verbose_name=_("Name"))
     type = models.CharField(
-        max_length=100, choices=MachineType.choices, default=MachineType.PRIMARY,
+        max_length=100,
+        choices=MachineType.choices,
+        default=MachineType.PRIMARY,
+        verbose_name=_("Type"),
         help_text=_("Type of machine. Primary machines are the main machines."),
     )
     parent = models.ForeignKey(
@@ -77,29 +81,51 @@ class Machine(TimestampedModel):
         related_name="children",
         null=True,
         blank=True,
+        verbose_name=_("Parent Machine"),
         help_text=_("If this is a compartment in a locker, select the locker here."),
     )
-    compartment_id = models.CharField(max_length=20, null=True, blank=True)
+    compartment_id = models.CharField(
+        max_length=20,
+        null=True,
+        blank=True,
+        verbose_name=_("Compartment ID"),
+        help_text=_("Identifier for the compartment in a locker."),
+    )
     location = models.ForeignKey(
         "locations.Location",
         on_delete=models.SET_NULL,
         related_name="machines",
         null=True,
         blank=True,
+        verbose_name=_("Location"),
     )
-    state = models.CharField(max_length=20, default=MachineStatus.ACTIVE, choices=MachineStatus.choices)
+    state = models.CharField(
+        max_length=20, default=MachineStatus.ACTIVE, choices=MachineStatus.choices, verbose_name=_("State")
+    )
     needs_qualification = models.BooleanField(
         default=True,
+        verbose_name=_("Needs Qualification"),
         help_text=_("If disabled, any active user can access this machine."),
     )
 
-    mac_address = models.CharField(max_length=17, db_index=True, null=True, blank=True)
-    hostname = models.CharField(max_length=100, null=True, blank=True)
-    ip_address = models.GenericIPAddressField(null=True, blank=True)
+    mac_address = models.CharField(
+        max_length=17,
+        db_index=True,
+        null=True,
+        blank=True,
+        verbose_name=_("MAC Address"),
+    )
+    hostname = models.CharField(
+        max_length=100, null=True, blank=True, verbose_name=_("Hostname")
+    )
+    ip_address = models.GenericIPAddressField(
+        null=True, blank=True, verbose_name=_("IP-Address")
+    )
     encryption_key = models.CharField(
         max_length=64,
         null=True,
         blank=True,
+        verbose_name=_("Encryption Key"),
         help_text=_(
             "64 character encryption key for secure communication with the machine."
         ),
@@ -109,29 +135,45 @@ class Machine(TimestampedModel):
         null=True,
         blank=True,
         help_text=_("API Key for authenticated when the machine accesses the API."),
+        verbose_name=_("API Key"),
     )
     chip = models.CharField(
-        max_length=100, default=SupportedChips.ESP32, choices=SupportedChips.choices
+        verbose_name=_("Chip"),
+        max_length=100,
+        default=SupportedChips.ESP32,
+        choices=SupportedChips.choices,
     )
-    firmware_version = models.CharField(max_length=50, null=True, blank=True)
+    firmware_version = models.CharField(
+        max_length=50, null=True, blank=True, verbose_name=_("Firmware Version")
+    )
 
-    log_booted = models.BooleanField(default=True, help_text=_("Log boot events"))
+    log_booted = models.BooleanField(
+        default=True, verbose_name=_("Log Booted"), help_text=_("Log boot events")
+    )
     log_enabled = models.BooleanField(
-        default=True, help_text=_("Log successful unlock events")
+        default=True,
+        verbose_name=_("Log Enabled"),
+        help_text=_("Log successful unlock events"),
     )
     log_disabled = models.BooleanField(
-        default=False, help_text=_("Log when machine is disabled again")
+        default=False,
+        verbose_name=_("Log Disabled"),
+        help_text=_("Log when machine is disabled again"),
     )
     log_unsuccessful = models.BooleanField(
-        default=False, help_text=_("Log unsuccessful unlock attempts")
+        default=False,
+        verbose_name=_("Log Unsuccessful"),
+        help_text=_("Log unsuccessful unlock attempts"),
     )
 
     runtimer = models.DurationField(
         default=timedelta(),
+        verbose_name=_("Run Timer"),
         help_text=_("Time until the machine is locked again when it is not active."),
     )
     min_power = models.IntegerField(
         default=10,
+        verbose_name=_("Minimum Power"),
         help_text=_(
             "Minimum power consumption in watts for the machine to be considered active."
         ),
@@ -139,27 +181,31 @@ class Machine(TimestampedModel):
     control_parameter = models.CharField(max_length=100, null=True, blank=True)
     display_time_countdown = models.BooleanField(
         default=True,
+        verbose_name=_("Display Time Countdown"),
         help_text=_(
             "Whether the machine displays the time remaining until it locks again when it is unlocked but not active."
         ),
     )
     display_power_consumption = models.BooleanField(
         default=True,
+        verbose_name=_("Display Power Consumption"),
         help_text=_("If the machine displays the power consumption when it is active."),
     )
     link_relays = models.BooleanField(
         default=False,
+        verbose_name=_("Link Relays"),
         help_text=_(
             "If set, the machine relays are linked and the secondary relay is activated together with the primary relay."
         ),
     )
     allowed_on_holidays = models.BooleanField(
         default=True,
+        verbose_name=_("Allowed on Holidays"),
         help_text=_("If set, the machine can be used on holidays."),
     )
-    
+
     comments = GenericRelation("comments.Comment")
-    
+
     class Meta:
         verbose_name = _("Machine")
         verbose_name_plural = _("Machines")
@@ -168,10 +214,11 @@ class Machine(TimestampedModel):
             models.Index(fields=["mac_address"]),
             models.Index(fields=["name"]),
         ]
-        permissions = (("view_machine_state", _("View Machine State")),
-                       ("view_machine_logs", _("View Machine Logs")),
-                       ("send_machine_commands", _("Send Machine Commands")),
-                       ("comment_machine", _("Can comment on machines")),
+        permissions = (
+            ("view_machine_state", _("View Machine State")),
+            ("view_machine_logs", _("View Machine Logs")),
+            ("send_machine_commands", _("Send Machine Commands")),
+            ("comment_machine", _("Can comment on machines")),
         )
 
     def __str__(self):
@@ -184,15 +231,15 @@ class Machine(TimestampedModel):
             and len(self.encryption_key) > 0
             and self.ip_address is not None
         )
-        
+
     @property
     def instructors(self):
         return self.qualified_people.filter(is_instructor=True)
-    
+
     @property
     def maintainers(self):
         return self.qualified_people.filter(is_maintainer=True)
-    
+
     @property
     def is_active(self):
         return self.state == Machine.MachineStatus.ACTIVE
@@ -240,20 +287,20 @@ class Machine(TimestampedModel):
 
 class MachineTime(TimestampedModel):
     machine = models.ForeignKey(Machine, on_delete=models.CASCADE, related_name="times")
-    weekdays = WeekdayField()
-    start_time = models.TimeField()
-    end_time = models.TimeField()
-    
+    weekdays = WeekdayField(verbose_name=_("Weekdays"))
+    start_time = models.TimeField(verbose_name=_("Start Time"))
+    end_time = models.TimeField(verbose_name=_("End Time"))
+
     def __str__(self):
-        
+
         return f"{self.get_weekdays_display()} {formats.time_format(self.start_time) if isinstance(self.start_time, datetime.time) else self.start_time} - {formats.time_format(self.end_time) if isinstance(self.end_time, datetime.time) else self.end_time}"
-    
+
     def get_weekdays_display(self):
         if not self.weekdays or len(self.weekdays) == 7:
             return _("Everyday")
-        if self.weekdays == [0,1,2,3,4]: 
+        if self.weekdays == [0, 1, 2, 3, 4]:
             return _("Weekdays")
-        if self.weekdays == [5,6]:
+        if self.weekdays == [5, 6]:
             return _("Weekends")
         days = []
         for day in self.weekdays:
@@ -275,9 +322,9 @@ class MachineTime(TimestampedModel):
 
 
 class MachineRegistrationRequest(TimestampedModel):
-    mac_address = models.CharField(max_length=17, db_index=True)
-    hostname = models.CharField(max_length=100)
-    ip_address = models.GenericIPAddressField()
+    mac_address = models.CharField(max_length=17, db_index=True, verbose_name=_("MAC Address"))
+    hostname = models.CharField(max_length=100, verbose_name=_("Hostname"))
+    ip_address = models.GenericIPAddressField(verbose_name=_("IP-Address"))
 
     class Meta:
         verbose_name = _("Registration Request")
@@ -286,15 +333,16 @@ class MachineRegistrationRequest(TimestampedModel):
 
     def __str__(self):
         return self.mac_address
-    
+
 
 class MachineControlKey(TimestampedModel):
     machine = models.ForeignKey(
-        Machine, on_delete=models.CASCADE, related_name="control_keys"
+        Machine, on_delete=models.CASCADE, related_name="control_keys",
+        verbose_name=_("Machine"),
     )
-    key = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    purpose = models.CharField(max_length=100)
-    last_used = models.DateTimeField(null=True, blank=True)
+    key = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, verbose_name=_("Key"))
+    purpose = models.CharField(max_length=100, verbose_name=_("Purpose"))
+    last_used = models.DateTimeField(null=True, blank=True, verbose_name=_("Last Used"))
 
     class Meta:
         verbose_name = _("Control Key")
@@ -304,19 +352,20 @@ class MachineControlKey(TimestampedModel):
     def __str__(self):
         return self.purpose
 
+
 class MachineConnection(TimestampedModel):
     primary_machine = models.ForeignKey(
-        Machine, on_delete=models.CASCADE, related_name="as_primary_machine"
+        Machine, on_delete=models.CASCADE, related_name="as_primary_machine", verbose_name=_("Primary Machine")
     )
     secondary_machine = models.ForeignKey(
-        Machine, on_delete=models.CASCADE, related_name="as_secondary_machine"
+        Machine, on_delete=models.CASCADE, related_name="as_secondary_machine", verbose_name=_("Secondary Machine")
     )
-    
+
     class Meta:
         verbose_name = _("Machine Connection")
         verbose_name_plural = _("Machine Connections")
         ordering = ["-created"]
-        
+
     def __str__(self):
         return f"{self.primary_machine} -> {self.secondary_machine}"
 

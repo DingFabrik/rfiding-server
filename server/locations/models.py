@@ -6,11 +6,16 @@ from base.models import TimestampedModel
 
 
 class Location(TimestampedModel):
-    name = models.CharField(max_length=100)
-    description = models.TextField(blank=True)
+    name = models.CharField(max_length=100, verbose_name=_("Name"))
+    description = models.TextField(blank=True, verbose_name=_("Description"))
 
     parent = models.ForeignKey(
-        "self", on_delete=models.CASCADE, null=True, blank=True, related_name="children"
+        "self",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="children",
+        verbose_name=_("Parent"),
     )
 
     class Meta:

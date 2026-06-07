@@ -14,20 +14,20 @@ from machines.models import Machine
 from people.models import Person
 
 TOKEN_STATUS = (
-    ("unknown", "unknown"),
-    ("archived", "Archived"),
-    ("assigned", "Assigned"),
+    ("unknown", _("Unknown")),
+    ("archived", _("Archived")),
+    ("assigned", _("Assigned")),
 )
 
 logger = logging.getLogger(__name__)
 
 
 class TokenType(TimestampedModel):
-    name = models.CharField(max_length=100)
-    label_prefix = models.CharField(max_length=10, blank=True)
-    label_id_padding = models.IntegerField(default=0)
-    description = models.TextField(null=True, blank=True)
-    is_active = models.BooleanField(default=True)
+    name = models.CharField(max_length=100, verbose_name=_("Name"))
+    label_prefix = models.CharField(max_length=10, blank=True, verbose_name=_("Label Prefix"))
+    label_id_padding = models.IntegerField(default=0, verbose_name=_("Label ID Padding"))
+    description = models.TextField(null=True, blank=True, verbose_name=_("Description"))
+    is_active = models.BooleanField(default=True, verbose_name=_("Is Active"))
 
     def __str__(self):
         return f"{self.name}"
@@ -44,14 +44,14 @@ class TokenType(TimestampedModel):
 
 
 class Token(TimestampedModel):
-    serial = models.CharField(max_length=20, db_index=True)
-    person = models.ForeignKey(Person, on_delete=models.CASCADE)
-    purpose = models.CharField(max_length=100)
-    type = models.ForeignKey(TokenType, on_delete=models.CASCADE, null=True)
-    label_id = models.IntegerField(null=True, blank=True)
-    notes = models.TextField(null=True, blank=True)
-    is_active = models.BooleanField(default=True)
-    archived = models.DateTimeField(null=True, blank=True)
+    serial = models.CharField(max_length=20, db_index=True, verbose_name=_("Serial"))
+    person = models.ForeignKey(Person, on_delete=models.CASCADE, verbose_name=_("Person"))
+    purpose = models.CharField(max_length=100, verbose_name=_("Purpose"))
+    type = models.ForeignKey(TokenType, on_delete=models.CASCADE, null=True, verbose_name=_("Type"))
+    label_id = models.IntegerField(null=True, blank=True, verbose_name=_("Label ID"))
+    notes = models.TextField(null=True, blank=True, verbose_name=_("Notes"))
+    is_active = models.BooleanField(default=True, verbose_name=_("Is Active"))
+    archived = models.DateTimeField(null=True, blank=True, verbose_name=_("Archived"))
     comments = GenericRelation("comments.Comment")
 
     def __str__(self):
@@ -76,8 +76,8 @@ class Token(TimestampedModel):
 
 
 class UnknownToken(TimestampedModel):
-    serial = models.CharField(max_length=20, blank=False)
-    machine = models.ForeignKey(Machine, on_delete=models.CASCADE)
+    serial = models.CharField(max_length=20, blank=False, verbose_name=_("Serial"))
+    machine = models.ForeignKey(Machine, on_delete=models.CASCADE, verbose_name=_("Machine"))
 
     def __str__(self):
         return f"{self.serial}"
@@ -89,7 +89,7 @@ class UnknownToken(TimestampedModel):
 
 
 class BlacklistedToken(TimestampedModel):
-    serial = models.CharField(max_length=20)
+    serial = models.CharField(max_length=20, verbose_name=_("Serial"))
 
     def __str__(self):
         return f"{self.serial}"
