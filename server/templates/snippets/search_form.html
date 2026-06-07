@@ -1,23 +1,26 @@
 {% load i18n %}
 <form class="float-start row row-cols-lg-auto g-3 align-items-center">
     <div class="col-12">
-    <input
-    id="id_search"
-    type="search"
-    class="form-control"
-    placeholder="{% trans "Search" %}"
-    name="search"
-    value="{{ request.GET.search }}"
-    hx-get="{{ request.path }}"
-    hx-include="#id_sort, #id_filter"
-    hx-target="#list_container"
-    hx-trigger="input changed delay:300ms, search"
-    hx-push-url="true">
+        <div class="input-group">
+            <span class="input-group-text"><i class="bi-search"></i></span>
+            <input
+            id="id_search"
+            type="search"
+            class="form-control"
+            placeholder="{% trans "Search" %}"
+            name="search"
+            value="{{ request.GET.search }}"
+            hx-get="{{ request.path }}"
+            hx-include="#id_sort, #id_filter"
+            hx-target="#list_container"
+            hx-trigger="input changed delay:300ms, search"
+            hx-push-url="true">
+        </div>
     </div>
     {% if filter_choices %}
     <div class="col-12">
         <div class="input-group">
-            <span class="input-group-text">{% trans "Filter" %}</span>
+            <span class="input-group-text"><i class="bi-funnel"></i></span>
             <select
             id="id_filter"
             class="form-select"
@@ -39,7 +42,7 @@
     {% if sort_choices %}
     <div class="col-12">
         <div class="input-group">
-            <span class="input-group-text">{% trans "Sort" %}</span>
+            <span class="input-group-text"><i class="bi-sort-alpha-down"></i></span>
             <select
             id="id_sort"
             class="form-select"

@@ -2,7 +2,7 @@ from django import forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Fieldset, Submit, HTML
 from crispy_forms.bootstrap import AppendedText, FormActions
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 
 from .utils import DAY_CHOICES
 from .models import Machine, MachineTime

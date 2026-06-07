@@ -1,5 +1,6 @@
 import * as bs from 'bootstrap'
 import * as htmx from './htmx.min.js'
+import * as htmx_ws from './htmx-ws.js'
 global.htmx = htmx;
 
 import Chart from 'chart.js/auto';

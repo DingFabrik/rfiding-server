@@ -5,7 +5,12 @@ from django.utils.translation import gettext_lazy as _
 from django.conf import settings
 from auditlog.registry import auditlog
 
-from base.filters import TOKEN_FILTER_CHOICES, PEOPLE_FILTER_CHOICES, MACHINE_FILTER_CHOICES
+from base.filters import (
+    TOKEN_FILTER_CHOICES,
+    PEOPLE_FILTER_CHOICES,
+    MACHINE_FILTER_CHOICES,
+)
+
 
 class UserManager(BaseUserManager):
     """Define a model manager for User model with no username field."""
@@ -53,12 +58,13 @@ THEME_COLORS = (
     ("cyan", _("Cyan")),
 )
 
+
 class RFIDingUser(AbstractUser):
     class TimeFormat(models.TextChoices):
         LOCALE = "locale", _("Locale Default")
         H12 = "12", _("12-hour")
         H24 = "24", _("24-hour")
-        
+
     class DateFormat(models.TextChoices):
         LOCALE = "locale", _("Locale Default")
         DMY = "d.m.Y", _("Day-Month-Year (DD.MM.YYYY)")
@@ -69,7 +75,7 @@ class RFIDingUser(AbstractUser):
         YSMD = "y-m-d", _("Year-Month-Day (YY-MM-DD)")
         WMDY = "M d, Y", _("Month Day, Year (Month DD, YYYY)")
         DWMY = "d M Y", _("Day Month Year (DD Month YYYY)")
-    
+
     USERNAME_FIELD = "email"
     username = None
     first_name = None
@@ -83,8 +89,18 @@ class RFIDingUser(AbstractUser):
     language = models.CharField(
         _("Language"), max_length=10, default="en", choices=settings.LANGUAGES
     )
-    date_format = models.CharField(_("Date format"), max_length=10, choices=DateFormat.choices, default=DateFormat.LOCALE)
-    time_format = models.CharField(_("Time format"), max_length=10, choices=TimeFormat.choices, default=TimeFormat.LOCALE)
+    date_format = models.CharField(
+        _("Date format"),
+        max_length=10,
+        choices=DateFormat.choices,
+        default=DateFormat.LOCALE,
+    )
+    time_format = models.CharField(
+        _("Time format"),
+        max_length=10,
+        choices=TimeFormat.choices,
+        default=TimeFormat.LOCALE,
+    )
     page_length = models.IntegerField(
         _("Page Length"),
         default=50,
@@ -109,7 +125,6 @@ class RFIDingUser(AbstractUser):
         default=MACHINE_FILTER_CHOICES[0][0],
         choices=[(choice[0], choice[1]) for choice in MACHINE_FILTER_CHOICES],
     )
-    
 
     theme_mode = models.CharField(
         max_length=10,
@@ -124,7 +139,8 @@ class RFIDingUser(AbstractUser):
         verbose_name = _("User")
         verbose_name_plural = _("Users")
         ordering = ["email"]
-        
+
+
 USER_WIDGETS = [
     ("token_counts", _("Token Counts")),
     ("people_counts", _("People Counts")),
@@ -132,18 +148,28 @@ USER_WIDGETS = [
     ("access_log_latest", _("Latest Access Log")),
 ]
 
+
 class UserWidget(models.Model):
-    user = models.ForeignKey(RFIDingUser, on_delete=models.CASCADE, related_name="widgets")
-    widget = models.CharField(max_length=100, choices=USER_WIDGETS)
-    position = models.IntegerField(default=-1)
-    width = models.IntegerField(default=4, validators=[validators.MinValueValidator(2), validators.MaxValueValidator(12)])
-    settings = models.JSONField(default=dict, blank=True)
+    user = models.ForeignKey(
+        RFIDingUser, on_delete=models.CASCADE, related_name="widgets"
+    )
+    widget = models.CharField(
+        max_length=100, choices=USER_WIDGETS, verbose_name=_("Widget")
+    )
+    position = models.IntegerField(default=-1, verbose_name=_("Position"))
+    width = models.IntegerField(
+        default=4,
+        validators=[validators.MinValueValidator(2), validators.MaxValueValidator(12)],
+        verbose_name=_("Width"),
+        help_text=_("Width of the widget in columns (2-12)"),
+    )
+    settings = models.JSONField(default=dict, blank=True, verbose_name=_("Settings"))
 
     class Meta:
         verbose_name = _("User Widget")
         verbose_name_plural = _("User Widgets")
         ordering = ["user", "position"]
-        
+
     @property
     def template(self):
         if self.widget == "token_counts" or self.widget == "people_counts":
@@ -152,7 +178,7 @@ class UserWidget(models.Model):
             return "widgets/machine_count.html"
         if self.widget == "access_log_latest":
             return "widgets/access_log_latest.html"
-        
+
     @property
     def title(self):
         if self.widget == "token_counts":

@@ -3,7 +3,7 @@ from django.contrib.auth.models import Group
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Fieldset, Submit, HTML
 from crispy_forms.bootstrap import FormActions
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 
 from .models import RFIDingUser, UserWidget
 
@@ -15,9 +15,13 @@ class ProfileForm(forms.ModelForm):
         self.helper.layout = Layout(
             "name",
             "email",
-            "language",
-            "date_format",
-            "time_format",
+            Fieldset(
+                _("Localization"),
+                "language",
+                "date_format",
+                "time_format",
+                css_class="border rounded p-2 mb-3",
+            ),
             Fieldset(
                 _("Display"),
                 "theme_mode",
