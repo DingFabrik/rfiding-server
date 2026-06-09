@@ -39,6 +39,7 @@ api_v1_urls = [
 api_v2_urls = [
     path("machine/check", v2.CheckMachineAccessView.as_view(), name="machine_check"),
     path("machine/config", v2.MachineConfigView.as_view(), name="machine_config"),
+    path("machine/disable", v2.MachineDisableView.as_view(), name="machine_disable"),
     path("machine/register", v2.MachineRegisterView.as_view(), name="machine_register"),
     path("machine/connect", v2.MachineConnectView.as_view(), name="machine_connect"),
     path("machine/control", v2.MachineControlView.as_view(), name="machine_control"),

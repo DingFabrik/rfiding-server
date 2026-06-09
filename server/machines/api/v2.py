@@ -158,7 +158,7 @@ class CheckMachineAccessView(BaseAPIView):
                 save_access_log.delay(self.machine.id, None, LOG_TYPE_UNSUCCESSFUL)
 
 
-class DisableMachineAccessView(BaseAPIView):
+class MachineDisableView(BaseAPIView):
     permission_classes = [MachineApiKeyPermission]
     required_get_parameters = ["mac_address", "tokenUid"]
 
