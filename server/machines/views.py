@@ -18,6 +18,7 @@ from base.views import BaseListView, PartialMixin, TitleMixin
 from machines.socket_helper import get_socket_data
 from comments.forms import CommentForm
 from comments.views import CommentCreateView
+from locations.models import Location
 from .models import Machine, MachineRegistrationRequest
 from .forms import MachineForm, ConfigureMachineForm, MachineTimeFormset
 from people.models import Qualification
@@ -44,21 +45,31 @@ class MachineListView(BaseListView):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        filter = self.request.GET.get("filter", self.request.user.default_machines_filter)
-        if filter == "all":
+        status_filter = self.request.GET.get("filter_status", self.request.user.default_machines_filter)
+        if status_filter == "all":
             queryset = queryset
-        elif filter == "inactive":
+        elif status_filter == "inactive":
             queryset = queryset.filter(state=Machine.MachineStatus.INACTIVE)
-        elif filter == "maintenance":
+        elif status_filter == "maintenance":
             queryset = queryset.filter(state=Machine.MachineStatus.MAINTENANCE)
         else:
             queryset = queryset.filter(state=Machine.MachineStatus.ACTIVE)
+        type_filter = self.request.GET.get("filter_type", "all")
+        if type_filter != "all":
+            queryset = queryset.filter(type=type_filter)
+        location_filter = self.request.GET.get("filter_location", "all")
+        if location_filter != "all":
+            queryset = queryset.filter(location=location_filter)
         return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["sort_choices"] = MACHINE_SORT_CHOICES
-        context["filter_choices"] = MACHINE_FILTER_CHOICES
+        locations = Location.objects.all()
+        filter_choices = MACHINE_FILTER_CHOICES.copy()
+        if locations.exists():
+            filter_choices["location"]["options"] += [(str(location.pk), location.name) for location in locations]
+        context["filter_choices"] = filter_choices
         context["filter_default"] = self.request.user.default_machines_filter
         return context
 

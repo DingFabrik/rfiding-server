@@ -22,21 +22,57 @@
 {% endblock %}
 
 {% block content %}
-{% if paginator.count == 0 %}
-{% block empty_state %}
-{% include "snippets/empty_list.html" with model=model %}
-{% endblock %}
-{% else %}
-<div id="list_container">
-    <div class="table-responsive">
-        {% block table_outer %}
-            <table class="table table-bordered table-hover">
-                {% block table %}
-                {% endblock %}
-            </table>
-        {% endblock %}
+<div class="row">
+    <div class="col-12 {% if filter_choices %}col-lg-9 col-xl-10{% endif %}">
+    {% if paginator.count == 0 %}
+    {% block empty_state %}
+    {% include "snippets/empty_list.html" with model=model %}
+    {% endblock %}
+    {% else %}
+    <div id="list_container">
+        <div class="table-responsive">
+            {% block table_outer %}
+                <table class="table table-bordered table-hover">
+                    {% block table %}
+                    {% endblock %}
+                </table>
+            {% endblock %}
+        </div>
+        {% include "base_pagination.html" with set_history=set_history|default:True %}
     </div>
-    {% include "base_pagination.html" with set_history=set_history|default:True %}
+    {% endif %}
+    </div>
+
+    {% if filter_choices %}
+    <div class="col-12 col-lg-3 col-xl-2">
+        <div class="card mb-3">
+            <div class="card-header">
+                {% trans "Filter" %}
+            </div>
+            <div class="card-body">
+                {% for key, choice in filter_choices.items %}
+                <div class="mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">{{ choice.label }}</label>
+                    <select
+                    id="id_filter_{{ key }}"
+                    class="form-select filter_choices"
+                    name="filter_{{ key }}"
+                    hx-get="{{ request.path }}"
+                    hx-include="#id_search, #id_sort, .filter_choices"
+                    hx-target="#list_container"
+                    hx-trigger="change"
+                    hx-push-url="true">
+                    {% with filter=request.GET|get_item:"filter_{{ key }}"|default:filter_default %}
+                        {% for option in choice.options %}
+                            <option value="{{ option.0 }}" {% if option.0 == filter %}selected{% endif %}>{{ option.1 }}</option>
+                        {% endfor %}
+                    {% endwith %}
+                    </select>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+    </div>
 </div>
-{% endif %}
 {% endblock %}

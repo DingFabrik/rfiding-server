@@ -43,6 +43,11 @@ def verbose_name_adaptive(object, count):
             return object._meta.verbose_name_plural
     return object.__class__.__name__
 
+@register.filter
+def get_item(dictionary, key):
+    return dictionary.get(key)
+
+
 @register.filter("range")
 def make_range(start, end):
     return range(start, end + 1)

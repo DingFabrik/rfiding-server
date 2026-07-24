@@ -17,28 +17,6 @@
             hx-push-url="true">
         </div>
     </div>
-    {% if filter_choices %}
-    <div class="col-12">
-        <div class="input-group">
-            <span class="input-group-text"><i class="bi-funnel"></i></span>
-            <select
-            id="id_filter"
-            class="form-select"
-            name="filter"
-            hx-get="{{ request.path }}"
-            hx-include="#id_search, #id_sort"
-            hx-target="#list_container"
-            hx-trigger="change"
-            hx-push-url="true">
-            {% with filter=request.GET.filter|default:filter_default %}
-            {% for choice in filter_choices %}
-                <option value="{{ choice.0 }}" {% if choice.0 == filter %}selected{% endif %}>{{ choice.1 }}</option>
-            {% endfor %}
-            {% endwith %}
-            </select>
-        </div>
-    </div>
-    {% endif %}
     {% if sort_choices %}
     <div class="col-12">
         <div class="input-group">

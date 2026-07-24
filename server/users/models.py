@@ -110,20 +110,20 @@ class RFIDingUser(AbstractUser):
     default_token_filter = models.CharField(
         _("Default Token Filter"),
         max_length=20,
-        default=TOKEN_FILTER_CHOICES[0][0],
-        choices=[(choice[0], choice[1]) for choice in TOKEN_FILTER_CHOICES],
+        default=TOKEN_FILTER_CHOICES["status"]["options"][0][0],
+        choices=TOKEN_FILTER_CHOICES["status"]["options"],
     )
     default_people_filter = models.CharField(
         _("Default People Filter"),
         max_length=20,
-        default=PEOPLE_FILTER_CHOICES[0][0],
-        choices=[(choice[0], choice[1]) for choice in PEOPLE_FILTER_CHOICES],
+        default=PEOPLE_FILTER_CHOICES["status"]["options"][0][0],
+        choices=PEOPLE_FILTER_CHOICES["status"]["options"],
     )
     default_machines_filter = models.CharField(
         _("Default Machine Filter"),
         max_length=100,
-        default=MACHINE_FILTER_CHOICES[0][0],
-        choices=[(choice[0], choice[1]) for choice in MACHINE_FILTER_CHOICES],
+        default=MACHINE_FILTER_CHOICES["status"]["options"][0][0],
+        choices=MACHINE_FILTER_CHOICES["status"]["options"],
     )
 
     theme_mode = models.CharField(

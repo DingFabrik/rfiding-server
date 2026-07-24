@@ -52,21 +52,28 @@ class TokenListView(BaseListView):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        filter = self.request.GET.get("filter", self.request.user.default_token_filter)
-        if filter == "all":
+        status_filter = self.request.GET.get("filter", self.request.user.default_token_filter)
+        if status_filter == "all":
             queryset = queryset
-        elif filter == "inactive":
+        elif status_filter == "inactive":
             queryset = queryset.filter(is_active=False)
-        elif filter == "archived":
+        elif status_filter == "archived":
             queryset = queryset.filter(archived__isnull=False)
         else:
             queryset = queryset.filter(is_active=True)
+        type_filter = self.request.GET.get("filter_type", "all")
+        if type_filter != "all":
+            queryset = queryset.filter(type=type_filter)
         return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["sort_choices"] = TOKEN_SORT_CHOICES
-        context["filter_choices"] = TOKEN_FILTER_CHOICES
+        token_types = TokenType.objects.all()
+        filter_choices = TOKEN_FILTER_CHOICES.copy()
+        if token_types.exists():
+            filter_choices["type"]["options"] += [(str(token_type.pk), token_type.name) for token_type in token_types]
+        context["filter_choices"] = filter_choices
         context["filter_default"] = self.request.user.default_token_filter
         return context
 

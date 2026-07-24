@@ -45,10 +45,10 @@ class PersonListView(BaseListView):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        filter = self.request.GET.get("filter", self.request.user.default_people_filter)
-        if filter == "all":
+        status_filter = self.request.GET.get("filter_status", self.request.user.default_people_filter)
+        if status_filter == "all":
             queryset = queryset
-        elif filter == "inactive":
+        elif status_filter == "inactive":
             queryset = queryset.filter(is_active=False)
         else:
             queryset = queryset.filter(is_active=True)
