@@ -34,6 +34,14 @@ def verbose_name_plural(object):
         return object._meta.verbose_name_plural
     return object.__class__.__name__
 
+@register.filter
+def verbose_name_adaptive(object, count):
+    if hasattr(object, "_meta"):
+        if count == 1:
+            return object._meta.verbose_name
+        else:
+            return object._meta.verbose_name_plural
+    return object.__class__.__name__
 
 @register.filter("range")
 def make_range(start, end):

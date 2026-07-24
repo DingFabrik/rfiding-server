@@ -1,5 +1,6 @@
 {% load base_extra %}
 {% load i18n %}{% load base_extra %}
+<div>{{ model_count }} {{ model|verbose_name_adaptive:model_count }}</div>
 {% if page_obj.has_previous or page_obj.has_next %}
 {% with path=page_path|default:request.path %}
 <nav aria-label="Page navigation" class="float-start">
