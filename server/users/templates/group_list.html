@@ -14,7 +14,7 @@
 {% for group in groups %}
 <tr>
 {% if perms.auth.modify_group %}
-<td><a class="link" href="{% url "users:groups:update" group.pk %}">{{ group.name }}</a></td>
+<td><a class="link-hover link-primary" href="{% url "users:groups:update" group.pk %}">{{ group.name }}</a></td>
 {% else %}
 <td>{{ group.name }}</td>
 {% endif %}

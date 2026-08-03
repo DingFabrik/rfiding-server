@@ -20,13 +20,11 @@ class ProfileForm(forms.ModelForm):
                 "language",
                 "date_format",
                 "time_format",
-                css_class="border rounded p-2 mb-3",
             ),
             Fieldset(
                 _("Display"),
                 "theme_mode",
                 "theme",
-                css_class="border rounded p-2 mb-3",
             ),
             Fieldset(
                 _("Lists"),
@@ -34,7 +32,6 @@ class ProfileForm(forms.ModelForm):
                 "default_token_filter",
                 "default_people_filter",
                 "default_machines_filter",
-                css_class="border rounded p-2 mb-3",
             ),
             FormActions(
                 Submit("submit", _("Save"))
@@ -71,7 +68,6 @@ class UserForm(forms.ModelForm):
                 "is_superuser",
                 "groups",
                 "user_permissions",
-                css_class="border rounded p-2 mb-3",
             ),
             "last_login",
             "date_joined",

@@ -8,7 +8,6 @@
 
 {% block top_actions %}
 <div class="flex flex-wrap items-center gap-2">
-    {% include "snippets/search_form.html" %}
     {% if can_create %}
     <a href="{% url request.resolver_match.namespace|add:':create' %}" class="btn btn-sm btn-primary tooltip" data-tip="{% with model|verbose_name as modelname %}{% blocktrans %}Add {{ modelname }}{% endblocktrans %}{% endwith %}"><i data-lucide="plus" class="w-4 h-4"></i></a>
     {% endif %}
@@ -30,9 +29,9 @@
     {% endblock %}
     {% else %}
     <div id="list_container">
-        <div class="max-w-full overflow-x-auto rounded-box border border-base-content/10">
+        <div class="max-w-full overflow-x-auto rounded-box bg-base-100 border border-base-content/10">
             {% block table_outer %}
-                <table class="table table-sm">
+                <table class="table">
                     {% block table %}
                     {% endblock %}
                 </table>
@@ -42,9 +41,13 @@
     </div>
     {% endif %}
     </div>
-
-    {% if filter_choices %}
     <div class="w-full lg:w-64 shrink-0">
+      <div class="card card-border bg-base-100 mb-3">
+        <div class="card-body">
+        {% include "snippets/search_form.html" %}
+        </div>
+      </div>
+    {% if filter_choices %}
         <div class="card card-border bg-base-100 mb-3">
             <div class="card-body gap-3">
                 <h2 class="card-title text-base">{% trans "Filter" %}</h2>
@@ -69,8 +72,8 @@
                 </div>
                 {% endfor %}
             </div>
-        </div>
     {% endif %}
+            </div>
     </div>
 </div>
 {% endblock %}

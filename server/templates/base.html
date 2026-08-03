@@ -18,9 +18,8 @@
     <link href="{% static "css/main.css" %}" rel="stylesheet">
   </head>
   <body
-    class="bg-base-200 flex flex-col h-full"
-    data-theme-color="{{ user.theme|default:"blue" }}"
-    data-theme-mode="{{ user.theme_mode|default:"auto" }}"
+    class="bg-base-200 flex flex-col min-h-full"
+    data-theme="{{ user.theme|default:"blue" }}-{{ user.theme_mode|default:"light" }}"
     hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
     {% if user.is_authenticated %}
     <div class="navbar bg-base-100 border-base-300 fixed top-0 z-30 border-b shadow-sm">
@@ -50,6 +49,7 @@
           <i data-lucide="search" class="w-5 h-5"></i>
         </button>
 
+        <div class="dropdown dropdown-end">
         <button
           class="btn btn-ghost btn-circle hidden lg:inline-flex"
           popovertarget="user-menu"
@@ -58,14 +58,13 @@
           <i data-lucide="circle-user" class="w-5 h-5"></i>
         </button>
         <ul
-          class="dropdown dropdown-end menu bg-base-100 rounded-box z-30 mt-3 w-56 p-2 shadow-lg hidden lg:block"
-          popover
+          class="dropdown-content menu bg-base-100 rounded-box z-30 mt-3 w-56 p-2 shadow-lg"
           id="user-menu"
           style="position-anchor:--user-menu">
           <li class="menu-title">{{ user.name|default:user.email }}</li>
           {% for item in side_menu %}
             {% if item.type == "divider" %}
-              <li class="divider my-0"></li>
+              <li class="divider"></li>
             {% else %}
               {% if item.has_permission %}
                 <li><a class="{% if item.active %}menu-active{% endif %}" href="{{ item.url }}"><i data-lucide="{{ item.icon }}" class="w-4 h-4"></i> {{ item.name }}</a></li>
@@ -79,7 +78,7 @@
             </form>
           </li>
         </ul>
-
+      </div>
         <button
           class="btn btn-ghost btn-circle lg:hidden"
           popovertarget="mobile-menu"
@@ -113,7 +112,7 @@
           <li>
             <form method="post" action="{% url "logout" %}">
               {% csrf_token %}
-              <button type="submit"><i data-lucide="log-out" class="w-4 h-4"></i> {% trans "Sign out" %}</button>
+              <button type="submit" class="btn"><i data-lucide="log-out" class="w-4 h-4"></i> {% trans "Sign out" %}</button>
             </form>
           </li>
         </ul>
@@ -140,10 +139,8 @@
   {% endblock %}
   <dialog id="hx_delete_modals" class="modal"></dialog>
   {% include 'modals/search_universal.html' %}
-    <footer class="mt-auto pb-3 pt-0 bg-base-200">
-      <div class="flex justify-center border-t pb-3 mb-3">
-      </div>
-      <p class="text-center text-base-content/60">© 2025 <a class="link" href="https://dingfabrik.de" target="_window">Dingfabrik e.V.</a> | Version: <a class="link" href="https://github.com/DingFabrik/rfiding-server" target="_window">{{ rfiding_version }}</a></p>
+    <footer class="mt-auto pb-3 pt-3 bg-base-300 border-t border-neutral/50">
+      <p class="text-center text-base-content/60">© 2026 <a class="link-hover link-primary" href="https://dingfabrik.de" target="_window">Dingfabrik e.V.</a> | Version: <a class="link-hover link-primary" href="https://github.com/DingFabrik/rfiding-server" target="_window">{{ rfiding_version }}</a></p>
     </footer>
     <script type="text/javascript" src="{% static 'js/main.js' %}"></script>
     {% block js_extra %}

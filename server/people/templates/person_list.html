@@ -13,14 +13,14 @@
             <th>{% trans "E-Mail" %}</th>
             <th>{% trans "Active" %}</th>
             {% if perms.people.modify_person or perms.people.qualify_person %}
-            <th width="62"></th>
+            <th></th>
             {% endif %}
         </tr>
         </thead>
 {% for object in people %}
 <tr>
 <td>{{ object.member_id | default:"--" }}</td>
-<td><a class="link" href="{% url "people:detail" object.pk %}">{{ object.name }}</a></td>
+<td><a class="link-hover link-primary" href="{% url "people:detail" object.pk %}">{{ object.name }}</a></td>
 <td>{{ object.email }}</td>
 <td>{% include 'snippets/active_toggle.html' %}</td>
 {% if perms.people.modify_person or perms.people.qualify_person %}

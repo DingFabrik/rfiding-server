@@ -15,7 +15,7 @@
 {% for user in users %}
 <tr>
 {% if perms.users.modify_user %}
-<td><a class="link" href="{% url "users:update" user.pk %}">{{ user.name }}</a></td>
+<td><a class="link-hover link-primary" href="{% url "users:update" user.pk %}">{{ user.name }}</a></td>
 {% else %}
 <td>{{ user.name }}</td>
 {% endif %}

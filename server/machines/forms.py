@@ -26,7 +26,6 @@ class MachineForm(forms.ModelForm):
                 "hostname",
                 "ip_address",
                 "mac_address",
-                css_class="border rounded p-2 mb-3",
                 css_id="network-fieldset",
             ),
             Fieldset(
@@ -35,19 +34,16 @@ class MachineForm(forms.ModelForm):
                 "log_enabled",
                 "log_disabled",
                 "log_unsuccessful",
-                css_class="border rounded p-2 mb-3",
                 css_id="logging-fieldset",
             ),
             Fieldset(
                 _("Security"),
                 "encryption_key",
                 "api_key",
-                css_class="border rounded p-2 mb-3",
                 css_id="security-fieldset",
             ),
             Fieldset(_("Client"),
                     "chip",
-                    css_class="border rounded p-2 mb-3",
                     css_id="client-fieldset",
                     ),
             FormActions(

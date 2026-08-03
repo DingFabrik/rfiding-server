@@ -68,7 +68,9 @@ class MachineListView(BaseListView):
         locations = Location.objects.all()
         filter_choices = MACHINE_FILTER_CHOICES.copy()
         if locations.exists():
-            filter_choices["location"]["options"] += [(str(location.pk), location.name) for location in locations]
+            filter_choices["location"]["options"] = [
+                ("all", _("All"))
+            ] + [(str(location.pk), location.name) for location in locations]
         context["filter_choices"] = filter_choices
         context["filter_default"] = self.request.user.default_machines_filter
         return context

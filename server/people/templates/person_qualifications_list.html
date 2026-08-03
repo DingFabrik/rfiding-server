@@ -2,9 +2,11 @@
 {% load i18n %}
 
 {% block title %}
-{% with name=person %}{% blocktrans %}Qualifications for {{ name }}{% endblocktrans %}{% endwith %}
+  {% with name=person %}
+    {% blocktrans %}Qualifications for {{ name }}{% endblocktrans %}
+  {% endwith %}
 {% endblock %}
 
 {% block content %}
-{% include "person_qualifications_table.html" %}
+  {% include 'person_qualifications_table.html' %}
 {% endblock %}

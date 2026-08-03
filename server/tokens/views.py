@@ -72,7 +72,9 @@ class TokenListView(BaseListView):
         token_types = TokenType.objects.all()
         filter_choices = TOKEN_FILTER_CHOICES.copy()
         if token_types.exists():
-            filter_choices["type"]["options"] += [(str(token_type.pk), token_type.name) for token_type in token_types]
+            filter_choices["type"]["options"] = [
+                ("all", _("All"))
+            ] + [(str(token_type.pk), token_type.name) for token_type in token_types]
         context["filter_choices"] = filter_choices
         context["filter_default"] = self.request.user.default_token_filter
         return context

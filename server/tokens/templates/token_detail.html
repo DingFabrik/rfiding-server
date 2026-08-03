@@ -18,7 +18,7 @@
 <li><span class="font-bold text-base-content/60">{% trans "Serial" %}:</span> {{ object.serial }}</li>
 <li><span class="font-bold text-base-content/60">{% trans "Label" %}:</span> {{ object.format_label }}</li>
 <li><span class="font-bold text-base-content/60">{% trans "Type" %}:</span> {{ object.type }}</li>
-<li><span class="font-bold text-base-content/60">{% trans "Owner" %}:</span> <a class="link" href="{% url 'people:detail' object.person.pk %}">{{ object.person }}</a></li>
+<li><span class="font-bold text-base-content/60">{% trans "Owner" %}:</span> <a class="link-hover link-primary" href="{% url 'people:detail' object.person.pk %}">{{ object.person }}</a></li>
 <li><span class="font-bold text-base-content/60">{% trans "Is Active" %}:</span> {% include "snippets/active_toggle.html" %}</li>
 {% if object.archived %}
 <li><span class="font-bold text-base-content/60">{% trans "Archived" %}:</span> {{ object.archived }}</li>

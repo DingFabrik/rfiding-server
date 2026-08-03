@@ -16,9 +16,11 @@
         hx-push-url="true">
     </label>
     {% if sort_choices %}
+    <label class="select">
+  <span class="label">{% trans "Sort" %}</span>
     <select
     id="id_sort"
-    class="select select-sm"
+    class="select select-sm select-ghost"
     name="sort"
     hx-get="{{ request.path }}"
     hx-include="#id_search, #id_filter"
@@ -29,5 +31,6 @@
         <option value="{{ choice.0 }}" {% if choice.0 == request.GET.sort %}selected{% endif %}>{{ choice.1 }}</option>
     {% endfor %}
     </select>
-    {% endif %}
+    {% endif %}</label>
+
 </form>

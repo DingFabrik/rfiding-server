@@ -3,7 +3,6 @@
 
 {% block top_actions %}
 <div class="flex flex-wrap items-center gap-2">
-    {% include "snippets/search_form.html" %}
     {% if perms.tokens.create_token %}
     <a href="{% url 'tokens:unknown' %}" class="btn btn-primary btn-sm tooltip" data-tip="{% trans 'Assign Token' %}"><i data-lucide="plus" class="w-4 h-4"></i></a>
     {% endif %}
@@ -35,12 +34,12 @@
         </thead>
 {% for object in tokens %}
 <tr>
-<td><a class="link" href="{% url 'tokens:detail' object.pk %}">{{ object.serial }}</a></td>
+<td><a class="link-hover link-primary" href="{% url 'tokens:detail' object.pk %}">{{ object.serial }}</a></td>
 <td>{{ object.format_label }}</td>
 <td>{{ object.type|default:"--" }}</td>
 <td>{% include "snippets/active_toggle.html" %}</td>
 {% if perms.people.view_person %}
-<td><a class="link" href="{% url "people:detail" object.person.pk %}">{{ object.person }}</a></td>
+<td><a class="link-hover link-primary" href="{% url "people:detail" object.person.pk %}">{{ object.person }}</a></td>
 {% else %}
 <td>{{ object.person }}</td>
 {% endif %}

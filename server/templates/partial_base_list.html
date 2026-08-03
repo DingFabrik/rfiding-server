@@ -1,12 +1,13 @@
 {% block content %}
-<div class="max-w-full overflow-x-auto min-w-0 rounded-box border border-base-content/10">
-{% block top_actions %}{% endblock %}
-{% block table_outer %}
-<table class="table table-sm">
-{% block table %}
-{% endblock %}
-</table>
-{% endblock %}
-</div>
-{% include "base_pagination.html" %}
+  <div class="max-w-full overflow-x-auto rounded-box bg-base-100 border border-base-content/10">
+    {% block top_actions %}
+    {% endblock %}
+    {% block table_outer %}
+      <table class="table">
+        {% block table %}
+        {% endblock %}
+      </table>
+    {% endblock %}
+  </div>
+  {% include 'base_pagination.html' %}
 {% endblock %}

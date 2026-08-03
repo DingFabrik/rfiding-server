@@ -1,5 +1,5 @@
 {% if machine %}
-<a href="{% url 'machines:detail' machine.pk %}" class="link" data-popover-toggle="machine-popover" data-machine-pk="{{ machine.pk }}">{{ machine }}</a>
+<a href="{% url 'machines:detail' machine.pk %}" class="link-hover link-primary" data-popover-toggle="machine-popover" data-machine-pk="{{ machine.pk }}">{{ machine }}</a>
 {% else %}
 ----
 {% endif %}

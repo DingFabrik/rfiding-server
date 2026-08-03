@@ -8,7 +8,7 @@
     {% for object in objects %}
     <tr>
         <td>{{ object|verbose_name }}</td>
-        <td><a class="link" href="{{ object.get_absolute_url }}">{{ object }}</a></td>
+        <td><a class="link-hover link-primary" href="{{ object.get_absolute_url }}">{{ object }}</a></td>
         <td>{{ object.created }}</td>
         <td>{{ object.updated }}</td>
     </tr>

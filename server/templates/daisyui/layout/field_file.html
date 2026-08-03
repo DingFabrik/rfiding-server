@@ -6,7 +6,7 @@
     <span class="join-item bg-base-200 px-3 py-2 text-sm">{{ widget.data.initial_text }}</span>
     <div class="join-item input input-sm flex h-auto items-center gap-2">
         <span class="grow truncate">
-            <a class="link" href="{{ field.value.url }}">{{ field.value.name }}</a>
+            <a class="link-hover link-primary" href="{{ field.value.url }}">{{ field.value.name }}</a>
         </span>
         {% if not widget.data.required %}
         <span class="flex items-center gap-1">

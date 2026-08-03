@@ -3,7 +3,7 @@
     <div class="card-body gap-1 p-4">
         <div class="flex items-center gap-2">
             <i data-lucide="radio-tower" class="w-4 h-4 {% if token.is_active %}text-success{% else %}text-error{% endif %}"></i>
-            <a class="link" href="{% url 'tokens:detail' token.id %}">
+            <a class="link-hover link-primary" href="{% url 'tokens:detail' token.id %}">
                 Token #{{ token.label }} &bull; [{{ token.serial }}]
             </a>
         </div>

@@ -1,6 +1,6 @@
 {% if person %}
 <a href="{% url 'people:detail' person.pk %}"
-    class="link"
+    class="link-hover link-primary"
     data-popover-toggle="person-popover"
     data-person-pk="{{ person.pk }}">{{ person }}</a>
 {% else %}

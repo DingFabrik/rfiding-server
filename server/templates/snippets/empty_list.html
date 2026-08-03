@@ -2,7 +2,7 @@
 <div class="card bg-base-100 text-center">
     <div class="card-body items-center">
     {% if icon %}
-    <i data-lucide="{{ icon }}" class="w-12 h-12 text-base-content/50"></i>
+    <i data-lucide="{{ icon }}" class="w-12 h-12 text-accent"></i>
     {% endif %}
     <h1 class="text-lg font-semibold text-base-content/70">{% with model|verbose_name_plural as modelname %}{% blocktrans %}No {{ modelname }} found.{% endblocktrans %}{% endwith %}</h1>
     {% if request.GET.search %}

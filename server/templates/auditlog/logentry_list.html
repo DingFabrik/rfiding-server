@@ -2,10 +2,6 @@
 {% load i18n %}
 {% load humanize %}
 
-{% block top_actions %}
-{% include "snippets/search_form.html" %}
-{% endblock %}
-
 {% block table %}
     <thead>
         <tr>
@@ -21,7 +17,7 @@
     <td class="whitespace-nowrap">{% include "snippets/timestamp.html" with timestamp=object.timestamp %}</td>
     <td>
     {% if object.actor %}
-        <a class="link" href="{% url "users:detail" object.actor_id %}">{{ object.actor }}</a>
+        <a class="link-hover link-primary" href="{% url "users:detail" object.actor_id %}">{{ object.actor }}</a>
     {% else %}
         System
     {% endif %}

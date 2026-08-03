@@ -1,32 +1,33 @@
 {% extends base_template %}
 {% load i18n %}
 
-{% block notitle %}{% endblock %}
+{% block notitle %}
+{% endblock %}
 
 {% block content %}
-    <div role="alert" class="alert alert-error">
-        <i data-lucide="triangle-alert" class="w-5 h-5"></i>
-        <div>
-            {% with person=object.person machine=object.machine %}
-            <h3 class="font-bold">{% blocktrans %}Revoke the qualification that <b>{{ person }}</b> has on <b>{{ machine }}</b>?{% endblocktrans %}</h3>
-            {% endwith %}
-        </div>
+  <div role="alert" class="alert alert-error">
+    <i data-lucide="triangle-alert" class="w-5 h-5"></i>
+    <div>
+      {% with person=object.person machine=object.machine %}
+        <h3 class="font-bold">{% blocktrans %}Revoke the qualification that <b>{{ person }}</b> has on <b>{{ machine }}</b>?{% endblocktrans %}</h3>
+      {% endwith %}
     </div>
-    {% if not is_partial %}
+  </div>
+  {% if not is_partial %}
     <form action="" method="post" class="mt-4">
-        {% csrf_token %}
-        <div class="flex justify-end gap-2">
-            <a href="{{ object.get_absolute_url }}" class="btn btn-sm">{% trans "No" %}</a>
-            <input type="submit" value="{% trans "Revoke" %}" class="btn btn-sm btn-error"/>
-        </div>
+      {% csrf_token %}
+      <div class="flex justify-end gap-2">
+        <a href="{{ object.get_absolute_url }}" class="btn btn-sm">{% trans 'No' %}</a>
+        <input type="submit" value="{% trans 'Revoke' %}" class="btn btn-sm btn-error" />
+      </div>
     </form>
-    {% endif %}
+  {% endif %}
 {% endblock %}
 
 {% block buttons %}
-<button type="button" class="btn btn-sm" data-modal-close>{% trans "No" %}</button>
-<form action="{{ request.path }}?next={{ request.GET.next }}" method="post">
+  <button type="button" class="btn btn-sm" data-modal-close>{% trans 'No' %}</button>
+  <form action="{{ request.path }}?next={{ request.GET.next }}" method="post">
     {% csrf_token %}
-    <input type="submit" value="{% trans "Revoke" %}" class="btn btn-sm btn-error"/>
-</form>
+    <input type="submit" value="{% trans 'Revoke' %}" class="btn btn-sm btn-error" />
+  </form>
 {% endblock %}

@@ -16,7 +16,7 @@
         </thead>
 {% for object in locations %}
 <tr>
-<td><a class="link" href="{% url "locations:detail" object.pk %}">{{ object.name }}</a></td>
+<td><a class="link-hover link-primary" href="{% url "locations:detail" object.pk %}">{{ object.name }}</a></td>
 {% if perms.locations.modify_location %}
 <td>
 {% if perms.locations.modify_location %}

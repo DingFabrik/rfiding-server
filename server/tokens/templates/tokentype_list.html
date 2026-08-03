@@ -18,7 +18,7 @@
 {% for token_type in types %}
 <tr>
 {% if perms.tokens.modify_tokentype %}
-<td><a class="link" href="{% url "tokens:types:update" token_type.pk %}">{{ token_type.name }}</a></td>
+<td><a class="link-hover link-primary" href="{% url "tokens:types:update" token_type.pk %}">{{ token_type.name }}</a></td>
 {% else %}
 <td>{{ token_type.name }}</td>
 {% endif %}
