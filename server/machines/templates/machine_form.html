@@ -29,8 +29,8 @@
             </ul>
         </div>
         <div class="flex gap-2">
-            <a href="{% url "machines:create" %}?request={{ request.pk}}" class="btn btn-primary btn-sm">{% trans "Create" %}</a>
-            <a href="{% url "machines:delete-request" pk=request.pk %}" class="btn btn-error btn-sm">{% trans "Delete" %}</a>
+            <a href="{% url "machines:create" %}?request={{ request.pk}}" class="btn btn-primary">{% trans "Create" %}</a>
+            <a href="{% url "machines:delete-request" pk=request.pk %}" class="btn btn-error">{% trans "Delete" %}</a>
         </div>
     </div>
 </div>

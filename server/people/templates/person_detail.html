@@ -52,7 +52,7 @@
       <div class="tab-content bg-base-100 border-base-300 p-6" role="tabpanel" id="qualifications-tab-pane" aria-labelledby="qualifications-tab">
         {% if perms.people.qualify_person %}
           <div class="flex justify-end mb-2">
-            <a class="btn btn-primary btn-sm" href="{% url 'people:qualify' person.pk %}">{% trans 'Add Qualification' %}</a>
+            <a class="btn btn-primary" href="{% url 'people:qualify' person.pk %}">{% trans 'Add Qualification' %}</a>
           </div>
         {% endif %}
         {% include 'person_qualifications_table.html' with is_partial=True set_history=False %}

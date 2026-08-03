@@ -7,10 +7,10 @@
     </div>
     <p class="py-4">{% blocktrans %}Deleting an object permanently removes it and can not be undone{% endblocktrans %}</p>
     <div class="modal-action">
-      <form method="dialog"><button type="button" class="btn btn-sm">{% trans "No" %}</button></form>
+      <form method="dialog"><button type="button" class="btn">{% trans "No" %}</button></form>
       <form action="{% url request.resolver_match.namespace|add:':delete' object.pk %}" method="post">
         {% csrf_token %}
-        <button type="submit" class="btn btn-sm btn-error">{% trans "Delete" %}</button>
+        <button type="submit" class="btn btn-error">{% trans "Delete" %}</button>
       </form>
     </div>
   </div>

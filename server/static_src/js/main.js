@@ -151,7 +151,7 @@ window.addEventListener('htmx:beforeSwap', function(event) {
 
 window.addEventListener('htmx:afterSwap', function(event) {
     initPopovers();
-    createIcons();
+    window.createIcons();
 })
 
 window.addEventListener('htmx:responseError', function(event) {

@@ -12,6 +12,6 @@
     <form class="mb-3" method="post" action="{% url comment_url object.pk %}" hx-target="#comments-tab-pane" hx-swap="outerHTML">
     {% csrf_token %}
     {{ comment_form|crispy }}
-    <button type="submit" class="btn btn-sm btn-primary">{% trans 'Post' %}</button>
+    <button type="submit" class="btn btn-primary">{% trans 'Post' %}</button>
   </form>
 </div>

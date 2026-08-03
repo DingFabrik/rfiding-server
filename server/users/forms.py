@@ -76,12 +76,12 @@ class UserForm(forms.ModelForm):
                 HTML("""{% load i18n %}
                      <div class="flex flex-wrap gap-2">
                      {% if object and request.user.is_superuser %}
-    <a class="btn btn-sm btn-warning" href="{% url 'users:admin_change_password' object.pk %}">
+    <a class="btn btn-warning" href="{% url 'users:admin_change_password' object.pk %}">
         <i data-lucide="key" class="w-4 h-4"></i> {% trans 'Change Password' %}
     </a>
 {% endif %}
                      {% if object and can_delete %}
-            <a class="btn btn-sm btn-error" href="{% url request.resolver_match.namespace|add:':delete' object.pk %}">
+            <a class="btn btn-error" href="{% url request.resolver_match.namespace|add:':delete' object.pk %}">
                 <i data-lucide="trash-2" class="w-4 h-4"></i> {% trans 'Delete' %}
             </a>
         {% endif %}

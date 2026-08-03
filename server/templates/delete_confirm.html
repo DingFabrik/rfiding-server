@@ -12,8 +12,8 @@
     <form action="" method="post" class="mt-4">
         {% csrf_token %}
         <div class="flex justify-end gap-2">
-            <a href="{{ object.get_absolute_url }}" class="btn btn-sm">{% trans "No" %}</a>
-            <input type="submit" value="{% trans "Delete" %}" class="btn btn-sm btn-error"/>
+            <a href="{{ object.get_absolute_url }}" class="btn">{% trans "No" %}</a>
+            <input type="submit" value="{% trans "Delete" %}" class="btn btn-error"/>
         </div>
     </form>
 {% endblock %}

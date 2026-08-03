@@ -4,10 +4,10 @@
 {% block top_actions %}
 <div class="join">
 {% if can_edit %}
-<a href="{% url request.resolver_match.namespace|add:':update' object.pk %}" class="btn btn-primary btn-sm join-item {% if object.archived %}btn-disabled{% endif %}" aria-disabled="{% if object.archived %}true{% else %}false{% endif %}"><i data-lucide="square-pen" class="w-4 h-4"></i>{% trans "Edit "%}</a>
+<a href="{% url request.resolver_match.namespace|add:':update' object.pk %}" class="btn btn-primary join-item {% if object.archived %}btn-disabled{% endif %}" aria-disabled="{% if object.archived %}true{% else %}false{% endif %}"><i data-lucide="square-pen" class="w-4 h-4"></i>{% trans "Edit "%}</a>
 {% endif %}
 {% if can_delete %}
-<a href="{% url request.resolver_match.namespace|add:':delete' object.pk %}" class="btn btn-error btn-sm join-item {% if object.archived %}btn-disabled{% endif %}" aria-disabled="{% if object.archived %}true{% else %}false{% endif %}" {% if not object.archived %}data-modal-target="confirmArchiveModal"{% endif %}><i data-lucide="archive" class="w-4 h-4"></i>{% trans "Archive"%}</a>
+<a href="{% url request.resolver_match.namespace|add:':delete' object.pk %}" class="btn btn-error join-item {% if object.archived %}btn-disabled{% endif %}" aria-disabled="{% if object.archived %}true{% else %}false{% endif %}" {% if not object.archived %}data-modal-target="confirmArchiveModal"{% endif %}><i data-lucide="archive" class="w-4 h-4"></i>{% trans "Archive"%}</a>
 {% endif %}
 </div>
 {% endblock %}

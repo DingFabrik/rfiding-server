@@ -26,13 +26,13 @@
                 <div>
                     <label for="id_times-{{ forloop.counter0 }}-weekdays-group" class="label">{% trans "Weekdays" %}</label>
                     <div id="id_times-{{ forloop.counter0 }}-weekdays-group" class="join" aria-label="{% trans "Weekdays" %}">
-                        <input type="checkbox" class="join-item btn btn-sm btn-outline btn-primary" name="times-{{ forloop.counter0 }}-weekdays"{% if 0 in timeform.weekdays.value or '0' in timeform.weekdays.value %} checked{% endif %} value="0" id="id_times-{{ forloop.counter0 }}-weekdays_0" aria-label="{% trans "Mo" %}">
-                        <input type="checkbox" class="join-item btn btn-sm btn-outline btn-primary" name="times-{{ forloop.counter0 }}-weekdays"{% if 1 in timeform.weekdays.value or '1' in timeform.weekdays.value %} checked{% endif %} value="1" id="id_times-{{ forloop.counter0 }}-weekdays_1" aria-label="{% trans "Tu" %}">
-                        <input type="checkbox" class="join-item btn btn-sm btn-outline btn-primary" name="times-{{ forloop.counter0 }}-weekdays"{% if 2 in timeform.weekdays.value or '2' in timeform.weekdays.value %} checked{% endif %} value="2" id="id_times-{{ forloop.counter0 }}-weekdays_2" aria-label="{% trans "We" %}">
-                        <input type="checkbox" class="join-item btn btn-sm btn-outline btn-primary" name="times-{{ forloop.counter0 }}-weekdays"{% if 3 in timeform.weekdays.value or '3' in timeform.weekdays.value %} checked{% endif %} value="3" id="id_times-{{ forloop.counter0 }}-weekdays_3" aria-label="{% trans "Th" %}">
-                        <input type="checkbox" class="join-item btn btn-sm btn-outline btn-primary" name="times-{{ forloop.counter0 }}-weekdays"{% if 4 in timeform.weekdays.value or '4' in timeform.weekdays.value %} checked{% endif %} value="4" id="id_times-{{ forloop.counter0 }}-weekdays_4" aria-label="{% trans "Fr" %}">
-                        <input type="checkbox" class="join-item btn btn-sm btn-outline btn-primary" name="times-{{ forloop.counter0 }}-weekdays"{% if 5 in timeform.weekdays.value or '5' in timeform.weekdays.value %} checked{% endif %} value="5" id="id_times-{{ forloop.counter0 }}-weekdays_5" aria-label="{% trans "Sa" %}">
-                        <input type="checkbox" class="join-item btn btn-sm btn-outline btn-primary" name="times-{{ forloop.counter0 }}-weekdays"{% if 6 in timeform.weekdays.value or '6' in timeform.weekdays.value %} checked{% endif %} value="6" id="id_times-{{ forloop.counter0 }}-weekdays_6" aria-label="{% trans "Su" %}">
+                        <input type="checkbox" class="join-item btn btn-outline btn-primary" name="times-{{ forloop.counter0 }}-weekdays"{% if 0 in timeform.weekdays.value or '0' in timeform.weekdays.value %} checked{% endif %} value="0" id="id_times-{{ forloop.counter0 }}-weekdays_0" aria-label="{% trans "Mo" %}">
+                        <input type="checkbox" class="join-item btn btn-outline btn-primary" name="times-{{ forloop.counter0 }}-weekdays"{% if 1 in timeform.weekdays.value or '1' in timeform.weekdays.value %} checked{% endif %} value="1" id="id_times-{{ forloop.counter0 }}-weekdays_1" aria-label="{% trans "Tu" %}">
+                        <input type="checkbox" class="join-item btn btn-outline btn-primary" name="times-{{ forloop.counter0 }}-weekdays"{% if 2 in timeform.weekdays.value or '2' in timeform.weekdays.value %} checked{% endif %} value="2" id="id_times-{{ forloop.counter0 }}-weekdays_2" aria-label="{% trans "We" %}">
+                        <input type="checkbox" class="join-item btn btn-outline btn-primary" name="times-{{ forloop.counter0 }}-weekdays"{% if 3 in timeform.weekdays.value or '3' in timeform.weekdays.value %} checked{% endif %} value="3" id="id_times-{{ forloop.counter0 }}-weekdays_3" aria-label="{% trans "Th" %}">
+                        <input type="checkbox" class="join-item btn btn-outline btn-primary" name="times-{{ forloop.counter0 }}-weekdays"{% if 4 in timeform.weekdays.value or '4' in timeform.weekdays.value %} checked{% endif %} value="4" id="id_times-{{ forloop.counter0 }}-weekdays_4" aria-label="{% trans "Fr" %}">
+                        <input type="checkbox" class="join-item btn btn-outline btn-primary" name="times-{{ forloop.counter0 }}-weekdays"{% if 5 in timeform.weekdays.value or '5' in timeform.weekdays.value %} checked{% endif %} value="5" id="id_times-{{ forloop.counter0 }}-weekdays_5" aria-label="{% trans "Sa" %}">
+                        <input type="checkbox" class="join-item btn btn-outline btn-primary" name="times-{{ forloop.counter0 }}-weekdays"{% if 6 in timeform.weekdays.value or '6' in timeform.weekdays.value %} checked{% endif %} value="6" id="id_times-{{ forloop.counter0 }}-weekdays_6" aria-label="{% trans "Su" %}">
                     </div>
                     {% if timeform.weekdays.errors %}
                     <p id="error_1_id_times-0-start_time" class="validator-hint text-error"><strong>{{ timeform.weekdays.errors }}</strong></p>
@@ -48,6 +48,6 @@
             {% endfor %}
         </div>
     </div>
-    <button class="btn btn-sm btn-primary" type="submit">{% trans "Save" %}</button>
+    <button class="btn btn-primary" type="submit">{% trans "Save" %}</button>
 </form>
 {% endblock %}

@@ -9,14 +9,14 @@
 {% block top_actions %}
 <div class="flex flex-wrap items-center gap-2">
     {% if can_create %}
-    <a href="{% url request.resolver_match.namespace|add:':create' %}" class="btn btn-sm btn-primary tooltip" data-tip="{% with model|verbose_name as modelname %}{% blocktrans %}Add {{ modelname }}{% endblocktrans %}{% endwith %}"><i data-lucide="plus" class="w-4 h-4"></i></a>
+    <a href="{% url request.resolver_match.namespace|add:':create' %}" class="btn btn-square btn-primary tooltip tooltip-bottom" data-tip="{% with model|verbose_name as modelname %}{% blocktrans %}Add {{ modelname }}{% endblocktrans %}{% endwith %}"><i data-lucide="plus" class="w-4 h-4"></i></a>
     {% endif %}
 </div>
 {% endblock %}
 
 {% block bottom_actions %}
 {% if can_create and paginator.count > 1 %}
-<a href="{% url request.resolver_match.namespace|add:':create' %}" class="btn btn-sm btn-primary tooltip" data-tip="{% with model|verbose_name as modelname %}{% blocktrans %}Add {{ modelname }}{% endblocktrans %}{% endwith %}"><i data-lucide="plus" class="w-4 h-4"></i></a>
+<a href="{% url request.resolver_match.namespace|add:':create' %}" class="btn btn-square btn-primary tooltip" data-tip="{% with model|verbose_name as modelname %}{% blocktrans %}Add {{ modelname }}{% endblocktrans %}{% endwith %}"><i data-lucide="plus" class="w-4 h-4"></i></a>
 {% endif %}
 {% endblock %}
 
@@ -56,7 +56,7 @@
                     <label for="id_filter_{{ key }}" class="label">{{ choice.label }}</label>
                     <select
                     id="id_filter_{{ key }}"
-                    class="select select-sm w-full filter_choices"
+                    class="select w-full filter_choices"
                     name="filter_{{ key }}"
                     hx-get="{{ request.path }}"
                     hx-include="#id_search, #id_sort, .filter_choices"

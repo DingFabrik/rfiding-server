@@ -6,13 +6,13 @@
 {% endblock title %}
 
 {% block top_actions %}
-<a href="#" class="btn btn-primary btn-sm only-edit-mode"
+<a href="#" class="btn btn-primary btn-square only-edit-mode"
     hx-get="{% url "users:widgets:create" %}"
     hx-target="#widget-modal .widget-modal-body"
     hx-trigger="click"
     hx-swap="innerHTML"
     onclick="showModal()"><i data-lucide="plus" class="w-4 h-4"></i></a>
-<a href="#" class="btn btn-secondary btn-sm" onclick="toggleEditMode()"><i data-lucide="square-pen" class="w-4 h-4"></i></a>
+<a href="#" class="btn btn-secondary btn-square" onclick="toggleEditMode()"><i data-lucide="square-pen" class="w-4 h-4"></i></a>
 {% endblock %}
 
 {% block content %}

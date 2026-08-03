@@ -12,23 +12,23 @@
     <div {% if field_class %}class="{{ field_class }}"{% endif %}>
         <div class="join{% if input_size %} {{ input_size }}{% endif %}">
             {% if crispy_prepended_text %}
-                <span class="join-item bg-base-200 flex items-center px-3 text-sm">{{ crispy_prepended_text }}</span>
+                <span class="join-item bg-base-200 flex items-center px-3 text">{{ crispy_prepended_text }}</span>
             {% endif %}
 
             {% if field|is_select %}
                 {% if field.errors %}
-                    {% crispy_field field 'class' 'select select-sm join-item select-error validator' 'aria-invalid' 'true' %}
+                    {% crispy_field field 'class' 'select join-item select-error validator' 'aria-invalid' 'true' %}
                 {% else %}
-                    {% crispy_field field 'class' 'select select-sm join-item' %}
+                    {% crispy_field field 'class' 'select join-item' %}
                 {% endif %}
             {% elif field.errors %}
-                {% crispy_field field 'class' 'input input-sm join-item input-error validator' 'aria-invalid' 'true' %}
+                {% crispy_field field 'class' 'input join-item input-error validator' 'aria-invalid' 'true' %}
             {% else %}
-                {% crispy_field field 'class' 'input input-sm join-item' %}
+                {% crispy_field field 'class' 'input join-item' %}
             {% endif %}
 
             {% if crispy_appended_text %}
-                <span class="join-item bg-base-200 flex items-center px-3 text-sm">{{ crispy_appended_text }}</span>
+                <span class="join-item bg-base-200 flex items-center px-3 text">{{ crispy_appended_text }}</span>
             {% endif %}
             {% if error_text_inline %}
                 {% include 'daisyui/layout/field_errors.html' %}

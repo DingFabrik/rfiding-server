@@ -1,6 +1,6 @@
 {% load i18n %}
 <form class="flex flex-wrap items-center gap-3">
-    <label class="input input-sm">
+    <label class="input">
         <i data-lucide="search" class="w-4 h-4 opacity-50"></i>
         <input
         id="id_search"
@@ -20,7 +20,7 @@
   <span class="label">{% trans "Sort" %}</span>
     <select
     id="id_sort"
-    class="select select-sm select-ghost"
+    class="select select-ghost"
     name="sort"
     hx-get="{{ request.path }}"
     hx-include="#id_search, #id_filter"

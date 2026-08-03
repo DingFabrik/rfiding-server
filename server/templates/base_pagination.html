@@ -12,27 +12,27 @@
         hx-target="#{{ target|default:"list_container" }}"
         {% if set_history %}hx-push-url="true"{% else %}hx-push-url="false"{% endif %}
         {% endif %}>
-        <a class="join-item btn btn-sm{% if not page_obj.has_previous %} btn-disabled{% endif %}" href="{{ path }}{% build_url_params request.GET page=1 %}" aria-label="First">
+        <a class="join-item btn{% if not page_obj.has_previous %} btn-disabled{% endif %}" href="{{ path }}{% build_url_params request.GET page=1 %}" aria-label="First">
             <i data-lucide="chevrons-left" class="w-4 h-4"></i>
         </a>
         {% if page_obj.has_previous %}
-            <a class="join-item btn btn-sm" href="{{ path }}{% build_url_params request.GET page=page_obj.previous_page_number %}"><i data-lucide="chevron-left" class="w-4 h-4"></i></a>
+            <a class="join-item btn" href="{{ path }}{% build_url_params request.GET page=page_obj.previous_page_number %}"><i data-lucide="chevron-left" class="w-4 h-4"></i></a>
         {% else %}
-            <span class="join-item btn btn-sm btn-disabled"><i data-lucide="chevron-left" class="w-4 h-4"></i></span>
+            <span class="join-item btn btn-disabled"><i data-lucide="chevron-left" class="w-4 h-4"></i></span>
         {% endif %}
         {% for page in 1|range_excl:page_obj.number|limit_to_last:3 %}
-            <a class="join-item btn btn-sm" href="{{ path }}{% build_url_params request.GET page=page %}">{{ page }}</a>
+            <a class="join-item btn" href="{{ path }}{% build_url_params request.GET page=page %}">{{ page }}</a>
         {% endfor %}
-        <a class="join-item btn btn-sm btn-active" href="#">{{ page_obj.number}}</a>
+        <a class="join-item btn btn-active" href="#">{{ page_obj.number}}</a>
         {% for page in page_obj.number|add:1|range:page_obj.paginator.num_pages|limit_to:3 %}
-            <a class="join-item btn btn-sm" href="{{ path }}{% build_url_params request.GET page=page %}">{{ page }}</a>
+            <a class="join-item btn" href="{{ path }}{% build_url_params request.GET page=page %}">{{ page }}</a>
         {% endfor %}
         {% if page_obj.has_next %}
-            <a class="join-item btn btn-sm" href="{{ path }}{% build_url_params request.GET page=page_obj.next_page_number %}"><i data-lucide="chevron-right" class="w-4 h-4"></i></a>
+            <a class="join-item btn" href="{{ path }}{% build_url_params request.GET page=page_obj.next_page_number %}"><i data-lucide="chevron-right" class="w-4 h-4"></i></a>
         {% else %}
-            <span class="join-item btn btn-sm btn-disabled"><i data-lucide="chevron-right" class="w-4 h-4"></i></span>
+            <span class="join-item btn btn-disabled"><i data-lucide="chevron-right" class="w-4 h-4"></i></span>
         {% endif %}
-        <a class="join-item btn btn-sm{% if not page_obj.has_next %} btn-disabled{% endif %}" href="{{ path }}{% build_url_params request.GET page=page_obj.paginator.num_pages %}" aria-label="Last">
+        <a class="join-item btn{% if not page_obj.has_next %} btn-disabled{% endif %}" href="{{ path }}{% build_url_params request.GET page=page_obj.paginator.num_pages %}" aria-label="Last">
             <i data-lucide="chevrons-right" class="w-4 h-4"></i>
         </a>
     </div>

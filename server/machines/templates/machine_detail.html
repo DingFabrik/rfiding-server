@@ -19,21 +19,21 @@
   {% if machine.has_api %}
     <div class="join">
       <div id="command_dropdown" class="join-item">
-        <button class="btn btn-secondary btn-sm" type="button" popovertarget="commands_menu" style="anchor-name:--command-dropdown">{% trans 'Send Command' %}</button>
+        <button class="btn btn-secondary" type="button" popovertarget="commands_menu" style="anchor-name:--command-dropdown">{% trans 'Send Command' %}</button>
         <ul id="commands_menu" class="dropdown menu bg-base-100 rounded-box z-30 w-52 p-2 shadow-lg" popover style="position-anchor:--command-dropdown"></ul>
       </div>
     </div>
     <div class="join">
-      <button type="button" id="logsButton" data-modal-target="logModal" class="btn btn-secondary btn-sm join-item" hx-get="{% url 'machines:logs' object.pk %}" hx-target="#logContainer" hx-swap="outerHTML" hx-trigger="click"><i data-lucide="square-pen" class="w-4 h-4"></i>{% trans 'Logs' %}</button>
+      <button type="button" id="logsButton" data-modal-target="logModal" class="btn btn-secondary join-item" hx-get="{% url 'machines:logs' object.pk %}" hx-target="#logContainer" hx-swap="outerHTML" hx-trigger="click"><i data-lucide="square-pen" class="w-4 h-4"></i>{% trans 'Logs' %}</button>
     </div>
   {% endif %}
   <div class="join">
     {% if can_edit %}
-      <a href="{% url request.resolver_match.namespace|add:':update' object.pk %}" class="btn btn-primary btn-sm join-item"><i data-lucide="square-pen" class="w-4 h-4"></i>{% trans 'Edit ' %}</a>
-      <a href="{% url request.resolver_match.namespace|add:':configure' object.pk %}" class="btn btn-primary btn-sm join-item"><i data-lucide="sliders-horizontal" class="w-4 h-4"></i>{% trans 'Configure' %}</a>
+      <a href="{% url request.resolver_match.namespace|add:':update' object.pk %}" class="btn btn-primary join-item"><i data-lucide="square-pen" class="w-4 h-4"></i>{% trans 'Edit ' %}</a>
+      <a href="{% url request.resolver_match.namespace|add:':configure' object.pk %}" class="btn btn-primary join-item"><i data-lucide="sliders-horizontal" class="w-4 h-4"></i>{% trans 'Configure' %}</a>
     {% endif %}
     {% if can_delete %}
-      <a href="{% url request.resolver_match.namespace|add:':delete' object.pk %}" class="btn btn-error btn-sm join-item" data-modal-target="confirmDeleteModal"><i data-lucide="trash-2" class="w-4 h-4"></i>{% trans 'Delete' %}</a>
+      <a href="{% url request.resolver_match.namespace|add:':delete' object.pk %}" class="btn btn-error join-item" data-modal-target="confirmDeleteModal"><i data-lucide="trash-2" class="w-4 h-4"></i>{% trans 'Delete' %}</a>
     {% endif %}
   </div>
 {% endblock %}
@@ -129,7 +129,7 @@
             <div class="flex flex-wrap items-center justify-between gap-2 text-base-content/60 mb-2">
               {% blocktrans %}{{ qualifications_count }} people are qualified to use this machine:{% endblocktrans %}
               {% if perms.people.qualify_person %}
-                <a class="btn btn-primary btn-sm" href="{% url 'machines:qualify' machine.pk %}">{% trans 'Qualify Person' %}</a>
+                <a class="btn btn-primary" href="{% url 'machines:qualify' machine.pk %}">{% trans 'Qualify Person' %}</a>
               {% endif %}
             </div>
             {% include 'machine_qualifications_table.html' with is_partial=True %}
@@ -189,7 +189,7 @@
         <div class="flex items-center justify-between p-4 pb-2">
           <h3 class="text-lg font-bold">{% trans 'Logs' %}</h3>
           <form method="dialog">
-            <button type="button" class="btn btn-sm btn-circle btn-ghost" aria-label="{% trans 'Close' %}">✕</button>
+            <button type="button" class="btn btn-circle btn-ghost" aria-label="{% trans 'Close' %}">✕</button>
           </form>
         </div>
         <div class="overflow-y-auto flex-1 px-4" id="logContainer"></div>
@@ -200,7 +200,7 @@
           </label>
           <div class="flex-1"></div>
           <form method="dialog">
-            <button type="button" class="btn btn-sm">{% trans 'Close' %}</button>
+            <button type="button" class="btn">{% trans 'Close' %}</button>
           </form>
         </div>
       </div>
