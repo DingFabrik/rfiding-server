@@ -3,12 +3,12 @@
     <div class="card-header">
         <i class="{% if token.is_active %}text-success{% else %}text-danger{% endif %} bi-broadcast"></i>
         <a href="{% url 'tokens:detail' token.id %}">
-            Token #{{ token.id }} &bull; [{{ token.serial }}]
+            Token #{{ token.label }} &bull; [{{ token.serial }}]
         </a>
     </div>
     <div class="card-body">
         <p class="card-text">
-            {{ token.purpose }}
+            {{ token.type }}
         </p>
     </div>
     {% if token.archived %}
