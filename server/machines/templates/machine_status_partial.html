@@ -1,42 +1,38 @@
 {% load i18n %}
-<h6 id="machine_state" class="d-inline align-bottom">
+<h6 id="machine_state" class="inline-block align-bottom">
 {% if status == 'standby' %}
-  <small class="badge text-bg-secondary h5">{% trans 'Standby' %}</small>
+  <span class="badge badge-neutral badge-sm">{% trans 'Standby' %}</span>
 {% elif status == 'disconnected' %}
-  <span class="badge text-bg-danger">{% trans 'Offline' %}</span>
+  <span class="badge badge-error badge-sm">{% trans 'Offline' %}</span>
 {% elif status == 'enabled' %}
-  <small class="badge text-bg-warning">{% trans 'Enabled' %}</small>
+  <span class="badge badge-warning badge-sm">{% trans 'Enabled' %}</span>
   {% elif status == 'active' %}
-    <small class="badge text-bg-greenb">{% trans 'Active' %}</small>
+    <span class="badge badge-success badge-sm">{% trans 'Active' %}</span>
 {% else %}
-  <small class="label label-warning">{% trans 'Unknown' %}</small>
+  <span class="badge badge-warning badge-sm">{% trans 'Unknown' %}</span>
 {% endif %}
 </h6>
 
-<div id="command_dropdown" class="dropdown">
-  <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+<div id="command_dropdown">
+  <button class="btn btn-secondary btn-sm" type="button" popovertarget="commands_menu" style="anchor-name:--command-dropdown">
     {% trans "Send Command" %}
   </button>
-<ul id="commands_menu" class="dropdown-menu">
-  <li><a id="reload_command"
-    class="dropdown-item{% if status != 'standby' %} disabled{% endif %}"
+<ul id="commands_menu" class="dropdown menu bg-base-100 rounded-box z-30 w-52 p-2 shadow-lg" popover style="position-anchor:--command-dropdown">
+  <li class="{% if status != 'standby' %}menu-disabled{% endif %}"><a id="reload_command"
     href="#"
     hx-vals='{"command": "reload_config"}'
     ws-send>{% trans "Reload Config" %}</a></li>
-  <li><a id="restart_command"
-    class="dropdown-item{% if status != 'standby' %} disabled{% endif %}"
+  <li class="{% if status != 'standby' %}menu-disabled{% endif %}"><a id="restart_command"
     href="#"
     hx-vals='{"command": "restart"}'
     ws-send>{% trans "Restart Machine" %}</a></li>
-  <li><a
+  <li class="{% if status != 'standby' %}menu-disabled{% endif %}"><a
     id="enable_command"
-    class="dropdown-item{% if status != 'standby' %} disabled{% endif %}"
     href="#"
     hx-vals='{"command": "enable"}'
     ws-send>{% trans "Enable" %}</a></li>
-  <li><a
+  <li class="{% if status != 'enabled' %}menu-disabled{% endif %}"><a
     id="disable_command"
-    class="dropdown-item{% if status != 'enabled' %} disabled{% endif %}"
     href="#"
     hx-vals='{"command": "disable"}'
     ws-send>{% trans "Disable" %}</a></li>

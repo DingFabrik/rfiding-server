@@ -1,7 +1,3 @@
 <div id="machine_logs" hx-swap-oob="beforeend">
-    <span class="log-line">
-        <span>[{% now "H:i:s" %}]</span>
-        <span class="log-level-{{ level }}">{{ message }}</span>
-        <br />
-    </span>
+    <pre data-prefix="{% now "H:i:s" %}"><code class="{% if level == 1 %}text-error{% elif level == 2 %}text-warning{% elif level == 3 %}text-success{% elif level == 4 %}text-secondary{% elif level >= 5 %}text-info{% else %}text-base-content/70{% endif %}">{{ message }}</code></pre>
 </div>

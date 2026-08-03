@@ -1,0 +1,27 @@
+{% load crispy_forms_filters %}
+{% load l10n %}
+
+<div {% if field_class %}class="{{ field_class }}"{% endif %}{% if flat_attrs %} {{ flat_attrs }}{% endif %}>
+
+    {% for group, options, index in field|optgroups %}
+    {% if group %}<span class="label font-semibold">{{ group }}</span>{% endif %}
+    {% for option in options %}
+      <label class="label justify-start gap-2{% if inline_class %} inline-flex{% endif %}">
+        <input type="{{option.type}}" class="{% if option.type == 'radio' %}radio radio-sm{% else %}checkbox checkbox-sm{% endif %}{% if field.errors %} validator{% endif %}" {% if field.errors %}aria-invalid="true" {% endif %}name="{{ field.html_name }}" value="{{ option.value|unlocalize }}" {% include "daisyui/layout/attrs.html" with widget=option %}>
+        {{ option.label|unlocalize }}
+      </label>
+        {% if field.errors and forloop.last and not inline_class and forloop.parentloop.last %}
+            {% include 'daisyui/layout/field_errors_block.html' %}
+        {% endif %}
+    {% endfor %}
+    {% endfor %}
+
+</div>
+{% if field.errors and inline_class %}
+    <div id="{{field.errors.field_id}}_error" class="validator-hint text-error">
+        {% for error in field.errors %}
+            <p id="error_{{ forloop.counter }}_{{ field.auto_id }}"><strong>{{ error }}</strong></p>
+        {% endfor %}
+    </div>
+{% endif %}
+{% include 'daisyui/layout/help_text.html' %}

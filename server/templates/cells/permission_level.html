@@ -1,8 +1,8 @@
 {% load i18n %}
 {% if permission_level == "always" %}
-<i class="bi-check-circle-fill me-2 text-success" aria-hidden="true"></i><span class="text-success-emphasis">{% trans "Always" %}</span>
+<i data-lucide="circle-check-big" class="w-4 h-4 inline text-success" aria-hidden="true"></i><span class="text-success">{% trans "Always" %}</span>
 {% elif permission_level == "if_space_open" %}
-<i class="bi-wrench-adjustable-circle-fill me-2 text-warning" aria-hidden="true"></i><span class="text-warning-emphasis">{% trans "If Space is Open" %}</span>
+<i data-lucide="wrench" class="w-4 h-4 inline text-warning" aria-hidden="true"></i><span class="text-warning">{% trans "If Space is Open" %}</span>
 {% elif permission_level == "never" %}
-<i class="bi-x-circle-fill me-2 text-danger" aria-hidden="true"></i><span class="text-danger-emphasis">{% trans "Never" %}</span>
+<i data-lucide="circle-x" class="w-4 h-4 inline text-error" aria-hidden="true"></i><span class="text-error">{% trans "Never" %}</span>
 {% endif %}

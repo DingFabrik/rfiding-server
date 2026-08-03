@@ -4,7 +4,7 @@
 {% block title %}
   {{ object.name }}
   {% if object.has_api %}
-    <div id="machine_state"></div>
+    <span id="machine_state"></span>
   {% endif %}
 {% endblock %}
 
@@ -16,205 +16,192 @@
 
 {% block top_actions %}
   {% if machine.has_api %}
-    <div class="btn-group" role="group">
-      <div id="command_dropdown" class="dropdown">
-        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">{% trans 'Send Command' %}</button>
-        <ul id="commands_menu" class="dropdown-menu"></ul>
+    <div class="join">
+      <div id="command_dropdown" class="join-item">
+        <button class="btn btn-secondary btn-sm" type="button" popovertarget="commands_menu" style="anchor-name:--command-dropdown">{% trans 'Send Command' %}</button>
+        <ul id="commands_menu" class="dropdown menu bg-base-100 rounded-box z-30 w-52 p-2 shadow-lg" popover style="position-anchor:--command-dropdown"></ul>
       </div>
     </div>
-    <div class="btn-group" role="group">
-      <button type="button" id="logsButton" data-bs-toggle="modal" data-bs-target="#logModal" class="btn btn-secondary" hx-get="{% url 'machines:logs' object.pk %}" hx-target="#logContainer" hx-swap="outerHTML" hx-trigger="click"><i class="bi-pencil-square me-2"></i>{% trans 'Logs' %}</button>
+    <div class="join">
+      <button type="button" id="logsButton" data-modal-target="logModal" class="btn btn-secondary btn-sm join-item" hx-get="{% url 'machines:logs' object.pk %}" hx-target="#logContainer" hx-swap="outerHTML" hx-trigger="click"><i data-lucide="square-pen" class="w-4 h-4"></i>{% trans 'Logs' %}</button>
     </div>
   {% endif %}
-  <div class="btn-group" role="group">
+  <div class="join">
     {% if can_edit %}
-      <a href="{% url request.resolver_match.namespace|add:':update' object.pk %}" class="btn btn-primary"><i class="bi-pencil-square me-2"></i>{% trans 'Edit ' %}</a>
-      <a href="{% url request.resolver_match.namespace|add:':configure' object.pk %}" class="btn btn-primary"><i class="bi-sliders me-2"></i>{% trans 'Configure' %}</a>
+      <a href="{% url request.resolver_match.namespace|add:':update' object.pk %}" class="btn btn-primary btn-sm join-item"><i data-lucide="square-pen" class="w-4 h-4"></i>{% trans 'Edit ' %}</a>
+      <a href="{% url request.resolver_match.namespace|add:':configure' object.pk %}" class="btn btn-primary btn-sm join-item"><i data-lucide="sliders-horizontal" class="w-4 h-4"></i>{% trans 'Configure' %}</a>
     {% endif %}
     {% if can_delete %}
-      <a href="{% url request.resolver_match.namespace|add:':delete' object.pk %}" class="btn btn-danger" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal"><i class="bi-trash me-1"></i>{% trans 'Delete' %}</a>
+      <a href="{% url request.resolver_match.namespace|add:':delete' object.pk %}" class="btn btn-error btn-sm join-item" data-modal-target="confirmDeleteModal"><i data-lucide="trash-2" class="w-4 h-4"></i>{% trans 'Delete' %}</a>
     {% endif %}
   </div>
 {% endblock %}
 
 {% block content %}
-  <div class="row mb-4">
-    <div class="col-md-4">
-      <h4>{% trans 'Details' %}</h4>
-      <ul class="list-unstyled">
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-4">
+    <div>
+      <h4 class="text-lg font-semibold mb-2">{% trans 'Details' %}</h4>
+      <ul class="list-none">
         <li>
-          <span class="fw-bold text-secondary-emphasis">{% trans 'Type' %}:</span> {{ object.get_type_display }}
+          <span class="font-bold text-base-content/60">{% trans 'Type' %}:</span> {{ object.get_type_display }}
         </li>
         {% if object.parent %}
           <li>
-            <span class="fw-bold text-secondary-emphasis">{% trans 'Locker' %}:</span> <a href="{% url "machines:detail" object.parent.pk %}">{{ object.parent }}</a>
+            <span class="font-bold text-base-content/60">{% trans 'Locker' %}:</span> <a class="link" href="{% url "machines:detail" object.parent.pk %}">{{ object.parent }}</a>
           </li>
         {% endif %}
         <li>
-          <span class="fw-bold text-secondary-emphasis">{% trans 'Location' %}:</span>
+          <span class="font-bold text-base-content/60">{% trans 'Location' %}:</span>
           {% if object.location %}
-            <a href="{% url 'locations:detail' object.location.pk %}">{{ object.location }}</a>
+            <a class="link" href="{% url 'locations:detail' object.location.pk %}">{{ object.location }}</a>
           {% elif object.parent.location %}
-              <a href="{% url 'locations:detail' object.parent.location.pk %}">{{ object.parent.location }}</a>
+              <a class="link" href="{% url 'locations:detail' object.parent.location.pk %}">{{ object.parent.location }}</a>
           {% else %}
             --
           {% endif %}
-          <br />
         </li>
         {% if object.type != "lock_group" %}
         <li>
-          <span class="fw-bold text-secondary-emphasis">{% trans 'State' %}:</span> {% include "snippets/machine_state_label.html" with object=object %}
+          <span class="font-bold text-base-content/60">{% trans 'State' %}:</span> {% include "snippets/machine_state_label.html" with object=object %}
         </li>
         {% endif %}
         {% if object.type != "compartment" %}
         <li>
-          <span class="fw-bold text-secondary-emphasis">{% trans 'Chip' %}:</span> {{ object.get_chip_display }}
+          <span class="font-bold text-base-content/60">{% trans 'Chip' %}:</span> {{ object.get_chip_display }}
         </li>
         {% endif %}
         {% if object.firmware_version %}
           <li>
-            <span class="fw-bold text-secondary-emphasis">{% trans 'Firmware Version' %}:</span> {{ object.firmware_version }}
+            <span class="font-bold text-base-content/60">{% trans 'Firmware Version' %}:</span> {{ object.firmware_version }}
           </li>
         {% endif %}
         {% if object.type != "lock_group" %}
         <li>
-          <span class="fw-bold text-secondary-emphasis">{% trans 'Last used' %}:</span> {{ last_access|default:_('Never') }}
+          <span class="font-bold text-base-content/60">{% trans 'Last used' %}:</span> {{ last_access|default:_('Never') }}
         </li>
         {% endif %}
       </ul>
     </div>
     {% if machine.type != "compartment" %}
-    <div class="col-md-4">
-      <h4>{% trans 'Network' %}</h4>
-      <ul class="list-unstyled">
+    <div>
+      <h4 class="text-lg font-semibold mb-2">{% trans 'Network' %}</h4>
+      <ul class="list-none">
         <li>
-          <span class="fw-bold text-secondary-emphasis">{% trans 'Hostname' %}:</span> {{ object.hostname }}
+          <span class="font-bold text-base-content/60">{% trans 'Hostname' %}:</span> {{ object.hostname }}
         </li>
         <li>
-          <span class="fw-bold text-secondary-emphasis">{% trans 'MAC Address' %}:</span> {{ object.mac_address }}
+          <span class="font-bold text-base-content/60">{% trans 'MAC Address' %}:</span> {{ object.mac_address }}
         </li>
         <li>
-          <span class="fw-bold text-secondary-emphasis">{% trans 'IP-Address' %}:</span> {{ object.ip_address }}
+          <span class="font-bold text-base-content/60">{% trans 'IP-Address' %}:</span> {{ object.ip_address }}
         </li>
       </ul>
     </div>
     {% else %}
-    <div class="col-md-4">
-    </div>
+    <div></div>
     {% endif %}
-    <div class="col-md-4">
-      <h4>{% trans 'Configuration' %}</h4>
-      <ul class="list-unstyled">
+    <div>
+      <h4 class="text-lg font-semibold mb-2">{% trans 'Configuration' %}</h4>
+      <ul class="list-none">
         <li>
-          <span class="fw-bold text-secondary-emphasis">{% trans 'Runtimer' %}:</span> {{ object.runtimer }}
+          <span class="font-bold text-base-content/60">{% trans 'Runtimer' %}:</span> {{ object.runtimer }}
         </li>
         <li>
-          <span class="fw-bold text-secondary-emphasis">{% trans 'Min Power' %}:</span> {{ object.min_power }}
+          <span class="font-bold text-base-content/60">{% trans 'Min Power' %}:</span> {{ object.min_power }}
         </li>
         <li>
-          <span class="fw-bold text-secondary-emphasis">{% trans 'Control Parameter' %}:</span> {{ object.control_parameter|default:'--' }}
+          <span class="font-bold text-base-content/60">{% trans 'Control Parameter' %}:</span> {{ object.control_parameter|default:'--' }}
         </li>
         <li>
-          <span class="fw-bold text-secondary-emphasis">{% trans 'Allowed on Holidays' %}:</span> {{ object.allowed_on_holidays|yesno:_("Yes,No") }}
+          <span class="font-bold text-base-content/60">{% trans 'Allowed on Holidays' %}:</span> {{ object.allowed_on_holidays|yesno:_("Yes,No") }}
         </li>
       </ul>
     </div>
   </div>
 
   {% if machine.type != "lock_group" %}
-  <div class="row">
-    <div class="mb-5 col-12">
-      <ul class="nav nav-tabs" id="myTab" role="tablist">
-        <li class="nav-item" role="presentation">
-          <button class="nav-link active" id="qualifications-tab" data-bs-toggle="tab" data-bs-target="#qualifications-tab-pane" type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">{% trans 'Qualifications' %}</button>
-        </li>
-        {% if perms.access_log.view_access_log %}
-          <li class="nav-item" role="presentation">
-            <button class="nav-link" id="accesslog-tab" hx-get="{% url 'access_log:for-machine' object.pk %}" hx-target="#accesslog-tab-pane" data-bs-toggle="tab" data-bs-target="#accesslog-tab-pane" type="button" role="tab" aria-controls="accesslog-tab-pane" aria-selected="false">{% trans 'Access Log' %}</button>
-          </li>
-        {% endif %}
-        <li class="nav-item" role="presentation">
-          <button class="nav-link" id="statistics-tab" hx-get="{% url 'machines:statistics' object.pk %}" hx-target="#statistics-tab-pane" data-bs-toggle="tab" data-bs-target="#statistics-tab-pane" type="button" role="tab" aria-controls="statistics-tab-pane" aria-selected="false">{% trans 'Statistics' %}</button>
-        </li>
-        {% if perms.machines.comment_machine %}
-        <li class="nav-item" role="presentation">
-          <button class="nav-link" id="comments-tab" data-bs-toggle="tab" data-bs-target="#comments-tab-pane" type="button" role="tab" aria-controls="comments-tab-pane" aria-selected="false">{% trans 'Comments' %}</button>
-        </li>
-        {% endif %}
-      </ul>
-      <div class="tab-content mt-4" id="myTabContent">
-        <div class="tab-pane show active" id="qualifications-tab-pane" role="tabpanel" aria-labelledby="qualifications-tab" tabindex="0">
-          {% if machine.needs_qualification %}
-            <div class="text-body-secondary clearfix">
-              {% blocktrans %}{{ qualifications_count }} people are qualified to use this machine:{% endblocktrans %}
-              {% if perms.people.qualify_person %}
-                <a class="btn btn-primary btn-sm float-end mb-2" href="{% url 'machines:qualify' machine.pk %}">{% trans 'Qualify Person' %}</a>
-              {% endif %}
-            </div>
-            {% include 'machine_qualifications_table.html' with is_partial=True %}
-          {% else %}
-            <div class="text-body-secondary">
-              {% blocktrans %}All active users are qualified to use this machine{% endblocktrans %}
-            </div>
-          {% endif %}
-        </div>
-        {% if perms.access_log.view_access_log %}
-          <div class="tab-pane" id="accesslog-tab-pane" role="tabpanel" aria-labelledby="accesslog-tab" tabindex="0">
-            {% include 'snippets/spinner.html' %}
+  <div class="mb-5">
+    <div role="tablist" class="tabs tabs-lift" id="myTab">
+      <button role="tab" class="tab tab-active" id="qualifications-tab" data-tabs-target="#qualifications-tab-pane" aria-selected="true">{% trans 'Qualifications' %}</button>
+      {% if perms.access_log.view_access_log %}
+        <button role="tab" class="tab" id="accesslog-tab" hx-get="{% url 'access_log:for-machine' object.pk %}" hx-target="#accesslog-tab-pane" data-tabs-target="#accesslog-tab-pane" aria-selected="false">{% trans 'Access Log' %}</button>
+      {% endif %}
+      <button role="tab" class="tab" id="statistics-tab" hx-get="{% url 'machines:statistics' object.pk %}" hx-target="#statistics-tab-pane" data-tabs-target="#statistics-tab-pane" aria-selected="false">{% trans 'Statistics' %}</button>
+      {% if perms.machines.comment_machine %}
+        <button role="tab" class="tab" id="comments-tab" data-tabs-target="#comments-tab-pane" aria-selected="false">{% trans 'Comments' %}</button>
+      {% endif %}
+    </div>
+    <div class="mt-4" id="myTabContent">
+      <div role="tabpanel" id="qualifications-tab-pane" aria-labelledby="qualifications-tab">
+        {% if machine.needs_qualification %}
+          <div class="flex flex-wrap items-center justify-between gap-2 text-base-content/60 mb-2">
+            {% blocktrans %}{{ qualifications_count }} people are qualified to use this machine:{% endblocktrans %}
+            {% if perms.people.qualify_person %}
+              <a class="btn btn-primary btn-sm" href="{% url 'machines:qualify' machine.pk %}">{% trans 'Qualify Person' %}</a>
+            {% endif %}
+          </div>
+          {% include 'machine_qualifications_table.html' with is_partial=True %}
+        {% else %}
+          <div class="text-base-content/60">
+            {% blocktrans %}All active users are qualified to use this machine{% endblocktrans %}
           </div>
         {% endif %}
-        <div class="tab-pane" id="statistics-tab-pane" role="tabpanel" aria-labelledby="statistics-tab" tabindex="0">
+      </div>
+      {% if perms.access_log.view_access_log %}
+        <div role="tabpanel" class="hidden" id="accesslog-tab-pane" aria-labelledby="accesslog-tab">
           {% include 'snippets/spinner.html' %}
         </div>
-        <div class="tab-pane" id="comments-tab-pane" role="tabpanel" aria-labelledby="comments-tab" tabindex="0">
-          {% include "comment_display.html" with comment_url='machines:add-comment' %}
-        </div>
+      {% endif %}
+      <div role="tabpanel" class="hidden" id="statistics-tab-pane" aria-labelledby="statistics-tab">
+        {% include 'snippets/spinner.html' %}
+      </div>
+      <div role="tabpanel" class="hidden" id="comments-tab-pane" aria-labelledby="comments-tab">
+        {% include "comment_display.html" with comment_url='machines:add-comment' %}
       </div>
     </div>
   </div>
   {% else %}
-  <div class="row">
-    <div class="mb-5 col-12">
-      <h4 class="mb-4">{% trans "Compartments" %}</h4>
-      <table class="table table-striped table-hover">
-        <thead>
+  <div class="mb-5">
+    <h4 class="text-lg font-semibold mb-4">{% trans "Compartments" %}</h4>
+    <div class="max-w-full overflow-x-auto">
+    <table class="table table-sm table-zebra">
+      <thead>
+        <tr>
+          <th>{% trans "Name" %}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for child in machine.children.all %}
           <tr>
-            <th>{% trans "Name" %}</th>
+            <td>
+              <a class="link" href="{% url 'machines:detail' child.pk %}">{{ child.name }}</a>
+            </td>
           </tr>
-        </thead>
-        <tbody>
-          {% for child in machine.children.all %}
-            <tr>
-              <td>
-                <a href="{% url 'machines:detail' child.pk %}">{{ child.name }}</a>
-              </td>
-            </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+        {% endfor %}
+      </tbody>
+    </table>
     </div>
   </div>
   {% endif %}
   {% if machine.has_api %}
-    <div class="modal" id="logModal" tabindex="-1">
-      <div class="modal-dialog modal-dialog-scrollable modal-xl">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">{% trans 'Logs' %}</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body" id="logContainer"></div>
-          <div class="modal-footer">
-            <div class="form-check">
-              <input class="form-check-input" type="checkbox" id="autoscrollCheckbox" checked />
-              <label class="form-check-label" for="autoscrollCheckbox">{% trans 'Auto Scroll' %}</label>
-            </div>
-            <div class="flex-fill"></div>
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          </div>
+    <dialog class="modal" id="logModal">
+      <div class="modal-box w-11/12 max-w-5xl max-h-[85vh] flex flex-col p-0">
+        <div class="flex items-center justify-between p-4 pb-2">
+          <h3 class="text-lg font-bold">{% trans 'Logs' %}</h3>
+          <form method="dialog"><button type="button" class="btn btn-sm btn-circle btn-ghost" aria-label="{% trans "Close" %}">✕</button></form>
+        </div>
+        <div class="overflow-y-auto flex-1 px-4" id="logContainer"></div>
+        <div class="flex items-center gap-3 p-4 pt-2 border-t border-base-300">
+          <label class="label gap-2">
+            <input class="checkbox checkbox-sm" type="checkbox" id="autoscrollCheckbox" checked />
+            {% trans 'Auto Scroll' %}
+          </label>
+          <div class="flex-1"></div>
+          <form method="dialog"><button type="button" class="btn btn-sm">{% trans "Close" %}</button></form>
         </div>
       </div>
-    </div>
+      <form method="dialog" class="modal-backdrop"><button>{% trans "close" %}</button></form>
+    </dialog>
   {% endif %}
 {% endblock %}
 
@@ -231,10 +218,11 @@ function scrollLogToBottom() {
 }
 
 const logModal = document.getElementById("logModal");
-logModal.addEventListener("hidden.bs.modal", event => {
+logModal.addEventListener("close", event => {
   var logContainer = document.getElementById("logContainer");
   const n = document.createElement("div")
   n.setAttribute("id", "logContainer");
+  n.className = "overflow-y-auto flex-1 px-4";
   logContainer.replaceWith(n);
 });
 {% endif %}

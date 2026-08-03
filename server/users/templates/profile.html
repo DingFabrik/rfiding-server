@@ -11,6 +11,6 @@
 {% crispy form %}
 </form>
 
-<hr class="my-5" />
-<a href="{% url "users:change_password" %}" class="btn btn-primary">{% trans "Change Password" %}</a>
+<div class="divider"></div>
+<a href="{% url "users:change_password" %}" class="btn btn-primary btn-sm">{% trans "Change Password" %}</a>
 {% endblock %}

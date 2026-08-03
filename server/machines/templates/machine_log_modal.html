@@ -1,9 +1,9 @@
 <div
     id="logContainer"
-    class="modal-body p-0"
+    class="overflow-y-auto flex-1 px-4"
     hx-ext="ws"
     ws-connect="/ws/machines/{{ machine.mac_address }}/logs"
     hx-on:htmx:ws-after-message="scrollLogToBottom()"
     hx-trigger="click from:#logsButton">
-    <div id="machine_logs" class="font-monospace machine-logs"></div>
+    <div id="machine_logs" class="mockup-code max-h-[60vh] overflow-y-auto"></div>
 </div>

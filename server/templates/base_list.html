@@ -7,32 +7,32 @@
 {% endblock %}
 
 {% block top_actions %}
-<div class="float-start me-3">
+<div class="flex flex-wrap items-center gap-2">
     {% include "snippets/search_form.html" %}
+    {% if can_create %}
+    <a href="{% url request.resolver_match.namespace|add:':create' %}" class="btn btn-sm btn-primary tooltip" data-tip="{% with model|verbose_name as modelname %}{% blocktrans %}Add {{ modelname }}{% endblocktrans %}{% endwith %}"><i data-lucide="plus" class="w-4 h-4"></i></a>
+    {% endif %}
 </div>
-{% if can_create %}
-<a href="{% url request.resolver_match.namespace|add:':create' %}" class="btn btn-primary mt-2 mt-md-0" data-bs-toggle="tooltip" title="{% with model|verbose_name as modelname %}{% blocktrans %}Add {{ modelname }}{% endblocktrans %}{% endwith %}"><i class="bi-plus-lg"></i></a>
-{% endif %}
 {% endblock %}
 
 {% block bottom_actions %}
 {% if can_create and paginator.count > 1 %}
-<a href="{% url request.resolver_match.namespace|add:':create' %}" class="btn btn-primary" data-bs-toggle="tooltip" title="{% with model|verbose_name as modelname %}{% blocktrans %}Add {{ modelname }}{% endblocktrans %}{% endwith %}"><i class="bi-plus-lg"></i></a>
+<a href="{% url request.resolver_match.namespace|add:':create' %}" class="btn btn-sm btn-primary tooltip" data-tip="{% with model|verbose_name as modelname %}{% blocktrans %}Add {{ modelname }}{% endblocktrans %}{% endwith %}"><i data-lucide="plus" class="w-4 h-4"></i></a>
 {% endif %}
 {% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-12 {% if filter_choices %}col-lg-9 col-xl-10{% endif %}">
+<div class="flex flex-col lg:flex-row gap-4">
+    <div class="min-w-0 grow">
     {% if paginator.count == 0 %}
     {% block empty_state %}
     {% include "snippets/empty_list.html" with model=model %}
     {% endblock %}
     {% else %}
     <div id="list_container">
-        <div class="table-responsive">
+        <div class="max-w-full overflow-x-auto rounded-box border border-base-content/10">
             {% block table_outer %}
-                <table class="table table-bordered table-hover">
+                <table class="table table-sm">
                     {% block table %}
                     {% endblock %}
                 </table>
@@ -44,18 +44,16 @@
     </div>
 
     {% if filter_choices %}
-    <div class="col-12 col-lg-3 col-xl-2">
-        <div class="card mb-3">
-            <div class="card-header">
-                {% trans "Filter" %}
-            </div>
-            <div class="card-body">
+    <div class="w-full lg:w-64 shrink-0">
+        <div class="card card-border bg-base-100 mb-3">
+            <div class="card-body gap-3">
+                <h2 class="card-title text-base">{% trans "Filter" %}</h2>
                 {% for key, choice in filter_choices.items %}
-                <div class="mb-3">
-                    <label for="exampleFormControlInput1" class="form-label">{{ choice.label }}</label>
+                <div>
+                    <label for="id_filter_{{ key }}" class="label">{{ choice.label }}</label>
                     <select
                     id="id_filter_{{ key }}"
-                    class="form-select filter_choices"
+                    class="select select-sm w-full filter_choices"
                     name="filter_{{ key }}"
                     hx-get="{{ request.path }}"
                     hx-include="#id_search, #id_sort, .filter_choices"

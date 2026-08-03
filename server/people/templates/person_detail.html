@@ -3,45 +3,41 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-  <div class="row mb-5">
-    <div class="col-12 col-md-6">
-      <h4>{% trans 'Details' %}</h4>
-      <ul class="mb-4 list-unstyled">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-5">
+    <div>
+      <h4 class="text-lg font-semibold mb-2">{% trans 'Details' %}</h4>
+      <ul class="list-none mb-4">
         <li>
-          <span class="fw-bold text-secondary-emphasis">{% trans 'Member ID' %}:</span> {{ person.member_id }}
+          <span class="font-bold text-base-content/60">{% trans 'Member ID' %}:</span> {{ person.member_id }}
         </li>
         <li>
-          <span class="fw-bold text-secondary-emphasis">{% trans 'Name' %}:</span> {{ person.name }}
+          <span class="font-bold text-base-content/60">{% trans 'Name' %}:</span> {{ person.name }}
         </li>
         <li>
-          <span class="fw-bold text-secondary-emphasis">{% trans 'E-Mail' %}:</span> {{ person.email }}
+          <span class="font-bold text-base-content/60">{% trans 'E-Mail' %}:</span> {{ person.email }}
         </li>
         <li>
-          <span class="fw-bold text-secondary-emphasis">{% trans 'Is Active' %}:</span> {% include 'snippets/active_toggle.html' %}
+          <span class="font-bold text-base-content/60">{% trans 'Is Active' %}:</span> {% include 'snippets/active_toggle.html' %}
         </li>
         {% if object.notes %}
           <li>
-            <span class="fw-bold text-secondary-emphasis">{% trans 'Notes' %}:</span> {{ object.notes }}<br />
+            <span class="font-bold text-base-content/60">{% trans 'Notes' %}:</span> {{ object.notes }}
           </li>
         {% endif %}
       </ul>
     </div>
-    <div class="col-12 col-md-6">
+    <div>
       <div class="mb-4">
-        <h4>{% trans 'Tokens' %}</h4>
-        <div class="row">
+        <h4 class="text-lg font-semibold mb-2">{% trans 'Tokens' %}</h4>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
           {% with tokens=person.token_set.all %}
             {% for token in tokens %}
-              <div class="col col-2 col-12 col-sm-6">
-                {% include 'token_card.html' %}
-              </div>
+              {% include 'token_card.html' %}
             {% empty %}
-              <div class="col">
-                <div class="col alert alert-secondary">
-                  {% with name=person.name %}
-                    {% blocktrans %}<b>{{ name }}</b> has no tokens.{% endblocktrans %}
-                  {% endwith %}
-                </div>
+              <div role="alert" class="alert col-span-full">
+                {% with name=person.name %}
+                  {% blocktrans %}<b>{{ name }}</b> has no tokens.{% endblocktrans %}
+                {% endwith %}
               </div>
             {% endfor %}
           {% endwith %}
@@ -50,41 +46,33 @@
     </div>
   </div>
 
-  <div class="row">
-    <div class="mb-5 col-12">
-      <ul class="nav nav-tabs" role="tablist">
-        <li class="nav-item" role="presentation">
-          <button class="nav-link active" id="qualifications-tab" data-bs-toggle="tab" data-bs-target="#qualifications-tab-pane" type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">{% trans 'Qualifications' %}</button>
-        </li>
-        {% if perms.access_log.view_access_log %}
-          <li class="nav-item" role="presentation">
-            <button class="nav-link" id="accesslog-tab" hx-get="{% url 'access_log:for-person' object.pk %}" hx-target="#accesslog-tab-pane" data-bs-toggle="tab" data-bs-target="#accesslog-tab-pane" type="button" role="tab" aria-controls="contact-tab-pane" aria-selected="false">{% trans 'Access Log' %}</button>
-          </li>
+  <div class="mb-5">
+    <div role="tablist" class="tabs tabs-lift">
+      <button role="tab" class="tab tab-active" id="qualifications-tab" data-tabs-target="#qualifications-tab-pane" aria-selected="true">{% trans 'Qualifications' %}</button>
+      {% if perms.access_log.view_access_log %}
+        <button role="tab" class="tab" id="accesslog-tab" hx-get="{% url 'access_log:for-person' object.pk %}" hx-target="#accesslog-tab-pane" data-tabs-target="#accesslog-tab-pane" aria-selected="false">{% trans 'Access Log' %}</button>
+      {% endif %}
+      {% if perms.people.comment_person %}
+        <button role="tab" class="tab" id="comments-tab" data-tabs-target="#comments-tab-pane" aria-selected="false">{% trans 'Comments' %}</button>
+      {% endif %}
+    </div>
+    <div class="mt-4">
+      <div role="tabpanel" id="qualifications-tab-pane" aria-labelledby="qualifications-tab">
+        {% if perms.people.qualify_person %}
+          <div class="flex justify-end mb-2">
+            <a class="btn btn-primary btn-sm" href="{% url 'people:qualify' person.pk %}">{% trans 'Add Qualification' %}</a>
+          </div>
         {% endif %}
-        {% if perms.people.comment_person %}
-          <li class="nav-item" role="presentation">
-            <button class="nav-link" id="comments-tab" data-bs-toggle="tab" data-bs-target="#comments-tab-pane" type="button" role="tab" aria-controls="comments-tab-pane" aria-selected="false">{% trans 'Comments' %}</button>
-          </li>
-        {% endif %}
-      </ul>
-      <div class="tab-content mt-4">
-        <div class="tab-pane show active" id="qualifications-tab-pane" role="tabpanel" aria-labelledby="qualifications-tab" tabindex="0">
-          {% if perms.people.qualify_person %}
-            <div class="clearfix">
-              <a class="btn btn-primary btn-sm float-end mb-2" href="{% url 'people:qualify' person.pk %}">{% trans 'Add Qualification' %}</a>
-            </div>
-          {% endif %}
-          {% include 'person_qualifications_table.html' with is_partial=True set_history=False %}
-        </div>
-        {% if perms.access_log.view_access_log %}
-          <div class="tab-pane" id="accesslog-tab-pane" role="tabpanel" aria-labelledby="accesslog-tab" tabindex="0">{% include "snippets/spinner.html" %}</div>
-        {% endif %}
-        {% if perms.people.comment_person %}
-        <div class="tab-pane" id="comments-tab-pane" role="tabpanel" aria-labelledby="comments-tab" tabindex="0">
-          {% include "comment_display.html" with comment_url='people:add-comment' %}
-        </div>
-        {% endif %}
+        {% include 'person_qualifications_table.html' with is_partial=True set_history=False %}
       </div>
+      {% if perms.access_log.view_access_log %}
+        <div role="tabpanel" class="hidden" id="accesslog-tab-pane" aria-labelledby="accesslog-tab">{% include "snippets/spinner.html" %}</div>
+      {% endif %}
+      {% if perms.people.comment_person %}
+      <div role="tabpanel" class="hidden" id="comments-tab-pane" aria-labelledby="comments-tab">
+        {% include "comment_display.html" with comment_url='people:add-comment' %}
+      </div>
+      {% endif %}
     </div>
   </div>
 {% endblock %}

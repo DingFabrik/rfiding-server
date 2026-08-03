@@ -1,40 +1,33 @@
 {% load i18n %}
-<form class="float-start row row-cols-lg-auto g-3 align-items-center">
-    <div class="col-12">
-        <div class="input-group">
-            <span class="input-group-text"><i class="bi-search"></i></span>
-            <input
-            id="id_search"
-            type="search"
-            class="form-control"
-            placeholder="{% trans "Search" %}"
-            name="search"
-            value="{{ request.GET.search }}"
-            hx-get="{{ request.path }}"
-            hx-include="#id_sort, #id_filter"
-            hx-target="#list_container"
-            hx-trigger="input changed delay:300ms, search"
-            hx-push-url="true">
-        </div>
-    </div>
+<form class="flex flex-wrap items-center gap-3">
+    <label class="input input-sm">
+        <i data-lucide="search" class="w-4 h-4 opacity-50"></i>
+        <input
+        id="id_search"
+        type="search"
+        class="grow"
+        placeholder="{% trans "Search" %}"
+        name="search"
+        value="{{ request.GET.search }}"
+        hx-get="{{ request.path }}"
+        hx-include="#id_sort, #id_filter"
+        hx-target="#list_container"
+        hx-trigger="input changed delay:300ms, search"
+        hx-push-url="true">
+    </label>
     {% if sort_choices %}
-    <div class="col-12">
-        <div class="input-group">
-            <span class="input-group-text"><i class="bi-sort-alpha-down"></i></span>
-            <select
-            id="id_sort"
-            class="form-select"
-            name="sort"
-            hx-get="{{ request.path }}"
-            hx-include="#id_search, #id_filter"
-            hx-target="#list_container"
-            hx-trigger="change"
-            hx-push-url="true">
-            {% for choice in sort_choices %}
-                <option value="{{ choice.0 }}" {% if choice.0 == request.GET.sort %}selected{% endif %}>{{ choice.1 }}</option>
-            {% endfor %}
-            </select>
-        </div>
-    </div>
+    <select
+    id="id_sort"
+    class="select select-sm"
+    name="sort"
+    hx-get="{{ request.path }}"
+    hx-include="#id_search, #id_filter"
+    hx-target="#list_container"
+    hx-trigger="change"
+    hx-push-url="true">
+    {% for choice in sort_choices %}
+        <option value="{{ choice.0 }}" {% if choice.0 == request.GET.sort %}selected{% endif %}>{{ choice.1 }}</option>
+    {% endfor %}
+    </select>
     {% endif %}
 </form>

@@ -1,4 +1,4 @@
-{% load i18n %}{% load base_extra %}<table class="table table-bordered table-hover">
+{% load i18n %}{% load base_extra %}<div class="max-w-full overflow-x-auto rounded-box border border-base-content/10"><table class="table table-sm">
     <tr>
         <th>{% trans "Type" %}</th>
         <th>{% trans "Name" %}</th>
@@ -8,9 +8,9 @@
     {% for object in objects %}
     <tr>
         <td>{{ object|verbose_name }}</td>
-        <td><a href="{{ object.get_absolute_url }}">{{ object }}</a></td>
+        <td><a class="link" href="{{ object.get_absolute_url }}">{{ object }}</a></td>
         <td>{{ object.created }}</td>
         <td>{{ object.updated }}</td>
     </tr>
     {% endfor %}
-</table>
+</table></div>

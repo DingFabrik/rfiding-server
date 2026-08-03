@@ -1,19 +1,19 @@
 {% load i18n %}
-<div class="card {% if token.is_active %}border-success{% elif token.archived %}border-secondary{% else %}border-danger{% endif %} mb-2">
-    <div class="card-header">
-        <i class="{% if token.is_active %}text-success{% else %}text-danger{% endif %} bi-broadcast"></i>
-        <a href="{% url 'tokens:detail' token.id %}">
-            Token #{{ token.label }} &bull; [{{ token.serial }}]
-        </a>
-    </div>
-    <div class="card-body">
-        <p class="card-text">
+<div class="card card-border {% if token.is_active %}border-success{% elif token.archived %}border-base-300{% else %}border-error{% endif %} mb-2">
+    <div class="card-body gap-1 p-4">
+        <div class="flex items-center gap-2">
+            <i data-lucide="radio-tower" class="w-4 h-4 {% if token.is_active %}text-success{% else %}text-error{% endif %}"></i>
+            <a class="link" href="{% url 'tokens:detail' token.id %}">
+                Token #{{ token.label }} &bull; [{{ token.serial }}]
+            </a>
+        </div>
+        <p class="m-0">
             {{ token.type }}
         </p>
+        {% if token.archived %}
+        <p class="text-base-content/60 text-sm m-0">
+            {% trans "Archived" %}: {{ token.archived }}
+        </p>
+        {% endif %}
     </div>
-    {% if token.archived %}
-    <div class="card-footer text-secondary">
-        {% trans "Archived" %}: {{ token.archived }}
-    </div>
-    {% endif %}
 </div>

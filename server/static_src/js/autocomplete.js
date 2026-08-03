@@ -1,5 +1,3 @@
-import * as bootstrap from 'bootstrap'
-
 const DEFAULTS = {
   threshold: 2,
   maximumItems: 5,
@@ -11,28 +9,26 @@ const DEFAULTS = {
   showValueBeforeLabel: false,
 };
 
+let autocompleteCounter = 0;
+
 class Autocomplete {
   constructor(field, options) {
     this.field = field;
     this.options = Object.assign({}, DEFAULTS, options);
-    this.dropdown = null;
 
-    field.parentNode.classList.add('dropdown');
-    field.setAttribute('data-bs-toggle', 'dropdown');
-    field.classList.add('dropdown-toggle');
+    const anchorName = `--autocomplete-${++autocompleteCounter}`;
+    field.style.setProperty('anchor-name', anchorName);
 
-    const dropdown = ce(`<div class="dropdown-menu"></div>`);
+    this.menu = ce(`<ul class="dropdown menu w-full rounded-box bg-base-100 shadow-lg" popover style="position-anchor:${anchorName}"></ul>`);
     if (this.options.dropdownClass)
-      dropdown.classList.add(this.options.dropdownClass);
+      this.menu.classList.add(this.options.dropdownClass);
 
-    insertAfter(dropdown, field);
-
-    this.dropdown = new bootstrap.Dropdown(field, this.options.dropdownOptions);
+    insertAfter(this.menu, field);
 
     field.addEventListener('click', (e) => {
       if (this.createItems() === 0) {
         e.stopPropagation();
-        this.dropdown.hide();
+        this.hide();
       }
     });
 
@@ -44,14 +40,24 @@ class Autocomplete {
 
     field.addEventListener('keydown', (e) => {
       if (e.keyCode === 27) {
-        this.dropdown.hide();
+        this.hide();
         return;
       }
       if (e.keyCode === 40) {
-        this.dropdown._menu.children[0]?.focus();
+        this.menu.querySelector('.autocomplete-item')?.focus();
         return;
       }
     });
+  }
+
+  show() {
+    if (!this.menu.matches(':popover-open'))
+      this.menu.showPopover();
+  }
+
+  hide() {
+    if (this.menu.matches(':popover-open'))
+      this.menu.hidePopover();
   }
 
   setData(data) {
@@ -61,7 +67,7 @@ class Autocomplete {
 
   renderIfNeeded() {
     if (this.createItems() > 0)
-      this.dropdown.show();
+      this.show();
     else
       this.field.click();
   }
@@ -89,18 +95,20 @@ class Autocomplete {
       }
     }
 
-    return ce(`<button type="button" class="dropdown-item" data-label="${item.label}" data-value="${item.value}">${label}</button>`);
+    const li = ce(`<li></li>`);
+    const button = ce(`<button type="button" class="autocomplete-item" data-label="${item.label}" data-value="${item.value}">${label}</button>`);
+    li.appendChild(button);
+    return li;
   }
 
   createItems() {
     const lookup = this.field.value;
     if (lookup.length < this.options.threshold) {
-      this.dropdown.hide();
+      this.hide();
       return 0;
     }
 
-    const items = this.field.nextSibling;
-    items.innerHTML = '';
+    this.menu.innerHTML = '';
 
     const keys = Object.keys(this.options.data);
 
@@ -114,13 +122,13 @@ class Autocomplete {
       };
 
       if (removeDiacritics(item.label).toLowerCase().indexOf(removeDiacritics(lookup).toLowerCase()) >= 0) {
-        items.appendChild(this.createItem(lookup, item));
+        this.menu.appendChild(this.createItem(lookup, item));
         if (this.options.maximumItems > 0 && ++count >= this.options.maximumItems)
           break;
       }
     }
 
-    this.field.nextSibling.querySelectorAll('.dropdown-item').forEach((item) => {
+    this.menu.querySelectorAll('.autocomplete-item').forEach((item) => {
       item.addEventListener('click', (e) => {
         let dataLabel = e.currentTarget.getAttribute('data-label');
         let dataValue = e.currentTarget.getAttribute('data-value');
@@ -134,11 +142,11 @@ class Autocomplete {
           });
         }
 
-        this.dropdown.hide();
+        this.hide();
       })
     });
 
-    return items.childNodes.length;
+    return this.menu.childNodes.length;
   }
 }
 
@@ -161,6 +169,8 @@ function insertAfter(elem, refElem) {
   return refElem.parentNode.insertBefore(elem, refElem.nextSibling);
 }
 
+const COMBINING_DIACRITICS = new RegExp('[' + String.fromCharCode(0x0300) + '-' + String.fromCharCode(0x036f) + ']', 'g');
+
 /**
  * @param {String} str
  * @returns {String}
@@ -168,7 +178,7 @@ function insertAfter(elem, refElem) {
 function removeDiacritics(str) {
   return str
       .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '');
+      .replace(COMBINING_DIACRITICS, '');
 }
 
 export { Autocomplete };

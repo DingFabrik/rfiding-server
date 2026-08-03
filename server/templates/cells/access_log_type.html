@@ -1,9 +1,9 @@
 {% if object.type == "booted" %}
-<i class="bi bi-rocket-takeoff-fill me-2 text-primary"></i><span class="text-warning-emphasis d-none d-md-inline">{{ object.get_type_display }}</span>
+<i data-lucide="rocket" class="w-4 h-4 inline text-primary"></i><span class="text-warning hidden md:inline">{{ object.get_type_display }}</span>
 {% elif object.type == "enabled" %}
-<i class="bi bi-play-circle-fill me-2 text-success"></i><span class="text-success-emphasis d-none d-md-inline">{{ object.get_type_display }}</span>
+<i data-lucide="circle-play" class="w-4 h-4 inline text-success"></i><span class="text-success hidden md:inline">{{ object.get_type_display }}</span>
 {% elif object.type == "disabled" %}
-<i class="bi bi-stop-circle-fill me-2 text-secondary"></i><span class="text-secondary-emphasis d-none d-md-inline">{{ object.get_type_display }}</span>
+<i data-lucide="circle-stop" class="w-4 h-4 inline text-neutral"></i><span class="text-neutral hidden md:inline">{{ object.get_type_display }}</span>
 {% elif object.type == "unsuccessful" %}
-<i class="bi bi-x-circle-fill me-2 text-danger"></i><span class="text-danger-emphasis d-none d-md-inline">{{ object.get_type_display }}</span>
+<i data-lucide="circle-x" class="w-4 h-4 inline text-error"></i><span class="text-error hidden md:inline">{{ object.get_type_display }}</span>
 {% endif %}

@@ -2,7 +2,8 @@
 
 {% block card_body_outer %}
 <div class="card-body p-0">
-<table class="table m-0">
+<div class="max-w-full overflow-x-auto">
+<table class="table table-sm m-0">
     <thead>
         <tr>
             <th>{% trans "Date" %}</th>
@@ -22,7 +23,9 @@
 {% endfor %}
         </tbody>
 </table>
-<a href="{% url 'access_log:list' %}" class="btn btn-primary btn-sm float-end m-2">{% trans "More" %}</a>
-
+</div>
+<div class="flex justify-end p-2">
+    <a href="{% url 'access_log:list' %}" class="btn btn-primary btn-sm">{% trans "More" %}</a>
+</div>
 </div>
 {% endblock %}

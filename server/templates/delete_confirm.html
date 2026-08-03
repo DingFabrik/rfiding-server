@@ -2,22 +2,18 @@
 {% load i18n %}
 
 {% block content %}
-    <div class="row">
-        <div class="col-md-12 col-md-offset-3">
-            <div class="alert-danger alert d-flex align-items-center" role="alert">
-                <i class="bi bi-exclamation-triangle-fill me-3"></i>
-                <div>
-                    <h5 class="mb-0">{% blocktrans %}Do you really want to delete <b>{{ object }}</b>?{% endblocktrans %}</h5>
-                    <small>{% blocktrans %}Deleting an object permanently removes it and can not be undone{% endblocktrans %}</small>
-                </div>
-            </div>
-            <form action="" method="post">
-                {% csrf_token %}
-                <div class="text-right">
-                    <a href="{{ object.get_absolute_url }}" class="btn btn-secondary me-3">{% trans "No" %}</a>
-                    <input type="submit" value="{% trans "Delete" %}" class="btn btn-danger"/>
-                </div>
-            </form>
+    <div role="alert" class="alert alert-error">
+        <i data-lucide="triangle-alert" class="w-5 h-5"></i>
+        <div>
+            <h3 class="font-bold">{% blocktrans %}Do you really want to delete <b>{{ object }}</b>?{% endblocktrans %}</h3>
+            <p class="text-sm">{% blocktrans %}Deleting an object permanently removes it and can not be undone{% endblocktrans %}</p>
         </div>
     </div>
+    <form action="" method="post" class="mt-4">
+        {% csrf_token %}
+        <div class="flex justify-end gap-2">
+            <a href="{{ object.get_absolute_url }}" class="btn btn-sm">{% trans "No" %}</a>
+            <input type="submit" value="{% trans "Delete" %}" class="btn btn-sm btn-error"/>
+        </div>
+    </form>
 {% endblock %}

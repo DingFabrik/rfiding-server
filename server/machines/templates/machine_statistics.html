@@ -4,26 +4,25 @@
 
 {% block content %}
 {% with day_count=selected_days %}
-<h4>{% blocktrans %}Access by day (last {{ day_count }} days){% endblocktrans %}
-  <div class="float-end">
-    <select
-    id="id_days"
-    class="form-select"
-    name="days"
-    hx-get="{{ request.path }}"
-    hx-target="#statistics-tab-pane"
-    hx-trigger="change">
-    {% for choice in days_choices %}
-        <option value="{{ choice.0 }}" {% if choice.0 == selected_days %}selected{% endif %}>{{ choice.1 }}</option>
-    {% endfor %}
-    </select>
-  </div>
-</h4>
-<div style="height: 300px;"><canvas id="daily_usage"></canvas></div>
-<h4 class="mt-4">{% blocktrans %}Access by hour (last {{ day_count }} days){% endblocktrans %}</h4>
-<div style="height: 300px;"><canvas id="hourly_usage"></canvas></div>
-<h4 class="mt-4">{% blocktrans %}Access by Weekday (last {{ day_count }} days){% endblocktrans %}</h4>
-<div style="height: 300px;"><canvas id="weekday_usage"></canvas></div>
+<div class="flex items-center justify-between gap-2 mb-2">
+  <h4 class="text-lg font-semibold">{% blocktrans %}Access by day (last {{ day_count }} days){% endblocktrans %}</h4>
+  <select
+  id="id_days"
+  class="select select-sm"
+  name="days"
+  hx-get="{{ request.path }}"
+  hx-target="#statistics-tab-pane"
+  hx-trigger="change">
+  {% for choice in days_choices %}
+      <option value="{{ choice.0 }}" {% if choice.0 == selected_days %}selected{% endif %}>{{ choice.1 }}</option>
+  {% endfor %}
+  </select>
+</div>
+<div class="h-[300px]"><canvas id="daily_usage"></canvas></div>
+<h4 class="text-lg font-semibold mt-4">{% blocktrans %}Access by hour (last {{ day_count }} days){% endblocktrans %}</h4>
+<div class="h-[300px]"><canvas id="hourly_usage"></canvas></div>
+<h4 class="text-lg font-semibold mt-4">{% blocktrans %}Access by Weekday (last {{ day_count }} days){% endblocktrans %}</h4>
+<div class="h-[300px]"><canvas id="weekday_usage"></canvas></div>
 {% endwith %}
 {% endblock %}
 

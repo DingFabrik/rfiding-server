@@ -17,28 +17,28 @@
         </tr>
         </thead>
 {% for object in object_list %}
-<tr class="align-middle">
-    <td style="white-space:nowrap;">{% include "snippets/timestamp.html" with timestamp=object.timestamp %}</td>
+<tr>
+    <td class="whitespace-nowrap">{% include "snippets/timestamp.html" with timestamp=object.timestamp %}</td>
     <td>
     {% if object.actor %}
-        <a href="{% url "users:detail" object.actor_id %}">{{ object.actor }}</a>
+        <a class="link" href="{% url "users:detail" object.actor_id %}">{{ object.actor }}</a>
     {% else %}
         System
     {% endif %}
 </td>
-<td style="white-space:nowrap;">
+<td class="whitespace-nowrap">
     {% if object.action == 0 %}
-    <i class="bi-plus-circle-fill text-success me-1"></i>{% trans "Created" %}
+    <i data-lucide="circle-plus" class="w-4 h-4 inline text-success"></i>{% trans "Created" %}
     {% elif object.action == 1 %}
-    <i class="bi-pencil-fill text-secondary me-1"></i>{% trans "Updated" %}
+    <i data-lucide="square-pen" class="w-4 h-4 inline text-neutral"></i>{% trans "Updated" %}
     {% elif object.action == 2 %}
-    <i class="bi-trash-fill text-danger me-1"></i>{% trans "Deleted" %}
+    <i data-lucide="trash-2" class="w-4 h-4 inline text-error"></i>{% trans "Deleted" %}
     {% endif %}
 </td>
 <td><i>{{ object.content_type.name }}</i> {{ object.object_repr }}</td>
 {% if object.action == 1%}
 <td>
-    <h6 class="mb-0">{% blocktrans count object.changes_dict|length as count %}1 change{% plural %}{{ count }} changes{% endblocktrans %}</h6>
+    <h6 class="font-semibold">{% blocktrans count object.changes_dict|length as count %}1 change{% plural %}{{ count }} changes{% endblocktrans %}</h6>
     <small>{% for change in object.changes_dict %}{{ change }}{% if not forloop.last %}{% if forloop.revcounter == 2 %} {% trans "and" %} {% else %}, {% endif %}{% else %}{% endif %}{% endfor %}</small>
 </td>
 {% else %}

@@ -54,8 +54,8 @@ class MachineForm(forms.ModelForm):
                 Submit("submit", _("Save")),
                 HTML(
                     """{% load i18n %}{% if object and can_delete %}
-            <a class="btn btn-danger float-end" href="{% url request.resolver_match.namespace|add:':delete' object.pk %}">
-                <i class="bi-trash me-1"></i> {% trans 'Delete' %}
+            <a class="btn btn-sm btn-error" href="{% url request.resolver_match.namespace|add:':delete' object.pk %}">
+                <i data-lucide="trash-2" class="w-4 h-4"></i> {% trans 'Delete' %}
             </a>
         {% endif %}"""
                 ),

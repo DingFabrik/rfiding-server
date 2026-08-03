@@ -1,7 +1,8 @@
 {% load i18n %}{% load base_extra %}
 <div id="qualifications_container">
   {% if qualifications %}
-    <table class="table table-striped table-bordered mb-4 mt-1">
+    <div class="max-w-full overflow-x-auto rounded-box border border-base-content/10">
+    <table class="table table-sm table-zebra mb-4 mt-1">
       <thead>
         <tr>
           <th>
@@ -24,14 +25,14 @@
       </thead>
       <tbody>
         {% for qualification in qualifications %}
-          <tr class="align-middle">
+          <tr>
             <td>{% include "cells/machine.html" with machine=qualification.machine %}</td>
             <td>{% include "snippets/boolean.html" with object=qualification.is_instructor %}</td>
             <td>{% include "snippets/boolean.html" with object=qualification.is_maintainer %}</td>
             <td>{% include "cells/permission_level.html" with permission_level=qualification.permission_level %}</td>
             <td>
               {% if qualification.instructed_by %}
-                <a href="{% url 'people:detail' qualification.instructed_by.pk %}">{{ qualification.instructed_by }}</a>
+                <a class="link" href="{% url 'people:detail' qualification.instructed_by.pk %}">{{ qualification.instructed_by }}</a>
               {% else %}
                 --
               {% endif %}
@@ -40,31 +41,29 @@
             <td>{% user_date qualification.created "DATE_FORMAT" %}</td>
             {% if perms.people.qualify_person %}
               <td>
-                <a href="{% url 'people:edit-qualification' qualification.person.pk qualification.pk %}" data-bs-toggle="tooltip" title="{% trans 'Edit' %}"><i class="bi-pencil-square me-2"></i></a>
-                <div class="d-inline"
-                data-bs-toggle="tooltip"
-                title="{% trans 'Revoke' %}">
+                <a href="{% url 'people:edit-qualification' qualification.person.pk qualification.pk %}" class="tooltip" data-tip="{% trans 'Edit' %}"><i data-lucide="square-pen" class="w-4 h-4"></i></a>
                 <a
+                class="tooltip"
+                data-tip="{% trans 'Revoke' %}"
                 href="{% url 'people:revoke-qualification' qualification.person.pk qualification.pk %}"
-                data-bs-toggle="modal"
-                data-bs-target="#hx_delete_modals"
+                data-modal-target="hx_delete_modals"
                 hx-get="{% url 'people:revoke-qualification' qualification.person.pk qualification.pk %}"
                 hx-target="#hx_delete_modals"
                 hx-trigger="click"
                 >{% include 'snippets/hoverable_revoke.html' %}</a>
-                </div>
               </td>
             {% endif %}
           </tr>
         {% endfor %}
       </tbody>
     </table>
+    </div>
     {% url 'people:qualifications' person.pk as page_path %}
     {% include 'base_pagination.html' with page_obj=qualifications target='qualifications_container' %}
   {% else %}
-    <div class="alert alert-secondary">
-      <i class="h5 bi-ban me-2"></i>
-      <span class=align-top>{% with name=person.name %}
+    <div role="alert" class="alert">
+      <i data-lucide="ban" class="w-5 h-5"></i>
+      <span>{% with name=person.name %}
         {% blocktrans %}<b>{{ name }}</b> is not qualified for any machines.{% endblocktrans %}
       {% endwith %}
       </span>

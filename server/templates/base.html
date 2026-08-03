@@ -1,14 +1,14 @@
 {% load static %}
 {% load i18n %}
 <!doctype html>
-<html lang="en" class="h-100">
+<html lang="en" class="h-full">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="author" content="">
 
     <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
-    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/favicon-32x32.png' %}"> 
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/favicon-32x32.png' %}">
     <link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/favicon-16x16.png' %}">
     <link rel="apple-touch-icon" sizes="180x180" href="{% static 'images/apple-touch-icon.png' %}">
     <link rel="manifest" href="{% static 'site.webmanifest' %}">
@@ -16,123 +16,134 @@
     <title>{% block html_title %}{{ html_title }}{% endblock html_title %} ・ RFIDing</title>
 
     <link href="{% static "css/main.css" %}" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css">
   </head>
   <body
-    class="bg-body-tertiary d-flex flex-column h-100"
-    data-bs-themecolor="{{ user.theme|default:"blue" }}"
-    data-bs-theme="{{ user.theme_mode|default:"auto" }}"
+    class="bg-base-200 flex flex-col h-full"
+    data-theme-color="{{ user.theme|default:"blue" }}"
+    data-theme-mode="{{ user.theme_mode|default:"auto" }}"
     hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
     {% if user.is_authenticated %}
-    <nav class="navbar navbar-expand-lg border-bottom border-1 bg-body fixed-top">
-      <div class="container">
-        <a class="navbar-brand p-0" href="{% url 'home' %}">
-          <img src="{% static "images/logo_dark.svg" %}" alt="Logo" width="46" class="d-inline-block"></a>
-          {% if space_state %}
-          <div class="d-flex align-items-center d-block d-md-none">
-            <a href="{% url "space:status" %}" class="align-middle me-4 badge text-bg-{% if space_state.is_open %}success{% else %}danger{% endif %}">{{ space_state }}</a>
-          </div>
-          {% endif %}
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav navbar-nav-scroll me-auto mb-2 mb-lg-0">
-            {% for item in menu %}
-            {% if item.has_permission %}
-              <li class="nav-item">
-                <a class="nav-link {% if item.active %}active{% endif %}" href="{{ item.url }}"><i class="bi-{% if item.active and item.active_icon %}{{item.active_icon}}{% else %}{{item.icon}}{% endif %} me-1"></i> {{item.name}}</a>
-              </li>
-            {% endif %}
-            {% endfor %}
-            <li class="d-lg-none"><hr></li>
-            {% for item in side_menu %}
-                  {% if item.type == "divider" %}
-                    <li class="d-lg-none"><hr></li>
-                  {% else %}
-                    {% if item.has_permission %}
-                      <li><a class="nav-link d-lg-none {% if item.active %}active{% endif %}" href="{{ item.url }}"><i class="bi-{% if item.active and item.active_icon %}{{item.active_icon}}{% else %}{{item.icon}}{% endif %} me-1"></i> {{item.name}}</a></li>
-                    {% endif %}
-                    {% endif%}
-                  {% endfor %}
-                  <li>
-                    <form method="post" action="{% url "logout" %}">
-                      {% csrf_token %}
-                      <button type="submit" class="nav-link d-lg-none"><i class="bi-door-closed me-1"></i> {% trans "Sign out" %}</button>
-                    </form>
-                  </li>
-          </ul>
-          <button
-            type="button"
-            class="d-flex btn btn-outline-primary"
-            data-bs-toggle="modal"
-            data-bs-target="#searchUniversalModal">
-            <i class="bi bi-search me-2"></i> {% trans "Search" %}
-            <span class="btn-kbd text-bg-primary ms-2"><i class="bi bi-command"></i> K</span>
-          </button>
-          <ul class="navbar-nav ms-4">
-            {% if space_state %}
-            <div class="d-flex align-items-center d-none d-md-block">
-              <a href="{% url "space:status" %}" class="align-middle me-4 badge text-bg-{% if space_state.is_open %}success{% else %}danger{% endif %}">{{ space_state }}</a>
-            </div>
-            {% endif %}
-            <li class="nav-item dropdown d-none d-lg-block">
-                <a class="nav-link dropdown-toggle" href="#" id="dropdown-right" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  {{ user.name|default:user.email}}
-                </a>
-                <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="dropdown-right">
-                  {% for item in side_menu %}
-                  {% if item.type == "divider" %}
-                    <li><hr class="dropdown-divider"></li>
-                  {% else %}
-                    {% if item.has_permission %}
-                      <li><a class="dropdown-item {% if item.active %}active{% endif %}" href="{{ item.url }}"><i class="bi-{% if item.active and item.active_icon %}{{item.active_icon}}{% else %}{{item.icon}}{% endif %} me-1"></i> {{item.name}}</a></li>
-                    {% endif %}
-                    {% endif%}
-                  {% endfor %}
-                  <li>
-                    <form method="post" action="{% url "logout" %}">
-                      {% csrf_token %}
-                      <button type="submit" class="dropdown-item"><i class="bi-door-closed me-1"></i> {% trans "Sign out" %}</button>
-                    </form>
-                  </li>
-                </ul>
-            </li>
-        </ul>
-        </div>
+    <div class="navbar bg-base-100 border-base-300 fixed top-0 z-30 border-b shadow-sm">
+      <div class="navbar-start">
+        <a class="btn btn-ghost px-2" href="{% url 'home' %}">
+          <img src="{% static "images/logo_dark.svg" %}" alt="Logo" width="40" height="40">
+        </a>
       </div>
-    </nav>
-    {% endif %}
-<main id="main" role="main" class="container mb-3 flex-shrink-0 {% block container_classes %}{% endblock %}" {% block container_div %}{% endblock %}>
-  {% block main %}
-  <div class="mb-3 clearfix">
-    {% block pre_title %}{% endblock %}
-    <div class="float-end">{% block top_actions %}{% endblock %}</div>
-      <h1 class="h2">  {% block title %}{% endblock title %}</h1>
+      <div class="navbar-center hidden lg:flex">
+        <ul class="menu menu-horizontal px-1">
+          {% for item in menu %}
+            {% if item.has_permission %}
+              <li><a class="{% if item.active %}menu-active{% endif %}" href="{{ item.url }}"><i data-lucide="{{ item.icon }}" class="w-4 h-4"></i> {{ item.name }}</a></li>
+            {% endif %}
+          {% endfor %}
+        </ul>
+      </div>
+      <div class="navbar-end gap-1">
+        {% if space_state %}
+          <a href="{% url "space:status" %}" class="badge {% if space_state.is_open %}badge-success{% else %}badge-error{% endif %} hidden md:inline-flex">{{ space_state }}</a>
+        {% endif %}
+        <button type="button" class="btn btn-outline btn-primary btn-sm hidden md:inline-flex" data-modal-target="searchUniversalModal">
+          <i data-lucide="search" class="w-4 h-4"></i> {% trans "Search" %}
+          <kbd class="kbd kbd-sm gap-0.5"><i data-lucide="command" class="w-3 h-3"></i>K</kbd>
+        </button>
+        <button type="button" class="btn btn-ghost btn-circle md:hidden" data-modal-target="searchUniversalModal" aria-label="{% trans "Search" %}">
+          <i data-lucide="search" class="w-5 h-5"></i>
+        </button>
+
+        <button
+          class="btn btn-ghost btn-circle hidden lg:inline-flex"
+          popovertarget="user-menu"
+          style="anchor-name:--user-menu"
+          aria-label="{% trans "Account" %}">
+          <i data-lucide="circle-user" class="w-5 h-5"></i>
+        </button>
+        <ul
+          class="dropdown dropdown-end menu bg-base-100 rounded-box z-30 mt-3 w-56 p-2 shadow-lg hidden lg:block"
+          popover
+          id="user-menu"
+          style="position-anchor:--user-menu">
+          <li class="menu-title">{{ user.name|default:user.email }}</li>
+          {% for item in side_menu %}
+            {% if item.type == "divider" %}
+              <li class="divider my-0"></li>
+            {% else %}
+              {% if item.has_permission %}
+                <li><a class="{% if item.active %}menu-active{% endif %}" href="{{ item.url }}"><i data-lucide="{{ item.icon }}" class="w-4 h-4"></i> {{ item.name }}</a></li>
+              {% endif %}
+            {% endif %}
+          {% endfor %}
+          <li>
+            <form method="post" action="{% url "logout" %}">
+              {% csrf_token %}
+              <button type="submit"><i data-lucide="log-out" class="w-4 h-4"></i> {% trans "Sign out" %}</button>
+            </form>
+          </li>
+        </ul>
+
+        <button
+          class="btn btn-ghost btn-circle lg:hidden"
+          popovertarget="mobile-menu"
+          style="anchor-name:--mobile-menu"
+          aria-label="{% trans "Menu" %}">
+          <i data-lucide="menu" class="w-5 h-5"></i>
+        </button>
+        <ul
+          class="dropdown dropdown-end menu bg-base-100 rounded-box z-30 mt-3 w-64 p-2 shadow-lg lg:hidden"
+          popover
+          id="mobile-menu"
+          style="position-anchor:--mobile-menu">
+          {% if space_state %}
+            <li class="px-2 py-1"><a href="{% url "space:status" %}" class="badge {% if space_state.is_open %}badge-success{% else %}badge-error{% endif %}">{{ space_state }}</a></li>
+          {% endif %}
+          {% for item in menu %}
+            {% if item.has_permission %}
+              <li><a class="{% if item.active %}menu-active{% endif %}" href="{{ item.url }}"><i data-lucide="{{ item.icon }}" class="w-4 h-4"></i> {{ item.name }}</a></li>
+            {% endif %}
+          {% endfor %}
+          <li class="divider my-0"></li>
+          {% for item in side_menu %}
+            {% if item.type == "divider" %}
+              <li class="divider my-0"></li>
+            {% else %}
+              {% if item.has_permission %}
+                <li><a class="{% if item.active %}menu-active{% endif %}" href="{{ item.url }}"><i data-lucide="{{ item.icon }}" class="w-4 h-4"></i> {{ item.name }}</a></li>
+              {% endif %}
+            {% endif %}
+          {% endfor %}
+          <li>
+            <form method="post" action="{% url "logout" %}">
+              {% csrf_token %}
+              <button type="submit"><i data-lucide="log-out" class="w-4 h-4"></i> {% trans "Sign out" %}</button>
+            </form>
+          </li>
+        </ul>
+      </div>
     </div>
+    {% endif %}
+<main id="main" role="main" class="container mx-auto px-4 pt-20 mb-3 flex-shrink-0 {% block container_classes %}{% endblock %}" {% block container_div %}{% endblock %}>
+  {% block main %}
+  <div class="mb-3 flex flex-wrap items-start justify-between gap-2">
+    <div>
+      {% block pre_title %}{% endblock %}
+      <h1 class="text-2xl font-bold">{% block title %}{% endblock title %}</h1>
+    </div>
+    <div class="flex flex-wrap gap-2">{% block top_actions %}{% endblock %}</div>
+  </div>
       {% block content %}
       {% endblock content %}
-      <div class="mb-3 clearfix">
-        <div class="float-end">{% block bottom_actions %}{% endblock %}</div>
+      <div class="mb-3 flex justify-end gap-2">
+        {% block bottom_actions %}{% endblock %}
   </div>
   {% endblock %}
 </main>
   {% block extra_content %}
   {% endblock %}
-  <div id="hx_delete_modals"
-      class="modal modal-blur fade"
-      style="display: none"
-      aria-hidden="false"
-      tabindex="-1">
-      <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-          <div class="modal-content"></div>
-      </div>
-  </div>
+  <dialog id="hx_delete_modals" class="modal"></dialog>
   {% include 'modals/search_universal.html' %}
-    <footer class="mt-auto pb-3 pt-0 bg-body-secondary">
-      <div class="nav justify-content-center border-top pb-3 mb-3">
+    <footer class="mt-auto pb-3 pt-0 bg-base-200">
+      <div class="flex justify-center border-t pb-3 mb-3">
       </div>
-      <p class="text-center text-body-secondary">© 2025 <a class="text-body-secondary" href="https://dingfabrik.de" target="_window">Dingfabrik e.V.</a> | Version: <a class="text-body-secondary" href="https://github.com/DingFabrik/rfiding-server" target="_window">{{ rfiding_version }}</a></p>
+      <p class="text-center text-base-content/60">© 2025 <a class="link" href="https://dingfabrik.de" target="_window">Dingfabrik e.V.</a> | Version: <a class="link" href="https://github.com/DingFabrik/rfiding-server" target="_window">{{ rfiding_version }}</a></p>
     </footer>
     <script type="text/javascript" src="{% static 'js/main.js' %}"></script>
     {% block js_extra %}
@@ -141,22 +152,20 @@
       {% block script_extra %}
       {% endblock%}
       window.addEventListener('DOMContentLoaded', () => {
+        const themeColor = '{{ user.theme|default:"blue" }}';
         {% if user.theme_mode|default:"auto" == "auto" %}
-          document.documentElement.setAttribute('data-bs-theme', (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'))
+          const themeMode = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
         {% else %}
-          document.documentElement.setAttribute('data-bs-theme', user.theme_mode|default:"light")
+          const themeMode = '{{ user.theme_mode|default:"light" }}';
         {% endif %}
+        document.documentElement.setAttribute('data-theme', themeColor + '-' + themeMode);
       });
-      updateTooltips();
+      initPopovers();
+      createIcons();
 
       urlMap['person-for-token-popover'] = '{% url "tokens:person-for-token-popover" %}';
       urlMap['person-popover'] = '{% url "people:person-popover" %}';
       urlMap['machine-popover'] = '{% url "machines:popover" %}';
-
-      $('#searchUniversalModal').on('shown.bs.modal', function() {
-        $('#search_universal_input').focus();
-        console.log("Give Focus");
-      })
     </script>
   </body>
 </html>

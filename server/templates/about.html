@@ -6,30 +6,26 @@
 {% endblock %}
 
 {% block content %}
-<div class="col-md-12">
-    <div class="row">
-        <div class="col-md-12 mb-3">
-            <label for="version">{% trans "Version" %}</label>
+<div class="fieldset">
+    <label class="label" for="version">{% trans "Version" %}</label>
+    <input type="text"
+           class="input w-full mb-3"
+           value="{{ version }}"
+           readonly
+    />
+    <div class="flex flex-col sm:flex-row gap-3">
+        <div class="flex-1">
+            <label class="label" for="scalaVersion">{% trans "Python version" %}</label>
             <input type="text"
-                   class="form-control"
-                   value="{{ version }}"
-                   readonly
-            />
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-6 mb-3">
-            <label for="scalaVersion">{% trans "Python version" %}</label>
-            <input type="text"
-                   class="form-control"
+                   class="input w-full"
                    value="{{ python_version }}"
                    readonly
             />
         </div>
-        <div class="col-md-6 mb-3">
-            <label for="sbtVersion">{% trans "Django version" %}</label>
+        <div class="flex-1">
+            <label class="label" for="sbtVersion">{% trans "Django version" %}</label>
             <input type="text"
-                   class="form-control"
+                   class="input w-full"
                    value="{{ django_version }}"
                    readonly
             />

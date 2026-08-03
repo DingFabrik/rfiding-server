@@ -1,7 +1,7 @@
 {% if person %}
 <a href="{% url 'people:detail' person.pk %}"
-    data-bs-toggle="person-popover"
-    data-bs-trigger="hover focus"
+    class="link"
+    data-popover-toggle="person-popover"
     data-person-pk="{{ person.pk }}">{{ person }}</a>
 {% else %}
 ----

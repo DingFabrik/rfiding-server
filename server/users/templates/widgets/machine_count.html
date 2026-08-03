@@ -1,18 +1,30 @@
 {% extends "widgets/base.html" %}{% load i18n %}
 
 {% block content %}
-<div class="row{% if placeholder %} placeholder-glow{% endif %} text-center">
-    <div class="col">
-        <span class="h3 mb-1 p-0{% if placeholder %} placeholder col-2" style="margin-top:1px;"{% else %}"{% endif %}>{{ widget.data.active_count }}</span>
-        <p class="card-text text-secondary">{% trans "Active" %}</p>
+<div class="flex text-center">
+    <div class="flex-1">
+        {% if placeholder %}
+            <div class="skeleton h-8 w-16 mx-auto mb-1"></div>
+        {% else %}
+            <span class="block text-3xl font-bold">{{ widget.data.active_count }}</span>
+        {% endif %}
+        <p class="text-base-content/60 m-0">{% trans "Active" %}</p>
     </div>
-    <div class="col">
-        <span class="h3 mb-1 p-0{% if placeholder %} placeholder col-2" style="margin-top:1px;"{% else %}"{% endif %}>{{ widget.data.maintenance_count }}</span>
-        <p class="card-text text-secondary">{% trans "Maintenance" %}</p>
+    <div class="flex-1">
+        {% if placeholder %}
+            <div class="skeleton h-8 w-16 mx-auto mb-1"></div>
+        {% else %}
+            <span class="block text-3xl font-bold">{{ widget.data.maintenance_count }}</span>
+        {% endif %}
+        <p class="text-base-content/60 m-0">{% trans "Maintenance" %}</p>
     </div>
-    <div class="col">
-        <span class="h3 mb-1 p-0{% if placeholder %} placeholder col-2" style="margin-top:1px;"{% else %}"{% endif %}>{{ widget.data.total_count }}</span>
-        <p class="card-text text-secondary">{% trans "Total" %}</p>
+    <div class="flex-1">
+        {% if placeholder %}
+            <div class="skeleton h-8 w-16 mx-auto mb-1"></div>
+        {% else %}
+            <span class="block text-3xl font-bold">{{ widget.data.total_count }}</span>
+        {% endif %}
+        <p class="text-base-content/60 m-0">{% trans "Total" %}</p>
     </div>
 </div>
 {% endblock %}

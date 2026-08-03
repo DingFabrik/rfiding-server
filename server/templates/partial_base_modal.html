@@ -1,18 +1,15 @@
-{% load i18n %}<div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      {% block notitle %}
-      <div class="modal-header">
-        <h5 class="modal-title">{% block title %}{% endblock %}</h5>
-      </div>
-      {% endblock %}
-      <div class="modal-body">
-        {% block content %}{% endblock %}
-      </div>
-      <div class="modal-footer">
-        {% block buttons%}{% endblock %}
-      </div>
-    </div>
+{% load i18n %}<div class="modal-box">
+  {% block notitle %}
+  <h3 class="text-lg font-bold">{% block title %}{% endblock %}</h3>
+  {% endblock %}
+  <div class="py-4">
+    {% block content %}{% endblock %}
   </div>
+  <div class="modal-action">
+    {% block buttons %}{% endblock %}
+  </div>
+</div>
+<form method="dialog" class="modal-backdrop"><button>{% trans "close" %}</button></form>
 
 <script>
     {% block script_extra %}

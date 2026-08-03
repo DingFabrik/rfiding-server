@@ -2,7 +2,7 @@
 {% load i18n %}{% load base_extra %}
 
 {% block empty_state %}
-{% include "snippets/empty_list.html" with model=model icon="calendar-event" can_create=can_create %}
+{% include "snippets/empty_list.html" with model=model icon="calendar-days" can_create=can_create %}
 {% endblock %}
 
 {% block table %}
@@ -23,9 +23,9 @@
 <td>{{ object.repeats_annually|yesno:_("Yes,No") }}</td>
 {% if perms.holidays.modify_holiday %}
 <td>
-<a href="{% url 'holidays:update' object.pk %}" data-bs-toggle="tooltip" title="{% trans 'Edit' %}"><i class="bi-pencil-square me-2"></i></a>
+<a href="{% url 'holidays:update' object.pk %}" class="tooltip" data-tip="{% trans 'Edit' %}"><i data-lucide="square-pen" class="w-4 h-4"></i></a>
 {% if perms.holidays.delete_holiday %}
-<a href="{% url 'holidays:delete' object.pk %}" data-bs-toggle="tooltip" title="{% trans 'Delete' %}"><i class="bi-trash text-danger"></i></a>
+<a href="{% url 'holidays:delete' object.pk %}" class="tooltip" data-tip="{% trans 'Delete' %}"><i data-lucide="trash-2" class="w-4 h-4 text-error"></i></a>
 {% endif %}
 </td>
 {% endif %}

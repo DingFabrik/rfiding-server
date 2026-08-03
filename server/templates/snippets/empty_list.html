@@ -1,14 +1,14 @@
 {% load i18n %}{% load base_extra %}
-<div class="card text-center">
-    <div class="card-body">
+<div class="card bg-base-100 text-center">
+    <div class="card-body items-center">
     {% if icon %}
-    <i class="bi-{{ icon }} display-2 text-secondary d-block mx-auto"></i>
+    <i data-lucide="{{ icon }}" class="w-12 h-12 text-base-content/50"></i>
     {% endif %}
-    <h1 class="h5 text-body-secondary">{% with model|verbose_name_plural as modelname %}{% blocktrans %}No {{ modelname }} found.{% endblocktrans %}{% endwith %}</h1>
+    <h1 class="text-lg font-semibold text-base-content/70">{% with model|verbose_name_plural as modelname %}{% blocktrans %}No {{ modelname }} found.{% endblocktrans %}{% endwith %}</h1>
     {% if request.GET.search %}
-    <p class="text-secondary">{% with request.GET.search as search_query %}{% blocktrans %}No results for "{{ search_query }}".{% endblocktrans %}{% endwith %}</p>
+    <p class="text-base-content/60">{% with request.GET.search as search_query %}{% blocktrans %}No results for "{{ search_query }}".{% endblocktrans %}{% endwith %}</p>
     {% elif can_create %}
-    <p class="text-secondary">{% with model|verbose_name as modelname %}{% blocktrans %}You can create a {{ modelname }} with the + button.{% endblocktrans %}{% endwith %}</p>
+    <p class="text-base-content/60">{% with model|verbose_name as modelname %}{% blocktrans %}You can create a {{ modelname }} with the + button.{% endblocktrans %}{% endwith %}</p>
     {% endif %}
     </div>
 </div>

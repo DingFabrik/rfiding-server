@@ -3,33 +3,23 @@
 {% load static %}
 
 {% block content %}
-<div class="col-md-3 mx-auto">
-    <div class="mx-auto mb-5" style="width: 140px;">
+<div class="w-full max-w-sm mx-auto">
+    <div class="mx-auto mb-5 w-[140px]">
         <img src="{% static "images/logo_dark.svg" %}" alt="Logo" width="140">
     </div>
-    <h3>{% trans "Sign in" %}</h3>
-    <form class="form-signin" method="post">
+    <h3 class="text-xl font-bold mb-4">{% trans "Sign in" %}</h3>
+    <form method="post" class="fieldset">
         {% csrf_token %}
     {% if form.errors %}
-        <div class="row mt-2">
-            <div class="col-md-12">
-                <div class="alert alert-danger" role="alert">{% trans "E-Mail Address or password incorrect" %}</div>
-            </div>
-        </div>
+        <div role="alert" class="alert alert-error mb-2">{% trans "E-Mail Address or password incorrect" %}</div>
     {% endif %}
-    <div class="form-floating">
-        <input type="email" class="form-control" id="{{ form.username.id_for_label }}" name="{{ form.username.name }}" required value="{{ form.username.value|default:"" }}" placeholder="{% trans "E-Mail Address" %}" style="margin-bottom: -1px;border-bottom-right-radius: 0;border-bottom-left-radius: 0;">
-        <label for="{{ form.username.id_for_label }}">{% trans "E-Mail Address" %}</label>
-    </div>
-    <div class="form-floating">
-        <input type="password" class="form-control" id="{{ form.password.id_for_label }}" name="{{ form.password.name }}" placeholder="{% trans "Password" %}" style="margin-top: -1px;border-top-right-radius: 0;border-top-left-radius: 0;">
-        <label for="{{ form.password.id_for_label }}">{% trans "Password" %}</label>
-    </div>
-    <div class="d-grid gap-2 mt-3">
-    <button class="btn btn-lg btn-primary btn-block" type="submit">{% trans "Sign in" %}</button>
-    </div>
-</div>
+    <label class="label" for="{{ form.username.id_for_label }}">{% trans "E-Mail Address" %}</label>
+    <input type="email" class="input w-full" id="{{ form.username.id_for_label }}" name="{{ form.username.name }}" required value="{{ form.username.value|default:"" }}" placeholder="{% trans "E-Mail Address" %}">
+
+    <label class="label" for="{{ form.password.id_for_label }}">{% trans "Password" %}</label>
+    <input type="password" class="input w-full" id="{{ form.password.id_for_label }}" name="{{ form.password.name }}" placeholder="{% trans "Password" %}">
+
+    <button class="btn btn-primary btn-block mt-4" type="submit">{% trans "Sign in" %}</button>
+</form>
 </div>
 {% endblock %}
-
-<input id="inputEmail" class="form-control" placeholder="Email address" required="" autofocus="" type="email">

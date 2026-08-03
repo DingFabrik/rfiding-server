@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     "django.contrib.humanize",
     "rest_framework",
     "crispy_forms",
-    "crispy_bootstrap5",
     "django_celery_results",
     "django_celery_beat",
     "auditlog",
@@ -156,8 +155,8 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.DjangoModelPermissions"]
 }
 
-CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
-CRISPY_TEMPLATE_PACK = "bootstrap5"
+CRISPY_ALLOWED_TEMPLATE_PACKS = "daisyui"
+CRISPY_TEMPLATE_PACK = "daisyui"
 
 SPACE_STATE_SECRET = "12345"
 SPACE_NAME = "Makerspace"

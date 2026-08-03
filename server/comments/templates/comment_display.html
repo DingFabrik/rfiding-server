@@ -1,19 +1,17 @@
-{% load crispy_forms_tags %}{% load i18n %}<div class="row">
-  <div class="col-md-6">
+{% load crispy_forms_tags %}{% load i18n %}<div class="flex flex-col md:flex-row gap-4">
+  <div class="flex-1">
   {% for comment in object.comments.all %}
     {% include "comment.html" %}
     {% empty %}
-    <div class="col">
-      <div class="col alert alert-secondary">
-        {% trans "No comments yet." %}
-      </div>
+    <div role="alert" class="alert">
+      {% trans "No comments yet." %}
     </div>
   {% endfor %}
 </div>
-<div class="col-md-6">
+<div class="flex-1">
     <form class="mb-3" method="post" action="{% url comment_url object.pk %}" hx-target="#comments-tab-pane" hx-swap="outerHTML">
     {% csrf_token %}
     {{ comment_form|crispy }}
-    <button type="submit" class="btn btn-primary">{% trans 'Post' %}</button>
+    <button type="submit" class="btn btn-sm btn-primary">{% trans 'Post' %}</button>
   </form>
 </div>

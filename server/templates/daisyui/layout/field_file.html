@@ -1,0 +1,24 @@
+{% load crispy_forms_field %}
+
+{% for widget in field.subwidgets %}
+{% if widget.data.is_initial %}
+<div class="join mb-2 items-center">
+    <span class="join-item bg-base-200 px-3 py-2 text-sm">{{ widget.data.initial_text }}</span>
+    <div class="join-item input input-sm flex h-auto items-center gap-2">
+        <span class="grow truncate">
+            <a class="link" href="{{ field.value.url }}">{{ field.value.name }}</a>
+        </span>
+        {% if not widget.data.required %}
+        <span class="flex items-center gap-1">
+            <input type="checkbox" name="{{ widget.data.checkbox_name }}" id="{{ widget.data.checkbox_id }}" class="checkbox checkbox-sm"{% if field.field.disabled %} disabled{% endif %}>
+            <label class="label" for="{{ widget.data.checkbox_id }}">{{ widget.data.clear_checkbox_label }}</label>
+        </span>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+<div{% if field.errors %} class="mb-1"{% endif %}>
+    <input type="{{ widget.data.type }}" name="{{ widget.data.name }}" class="file-input file-input-sm w-full{% if widget.data.attrs.class %} {{ widget.data.attrs.class }}{% endif %}{% if field.errors %} file-input-error{% endif %}"{% if field.field.disabled %} disabled{% endif %}{% for name, value in widget.data.attrs.items %}{% if value is not False and name != 'class' %} {{ name }}{% if value is not True %}="{{ value|stringformat:'s' }}"{% endif %}{% endif %}{% endfor %}>
+    {% include 'daisyui/layout/help_text_and_errors.html' %}
+</div>
+{% endfor %}

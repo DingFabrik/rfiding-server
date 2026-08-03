@@ -5,12 +5,13 @@
 {% endblock %}
 
 {% block empty_state %}
-{% include "snippets/empty_list.html" with model=model icon="broadcast" can_create=false %}
+{% include "snippets/empty_list.html" with model=model icon="radio-tower" can_create=false %}
 {% endblock %}
 
 {% block table_outer %}
-<small class="text-secondary">{% trans "Blacklisted tokens do not appear in Unknown Tokens" %}</small>
-<table class="table table-bordered table-hover mt-2">
+<small class="text-base-content/60">{% trans "Blacklisted tokens do not appear in Unknown Tokens" %}</small>
+<div class="max-w-full overflow-x-auto rounded-box border border-base-content/10">
+<table class="table table-sm table-zebra mt-2">
     <thead>
         <tr>
             <th>{% trans "Serial" %}</th>
@@ -23,9 +24,10 @@
 <tr>
 <td>{{ object.serial }}</td>
 {% if perms.tokens.delete_blacklistedtoken %}
-<td><a href="{% url "tokens:delete-blacklisted" object.pk %}"><i class="bi-trash"></i></a></td>
+<td><a href="{% url "tokens:delete-blacklisted" object.pk %}"><i data-lucide="trash-2" class="w-4 h-4 text-error"></i></a></td>
 {% endif %}
 </tr>
 {% endfor %}
 </table>
+</div>
 {% endblock %}

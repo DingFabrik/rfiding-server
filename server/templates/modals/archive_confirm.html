@@ -1,19 +1,17 @@
 {% load i18n %}
-<div class="modal fade" id="confirmArchiveModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-            <i class="bi-archive fs-1 text-danger me-2"></i>
-          <h1 class="modal-title fs-5" id="confirmArchiveModalLabel">{% blocktrans %}Do you really want to archive <b>{{ object }}</b>?{% endblocktrans %}</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans "No" %}</button>
-          <form action="{% url request.resolver_match.namespace|add:':delete' object.pk %}" method="post">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-danger">{% trans "Archive" %}</button>
-          </form>
-        </div>
-      </div>
+<dialog class="modal" id="confirmArchiveModal">
+  <div class="modal-box">
+    <div class="flex items-start gap-3">
+      <i data-lucide="archive" class="w-8 h-8 text-error shrink-0"></i>
+      <h3 class="text-lg font-bold">{% blocktrans %}Do you really want to archive <b>{{ object }}</b>?{% endblocktrans %}</h3>
+    </div>
+    <div class="modal-action">
+      <form method="dialog"><button type="button" class="btn btn-sm">{% trans "No" %}</button></form>
+      <form action="{% url request.resolver_match.namespace|add:':delete' object.pk %}" method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-sm btn-error">{% trans "Archive" %}</button>
+      </form>
     </div>
   </div>
+  <form method="dialog" class="modal-backdrop"><button>{% trans "close" %}</button></form>
+</dialog>

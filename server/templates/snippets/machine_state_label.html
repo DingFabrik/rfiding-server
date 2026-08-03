@@ -1,9 +1,9 @@
 {% if object.state == "maintenance" %}
-<i class="bi-wrench-adjustable-circle-fill me-2 text-warning" aria-hidden="true"></i><span class="text-warning-emphasis">{{ object.get_state_display }}</span>
+<i data-lucide="wrench" class="w-4 h-4 inline text-warning" aria-hidden="true"></i><span class="text-warning">{{ object.get_state_display }}</span>
 {% elif object.state == "inactive" %}
-<i class="bi-x-circle-fill me-2 text-danger" aria-hidden="true"></i><span class="text-danger-emphasis">{{ object.get_state_display }}</span>
+<i data-lucide="circle-x" class="w-4 h-4 inline text-error" aria-hidden="true"></i><span class="text-error">{{ object.get_state_display }}</span>
 {% elif object.state == "active" %}
-<i class="bi-check-circle-fill me-2 text-success" aria-hidden="true"></i><span class="text-success-emphasis">{{ object.get_state_display }}</span>
+<i data-lucide="circle-check-big" class="w-4 h-4 inline text-success" aria-hidden="true"></i><span class="text-success">{{ object.get_state_display }}</span>
 {% else %}
 <b>{{ object.get_state_display }}</b>
 {% endif %}

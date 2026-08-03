@@ -2,7 +2,7 @@
 {% load i18n %}
 
 {% block empty_state %}
-{% include "snippets/empty_list.html" with model=model icon="user-badge" can_create=can_create %}
+{% include "snippets/empty_list.html" with model=model icon="id-card" can_create=can_create %}
 {% endblock %}
 
 {% block table %}
@@ -15,7 +15,7 @@
 {% for user in users %}
 <tr>
 {% if perms.users.modify_user %}
-<td><a href="{% url "users:update" user.pk %}">{{ user.name }}</a></td>
+<td><a class="link" href="{% url "users:update" user.pk %}">{{ user.name }}</a></td>
 {% else %}
 <td>{{ user.name }}</td>
 {% endif %}

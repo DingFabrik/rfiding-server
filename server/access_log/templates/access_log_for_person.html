@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block top_actions %}
-<a href="{% url 'people:detail' person.pk %}" class="btn btn-outline-primary">{% trans "Go to person" %}</a>
+<a href="{% url 'people:detail' person.pk %}" class="btn btn-sm btn-outline btn-primary">{% trans "Go to person" %}</a>
 {% endblock %}
 {% block bottom_actions %}
 {% endblock %}
@@ -14,10 +14,11 @@
 {% block content %}
 <div id="access_log_container">
     {% if is_partial %}
-    <h4>{% trans "Access Log" %}</h4>
+    <h4 class="text-lg font-semibold mb-2">{% trans "Access Log" %}</h4>
     {% endif %}
     {% if object_list %}
-    <table class="table table-striped table-bordered">
+    <div class="max-w-full overflow-x-auto rounded-box border border-base-content/10">
+    <table class="table table-sm table-zebra">
         <thead>
             <tr>
                 <th>{% trans "Date" %}</th>
@@ -35,9 +36,10 @@
     </tr>
     {% endfor %}
     </table>
+    </div>
     {% include "base_pagination.html" with target="access_log_container" %}
     {% else %}
-    <div class="alert alert-secondary text-center">{% trans "This person has not accessed anything yet." %}</div>
+    <div role="alert" class="alert justify-center">{% trans "This person has not accessed anything yet." %}</div>
     {% endif%}
 </div>
 {% endblock %}

@@ -5,23 +5,21 @@
 
 {% block main %}
 <div hx-ext="ws" ws-connect="/ws/tokens/unknown/">
-    <div class="mb-3 clearfix">
-        <div class="float-end">
-            <a
-                href="{% url 'tokens:clear-unknown' %}"
-                ws-send
-                hx-vals='{"action": "clear"}'
-                class="btn btn-primary">
-                <i class="bi-x-circle"></i> {% trans "Clear list" %}
-            </a>
-        </div>
-          <h1 class="h2">{% trans "Unknown tokens" %}</h1>
-        </div>
-          {% block content %}
-          {% endblock content %}
-          <div class="mb-3 clearfix">
-            <div class="float-end">{% block bottom_actions %}{% endblock %}</div>
-        </div>
+    <div class="mb-3 flex flex-wrap items-start justify-between gap-2">
+        <h1 class="text-2xl font-bold">{% trans "Unknown tokens" %}</h1>
+        <a
+            href="{% url 'tokens:clear-unknown' %}"
+            ws-send
+            hx-vals='{"action": "clear"}'
+            class="btn btn-primary btn-sm">
+            <i data-lucide="circle-x" class="w-4 h-4"></i> {% trans "Clear list" %}
+        </a>
+    </div>
+      {% block content %}
+      {% endblock content %}
+      <div class="mb-3 flex justify-end gap-2">
+        {% block bottom_actions %}{% endblock %}
+    </div>
 {% if tokens %}
 {% include "unknown_token_table.html" %}
 {% else %}

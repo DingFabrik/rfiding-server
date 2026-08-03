@@ -2,7 +2,7 @@
 {% load i18n %}
 
 {% block empty_state %}
-{% include "snippets/empty_list.html" with model=model icon="hdd" can_create=can_create %}
+{% include "snippets/empty_list.html" with model=model icon="hard-drive" can_create=can_create %}
 {% endblock %}
 
 {% block table %}
@@ -20,15 +20,15 @@
     </thead>
 {% for object in machines %}
 <tr>
-    <td><a href="{% url "machines:detail" object.pk %}">{{ object.name }}</a></td>
+    <td><a class="link" href="{% url "machines:detail" object.pk %}">{{ object.name }}</a></td>
     <td>{{ object.mac_address }}</td>
-    <td><a href="{% url "machines:detail" object.pk %}">{{ object.hostname }}</a></td>
+    <td><a class="link" href="{% url "machines:detail" object.pk %}">{{ object.hostname }}</a></td>
     <td>{% include "snippets/machine_state_label.html" with object=object %}</td>
     <td>{{ object.get_type_display }}</td>
     {% if can_edit %}
         <td>
-            <a href="{% url 'machines:update' object.pk %}" data-bs-toggle="tooltip" title="{% trans 'Edit' %}"><i class="bi-pencil-square me-2"></i></a>
-            <a href="{% url "machines:configure" object.pk %}" data-bs-toggle="tooltip" title="{% trans 'Configure' %}"><i class="bi-sliders"></i></a>
+            <a href="{% url 'machines:update' object.pk %}" class="tooltip" data-tip="{% trans 'Edit' %}"><i data-lucide="square-pen" class="w-4 h-4"></i></a>
+            <a href="{% url "machines:configure" object.pk %}" class="tooltip" data-tip="{% trans 'Configure' %}"><i data-lucide="sliders-horizontal" class="w-4 h-4"></i></a>
         </td>
     {% endif %}
 </tr>

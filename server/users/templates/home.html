@@ -8,15 +8,15 @@
 {% block top_actions %}
 <a href="#" class="btn btn-primary btn-sm only-edit-mode"
     hx-get="{% url "users:widgets:create" %}"
-    hx-target="#widget-modal .modal-body"
+    hx-target="#widget-modal .widget-modal-body"
     hx-trigger="click"
     hx-swap="innerHTML"
-    onclick="showModal()"><i class="bi-plus"></i></a>
-<a href="#" class="btn btn-secondary btn-sm" onclick="toggleEditMode()"><i class="bi-pencil-fill"></i></a>
+    onclick="showModal()"><i data-lucide="plus" class="w-4 h-4"></i></a>
+<a href="#" class="btn btn-secondary btn-sm" onclick="toggleEditMode()"><i data-lucide="square-pen" class="w-4 h-4"></i></a>
 {% endblock %}
 
 {% block content %}
-<div class="row justify-content-md-start" id="widgets"
+<div class="grid grid-cols-12 gap-4" id="widgets"
     hx-get="{% url "users:widgets:home" %}"
     hx-trigger="load">
     {% for widget in widgets %}
@@ -26,22 +26,16 @@
 {% endblock content %}
 
 {% block extra_content %}
-<div id="widget-modal"
-    class="modal modal-blur fade"
-    style="display: none"
-    aria-hidden="false"
-    tabindex="-1">
+<dialog id="widget-modal" class="modal">
     <div
-    class="modal-dialog modal-dialog-centered"
-    role="document"
+    class="modal-box"
     hx-boost="true"
     hx-push-url="false"
     hx-target="#widgets">
-        <div class="modal-content">
-            <div class="modal-body"></div>
-        </div>
+        <div class="widget-modal-body"></div>
     </div>
-</div>
+    <form method="dialog" class="modal-backdrop"><button>{% trans "close" %}</button></form>
+</dialog>
 {% endblock %}
 
 {% block script_extra %}
@@ -53,14 +47,13 @@ function toggleEditMode() {
         main.className = main.className.replace(" edit-mode", "");
     }
 }
-var modal = new bootstrap.Modal(document.getElementById('widget-modal'));
 function showModal() {
-    modal.show();
+    openModal('widget-modal');
 }
 
 htmx.on("htmx:afterRequest", function(evt) {
     if (evt.detail.elt.nodeName === "FORM") {
-        modal.hide();
+        closeModal('widget-modal');
     }
 });
 {% endblock %}

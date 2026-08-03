@@ -4,49 +4,50 @@
 {% block title %}{{ machine.name }}{% endblock %}
 
 {% block content %}
-  <div class="row mb-4">
-    <div class="col-md-6">
-      <h4>{% trans 'Details' %}</h4>
-      <ul class="list-unstyled">
+  <div class="mb-4">
+    <div class="w-full md:w-1/2">
+      <h4 class="text-lg font-semibold mb-2">{% trans 'Details' %}</h4>
+      <ul class="list-none">
         {% if machine.location %}
           <li>
-            <span class="fw-bold text-secondary-emphasis">{% trans 'Location' %}:</span> {{ machine.location }}
+            <span class="font-bold text-base-content/60">{% trans 'Location' %}:</span> {{ machine.location }}
           </li>
         {% elif machine.parent.location %}
           <li>
-            <span class="fw-bold text-secondary-emphasis">{% trans 'Location' %}:</span> {{ machine.parent.location }}
+            <span class="font-bold text-base-content/60">{% trans 'Location' %}:</span> {{ machine.parent.location }}
           </li>
         {% endif %}
         {% if machine.type != "lock_group" %}
           <li>
-            <span class="fw-bold text-secondary-emphasis">{% trans 'State' %}:</span>{% include "snippets/machine_state_label.html" with object=machine %}
+            <span class="font-bold text-base-content/60">{% trans 'State' %}:</span>{% include "snippets/machine_state_label.html" with object=machine %}
           </li>
         {% endif %}
         <li>
-          <span class="fw-bold text-secondary-emphasis">{% trans 'Allowed on Holidays' %}:</span> {{ machine.allowed_on_holidays|yesno:_("Yes,No") }}
+          <span class="font-bold text-base-content/60">{% trans 'Allowed on Holidays' %}:</span> {{ machine.allowed_on_holidays|yesno:_("Yes,No") }}
         </li>
         <li>
-          <span class="fw-bold text-secondary-emphasis">{% trans 'Usage Times' %}</span>
+          <span class="font-bold text-base-content/60">{% trans 'Usage Times' %}</span>
           {% if machine.times.exists %}
-            <ul>
+            <ul class="list-disc ms-6">
               {% for time in machine.times.all %}
                 <li>{{ time }}</li>
               {% endfor %}
             </ul>
           {% else %}
-            <span class="text-body-secondary ms-2">{% trans 'No specific usage times defined.' %}</span>
+            <span class="text-base-content/60 ms-2">{% trans 'No specific usage times defined.' %}</span>
           {% endif %}
         </li>
       </ul>
     </div>
   </div>
 
-    <div class="row">
-      <div class="col-12">
-        <h4>{% trans 'Instructors' %}</h4>
+    <div>
+      <div>
+        <h4 class="text-lg font-semibold mb-2">{% trans 'Instructors' %}</h4>
         {% if machine.needs_qualification %}
           {% if instructors %}
-            <table class="table table-striped">
+            <div class="max-w-full overflow-x-auto">
+            <table class="table table-sm table-zebra">
               <thead>
                 <tr>
                   <th>{% trans 'Name' %}</th>
@@ -60,11 +61,12 @@
                 {% endfor %}
               </tbody>
             </table>
+            </div>
           {% else %}
-            <p class="text-body-secondary">{% trans 'No instructors are currently assigned to this machine.' %}</p>
+            <p class="text-base-content/60">{% trans 'No instructors are currently assigned to this machine.' %}</p>
           {% endif %}
         {% else %}
-            <p class="text-body-secondary">{% trans 'This machine does not require qualification, so there are no instructors assigned.' %}</p>
+            <p class="text-base-content/60">{% trans 'This machine does not require qualification, so there are no instructors assigned.' %}</p>
         {% endif %}
       </div>
     </div>

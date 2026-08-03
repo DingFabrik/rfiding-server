@@ -1,30 +1,32 @@
 {% load i18n %}
-<div class="modal fade" id="searchUniversalModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-lg modal-dialog-scrollable">
-    <div class="modal-content">
-      <div class="modal-header">
-        <form role="search" class="w-100">
-          <div class="input-group">
-            <span class="input-group-text"><i class="bi bi-search"></i></span>
-            <input
-            id="search_universal_input"
-              class="form-control"
-              type="search"
-              placeholder="{% trans "Search" %}"
-              name="search"
-              value="{{ request.GET.search }}"
-              hx-get="{% url "search-universal" %}"
-              hx-target="#search_universal_results"
-              hx-trigger="input changed delay:300ms, search" />
-          </div>
-        </form>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <div id="search_universal_results">
-          <span class="text-muted">{% trans "Type to search" %}</span>
-        </div>
+<dialog class="modal" id="searchUniversalModal">
+  <div class="modal-box max-w-2xl max-h-[80vh] flex flex-col">
+    <div class="flex items-center gap-2">
+      <form role="search" class="w-full">
+        <label class="input w-full">
+          <i data-lucide="search" class="w-4 h-4 opacity-50"></i>
+          <input
+          id="search_universal_input"
+            class="grow"
+            type="search"
+            autofocus
+            placeholder="{% trans "Search" %}"
+            name="search"
+            value="{{ request.GET.search }}"
+            hx-get="{% url "search-universal" %}"
+            hx-target="#search_universal_results"
+            hx-trigger="input changed delay:300ms, search" />
+        </label>
+      </form>
+      <form method="dialog">
+        <button class="btn btn-sm btn-circle btn-ghost" aria-label="{% trans "Close" %}">✕</button>
+      </form>
+    </div>
+    <div class="mt-4 overflow-y-auto">
+      <div id="search_universal_results">
+        <span class="text-base-content/60">{% trans "Type to search" %}</span>
       </div>
     </div>
   </div>
-</div>
+  <form method="dialog" class="modal-backdrop"><button>{% trans "close" %}</button></form>
+</dialog>

@@ -2,7 +2,7 @@
 {% load i18n %}
 
 {% block empty_state %}
-{% include "snippets/empty_list.html" with model=model icon="broadcast" can_create=can_create %}
+{% include "snippets/empty_list.html" with model=model icon="radio-tower" can_create=can_create %}
 {% endblock %}
 
 {% block table %}
@@ -18,13 +18,13 @@
 {% for token_type in types %}
 <tr>
 {% if perms.tokens.modify_tokentype %}
-<td><a href="{% url "tokens:types:update" token_type.pk %}">{{ token_type.name }}</a></td>
+<td><a class="link" href="{% url "tokens:types:update" token_type.pk %}">{{ token_type.name }}</a></td>
 {% else %}
 <td>{{ token_type.name }}</td>
 {% endif %}
 <td>{{ token_type.label_prefix }}</td>
 {% if perms.tokens.delete_tokentype %}
-<td><a href="{% url "tokens:types:delete" token_type.pk %}"><i class="bi-trash"></i></a></td>
+<td><a href="{% url "tokens:types:delete" token_type.pk %}"><i data-lucide="trash-2" class="w-4 h-4 text-error"></i></a></td>
 {% endif %}
 </tr>
 {% endfor %}

@@ -2,12 +2,12 @@
 {% load i18n %}
 
 {% block top_actions %}
-<div class="input-group">
-    <span class="input-group-text">{% trans "Filter" %}</span>
+<div class="flex items-center gap-2">
+    <span class="text-sm">{% trans "Filter" %}</span>
 <select
     id="log_action"
     name="action"
-    class="form-control"
+    class="select select-sm"
     hx-get="{% url 'access_log:list' %}"
     hx-trigger="change delay:500ms"
     hx-target="#list_container"
@@ -23,7 +23,7 @@
 {% endblock %}
 
 {% block empty_state %}
-{% include "snippets/empty_list.html" with model=model icon="card-list" can_create=False %}
+{% include "snippets/empty_list.html" with model=model icon="list" can_create=False %}
 {% endblock %}
 
 {% block table %}

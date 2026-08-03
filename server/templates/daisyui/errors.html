@@ -1,0 +1,8 @@
+{% if form.non_field_errors %}
+    <div role="alert" class="alert alert-error mb-3">
+        {% if form_error_title %}<h4 class="font-bold">{{ form_error_title }}</h4>{% endif %}
+        <ul class="m-0">
+            {{ form.non_field_errors|unordered_list }}
+        </ul>
+    </div>
+{% endif %}

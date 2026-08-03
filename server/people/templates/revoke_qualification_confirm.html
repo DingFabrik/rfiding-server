@@ -4,35 +4,29 @@
 {% block notitle %}{% endblock %}
 
 {% block content %}
-    <div class="row">
-        <div class="col-md-12 col-md-offset-3">
-            <div class="alert-danger alert d-flex align-items-center" role="alert">
-                <i class="bi bi-exclamation-triangle-fill me-3"></i>
-                <div>
-                    {% with person=object.person machine=object.machine %}
-                    <h5 class="mb-0">{% blocktrans %}Revoke the qualification that <b>{{ person }}</b> has on <b>{{ machine }}</b>?{% endblocktrans %}</h5>
-                    {% endwith %}
-                </div>
-            </div>
-            {% if not is_partial %}
-            <form action="" method="post">
-                {% csrf_token %}
-                <div class="text-right">
-                    <a href="{{ object.get_absolute_url }}" class="btn btn-secondary me-3">{% trans "No" %}</a>
-                    <input type="submit" value="{% trans "Revoke" %}" class="btn btn-danger"/>
-                </div>
-            </form>
-            {% endif %}
+    <div role="alert" class="alert alert-error">
+        <i data-lucide="triangle-alert" class="w-5 h-5"></i>
+        <div>
+            {% with person=object.person machine=object.machine %}
+            <h3 class="font-bold">{% blocktrans %}Revoke the qualification that <b>{{ person }}</b> has on <b>{{ machine }}</b>?{% endblocktrans %}</h3>
+            {% endwith %}
         </div>
     </div>
+    {% if not is_partial %}
+    <form action="" method="post" class="mt-4">
+        {% csrf_token %}
+        <div class="flex justify-end gap-2">
+            <a href="{{ object.get_absolute_url }}" class="btn btn-sm">{% trans "No" %}</a>
+            <input type="submit" value="{% trans "Revoke" %}" class="btn btn-sm btn-error"/>
+        </div>
+    </form>
+    {% endif %}
 {% endblock %}
 
 {% block buttons %}
+<button type="button" class="btn btn-sm" data-modal-close>{% trans "No" %}</button>
 <form action="{{ request.path }}?next={{ request.GET.next }}" method="post">
     {% csrf_token %}
-    <div class="text-right">
-        <a data-bs-dismiss="modal" class="btn btn-secondary me-3">{% trans "No" %}</a>
-        <input type="submit" value="{% trans "Revoke" %}" class="btn btn-danger"/>
-    </div>
+    <input type="submit" value="{% trans "Revoke" %}" class="btn btn-sm btn-error"/>
 </form>
 {% endblock %}

@@ -78,16 +78,18 @@ class UserForm(forms.ModelForm):
             FormActions(
                 Submit("submit", _("Save")),
                 HTML("""{% load i18n %}
+                     <div class="flex flex-wrap gap-2">
                      {% if object and request.user.is_superuser %}
-    <a class="btn btn-warning float-end me-3" href="{% url 'users:admin_change_password' object.pk %}">
-        <i class="bi-key me-1"></i> {% trans 'Change Password' %}
+    <a class="btn btn-sm btn-warning" href="{% url 'users:admin_change_password' object.pk %}">
+        <i data-lucide="key" class="w-4 h-4"></i> {% trans 'Change Password' %}
     </a>
 {% endif %}
                      {% if object and can_delete %}
-            <a class="btn btn-danger float-end" href="{% url request.resolver_match.namespace|add:':delete' object.pk %}">
-                <i class="bi-trash me-1"></i> {% trans 'Delete' %}
+            <a class="btn btn-sm btn-error" href="{% url request.resolver_match.namespace|add:':delete' object.pk %}">
+                <i data-lucide="trash-2" class="w-4 h-4"></i> {% trans 'Delete' %}
             </a>
-        {% endif %}"""),
+        {% endif %}
+                     </div>"""),
             ),
         )
     

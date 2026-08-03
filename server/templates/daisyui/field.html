@@ -1,0 +1,52 @@
+{% load crispy_forms_field %}
+
+{% if field.is_hidden %}
+    {{ field }}
+{% else %}
+<div id="div_{{ field.auto_id }}" class="mb-3{% if wrapper_class %} {{ wrapper_class }}{% endif %}{% if field.css_classes %} {{ field.css_classes }}{% endif %}">
+    {% if field|is_checkboxselectmultiple or field|is_radioselect %}
+        {% if field.label and form_show_labels %}
+            <span class="label mb-1">{{ field.label }}{% if field.field.required %}<span class="text-error">*</span>{% endif %}</span>
+        {% endif %}
+        {% include 'daisyui/layout/radio_checkbox_select.html' %}
+    {% elif field|is_checkbox %}
+        <label class="label justify-start gap-2" for="{{ field.id_for_label }}">
+            {% if field.errors %}
+                {% crispy_field field 'class' 'checkbox checkbox-sm validator' 'aria-invalid' 'true' %}
+            {% else %}
+                {% crispy_field field 'class' 'checkbox checkbox-sm' %}
+            {% endif %}
+            {{ field.label }}{% if field.field.required %}<span class="text-error">*</span>{% endif %}
+        </label>
+        {% include 'daisyui/layout/help_text_and_errors.html' %}
+    {% else %}
+        {% if field.label and form_show_labels %}
+            <label class="label" for="{{ field.id_for_label }}">{{ field.label }}{% if field.field.required %}<span class="text-error">*</span>{% endif %}</label>
+        {% endif %}
+        {% if field|is_file %}
+            {% include 'daisyui/layout/field_file.html' %}
+        {% elif field|is_select %}
+            {% if field.errors %}
+                {% crispy_field field 'class' 'select select-sm w-full select-error validator' 'aria-invalid' 'true' %}
+            {% else %}
+                {% crispy_field field 'class' 'select select-sm w-full' %}
+            {% endif %}
+            {% include 'daisyui/layout/help_text_and_errors.html' %}
+        {% elif field|css_class == 'textarea' %}
+            {% if field.errors %}
+                {% crispy_field field 'class' 'textarea textarea-sm w-full textarea-error validator' 'aria-invalid' 'true' %}
+            {% else %}
+                {% crispy_field field 'class' 'textarea textarea-sm w-full' %}
+            {% endif %}
+            {% include 'daisyui/layout/help_text_and_errors.html' %}
+        {% else %}
+            {% if field.errors %}
+                {% crispy_field field 'class' 'input input-sm w-full input-error validator' 'aria-invalid' 'true' %}
+            {% else %}
+                {% crispy_field field 'class' 'input input-sm w-full' %}
+            {% endif %}
+            {% include 'daisyui/layout/help_text_and_errors.html' %}
+        {% endif %}
+    {% endif %}
+</div>
+{% endif %}

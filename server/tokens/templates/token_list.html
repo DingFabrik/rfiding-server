@@ -2,23 +2,22 @@
 {% load i18n %}
 
 {% block top_actions %}
-<div class="float-start me-3">
+<div class="flex flex-wrap items-center gap-2">
     {% include "snippets/search_form.html" %}
+    {% if perms.tokens.create_token %}
+    <a href="{% url 'tokens:unknown' %}" class="btn btn-primary btn-sm tooltip" data-tip="{% trans 'Assign Token' %}"><i data-lucide="plus" class="w-4 h-4"></i></a>
+    {% endif %}
 </div>
-{% if perms.tokens.create_token %}
-<a href="{% url 'tokens:unknown' %}" class="btn btn-primary"data-bs-toggle="tooltip"
-title="{% trans 'Assign Token' %}"><i class="bi-plus-lg"></i></a>
-{% endif %}
 {% endblock %}
 
 {% block bottom_actions %}
 {% if perms.tokens.create_token and paginator.count > 1 %}
-<a href="{% url 'tokens:unknown' %}" class="btn btn-primary"data-bs-toggle="tooltip"
-title="{% trans 'Assign Token' %}"><i class="bi-plus-lg"></i></a>{% endif %}
+<a href="{% url 'tokens:unknown' %}" class="btn btn-primary btn-sm tooltip" data-tip="{% trans 'Assign Token' %}"><i data-lucide="plus" class="w-4 h-4"></i></a>
+{% endif %}
 {% endblock %}
 
 {% block empty_state %}
-{% include "snippets/empty_list.html" with model=model icon="broadcast" can_create=false %}
+{% include "snippets/empty_list.html" with model=model icon="radio-tower" can_create=false %}
 {% endblock %}
 
 {% block table %}
@@ -36,17 +35,17 @@ title="{% trans 'Assign Token' %}"><i class="bi-plus-lg"></i></a>{% endif %}
         </thead>
 {% for object in tokens %}
 <tr>
-<td><a href="{% url 'tokens:detail' object.pk %}">{{ object.serial }}</a></td>
+<td><a class="link" href="{% url 'tokens:detail' object.pk %}">{{ object.serial }}</a></td>
 <td>{{ object.format_label }}</td>
 <td>{{ object.type|default:"--" }}</td>
 <td>{% include "snippets/active_toggle.html" %}</td>
 {% if perms.people.view_person %}
-<td><a href="{% url "people:detail" object.person.pk %}">{{ object.person }}</a></td>
+<td><a class="link" href="{% url "people:detail" object.person.pk %}">{{ object.person }}</a></td>
 {% else %}
 <td>{{ object.person }}</td>
 {% endif %}
 {% if perms.tokens.modify_token %}
-<td><a href="{% url 'tokens:update' object.pk %}" data-bs-toggle="tooltip" title="{% trans 'Edit' %}"><i class="bi-pencil-square"></i></a></td>
+<td><a href="{% url 'tokens:update' object.pk %}" class="tooltip" data-tip="{% trans 'Edit' %}"><i data-lucide="square-pen" class="w-4 h-4"></i></a></td>
 {% endif %}
 </tr>
 {% endfor %}

@@ -1,6 +1,6 @@
-<div class="alert alert-secondary">
+<div role="alert" class="alert">
     {% if icon %}
-    <i class="bi-{{ icon }} h5 me-2"></i>
+    <i data-lucide="{{ icon }}" class="w-5 h-5"></i>
     {% endif %}
-    <span class=align-top>{{ message }}</span>
+    <span>{{ message }}</span>
 </div>

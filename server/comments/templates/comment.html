@@ -1,10 +1,10 @@
-<div class="card mb-3">
+<div class="card bg-base-100 card-border mb-3">
 
   <div class="card-body">
-    <div class="card-title">
+    <div class="card-title flex items-center justify-between">
       <strong>{{ comment.author }}</strong>
-      <span class="text-body-secondary float-end">{% include 'snippets/timestamp.html' with timestamp=comment.created %}</span>
+      <span class="text-base-content/60 text-sm font-normal">{% include 'snippets/timestamp.html' with timestamp=comment.created %}</span>
     </div>
-    <span class="card-text">{{ comment.text|linebreaksbr }}</span>
+    <span>{{ comment.text|linebreaksbr }}</span>
   </div>
 </div>

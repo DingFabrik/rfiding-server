@@ -4,7 +4,7 @@
 
 {% block title %}
 {% if machine %}
-{% blocktrans %}Edit <span class="text-primary-emphasis">{{ machine.name }}</span>{% endblocktrans %}
+{% blocktrans %}Edit <span class="text-primary">{{ machine.name }}</span>{% endblocktrans %}
 {% else %}
 {% blocktrans %}Add a new machine{% endblocktrans %}
 {% endif %}
@@ -16,19 +16,23 @@
 
 {% block pre_title %}
 {% if registration_requests %}
-<h2>{% trans "Pending registration requests" %}</h2>
+<h2 class="text-lg font-semibold mb-2">{% trans "Pending registration requests" %}</h2>
 {% for request in registration_requests %}
-<div class="alert alert-secondary" role="alert">
-    <h6 class="alert-heading">{{ request.created }}</h6>
-    <div class="float-end">
-        <a href="{% url "machines:create" %}?request={{ request.pk}}" class="btn btn-primary btn-sm">{% trans "Create" %}</a>
-        <a href="{% url "machines:delete-request" pk=request.pk %}" class="btn btn-danger btn-sm">{% trans "Delete" %}</a>
+<div role="alert" class="alert mb-2">
+    <div class="flex w-full items-start justify-between gap-2">
+        <div>
+            <h6 class="font-bold">{{ request.created }}</h6>
+            <ul class="list-none m-0">
+                <li><span class="font-bold text-base-content/70">{% trans "Hostname" %}:</span> {{ request.hostname }}</li>
+                <li><span class="font-bold text-base-content/70">{% trans "MAC Address" %}:</span> {{ request.mac_address }}</li>
+                <li><span class="font-bold text-base-content/70">{% trans "IP-Address" %}:</span> {{ request.ip_address }}</li>
+            </ul>
+        </div>
+        <div class="flex gap-2">
+            <a href="{% url "machines:create" %}?request={{ request.pk}}" class="btn btn-primary btn-sm">{% trans "Create" %}</a>
+            <a href="{% url "machines:delete-request" pk=request.pk %}" class="btn btn-error btn-sm">{% trans "Delete" %}</a>
+        </div>
     </div>
-    <ul class="list-unstyled mb-0">
-        <li><span class="fw-bold text-emphasis">{% trans "Hostname" %}:</span> {{ request.hostname }}</li>
-        <li><span class="fw-bold text-emphasis">{% trans "MAC Address" %}:</span> {{ request.mac_address }}</li>
-        <li><span class="fw-bold text-emphasis">{% trans "IP-Address" %}:</span> {{ request.ip_address }}</li>
-    </ul>
 </div>
 {% endfor %}
 {% endif %}
@@ -63,27 +67,27 @@ function updateMachineTypeFormElements () {
     }
 
     if (selectedOption.value === "compartment") {
-        parentFormGroup.classList.remove("d-none");
-        compartmentIdFormGroup.classList.remove("d-none");
-        networkFieldset.classList.add("d-none");
-        securityFieldset.classList.add("d-none");
-        clientFieldset.classList.add("d-none");
-        locationFormGroup.classList.add("d-none");
+        parentFormGroup.classList.remove("hidden");
+        compartmentIdFormGroup.classList.remove("hidden");
+        networkFieldset.classList.add("hidden");
+        securityFieldset.classList.add("hidden");
+        clientFieldset.classList.add("hidden");
+        locationFormGroup.classList.add("hidden");
     } else {
-        parentFormGroup.classList.add("d-none");
-        compartmentIdFormGroup.classList.add("d-none");
-        networkFieldset.classList.remove("d-none");
-        securityFieldset.classList.remove("d-none");
-        clientFieldset.classList.remove("d-none");
-        locationFormGroup.classList.remove("d-none");
+        parentFormGroup.classList.add("hidden");
+        compartmentIdFormGroup.classList.add("hidden");
+        networkFieldset.classList.remove("hidden");
+        securityFieldset.classList.remove("hidden");
+        clientFieldset.classList.remove("hidden");
+        locationFormGroup.classList.remove("hidden");
     }
 
     if (selectedOption.value === "lock_group") {
-        stateFormGroup.classList.add("d-none");
-        needsQualificationFormGroup.classList.add("d-none");
+        stateFormGroup.classList.add("hidden");
+        needsQualificationFormGroup.classList.add("hidden");
     } else {
-        stateFormGroup.classList.remove("d-none");
-        needsQualificationFormGroup.classList.remove("d-none");
+        stateFormGroup.classList.remove("hidden");
+        needsQualificationFormGroup.classList.remove("hidden");
     }
 }
 updateMachineTypeFormElements();
