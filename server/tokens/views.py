@@ -53,7 +53,7 @@ class TokenListView(BaseListView):
         queryset = super().get_queryset()
         status_filter = self.request.GET.get("filter_status", self.request.user.default_token_filter)
         if status_filter == "all":
-            queryset = queryset
+            queryset = queryset.filter(archived__isnull=True)
         elif status_filter == "inactive":
             queryset = queryset.filter(is_active=False, archived__isnull=True)
         elif status_filter == "archived":

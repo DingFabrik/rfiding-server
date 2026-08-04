@@ -25,12 +25,6 @@
 </div>
 {% endblock %}
 
-{% block bottom_actions %}
-{% if can_create and paginator.count > 1 %}
-<a href="{% url request.resolver_match.namespace|add:':create' %}" class="btn btn-square btn-primary tooltip" data-tip="{% with model|verbose_name as modelname %}{% blocktrans %}Add {{ modelname }}{% endblocktrans %}{% endwith %}"><i data-lucide="plus" class="w-4 h-4"></i></a>
-{% endif %}
-{% endblock %}
-
 {% block content %}
 <div class="flex flex-col lg:flex-row gap-4">
     <div class="min-w-0 grow">
