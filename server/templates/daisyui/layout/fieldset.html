@@ -1,5 +1,5 @@
-<fieldset class="fieldset border border-secondary rounded-box p-2 mb-3{% if fieldset.css_class %} {{ fieldset.css_class }}{% endif %}" {% if fieldset.css_id %}id="{{ fieldset.css_id }}"{% endif %}
+<fieldset class="fieldset border border-base-300 rounded-box p-2 mb-3{% if fieldset.css_class %} {{ fieldset.css_class }}{% endif %}" {% if fieldset.css_id %}id="{{ fieldset.css_id }}"{% endif %}
     {{ fieldset.flat_attrs }}>
-    {% if legend %}<legend class="fieldset-legend text-base px-2">{{ legend|safe }}</legend>{% endif %}
+    {% if legend %}<legend class="fieldset-legend text-xs font-semibold uppercase tracking-wide text-base-content/50 px-2">{{ legend|safe }}</legend>{% endif %}
     {{ fields|safe }}
 </fieldset>

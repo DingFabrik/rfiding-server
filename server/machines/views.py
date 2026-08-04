@@ -468,12 +468,12 @@ class MachineRegistrationRequestDeleteView(
 ):
     permission_required = "machines.delete_machineregistrationrequest"
 
-    model = Machine
+    model = MachineRegistrationRequest
     template_name = "delete_confirm.html"
-    success_url = reverse_lazy("machines:list")
+    success_url = reverse_lazy("machines:create")
 
     def get_title(self):
-        return _(f"Delete {self.object.name}")
+        return _(f"Delete {self.object.mac_address}")
 
 class MachineCommentCreateView(CommentCreateView):
     permission_required = "machines.comment_machine"

@@ -94,7 +94,7 @@ class PersonCreateView(TitleMixin, PermissionRequiredMixin, CreateView):
     permission_required = "people.add_person"
 
     model = Person
-    template_name = "person_form.html"
+    template_name = "base_form.html"
     form_class = PersonForm
 
 
@@ -102,7 +102,7 @@ class PersonUpdateView(TitleMixin, PermissionRequiredMixin, UpdateView):
     permission_required = "people.change_person"
 
     model = Person
-    template_name = "person_form.html"
+    template_name = "base_form.html"
     form_class = PersonForm
     context_object_name = "person"
 

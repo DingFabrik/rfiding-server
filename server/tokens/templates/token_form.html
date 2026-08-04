@@ -2,16 +2,6 @@
 {% load i18n %}
 {% load crispy_forms_tags %}
 
-{% block title %}
-{% if token %}
-{% blocktrans %}Edit <span class="text-primary">{{ token }}</span>{% endblocktrans %}
-{% elif prefilled_serial %}
-{% blocktrans %}Assign Token{% endblocktrans %}
-{% else %}
-{% blocktrans %}Add a new Token{% endblocktrans %}
-{% endif %}
-{% endblock %}
-
 {% block content %}
 <form action="" method="post">
     {% csrf_token %}

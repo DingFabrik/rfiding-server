@@ -1,14 +1,6 @@
 {% extends "base_form.html" %}
 {% load i18n %}{% load crispy_forms_tags %}
 
-{% block title %}
-{% if object %}
-{% blocktrans %}Edit {{ object }}{% endblocktrans %}
-{% else %}
-{% blocktrans %}Add a new user{% endblocktrans %}
-{% endif %}
-{% endblock %}
-
 {% block content %}
 {% block pre_form %}{% endblock %}
     {% crispy form %}

@@ -43,7 +43,7 @@ class LocationCreateView(TitleMixin, PermissionRequiredMixin, CreateView):
     title = _("Create Location")
 
     model = Location
-    template_name = "location_form.html"
+    template_name = "base_form.html"
     fields = ["name", "description", "parent"]
 
 
@@ -52,7 +52,7 @@ class LocationUpdateView(TitleMixin, PermissionRequiredMixin, UpdateView):
     title = _("Edit Location")
 
     model = Location
-    template_name = "location_form.html"
+    template_name = "base_form.html"
     fields = ["name", "description", "parent"]
 
     def get_title(self):
