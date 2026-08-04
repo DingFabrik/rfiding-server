@@ -49,7 +49,6 @@
           <i data-lucide="search" class="w-5 h-5"></i>
         </button>
 
-        <div class="dropdown dropdown-end">
         <button
           class="btn btn-ghost btn-circle hidden lg:inline-flex"
           popovertarget="user-menu"
@@ -58,7 +57,8 @@
           <i data-lucide="circle-user" class="w-5 h-5"></i>
         </button>
         <ul
-          class="dropdown-content menu bg-base-100 rounded-box z-30 mt-3 w-56 p-2 shadow-lg"
+          class="dropdown dropdown-end menu bg-base-100 rounded-box z-30 mt-3 w-56 p-2 shadow-lg"
+          popover
           id="user-menu"
           style="position-anchor:--user-menu">
           <li class="menu-title">{{ user.name|default:user.email }}</li>
@@ -78,7 +78,6 @@
             </form>
           </li>
         </ul>
-      </div>
         <button
           class="btn btn-ghost btn-circle lg:hidden"
           popovertarget="mobile-menu"

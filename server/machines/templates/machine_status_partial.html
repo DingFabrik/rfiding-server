@@ -1,40 +1,47 @@
 {% load i18n %}
-<h6 id="machine_state" class="inline-block align-bottom">
+<span id="machine_state" class="inline-flex items-center gap-2">
 {% if status == 'standby' %}
-  <span class="badge badge-neutral badge-sm">{% trans 'Standby' %}</span>
+  <span class="status status-neutral status-md"></span>
+  <span class="text-sm font-medium text-base-content/70">{% trans 'Standby' %}</span>
 {% elif status == 'disconnected' %}
-  <span class="badge badge-error badge-sm">{% trans 'Offline' %}</span>
+  <span class="status status-error status-md"></span>
+  <span class="text-sm font-medium text-error">{% trans 'Offline' %}</span>
 {% elif status == 'enabled' %}
-  <span class="badge badge-warning badge-sm">{% trans 'Enabled' %}</span>
-  {% elif status == 'active' %}
-    <span class="badge badge-success badge-sm">{% trans 'Active' %}</span>
+  <span class="status status-warning status-md"></span>
+  <span class="text-sm font-medium text-warning">{% trans 'Enabled' %}</span>
+{% elif status == 'active' %}
+  <span class="status status-success status-md animate-pulse"></span>
+  <span class="text-sm font-medium text-success">{% trans 'Active' %}</span>
 {% else %}
-  <span class="badge badge-warning badge-sm">{% trans 'Unknown' %}</span>
+  <span class="status status-warning status-md"></span>
+  <span class="text-sm font-medium text-warning">{% trans 'Unknown' %}</span>
 {% endif %}
-</h6>
+</span>
 
 <div id="command_dropdown">
-  <button class="btn btn-secondary" type="button" popovertarget="commands_menu" style="anchor-name:--command-dropdown">
+  <button class="btn btn-secondary btn-sm" type="button" popovertarget="commands_menu" style="anchor-name:--command-dropdown">
+    <i data-lucide="terminal" class="w-4 h-4"></i>
     {% trans "Send Command" %}
   </button>
-<ul id="commands_menu" class="dropdown menu bg-base-100 rounded-box z-30 w-52 p-2 shadow-lg" popover style="position-anchor:--command-dropdown">
-  <li class="{% if status != 'standby' %}menu-disabled{% endif %}"><a id="reload_command"
+<ul id="commands_menu" class="dropdown menu bg-base-100 rounded-box z-30 w-56 p-2 shadow-lg" popover style="position-anchor:--command-dropdown">
+  <li class="menu-title">{% trans "Device commands" %}</li>
+  <li class="{% if status != 'standby' %}menu-disabled tooltip tooltip-left {% endif %}" {% if status != 'standby' %}data-tip="{% trans 'Only available in standby' %}"{% endif %}><a id="reload_command"
     href="#"
     hx-vals='{"command": "reload_config"}'
-    ws-send>{% trans "Reload Config" %}</a></li>
-  <li class="{% if status != 'standby' %}menu-disabled{% endif %}"><a id="restart_command"
+    ws-send><i data-lucide="refresh-cw" class="w-4 h-4"></i>{% trans "Reload Config" %}</a></li>
+  <li class="{% if status != 'standby' %}menu-disabled tooltip tooltip-left {% endif %}" {% if status != 'standby' %}data-tip="{% trans 'Only available in standby' %}"{% endif %}><a id="restart_command"
     href="#"
     hx-vals='{"command": "restart"}'
-    ws-send>{% trans "Restart Machine" %}</a></li>
-  <li class="{% if status != 'standby' %}menu-disabled{% endif %}"><a
+    ws-send><i data-lucide="rotate-cw" class="w-4 h-4"></i>{% trans "Restart Machine" %}</a></li>
+  <li class="{% if status != 'standby' %}menu-disabled tooltip tooltip-left {% endif %}" {% if status != 'standby' %}data-tip="{% trans 'Only available in standby' %}"{% endif %}><a
     id="enable_command"
     href="#"
     hx-vals='{"command": "enable"}'
-    ws-send>{% trans "Enable" %}</a></li>
-  <li class="{% if status != 'enabled' %}menu-disabled{% endif %}"><a
+    ws-send><i data-lucide="circle-play" class="w-4 h-4"></i>{% trans "Enable" %}</a></li>
+  <li class="{% if status != 'enabled' %}menu-disabled tooltip tooltip-left {% endif %}" {% if status != 'enabled' %}data-tip="{% trans 'Only available while enabled' %}"{% endif %}><a
     id="disable_command"
     href="#"
     hx-vals='{"command": "disable"}'
-    ws-send>{% trans "Disable" %}</a></li>
+    ws-send><i data-lucide="circle-stop" class="w-4 h-4"></i>{% trans "Disable" %}</a></li>
   </ul>
 </div>

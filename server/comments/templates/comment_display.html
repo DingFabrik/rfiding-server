@@ -1,17 +1,22 @@
-{% load crispy_forms_tags %}{% load i18n %}<div class="flex flex-col md:flex-row gap-4">
-  <div class="flex-1">
-  {% for comment in object.comments.all %}
-    {% include "comment.html" %}
+{% load crispy_forms_tags %}{% load i18n %}{% load base_extra %}
+<div class="flex flex-col lg:flex-row gap-4">
+  <div class="min-w-0 grow">
+    {% for comment in object.comments.all %}
+      {% include "comment.html" %}
     {% empty %}
-    <div role="alert" class="alert">
-      {% trans "No comments yet." %}
+      {% include 'snippets/empty.html' with icon='message-square' message='No comments yet.'|translate %}
+    {% endfor %}
+  </div>
+  <div class="w-full lg:w-80 shrink-0">
+    <div class="card card-border bg-base-100">
+      <div class="card-body gap-3">
+        <h2 class="text-xs font-semibold uppercase tracking-wide text-base-content/50">{% trans 'Add Comment' %}</h2>
+        <form method="post" action="{% url comment_url object.pk %}" hx-target="#comments-tab-pane" hx-swap="outerHTML">
+          {% csrf_token %}
+          {{ comment_form|crispy }}
+          <button type="submit" class="btn btn-primary btn-sm"><i data-lucide="send" class="w-4 h-4"></i>{% trans 'Post' %}</button>
+        </form>
+      </div>
     </div>
-  {% endfor %}
-</div>
-<div class="flex-1">
-    <form class="mb-3" method="post" action="{% url comment_url object.pk %}" hx-target="#comments-tab-pane" hx-swap="outerHTML">
-    {% csrf_token %}
-    {{ comment_form|crispy }}
-    <button type="submit" class="btn btn-primary">{% trans 'Post' %}</button>
-  </form>
+  </div>
 </div>

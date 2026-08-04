@@ -8,7 +8,7 @@
 {% endblock %}
 
 {% block buttons %}
-<form method="dialog"><button type="button" class="btn">{% trans "No" %}</button></form>
+<form method="dialog"><button class="btn">{% trans "No" %}</button></form>
 <form action="{{ request.path }}" method="post">
     {% csrf_token %}
     <button type="submit" class="btn btn-error">{% trans "Delete" %}</button>

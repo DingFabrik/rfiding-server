@@ -1,70 +1,116 @@
 {% extends 'base_detail.html' %}
 {% load i18n %}
-{% load crispy_forms_tags %}
+{% load base_extra %}
+
+{% block title %}{{ person.name }}{% endblock %}
+
+{% block top_actions %}
+  <div class="join">
+    {% if can_edit %}
+      <a href="{% url 'people:update' person.pk %}" class="btn btn-primary btn-sm join-item"><i data-lucide="square-pen" class="w-4 h-4"></i>{% trans 'Edit' %}</a>
+    {% endif %}
+    {% if can_delete %}
+      <a href="{% url 'people:delete' person.pk %}" class="btn btn-error btn-sm join-item" data-modal-target="confirmDeleteModal"><i data-lucide="trash-2" class="w-4 h-4"></i>{% trans 'Delete' %}</a>
+    {% endif %}
+  </div>
+{% endblock %}
 
 {% block content %}
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-5">
-    <div>
-      <h4 class="text-lg font-semibold mb-2">{% trans 'Details' %}</h4>
-      <ul class="list-none mb-4">
-        <li>
-          <span class="font-bold text-base-content/60">{% trans 'Member ID' %}:</span> {{ person.member_id }}
+  <div class="flex flex-wrap items-center gap-2 mb-5 -mt-2">
+    {% if person.member_id %}
+      <span class="badge badge-soft badge-sm font-mono"></i>#{{ person.member_id }}</span>
+    {% endif %}
+    {% if person.is_system_maintainer %}
+      <span class="badge badge-soft badge-accent badge-sm"><i data-lucide="wrench" class="w-3 h-3"></i>{% trans 'System Maintainer' %}</span>
+    {% endif %}
+    <span>{% include 'snippets/active_toggle.html' %}</span>
+  </div>
+
+    <div class="stats stats-vertical sm:stats-horizontal border border-neutral/10 bg-base-300 w-full mb-6">
+    <div class="stat py-3">
+      <div class="stat-figure text-primary">
+        <i data-lucide="radio-tower" class="w-8 h-8"></i>
+      </div>
+      <div class="stat-title text-xs">{% trans 'Tokens' %}</div>
+      <div class="stat-value text-lg tabular-nums">{{ person.token_set.count }}</div>
+    </div>
+    <div class="stat py-3">
+      <div class="stat-figure text-primary">
+        <i data-lucide="shield-check" class="w-8 h-8"></i>
+      </div>
+      <div class="stat-title text-xs">{% trans 'Qualifications' %}</div>
+      <div class="stat-value text-lg tabular-nums">{{ qualifications.paginator.count }}</div>
+    </div>
+    <div class="stat py-3">
+      <div class="stat-figure text-primary">
+        <i data-lucide="calendar" class="w-8 h-8"></i>
+      </div>
+      <div class="stat-title text-xs">{% trans 'Member since' %}</div>
+      <div class="stat-value text-lg tabular-nums">{% user_date person.created "DATE_FORMAT" %}</div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-px bg-base-300 border border-base-300 rounded-box overflow-hidden mb-6">
+    <div class="bg-base-100 p-4">
+      <h2 class="text-xs font-semibold uppercase tracking-wide text-base-content/50 mb-2">{% trans 'Details' %}</h2>
+      <ul class="list text-sm">
+        <li class="list-row items-center px-0 py-1.5 border-b border-base-200">
+          <span class="text-base-content/60">{% trans 'Member ID' %}</span>
+          <span class="font-medium font-mono text-right">{{ person.member_id|default:'--' }}</span>
         </li>
-        <li>
-          <span class="font-bold text-base-content/60">{% trans 'Name' %}:</span> {{ person.name }}
+        <li class="list-row items-center px-0 py-1.5 border-b border-base-200">
+          <span class="text-base-content/60">{% trans 'E-Mail' %}</span>
+          <span class="font-medium truncate text-right"><a class="link-hover" href="mailto:{{ person.email }}">{{ person.email }}</a></span>
         </li>
-        <li>
-          <span class="font-bold text-base-content/60">{% trans 'E-Mail' %}:</span> {{ person.email }}
-        </li>
-        <li>
-          <span class="font-bold text-base-content/60">{% trans 'Is Active' %}:</span> {% include 'snippets/active_toggle.html' %}
-        </li>
-        {% if object.notes %}
-          <li>
-            <span class="font-bold text-base-content/60">{% trans 'Notes' %}:</span> {{ object.notes }}
+        {% if person.notes %}
+          <li class="list-row items-start px-0 py-1.5">
+            <span class="text-base-content/60">{% trans 'Notes' %}</span>
+            <span class="font-medium text-right whitespace-pre-line">{{ person.notes }}</span>
           </li>
         {% endif %}
       </ul>
     </div>
-    <div>
-      <div class="mb-4">
-        <h4 class="text-lg font-semibold mb-2">{% trans 'Tokens' %}</h4>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          {% with tokens=person.token_set.all %}
-            {% for token in tokens %}
-              {% include 'token_card.html' %}
-            {% empty %}
-              <div role="alert" class="alert col-span-full">
-                {% with name=person.name %}
-                  {% blocktrans %}<b>{{ name }}</b> has no tokens.{% endblocktrans %}
-                {% endwith %}
-              </div>
-            {% endfor %}
-          {% endwith %}
-        </div>
+    <div class="bg-base-100 p-4 lg:col-span-2">
+      <h2 class="text-xs font-semibold uppercase tracking-wide text-base-content/50 mb-2">{% trans 'Tokens' %}</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+        {% with tokens=person.token_set.all %}
+          {% for token in tokens %}
+            {% include 'token_card.html' %}
+          {% empty %}
+            {% blocktrans asvar empty_tokens_message with name=person.name %}<b>{{ name }}</b> has no tokens.{% endblocktrans %}
+            <div class="col-span-full">
+              {% include 'snippets/empty.html' with icon='ban' message=empty_tokens_message %}
+            </div>
+          {% endfor %}
+        {% endwith %}
       </div>
     </div>
   </div>
 
   <div class="mb-5">
     <div role="tablist" class="tabs tabs-lift">
-      <button role="tab" class="tab tab-active" id="qualifications-tab" data-tabs-target="#qualifications-tab-pane" aria-selected="true">{% trans 'Qualifications' %}</button>
-      <div class="tab-content bg-base-100 border-base-300 p-6" role="tabpanel" id="qualifications-tab-pane" aria-labelledby="qualifications-tab">
+      <button role="tab" class="tab tab-active" id="qualifications-tab" data-tabs-target="#qualifications-tab-pane" aria-selected="true"><i data-lucide="shield-check" class="w-4 h-4 mr-1"></i>{% trans 'Qualifications' %}</button>
+      <div class="tab-content bg-base-100 border-base-300" role="tabpanel" id="qualifications-tab-pane" aria-labelledby="qualifications-tab">
         {% if perms.people.qualify_person %}
-          <div class="flex justify-end mb-2">
-            <a class="btn btn-primary" href="{% url 'people:qualify' person.pk %}">{% trans 'Add Qualification' %}</a>
+          <div class="flex justify-end mb-2 mx-6 mt-6">
+            <a class="btn btn-primary btn-sm" href="{% url 'people:qualify' person.pk %}"><i data-lucide="shield-plus" class="w-4 h-4"></i>{% trans 'Add Qualification' %}</a>
           </div>
         {% endif %}
         {% include 'person_qualifications_table.html' with is_partial=True set_history=False %}
       </div>
       {% if perms.access_log.view_access_log %}
-        <button role="tab" class="tab" id="accesslog-tab" hx-get="{% url 'access_log:for-person' object.pk %}" hx-target="#accesslog-tab-pane" data-tabs-target="#accesslog-tab-pane" aria-selected="false">{% trans 'Access Log' %}</button>
-        <div class="tab-content bg-base-100 border-base-300 p-6" role="tabpanel" class="hidden" id="accesslog-tab-pane" aria-labelledby="accesslog-tab">
-          {% include 'snippets/spinner.html' %}
+        <button role="tab" class="tab" id="accesslog-tab" hx-get="{% url 'access_log:for-person' object.pk %}" hx-target="#accesslog-tab-pane" data-tabs-target="#accesslog-tab-pane" aria-selected="false"><i data-lucide="list" class="w-4 h-4 mr-1"></i>{% trans 'Access Log' %}</button>
+        <div class="tab-content bg-base-100 border-base-300" role="tabpanel" class="hidden" id="accesslog-tab-pane" aria-labelledby="accesslog-tab">
+          <div class="flex flex-col gap-2 p-6">
+            <div class="skeleton h-4 w-full"></div>
+            <div class="skeleton h-4 w-full"></div>
+            <div class="skeleton h-4 w-full"></div>
+            <div class="skeleton h-4 w-2/3"></div>
+          </div>
         </div>
       {% endif %}
       {% if perms.people.comment_person %}
-        <button role="tab" class="tab" id="comments-tab" data-tabs-target="#comments-tab-pane" aria-selected="false">{% trans 'Comments' %}</button>
+        <button role="tab" class="tab" id="comments-tab" data-tabs-target="#comments-tab-pane" aria-selected="false"><i data-lucide="message-square" class="w-4 h-4 mr-1"></i>{% trans 'Comments' %}</button>
         <div class="tab-content bg-base-100 border-base-300 p-6" role="tabpanel" class="hidden" id="comments-tab-pane" aria-labelledby="comments-tab">
           {% include 'comment_display.html' with comment_url='people:add-comment' %}
         </div>

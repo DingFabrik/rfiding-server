@@ -1,36 +1,40 @@
 {% load i18n %}
-<form class="flex flex-wrap items-center gap-3">
-    <label class="input">
+<form class="flex flex-col gap-3">
+    <label class="input input-sm w-full">
         <i data-lucide="search" class="w-4 h-4 opacity-50"></i>
         <input
         id="id_search"
         type="search"
         class="grow"
         placeholder="{% trans "Search" %}"
+        aria-label="{% trans "Search" %}"
         name="search"
         value="{{ request.GET.search }}"
         hx-get="{{ request.path }}"
         hx-include="#id_sort, #id_filter"
         hx-target="#list_container"
         hx-trigger="input changed delay:300ms, search"
+        hx-indicator="#list_loading_indicator"
         hx-push-url="true">
     </label>
     {% if sort_choices %}
-    <label class="select">
-  <span class="label">{% trans "Sort" %}</span>
-    <select
-    id="id_sort"
-    class="select select-ghost"
-    name="sort"
-    hx-get="{{ request.path }}"
-    hx-include="#id_search, #id_filter"
-    hx-target="#list_container"
-    hx-trigger="change"
-    hx-push-url="true">
-    {% for choice in sort_choices %}
-        <option value="{{ choice.0 }}" {% if choice.0 == request.GET.sort %}selected{% endif %}>{{ choice.1 }}</option>
-    {% endfor %}
-    </select>
-    {% endif %}</label>
-
+    <div>
+        <label for="id_sort" class="label text-sm">{% trans "Sort" %}</label>
+        <select
+        id="id_sort"
+        class="select select-sm w-full"
+        name="sort"
+        hx-get="{{ request.path }}"
+        hx-include="#id_search, #id_filter"
+        hx-target="#list_container"
+        hx-trigger="change"
+        hx-indicator="#list_loading_indicator"
+        hx-push-url="true">
+        {% for choice in sort_choices %}
+            <option value="{{ choice.0 }}" {% if choice.0 == request.GET.sort %}selected{% endif %}>{{ choice.1 }}</option>
+        {% endfor %}
+        </select>
+    </div>
+    {% endif %}
+    <div id="list_loading_indicator" class="htmx-indicator skeleton h-4 w-2/3"></div>
 </form>

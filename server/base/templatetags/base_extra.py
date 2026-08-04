@@ -3,8 +3,14 @@ from django.utils.translation import gettext_lazy as _
 from django.utils import formats
 
 from users.models import RFIDingUser
+from base.app_icons import app_icon as _app_icon
 
 register = template.Library()
+
+
+@register.filter(name="app_icon")
+def app_icon(app_name):
+    return _app_icon(app_name)
 
 
 @register.simple_tag

@@ -1,7 +1,7 @@
 {% load i18n %}{% load base_extra %}
 <div id="qualifications_container">
   {% if qualifications %}
-    <div class="max-w-full overflow-x-auto rounded-box border border-base-content/10">
+    <div class="max-w-full overflow-x-auto {% if not is_partial %} rounded-box border border-base-content/10{% endif %}">
     <table class="table table-sm table-zebra mb-4 mt-1">
       <thead>
         <tr>
@@ -19,7 +19,7 @@
             {% trans 'Date' %}
           </th>
           {% if perms.people.qualify_person %}
-            <th width="60"></th>
+            <th></th>
           {% endif %}
         </tr>
       </thead>
@@ -61,12 +61,9 @@
     {% url 'people:qualifications' person.pk as page_path %}
     {% include 'base_pagination.html' with page_obj=qualifications target='qualifications_container' %}
   {% else %}
-    <div role="alert" class="alert">
-      <i data-lucide="ban" class="w-5 h-5"></i>
-      <span>{% with name=person.name %}
-        {% blocktrans %}<b>{{ name }}</b> is not qualified for any machines.{% endblocktrans %}
-      {% endwith %}
-      </span>
+    <div class="mb-6 mx-6 mt-4">
+      {% blocktrans asvar empty_message with name=person.name %}<b>{{ name }}</b> is not qualified for any machines.{% endblocktrans %}
+      {% include 'snippets/empty.html' with icon='ban' message=empty_message %}
     </div>
   {% endif %}
 </div>

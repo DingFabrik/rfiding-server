@@ -1,7 +1,7 @@
 {% load i18n %}{% load base_extra %}
 <div id="qualifications_container">
     {% if qualifications %}
-    <div class="max-w-full overflow-x-auto rounded-box border border-base-content/10">
+    <div class="max-w-full overflow-x-auto {% if not is_partial %} rounded-box border border-base-content/10{% endif %}">
     <table class="table table-sm table-zebra">
         <thead>
             <tr>
@@ -13,7 +13,7 @@
                 <th>{% trans "Instructed by" %}</th>
                 <th>{% trans "Date" %}</th>
                 {% if perms.people.qualify_person %}
-                <th width="60"></th>
+                <th></th>
                 {% endif %}
             </tr>
         </thead>
@@ -26,7 +26,7 @@
                 <td>{% include "cells/permission_level.html" with permission_level=qualification.permission_level %}</td>
                 <td style="max-width: 600px;">{{ qualification.comment }}</td>
                 <td>{% if qualification.instructed_by %}
-                    <a class="link-hover link-primary" href="{% url "people:detail" qualification.instructed_by.pk %}">{{ qualification.instructed_by }}</a>
+                    <a class="link" href="{% url "people:detail" qualification.instructed_by.pk %}">{{ qualification.instructed_by }}</a>
                     {% else %}--{% endif %}
                 </td>
                 <td>{% user_date qualification.created "DATE_FORMAT" %}</td>
@@ -52,6 +52,8 @@
     {% url 'machines:qualifications' machine.pk as page_path %}
     {% include "base_pagination.html" with page_obj=qualifications target="qualifications_container" %}
     {% else %}
+    <div class="mb-6 mx-6 mt-4">
     {% include "snippets/empty.html" with icon="ban" message="There are no people qualified for this machine"|translate %}
+    </div>
     {% endif %}
 </div>

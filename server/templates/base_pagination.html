@@ -1,7 +1,9 @@
 {% load base_extra %}
-{% load i18n %}{% load base_extra %}
+{% load i18n %}
 {% if model_count is not None %}
-<div class="text-sm text-base-content/70 mb-2">{{ model_count }} {{ model|verbose_name_adaptive:model_count }}</div>
+<div class="mb-3">
+  <span class="badge badge-soft badge-sm tabular-nums">{{ model_count }} {{ model|verbose_name_adaptive:model_count }}</span>
+</div>
 {% endif %}
 {% if page_obj.has_previous or page_obj.has_next %}
 {% with path=page_path|default:request.path %}
@@ -12,7 +14,7 @@
         hx-target="#{{ target|default:"list_container" }}"
         {% if set_history %}hx-push-url="true"{% else %}hx-push-url="false"{% endif %}
         {% endif %}>
-        <a class="join-item btn{% if not page_obj.has_previous %} btn-disabled{% endif %}" href="{{ path }}{% build_url_params request.GET page=1 %}" aria-label="First">
+        <a class="join-item btn{% if not page_obj.has_previous %} btn-disabled {% endif %}" href="{{ path }}{% build_url_params request.GET page=1 %}" aria-label="First">
             <i data-lucide="chevrons-left" class="w-4 h-4"></i>
         </a>
         {% if page_obj.has_previous %}
@@ -32,7 +34,7 @@
         {% else %}
             <span class="join-item btn btn-disabled"><i data-lucide="chevron-right" class="w-4 h-4"></i></span>
         {% endif %}
-        <a class="join-item btn{% if not page_obj.has_next %} btn-disabled{% endif %}" href="{{ path }}{% build_url_params request.GET page=page_obj.paginator.num_pages %}" aria-label="Last">
+        <a class="join-item btn{% if not page_obj.has_next %} btn-disabled {% endif %}" href="{{ path }}{% build_url_params request.GET page=page_obj.paginator.num_pages %}" aria-label="Last">
             <i data-lucide="chevrons-right" class="w-4 h-4"></i>
         </a>
     </div>

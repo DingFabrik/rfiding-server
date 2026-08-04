@@ -2,11 +2,26 @@
 {% load i18n %}
 {% load l10n %}
 {% load humanize %}
+{% load base_extra %}
 
 {% block main %}
 <div hx-ext="ws" ws-connect="/ws/tokens/unknown/">
     <div class="mb-3 flex flex-wrap items-start justify-between gap-2">
-        <h1 class="text-2xl font-bold">{% trans "Unknown tokens" %}</h1>
+        <div>
+          <div class="flex items-center gap-3 mb-2">
+            <div class="avatar avatar-placeholder">
+              <div class="bg-base-300 text-base-content w-10 rounded-box">
+                <i data-lucide="{{ request.resolver_match.app_name|app_icon }}" class="w-5 h-5"></i>
+              </div>
+            </div>
+            <div class="breadcrumbs text-sm py-0">
+              <ul>
+                <li>{% trans "Unknown tokens" %}</li>
+              </ul>
+            </div>
+          </div>
+          <h1 class="text-2xl font-bold">{% trans "Unknown tokens" %}</h1>
+        </div>
         <a
             href="{% url 'tokens:clear-unknown' %}"
             ws-send

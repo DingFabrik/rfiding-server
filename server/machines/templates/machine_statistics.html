@@ -10,6 +10,7 @@
   id="id_days"
   class="select select-sm"
   name="days"
+  aria-label="{% trans 'Days to show' %}"
   hx-get="{{ request.path }}"
   hx-target="#statistics-tab-pane"
   hx-trigger="change">

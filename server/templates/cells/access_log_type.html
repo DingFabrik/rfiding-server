@@ -1,9 +1,9 @@
 {% if object.type == "booted" %}
-<i data-lucide="rocket" class="w-4 h-4 inline text-primary"></i><span class="text-warning hidden md:inline">{{ object.get_type_display }}</span>
+<span class="badge badge-soft badge-sm"><i data-lucide="rocket" class="w-3 h-3"></i><span class="hidden md:inline">{{ object.get_type_display }}</span></span>
 {% elif object.type == "enabled" %}
-<i data-lucide="circle-play" class="w-4 h-4 inline text-success"></i><span class="text-success hidden md:inline">{{ object.get_type_display }}</span>
+<span class="badge badge-soft badge-success badge-sm"><i data-lucide="circle-play" class="w-3 h-3"></i><span class="hidden md:inline">{{ object.get_type_display }}</span></span>
 {% elif object.type == "disabled" %}
-<i data-lucide="circle-stop" class="w-4 h-4 inline text-neutral"></i><span class="text-neutral hidden md:inline">{{ object.get_type_display }}</span>
+<span class="badge badge-soft badge-sm"><i data-lucide="circle-stop" class="w-3 h-3"></i><span class="hidden md:inline">{{ object.get_type_display }}</span></span>
 {% elif object.type == "unsuccessful" %}
-<i data-lucide="circle-x" class="w-4 h-4 inline text-error"></i><span class="text-error hidden md:inline">{{ object.get_type_display }}</span>
+<span class="badge badge-soft badge-error badge-sm"><i data-lucide="circle-x" class="w-3 h-3"></i><span class="hidden md:inline">{{ object.get_type_display }}</span></span>
 {% endif %}

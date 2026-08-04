@@ -39,7 +39,6 @@ class TokenListView(BaseListView):
     queryset = (
         Token.objects.select_related("person")
         .select_related("type")
-        .filter(archived=None)
         .order_by("id")
     )
     permission_required = "tokens.view_token"
@@ -52,15 +51,15 @@ class TokenListView(BaseListView):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        status_filter = self.request.GET.get("filter", self.request.user.default_token_filter)
+        status_filter = self.request.GET.get("filter_status", self.request.user.default_token_filter)
         if status_filter == "all":
             queryset = queryset
         elif status_filter == "inactive":
-            queryset = queryset.filter(is_active=False)
+            queryset = queryset.filter(is_active=False, archived__isnull=True)
         elif status_filter == "archived":
             queryset = queryset.filter(archived__isnull=False)
         else:
-            queryset = queryset.filter(is_active=True)
+            queryset = queryset.filter(is_active=True, archived__isnull=True)
         type_filter = self.request.GET.get("filter_type", "all")
         if type_filter != "all":
             queryset = queryset.filter(type=type_filter)

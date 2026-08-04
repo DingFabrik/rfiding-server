@@ -1,6 +1,6 @@
-<div role="alert" class="alert">
+<div role="alert" class="alert alert-soft alert-info">
     {% if icon %}
-    <i data-lucide="{{ icon }}" class="w-5 h-5"></i>
+    <i data-lucide="{{ icon }}" class="w-4 h-4" aria-hidden="true"></i>
     {% endif %}
-    <span>{{ message }}</span>
+    <span>{{ message|safe }}</span>
 </div>

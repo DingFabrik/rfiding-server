@@ -1,44 +1,59 @@
 {% extends base_template %}
 {% load i18n %}
+{% load base_extra %}
 
 {% block title %}
-{% with name=token %}{% blocktrans %}Access Log for {{ name }}{% endblocktrans %}{% endwith %}
+  {% with name=token %}
+    {% blocktrans %}Access Log for {{ name }}{% endblocktrans %}
+  {% endwith %}
 {% endblock %}
 
 {% block top_actions %}
-<a href="{% url 'tokens:detail' token.pk %}" class="btn btn-outline btn-primary">{% trans "Go to token" %}</a>
+  <a href="{% url 'tokens:detail' token.pk %}" class="btn btn-outline btn-primary">{% trans 'Go to token' %}</a>
 {% endblock %}
 {% block bottom_actions %}
+
 {% endblock %}
 
 {% block content %}
-<div id="access_log_container">
-    {% if is_partial %}
-    <h4 class="text-lg font-semibold mb-2">{% trans "Access Log" %}</h4>
-    {% endif %}
+  <div id="access_log_container">
     {% if object_list %}
-    <div class="max-w-full overflow-x-auto rounded-box border border-base-content/10">
-    <table class="table table-sm table-zebra">
-        <thead>
+      <div class="max-w-full overflow-x-auto {% if not is_partial %} rounded-box border border-base-content/10 {% endif %}">
+        <table class="table table-sm table-zebra">
+          <thead>
             <tr>
-                <th>{% trans "Date" %}</th>
-                <th>{% trans "Machine" %}</th>
-                <th>{% trans "Action" %}</th>
+              <th>
+                {% trans 'Date' %}
+              </th>
+              <th>
+                {% trans 'Machine' %}
+              </th>
+              <th>
+                {% trans 'Action' %}
+              </th>
             </tr>
-            </thead>
-    {% for object in object_list %}
-    <tr>
-        <td>{% include "snippets/timestamp.html" with timestamp=object.timestamp %}</td>
-        <td>{% include "cells/machine.html" with machine=object.machine %}</td>
-        <td>{% include "cells/access_log_type.html" %}</td>
-    </tr>
-    {% endfor %}
-    </table>
-    </div>
+          </thead>
+          {% for object in object_list %}
+            <tr>
+              <td>
+                {% include 'snippets/timestamp.html' with timestamp=object.timestamp %}
+              </td>
+              <td>
+                {% include 'cells/machine.html' with machine=object.machine %}
+              </td>
+              <td>
+                {% include 'cells/access_log_type.html' %}
+              </td>
+            </tr>
+          {% endfor %}
+        </table>
+      </div>
 
-    {% include "base_pagination.html" with target="access_log_container" %}
+      {% include 'base_pagination.html' with target='access_log_container' %}
     {% else %}
-    <div role="alert" class="alert justify-center">{% trans "This token has not been used yet" %}</div>
-    {% endif%}
-</div>
+      <div class="m-6">
+        {% include 'snippets/empty.html' with icon='history' message='This token has not been used yet.'|translate %}
+      </div>
+    {% endif %}
+  </div>
 {% endblock %}

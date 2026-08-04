@@ -4,8 +4,7 @@ from django.views.generic import ListView
 from django.utils.translation import gettext_lazy as _
 
 from base.views import PartialListMixin, TitleMixin
-from .models import AccessLog
-from .forms import AccessLogFilterForm
+from .models import AccessLog, LOG_TYPES
 from tokens.models import Token
 from machines.models import Machine
 from people.models import Person
@@ -21,8 +20,9 @@ class AccessLogListView(TitleMixin, PartialListMixin, ListView):
 
     def get_queryset(self) -> QuerySet[Any]:
         queryset = super().get_queryset()
-        if "action" in self.request.GET and self.request.GET["action"] != "all":
-            queryset = queryset.filter(type=self.request.GET["action"])
+        action = self.request.GET.get("filter_action", "all")
+        if action != "all":
+            queryset = queryset.filter(type=action)
         return queryset
 
     def get_paginate_by(self, queryset):
@@ -30,10 +30,15 @@ class AccessLogListView(TitleMixin, PartialListMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["can_create"] = self.request.user.has_perm(
-            "access_log.create_accesslog"
-        )
-        context["filter_form"] = AccessLogFilterForm(self.request.GET)
+        context["can_create"] = False
+        context["filter_choices"] = {
+            "action": {
+                "label": _("Action"),
+                "options": [("all", _("All"))] + list(LOG_TYPES),
+            }
+        }
+        context["filter_default"] = "all"
+        context["model_count"] = self.get_queryset().count()
         context["model"] = self.model
         return context
 

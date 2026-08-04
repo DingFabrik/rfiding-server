@@ -1,8 +1,25 @@
 {% extends 'base.html' %}
 {% load i18n %}
+{% load base_extra %}
 
 {% block title %}
 {{ object }}
+{% endblock %}
+
+{% block pre_title %}
+  <div class="flex items-center gap-3 mb-2">
+    <div class="avatar avatar-placeholder">
+      <div class="bg-base-300 text-base-content w-10 rounded-box">
+        <i data-lucide="{% block breadcrumb_icon %}{{ request.resolver_match.app_name|app_icon }}{% endblock %}" class="w-5 h-5"></i>
+      </div>
+    </div>
+    <div class="breadcrumbs text-sm py-0">
+      <ul>
+        <li><a class="link-hover" href="{% url request.resolver_match.namespace|add:':list' %}">{% block breadcrumb_parent_label %}{% get_verbose_name_plural object %}{% endblock %}</a></li>
+        <li>{% block breadcrumb_label %}{{ object }}{% endblock %}</li>
+      </ul>
+    </div>
+  </div>
 {% endblock %}
 
 {% block top_actions %}
