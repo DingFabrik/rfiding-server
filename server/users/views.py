@@ -239,8 +239,8 @@ class WidgetUpdateView(TitleMixin, PartialMixin, UpdateView):
     title = _("Add Widget")
 
     model = UserWidget
+    form_class = UserWidgetForm
     template_name = "widget_form.html"
-    fields = ["width"]
     success_url = reverse_lazy("home")
     partial_base_template = "partial_base_form.html"
     full_base_template = "base_form.html"
@@ -262,7 +262,6 @@ class WidgetUpdateView(TitleMixin, PartialMixin, UpdateView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        print(context)
         context["form_url"] = reverse_lazy("users:widgets:update", kwargs={"pk": self.kwargs["pk"]})
         return context
 

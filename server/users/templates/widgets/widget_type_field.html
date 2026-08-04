@@ -1,0 +1,27 @@
+{% load crispy_forms_filters %}
+{% load l10n %}
+{% load i18n %}
+
+<div id="div_{{ field.auto_id }}" class="mb-3{% if field.css_classes %} {{ field.css_classes }}{% endif %}">
+    {% if field.label and form_show_labels %}
+        <span class="label mb-1">{{ field.label }}{% if field.field.required %}<span class="text-error">*</span>{% endif %}</span>
+    {% endif %}
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+        {% for group, options, index in field|optgroups %}
+            {% for option in options %}
+            <label class="flex items-center gap-3 rounded-box border border-base-300 p-3 cursor-pointer has-[:checked]:border-primary has-[:checked]:bg-primary/5">
+                <input
+                    type="radio"
+                    name="{{ field.html_name }}"
+                    value="{{ option.value|unlocalize }}"
+                    class="radio radio-sm {% if field.errors %}validator{% endif %}"
+                    {% if field.errors %}aria-invalid="true"{% endif %}
+                    {% include "daisyui/layout/attrs.html" with widget=option %}>
+                <i data-lucide="{% if option.value == "token_counts" %}radio-tower{% elif option.value == "people_counts" %}users{% elif option.value == "machine_counts" %}hard-drive{% elif option.value == "access_log_latest" %}list{% endif %}" class="w-5 h-5 text-base-content/60 shrink-0"></i>
+                <span class="font-medium">{{ option.label|unlocalize }}</span>
+            </label>
+            {% endfor %}
+        {% endfor %}
+    </div>
+    {% include 'daisyui/layout/help_text_and_errors.html' %}
+</div>

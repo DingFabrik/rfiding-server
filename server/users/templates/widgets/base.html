@@ -1,41 +1,53 @@
 {% load i18n %}
 <div id="widget-{{ widget.pk }}" class="col-span-12 md:col-span-{{ widget.width|default:4 }} mb-3 widget">
     <div class="card card-border border-base-300 bg-base-100">
-        <div class="flex items-center justify-center relative px-4 py-2 border-b border-base-300">
-            <div class="absolute right-2 flex items-center gap-1">
-                {% block header_actions %}{% endblock %}
-                <button
-                    type="button"
-                    class="btn btn-ghost btn-square not-edit-mode"
-                    hx-get="{% url "users:widgets:home" %}?widget_id={{ widget.pk }}"
-                    hx-target="closest .widget"
-                    hx-swap="outerHTML"
-                    hx-trigger="click">
-                    <i data-lucide="refresh-cw" class="w-4 h-4"></i>
-                </button>
-                <button type="button" class="btn btn-ghost btn-square only-edit-mode"
-                    hx-get="{% url "users:widgets:update" widget.pk %}"
-                    hx-target="#widget-modal .widget-modal-body"
-                    hx-trigger="click"
-                    hx-swap="innerHTML"
-                    onclick="showModal()">
-                    <i data-lucide="settings" class="w-4 h-4"></i>
-                </button>
-                <button
-                    type="button"
-                    class="btn btn-ghost btn-square text-error only-edit-mode"
-                    hx-delete="{% url 'users:widgets:delete' widget.pk %}"
-                    hx-confirm="{% trans "Are you sure?" %}"
-                    hx-target="closest .widget">
-                    <i data-lucide="trash-2" class="w-4 h-4"></i>
-                </button>
+        <div class="flex items-center gap-2 px-4 py-2 border-b border-base-300">
+            <i data-lucide="{{ widget.icon }}" class="w-4 h-4 text-base-content/50 shrink-0"></i>
+            <div class="grow min-w-0">
+                {% block title %}
+                <span class="font-semibold truncate block">{{ widget.title }}</span>
+                {% endblock %}
             </div>
-            {% block title %}
-            <a class="font-semibold">{{ widget.title }}</a>
-            {% endblock %}
+            <div class="flex items-center gap-1 shrink-0">
+                {% block header_actions %}{% endblock %}
+                <div class="tooltip" data-tip="{% trans "Refresh" %}">
+                    <button
+                        type="button"
+                        class="btn btn-ghost btn-square btn-sm not-edit-mode"
+                        aria-label="{% trans "Refresh" %}"
+                        hx-get="{% url "users:widgets:home" %}?widget_id={{ widget.pk }}"
+                        hx-target="closest .widget"
+                        hx-swap="outerHTML"
+                        hx-trigger="click">
+                        <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                    </button>
+                </div>
+                <div class="tooltip" data-tip="{% trans "Configure" %}">
+                    <button type="button" class="btn btn-soft btn-square btn-sm only-edit-mode"
+                        aria-label="{% trans "Configure" %}"
+                        hx-get="{% url "users:widgets:update" widget.pk %}"
+                        hx-target="#widget-modal .widget-modal-body"
+                        hx-trigger="click"
+                        hx-swap="innerHTML"
+                        onclick="showModal()">
+                        <i data-lucide="settings" class="w-4 h-4"></i>
+                    </button>
+                </div>
+                <div class="tooltip" data-tip="{% trans "Remove" %}">
+                    <button
+                        type="button"
+                        class="btn btn-error btn-soft btn-square btn-sm only-edit-mode"
+                        aria-label="{% trans "Remove" %}"
+                        hx-delete="{% url 'users:widgets:delete' widget.pk %}"
+                        hx-confirm="{% trans "Are you sure?" %}"
+                        hx-target="closest .widget">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
         </div>
         {% block card_body_outer %}
-        <div class="card-body">
+        <div class="card-body {% block card_body_class %}{% endblock %}">
             {% block content %}{% endblock %}
         </div>
         {% endblock %}

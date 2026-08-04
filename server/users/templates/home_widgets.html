@@ -1,4 +1,9 @@
 {% load i18n base_extra %}
+{% blocktrans asvar empty_widgets_message %}No widgets yet. Turn on edit mode and add your first widget to build your dashboard.{% endblocktrans %}
 {% for widget in widgets %}
     {% include widget.template with title=widget.title placeholder=False %}
+{% empty %}
+    <div class="col-span-12">
+        {% include 'snippets/empty.html' with icon='layout-dashboard' message=empty_widgets_message %}
+    </div>
 {% endfor %}

@@ -1,22 +1,22 @@
 {% extends "widgets/base.html" %}{% load i18n %}
 
 {% block content %}
-<div class="flex text-center">
-    <div class="flex-1">
+<div class="flex divide-x divide-base-200 text-center">
+    <div class="flex-1 px-2">
         {% if placeholder %}
             <div class="skeleton h-8 w-16 mx-auto mb-1"></div>
         {% else %}
-            <span class="block text-3xl font-bold">{{ widget.data.active_count }}</span>
+            <span class="block text-3xl font-bold text-success tabular-nums">{{ widget.data.active_count }}</span>
         {% endif %}
-        <p class="text-base-content/60 m-0">{% trans "Active" %}</p>
+        <p class="text-xs font-semibold uppercase tracking-wide text-base-content/50 m-0">{% trans "Active" %}</p>
     </div>
-    <div class="flex-1">
+    <div class="flex-1 px-2">
         {% if placeholder %}
             <div class="skeleton h-8 w-16 mx-auto mb-1"></div>
         {% else %}
-            <span class="block text-3xl font-bold">{{ widget.data.total_count }}</span>
+            <span class="block text-3xl font-bold tabular-nums">{{ widget.data.total_count }}</span>
         {% endif %}
-        <p class="text-base-content/60 m-0">{% trans "Total" %}</p>
+        <p class="text-xs font-semibold uppercase tracking-wide text-base-content/50 m-0">{% trans "Total" %}</p>
     </div>
 </div>
 {% endblock %}

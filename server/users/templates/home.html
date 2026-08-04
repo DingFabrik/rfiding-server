@@ -1,26 +1,39 @@
 {% extends "base.html" %}
 {% load i18n %}{% load base_extra %}
 
+{% block pre_title %}
+<p class="text-sm text-base-content/50 mb-1">{% now "l, N j, Y" %}</p>
+{% endblock %}
+
 {% block title %}
-{% trans "Welcome to RfiDing" %}
+{% blocktrans with name=user.name|default:user.email %}Welcome back, {{ name }}{% endblocktrans %}
 {% endblock title %}
 
 {% block top_actions %}
-<a href="#" class="btn btn-primary btn-square only-edit-mode"
-    hx-get="{% url "users:widgets:create" %}"
-    hx-target="#widget-modal .widget-modal-body"
-    hx-trigger="click"
-    hx-swap="innerHTML"
-    onclick="showModal()"><i data-lucide="plus" class="w-4 h-4"></i></a>
-<a href="#" class="btn btn-secondary btn-square" onclick="toggleEditMode()"><i data-lucide="square-pen" class="w-4 h-4"></i></a>
+<div class="tooltip tooltip-bottom" data-tip="{% trans "Add widget" %}">
+    <button type="button" class="btn btn-primary btn-square only-edit-mode" aria-label="{% trans "Add widget" %}"
+        hx-get="{% url "users:widgets:create" %}"
+        hx-target="#widget-modal .widget-modal-body"
+        hx-trigger="click"
+        hx-swap="innerHTML"
+        onclick="showModal()"><i data-lucide="plus" class="w-4 h-4"></i></button>
+</div>
+<div class="tooltip tooltip-bottom" data-tip="{% trans "Edit layout" %}">
+    <button type="button" class="btn btn-secondary btn-square" aria-label="{% trans "Edit layout" %}" onclick="toggleEditMode()"><i data-lucide="square-pen" class="w-4 h-4"></i></button>
+</div>
 {% endblock %}
 
 {% block content %}
+{% blocktrans asvar empty_widgets_message %}No widgets yet. Turn on edit mode and add your first widget to build your dashboard.{% endblocktrans %}
 <div class="grid grid-cols-12 gap-4" id="widgets"
     hx-get="{% url "users:widgets:home" %}"
     hx-trigger="load">
     {% for widget in widgets %}
     {% include widget.template with title=widget.title placeholder=True %}
+    {% empty %}
+    <div class="col-span-12">
+        {% include 'snippets/empty.html' with icon='layout-dashboard' message=empty_widgets_message %}
+    </div>
     {% endfor %}
 </div>
 {% endblock content %}
@@ -32,6 +45,9 @@
     hx-boost="true"
     hx-push-url="false"
     hx-target="#widgets">
+        <form method="dialog">
+            <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" aria-label="{% trans "Close" %}">✕</button>
+        </form>
         <div class="widget-modal-body"></div>
     </div>
     <form method="dialog" class="modal-backdrop"><button>{% trans "close" %}</button></form>

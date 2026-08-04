@@ -190,5 +190,16 @@ class UserWidget(models.Model):
         if self.widget == "access_log_latest":
             return _("Latest Access Log")
 
+    @property
+    def icon(self):
+        if self.widget == "token_counts":
+            return "radio-tower"
+        if self.widget == "people_counts":
+            return "users"
+        if self.widget == "machine_counts":
+            return "hard-drive"
+        if self.widget == "access_log_latest":
+            return "list"
+
 
 auditlog.register(RFIDingUser, exclude_fields=["password", "last_login"])

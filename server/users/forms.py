@@ -1,11 +1,11 @@
 from django import forms
 from django.contrib.auth.models import Group
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Fieldset, Submit, HTML
+from crispy_forms.layout import Layout, Fieldset, Field, Submit, HTML
 from crispy_forms.bootstrap import FormActions
 from django.utils.translation import gettext_lazy as _
 
-from .models import RFIDingUser, UserWidget
+from .models import RFIDingUser, UserWidget, USER_WIDGETS
 
 class ProfileForm(forms.ModelForm):
     
@@ -121,6 +121,17 @@ class UserWidgetForm(forms.ModelForm):
         widgets = {
             "widget": forms.RadioSelect()
         }
-        
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        layout_fields = []
+        if self.instance and self.instance.pk:
+            del self.fields["widget"]
+        else:
+            self.fields["widget"].choices = USER_WIDGETS
+            layout_fields.append(Field("widget", template="widgets/widget_type_field.html"))
+        layout_fields.append("width")
+        layout_fields.append(FormActions(Submit("submit", _("Save"))))
+        self.helper = FormHelper(self)
+        self.helper.form_tag = False
+        self.helper.layout = Layout(*layout_fields)

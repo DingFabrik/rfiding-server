@@ -1,7 +1,8 @@
 {% extends "widgets/base.html" %}{% load i18n %}
 
-{% block card_body_outer %}
-<div class="card-body p-0">
+{% block card_body_class %}p-0{% endblock %}
+
+{% block content %}
 <div class="max-w-full overflow-x-auto">
 <table class="table table-sm m-0">
     <thead>
@@ -13,6 +14,16 @@
         </tr>
         </thead>
         <tbody>
+{% if placeholder %}
+{% for i in "12345" %}
+<tr>
+    <td><div class="skeleton h-4 w-24"></div></td>
+    <td><div class="skeleton h-4 w-20"></div></td>
+    <td><div class="skeleton h-4 w-16"></div></td>
+    <td><div class="skeleton h-4 w-20"></div></td>
+</tr>
+{% endfor %}
+{% else %}
 {% for object in widget.data.log_entries %}
 <tr>
     <td>{% include "snippets/timestamp.html" with timestamp=object.timestamp %}</td>
@@ -21,11 +32,11 @@
     <td>{% include "cells/token.html" with token=object.token %}</td>
 </tr>
 {% endfor %}
+{% endif %}
         </tbody>
 </table>
 </div>
 <div class="flex justify-end p-2">
-    <a href="{% url 'access_log:list' %}" class="btn btn-primary">{% trans "More" %}</a>
-</div>
+    <a href="{% url 'access_log:list' %}" class="btn btn-primary btn-sm">{% trans "More" %}</a>
 </div>
 {% endblock %}
