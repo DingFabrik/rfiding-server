@@ -9,9 +9,10 @@ from django.views.generic import (
 from django.core.paginator import Paginator
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
+from django.utils import timezone
 from django.db.models.functions import TruncDay, TruncHour, ExtractWeekDay
 from django.db.models import Count
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 from access_log.models import AccessLog, LOG_TYPE_ENABLED
 from base.views import BaseListView, PartialMixin, TitleMixin
@@ -362,7 +363,7 @@ class MachineStatisticsView(
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         days = int(self.request.GET.get("days", 90))
-        timeframe_start = datetime.now() - timedelta(days=days)
+        timeframe_start = timezone.now() - timedelta(days=days)
         query = AccessLog.objects.filter(
             machine=self.object, timestamp__gte=timeframe_start, type=LOG_TYPE_ENABLED
         )
@@ -376,9 +377,10 @@ class MachineStatisticsView(
         day_map = {}
         for count in day_counts:
             day_map[count["day"].strftime("%d.%m")] = count["count"]
+        today = timezone.localdate()
         day_list = []
         for day in range(days):
-            date = (timeframe_start + timedelta(days=day)).strftime("%d.%m")
+            date = (today - timedelta(days=days - 1 - day)).strftime("%d.%m")
             day_list.append({"day": date, "count": day_map.get(date, 0)})
         context["access_by_day"] = day_list
 

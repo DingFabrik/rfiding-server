@@ -1,0 +1,42 @@
+{% extends "widgets/base.html" %}{% load i18n %}
+
+{% block card_body_class %}p-0{% endblock %}
+
+{% block content %}
+{% blocktrans asvar no_requests_message %}No pending registration requests.{% endblocktrans %}
+<ul class="list">
+{% if placeholder %}
+    {% for i in "123" %}
+    <li class="list-row items-center">
+        <div class="skeleton w-8 h-8 rounded-box shrink-0"></div>
+        <div class="min-w-0 flex-1">
+            <div class="skeleton h-4 w-32 mb-1"></div>
+            <div class="skeleton h-3 w-48"></div>
+        </div>
+    </li>
+    {% endfor %}
+{% else %}
+    {% for request in widget.data.requests %}
+    <li class="list-row items-center">
+        <div class="avatar avatar-placeholder">
+            <div class="bg-base-300 text-base-content w-8 rounded-box">
+                <i data-lucide="cpu" class="w-4 h-4"></i>
+            </div>
+        </div>
+        <div class="min-w-0">
+            <div class="font-mono text-sm truncate">{{ request.mac_address }}</div>
+            <div class="text-xs text-base-content/60 truncate">
+                {{ request.hostname|default:'--' }} &middot; {{ request.ip_address|default:'--' }} &middot; {% include 'snippets/timestamp.html' with timestamp=request.created %}
+            </div>
+        </div>
+        <div class="flex gap-2">
+            <a href="{% url 'machines:create' %}?request={{ request.pk }}" class="btn btn-primary btn-sm">{% trans "Create" %}</a>
+            <a href="{% url 'machines:delete-request' pk=request.pk %}" class="btn btn-error btn-sm btn-square" aria-label="{% trans 'Delete' %}"><i data-lucide="trash-2" class="w-4 h-4"></i></a>
+        </div>
+    </li>
+    {% empty %}
+    <li>{% include 'snippets/empty.html' with icon='cpu' message=no_requests_message %}</li>
+    {% endfor %}
+{% endif %}
+</ul>
+{% endblock %}

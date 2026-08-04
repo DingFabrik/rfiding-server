@@ -1,0 +1,50 @@
+{% extends "widgets/base.html" %}{% load i18n %}
+
+{% block card_body_class %}p-0{% endblock %}
+
+{% block content %}
+<div class="max-w-full overflow-x-auto">
+<table class="table table-sm m-0">
+    <thead>
+        <tr>
+            <th>{% trans "Date" %}</th>
+            <th>{% trans "User" %}</th>
+            <th>{% trans "Action" %}</th>
+            <th>{% trans "Object" %}</th>
+        </tr>
+        </thead>
+        <tbody>
+{% if placeholder %}
+{% for i in "12345" %}
+<tr>
+    <td><div class="skeleton h-4 w-24"></div></td>
+    <td><div class="skeleton h-4 w-20"></div></td>
+    <td><div class="skeleton h-4 w-16"></div></td>
+    <td><div class="skeleton h-4 w-32"></div></td>
+</tr>
+{% endfor %}
+{% else %}
+{% for object in widget.data.log_entries %}
+<tr>
+    <td>{% include "snippets/timestamp.html" with timestamp=object.timestamp %}</td>
+    <td>
+        {% if object.actor %}
+            <a class="link-hover" href="{% url "users:detail" object.actor_id %}">{{ object.actor }}</a>
+        {% else %}
+            {% trans "System" %}
+        {% endif %}
+    </td>
+    <td class="whitespace-nowrap">
+  {% include "auditlog/logentry_action.html" with action=object.action %}
+    </td>
+    <td class="truncate max-w-48"><i>{{ object.content_type.name }}</i> {{ object.object_repr }}</td>
+</tr>
+{% endfor %}
+{% endif %}
+        </tbody>
+</table>
+</div>
+<div class="flex justify-end p-2">
+    <a href="{% url 'auditlog' %}" class="btn btn-primary btn-sm">{% trans "More" %}</a>
+</div>
+{% endblock %}

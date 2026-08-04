@@ -146,7 +146,18 @@ USER_WIDGETS = [
     ("people_counts", _("People Counts")),
     ("machine_counts", _("Machine Counts")),
     ("access_log_latest", _("Latest Access Log")),
+    ("access_log_chart", _("Access Activity Chart")),
+    ("audit_log_latest", _("Recent Audit Log")),
+    ("pending_registration_requests", _("Pending Registration Requests")),
+    ("space_status", _("Space Status")),
+    ("machines_maintenance", _("Machines Needing Maintenance")),
 ]
+
+WIDGET_PERMISSIONS = {
+    "audit_log_latest": "tokens.view_token",
+    "pending_registration_requests": "machines.add_machine",
+    "machines_maintenance": "machines.view_machine",
+}
 
 
 class UserWidget(models.Model):
@@ -178,6 +189,16 @@ class UserWidget(models.Model):
             return "widgets/machine_count.html"
         if self.widget == "access_log_latest":
             return "widgets/access_log_latest.html"
+        if self.widget == "access_log_chart":
+            return "widgets/access_log_chart.html"
+        if self.widget == "audit_log_latest":
+            return "widgets/audit_log_latest.html"
+        if self.widget == "pending_registration_requests":
+            return "widgets/pending_registration_requests.html"
+        if self.widget == "space_status":
+            return "widgets/space_status.html"
+        if self.widget == "machines_maintenance":
+            return "widgets/machines_maintenance.html"
 
     @property
     def title(self):
@@ -189,6 +210,16 @@ class UserWidget(models.Model):
             return _("Machines")
         if self.widget == "access_log_latest":
             return _("Latest Access Log")
+        if self.widget == "access_log_chart":
+            return _("Access Activity")
+        if self.widget == "audit_log_latest":
+            return _("Recent Audit Log")
+        if self.widget == "pending_registration_requests":
+            return _("Pending Registration Requests")
+        if self.widget == "space_status":
+            return _("Space Status")
+        if self.widget == "machines_maintenance":
+            return _("Machines Needing Maintenance")
 
     @property
     def icon(self):
@@ -200,6 +231,16 @@ class UserWidget(models.Model):
             return "hard-drive"
         if self.widget == "access_log_latest":
             return "list"
+        if self.widget == "access_log_chart":
+            return "bar-chart-3"
+        if self.widget == "audit_log_latest":
+            return "history"
+        if self.widget == "pending_registration_requests":
+            return "cpu"
+        if self.widget == "space_status":
+            return "door-open"
+        if self.widget == "machines_maintenance":
+            return "wrench"
 
 
 auditlog.register(RFIDingUser, exclude_fields=["password", "last_login"])

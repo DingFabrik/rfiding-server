@@ -1,0 +1,25 @@
+{% load i18n %}
+<div id="div_{{ field.auto_id }}" class="mb-3{% if field.css_classes %} {{ field.css_classes }}{% endif %}">
+    {% if field.label and form_show_labels %}
+        <label class="label" for="{{ field.id_for_label }}">{{ field.label }}{% if field.field.required %}<span class="text-error">*</span>{% endif %}</label>
+    {% endif %}
+    <div class="flex items-center gap-3">
+        <input
+            type="range"
+            id="{{ field.id_for_label }}"
+            name="{{ field.html_name }}"
+            min="2"
+            max="12"
+            step="1"
+            value="{{ field.value|default:4 }}"
+            class="range range-primary flex-1 {% if field.errors %}range-error{% endif %}"
+            {% if field.errors %}aria-invalid="true"{% endif %}>
+    </div>
+    <div class="flex justify-between px-2.5 mt-2 text-xs text-base-content/50">
+        {% for i in "12345678901" %}<span>|</span>{% endfor %}
+    </div>
+    <div class="flex justify-between px-1 text-[10px] text-base-content/50">
+        <span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span>12</span>
+    </div>
+    {% include 'daisyui/layout/help_text_and_errors.html' %}
+</div>

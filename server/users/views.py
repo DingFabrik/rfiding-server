@@ -1,5 +1,8 @@
+import json
+
 from django.forms.forms import BaseForm
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseBadRequest
+from django.views import View
 from django.views.generic import (
     TemplateView,
     UpdateView,
@@ -20,7 +23,7 @@ from django.shortcuts import render
 
 from base.views import TitleMixin, BaseListView, PartialMixin
 from .widgets import WidgetDataProvider
-from users.models import RFIDingUser, UserWidget
+from users.models import RFIDingUser, UserWidget, WIDGET_PERMISSIONS
 from .forms import UserForm, GroupForm, ProfileForm, UserWidgetForm
 
 
@@ -41,14 +44,21 @@ class ProfileView(TitleMixin, UpdateView):
         return context
 
 
+def _visible_widgets(request, widgets):
+    for permission_key, permission in WIDGET_PERMISSIONS.items():
+        if not request.user.has_perm(permission):
+            widgets = widgets.exclude(widget=permission_key)
+    return widgets
+
+
 @method_decorator(login_required, name="dispatch")
 class HomeView(TitleMixin, TemplateView):
     template_name = "home.html"
     title = _("Home")
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["widgets"] = self.request.user.widgets.all()
+        context["widgets"] = _visible_widgets(self.request, self.request.user.widgets.all())
         return context
 
 @method_decorator(login_required, name="dispatch")
@@ -57,10 +67,10 @@ class HomeWidgetsView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        widgets = self.request.user.widgets.all()
         if "widget_id" in self.request.GET:
-            widgets = UserWidget.objects.filter(pk=self.request.GET["widget_id"])
-        else:
-            widgets = self.request.user.widgets.all()
+            widgets = widgets.filter(pk=self.request.GET["widget_id"])
+        widgets = _visible_widgets(self.request, widgets)
         data_provider = WidgetDataProvider()
         data_provider.provide_for_widgets(widgets)
         context["widgets"] = widgets
@@ -213,9 +223,15 @@ class WidgetCreateView(TitleMixin, PartialMixin, CreateView):
     success_url = reverse_lazy("home")
     partial_base_template = "partial_base_form.html"
     full_base_template = "base_form.html"
-    
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
+
     def form_valid(self, form):
         form.instance.user = self.request.user
+        form.instance.position = self.request.user.widgets.count()
         redirect = super().form_valid(form)
         widget = self.object
         if self.is_partial:
@@ -223,17 +239,17 @@ class WidgetCreateView(TitleMixin, PartialMixin, CreateView):
             context["widget"] = widget
             provider = WidgetDataProvider()
             provider.provide_for_widgets([widget])
-            
+
             response = render(self.request, widget.template, context)
             response["HX-Reswap"] = "beforeend"
             return response
         return redirect
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["form_url"] = reverse_lazy("users:widgets:create")
         return context
-    
+
 @method_decorator(login_required, name="dispatch")
 class WidgetUpdateView(TitleMixin, PartialMixin, UpdateView):
     title = _("Add Widget")
@@ -244,7 +260,10 @@ class WidgetUpdateView(TitleMixin, PartialMixin, UpdateView):
     success_url = reverse_lazy("home")
     partial_base_template = "partial_base_form.html"
     full_base_template = "base_form.html"
-    
+
+    def get_queryset(self):
+        return self.request.user.widgets.all()
+
     def form_valid(self, form):
         redirect = super().form_valid(form)
         widget = self.object
@@ -253,13 +272,13 @@ class WidgetUpdateView(TitleMixin, PartialMixin, UpdateView):
             provider = WidgetDataProvider()
             provider.provide_for_widgets([widget])
             context["widget"] = widget
-            
+
             response = render(self.request, widget.template, context)
             response["HX-Retarget"] = "#widget-" + str(widget.pk)
             response["HX-Reswap"] = "outerHTML"
             return response
         return redirect
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["form_url"] = reverse_lazy("users:widgets:update", kwargs={"pk": self.kwargs["pk"]})
@@ -271,8 +290,11 @@ class WidgetDeleteView(TitleMixin, DeleteView):
     template_name = "delete_confirm.html"
     success_url = reverse_lazy("home")
 
+    def get_queryset(self):
+        return self.request.user.widgets.all()
+
     def get_title(self):
-        return _(f"Delete {self.object.name}")
+        return _(f"Delete {self.object.title}")
     
     def delete(self, request, *args, **kwargs):
         self.object = self.get_object()
@@ -281,3 +303,22 @@ class WidgetDeleteView(TitleMixin, DeleteView):
     def form_valid(self, form):
         self.object.delete()
         return HttpResponse(status=200)
+
+
+@method_decorator(login_required, name="dispatch")
+class WidgetReorderView(View):
+    def post(self, request, *args, **kwargs):
+        try:
+            order = json.loads(request.POST.get("order", "[]"))
+        except json.JSONDecodeError:
+            return HttpResponseBadRequest()
+
+        widgets_by_pk = {str(widget.pk): widget for widget in request.user.widgets.all()}
+        updated = []
+        for position, pk in enumerate(order):
+            widget = widgets_by_pk.get(str(pk))
+            if widget is not None:
+                widget.position = position
+                updated.append(widget)
+        UserWidget.objects.bulk_update(updated, ["position"])
+        return HttpResponse(status=204)

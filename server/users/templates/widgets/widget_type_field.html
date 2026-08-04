@@ -1,6 +1,7 @@
 {% load crispy_forms_filters %}
 {% load l10n %}
 {% load i18n %}
+{% load user_extra %}
 
 <div id="div_{{ field.auto_id }}" class="mb-3{% if field.css_classes %} {{ field.css_classes }}{% endif %}">
     {% if field.label and form_show_labels %}
@@ -17,7 +18,7 @@
                     class="radio radio-sm {% if field.errors %}validator{% endif %}"
                     {% if field.errors %}aria-invalid="true"{% endif %}
                     {% include "daisyui/layout/attrs.html" with widget=option %}>
-                <i data-lucide="{% if option.value == "token_counts" %}radio-tower{% elif option.value == "people_counts" %}users{% elif option.value == "machine_counts" %}hard-drive{% elif option.value == "access_log_latest" %}list{% endif %}" class="w-5 h-5 text-base-content/60 shrink-0"></i>
+                <i data-lucide="{{ option.value|widget_icon }}" class="w-5 h-5 text-base-content/60 shrink-0"></i>
                 <span class="font-medium">{{ option.label|unlocalize }}</span>
             </label>
             {% endfor %}

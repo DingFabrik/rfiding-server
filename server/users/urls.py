@@ -14,6 +14,7 @@ groups_patterns = [
 widgets_patterns = [
     path("", views.HomeWidgetsView.as_view(), name="home"),
     path("add", views.WidgetCreateView.as_view(), name="create"),
+    path("reorder", views.WidgetReorderView.as_view(), name="reorder"),
     path("<int:pk>", views.WidgetUpdateView.as_view(), name="update"),
     path("<int:pk>/delete", views.WidgetDeleteView.as_view(), name="delete"),
 ]

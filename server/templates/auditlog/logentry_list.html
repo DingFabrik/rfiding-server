@@ -7,14 +7,14 @@
 
 {% block table %}
     <thead>
-        <tr>
-            <th>{% trans "Timestamp" %}</th>
-            <th>{% trans "User" %}</th>
-            <th>{% trans "Action" %}</th>
-            <th>{% trans "Object" %}
-            <th>{% trans "Changes" %}</th>
-        </tr>
-        </thead>
+      <tr>
+          <th>{% trans "Timestamp" %}</th>
+          <th>{% trans "User" %}</th>
+          <th>{% trans "Action" %}</th>
+          <th>{% trans "Object" %}</th>
+          <th>{% trans "Changes" %}</th>
+      </tr>
+    </thead>
 {% for object in object_list %}
 <tr>
     <td class="whitespace-nowrap">{% include "snippets/timestamp.html" with timestamp=object.timestamp %}</td>
@@ -26,13 +26,7 @@
     {% endif %}
 </td>
 <td class="whitespace-nowrap">
-    {% if object.action == 0 %}
-    <i data-lucide="circle-plus" class="w-4 h-4 inline text-success"></i>{% trans "Created" %}
-    {% elif object.action == 1 %}
-    <i data-lucide="square-pen" class="w-4 h-4 inline text-neutral"></i>{% trans "Updated" %}
-    {% elif object.action == 2 %}
-    <i data-lucide="trash-2" class="w-4 h-4 inline text-error"></i>{% trans "Deleted" %}
-    {% endif %}
+  {% include "auditlog/logentry_action.html" with action=object.action %}
 </td>
 <td><i>{{ object.content_type.name }}</i> {{ object.object_repr }}</td>
 {% if object.action == 1%}

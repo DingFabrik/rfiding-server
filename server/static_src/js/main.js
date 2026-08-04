@@ -90,7 +90,7 @@ function initPopover(toggle, pkAttr, urlKey) {
             $.ajax({
                 url: window.urlMap[urlKey] + '?' + pkAttr.replace(/^data-/, '').replace(/-/g, '_') + '=' + pk,
                 success: function (response) {
-                    $('#' + pk).html(response);
+                    $(content).html(response);
                 }
             });
         };
@@ -156,4 +156,108 @@ window.addEventListener('htmx:afterSwap', function(event) {
 
 window.addEventListener('htmx:responseError', function(event) {
     event.detail.target.innerHTML = '<div class="alert alert-error" role="alert"><h4 class="font-bold">An error occurred.</h4><span>' + event.detail.xhr.statusText + '</span></div>';
+});
+
+function isEditMode() {
+    return document.getElementById('main')?.classList.contains('edit-mode') ?? false;
+}
+
+function saveWidgetOrder() {
+    const widgetsContainer = document.getElementById('widgets');
+    if (!widgetsContainer || !window.urlMap['widgets-reorder']) {
+        return;
+    }
+    const order = Array.from(widgetsContainer.querySelectorAll(':scope > .widget')).map(
+        (el) => el.id.replace('widget-', '')
+    );
+    htmx.ajax('POST', window.urlMap['widgets-reorder'], {
+        source: document.body,
+        values: { order: JSON.stringify(order) },
+        swap: 'none'
+    });
+}
+
+function adjacentWidget(widget, direction) {
+    const step = direction === 'up' ? 'previousElementSibling' : 'nextElementSibling';
+    let el = widget[step];
+    while (el && !el.classList.contains('widget')) {
+        el = el[step];
+    }
+    return el;
+}
+
+function moveWidget(widget, direction) {
+    const container = widget.parentElement;
+    const sibling = adjacentWidget(widget, direction);
+    if (!sibling) {
+        return;
+    }
+    if (direction === 'up') {
+        container.insertBefore(widget, sibling);
+    } else {
+        container.insertBefore(sibling, widget);
+    }
+    saveWidgetOrder();
+}
+
+let draggedWidget = null;
+
+document.addEventListener('dragstart', function (event) {
+    const handle = event.target.closest('[data-drag-handle]');
+    const widget = handle?.closest('.widget');
+    if (!handle || !widget || !isEditMode()) {
+        event.preventDefault();
+        return;
+    }
+    draggedWidget = widget;
+    event.dataTransfer.effectAllowed = 'move';
+    widget.classList.add('opacity-50');
+});
+
+document.addEventListener('dragend', function () {
+    draggedWidget?.classList.remove('opacity-50');
+    draggedWidget = null;
+});
+
+document.addEventListener('dragover', function (event) {
+    if (!draggedWidget) {
+        return;
+    }
+    const target = event.target.closest('.widget');
+    if (!target) {
+        return;
+    }
+    event.preventDefault();
+    event.dataTransfer.dropEffect = 'move';
+    if (target === draggedWidget) {
+        return;
+    }
+    const rect = target.getBoundingClientRect();
+    const before = (event.clientY - rect.top) < rect.height / 2;
+    target.parentElement.insertBefore(draggedWidget, before ? target : adjacentWidget(target, 'down'));
+});
+
+document.addEventListener('drop', function (event) {
+    if (!draggedWidget) {
+        return;
+    }
+    event.preventDefault();
+    saveWidgetOrder();
+});
+
+document.addEventListener('keydown', function (event) {
+    if (event.key !== 'ArrowUp' && event.key !== 'ArrowDown') {
+        return;
+    }
+    const handle = event.target.closest('[data-drag-handle]');
+    if (!handle || !isEditMode()) {
+        return;
+    }
+    const widget = handle.closest('.widget');
+    if (!widget) {
+        return;
+    }
+    event.preventDefault();
+    moveWidget(widget, event.key === 'ArrowUp' ? 'up' : 'down');
+    handle.focus();
 });

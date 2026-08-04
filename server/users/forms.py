@@ -5,7 +5,7 @@ from crispy_forms.layout import Layout, Fieldset, Field, Submit, HTML
 from crispy_forms.bootstrap import FormActions
 from django.utils.translation import gettext_lazy as _
 
-from .models import RFIDingUser, UserWidget, USER_WIDGETS
+from .models import RFIDingUser, UserWidget, USER_WIDGETS, WIDGET_PERMISSIONS
 
 class ProfileForm(forms.ModelForm):
     
@@ -122,15 +122,20 @@ class UserWidgetForm(forms.ModelForm):
             "widget": forms.RadioSelect()
         }
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, user=None, **kwargs):
         super().__init__(*args, **kwargs)
         layout_fields = []
         if self.instance and self.instance.pk:
             del self.fields["widget"]
         else:
-            self.fields["widget"].choices = USER_WIDGETS
+            self.fields["widget"].choices = [
+                choice
+                for choice in USER_WIDGETS
+                if choice[0] not in WIDGET_PERMISSIONS
+                or (user is not None and user.has_perm(WIDGET_PERMISSIONS[choice[0]]))
+            ]
             layout_fields.append(Field("widget", template="widgets/widget_type_field.html"))
-        layout_fields.append("width")
+        layout_fields.append(Field("width", template="widgets/widget_width_field.html"))
         layout_fields.append(FormActions(Submit("submit", _("Save"))))
         self.helper = FormHelper(self)
         self.helper.form_tag = False

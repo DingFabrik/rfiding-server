@@ -1,0 +1,46 @@
+{% extends "widgets/base.html" %}{% load i18n %}
+
+{% block content %}
+{% if placeholder %}
+<div class="skeleton h-[220px] w-full"></div>
+{% else %}
+<div class="h-[220px]"><canvas id="access-log-chart-{{ widget.pk }}"></canvas></div>
+{% endif %}
+{% endblock %}
+
+{% block script_extra %}
+(function() {
+    const data = [
+{% for entry in widget.data.by_day %}{ date: '{{ entry.day }}', count: {{ entry.count }} }{% if not forloop.last %},{% endif %}
+{% endfor %}
+    ];
+    new Chart(document.getElementById('access-log-chart-{{ widget.pk }}'), {
+        type: 'bar',
+        data: {
+            labels: data.map(row => row.date),
+            datasets: [
+                {
+                    label: '{% trans "Accesses" %}',
+                    data: data.map(row => row.count)
+                }
+            ]
+        },
+        options: {
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        precision: 0
+                    }
+                }
+            }
+        }
+    });
+})();
+{% endblock %}

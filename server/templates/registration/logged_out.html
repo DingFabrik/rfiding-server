@@ -1,14 +1,16 @@
-{% extends "base.html" %}
-{% load i18n  %}
+{% extends 'base.html' %}
+{% load i18n %}
 {% load static %}
 
 {% block content %}
-<div class="w-full max-w-sm mx-auto text-center">
+  <div class="w-full max-w-sm mx-auto text-center">
     <div class="mx-auto mb-5 w-[140px]">
-        <img src="{% static "images/logo_dark.svg" %}" alt="Logo" width="140">
+      <img src="{% static 'images/logo_dark.svg' %}" alt="Logo" width="140" />
     </div>
-    <h3 class="text-xl font-bold mb-2">{% trans "Signed out" %}</h3>
-    <p class="mb-4">{% trans "You have successfully signed out." %}</p>
-    <a href="{% url "login" %}" class="btn btn-primary">{% trans "Sign in again" %}</a>
-</div>
+    <h3 class="text-xl font-bold mb-2">{% trans 'Signed out' %}</h3>
+    <p class="mb-4">
+      {% trans 'You have successfully signed out.' %}
+    </p>
+    <a href="{% url 'login' %}" class="btn btn-primary">{% trans 'Sign in again' %}</a>
+  </div>
 {% endblock %}

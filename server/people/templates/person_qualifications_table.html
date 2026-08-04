@@ -32,7 +32,7 @@
             <td>{% include "cells/permission_level.html" with permission_level=qualification.permission_level %}</td>
             <td>
               {% if qualification.instructed_by %}
-                <a class="link-hover link-primary" href="{% url 'people:detail' qualification.instructed_by.pk %}">{{ qualification.instructed_by }}</a>
+                    {% include "cells/person.html" with person=qualification.instructed_by %}
               {% else %}
                 --
               {% endif %}

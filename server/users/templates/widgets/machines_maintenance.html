@@ -1,0 +1,39 @@
+{% extends "widgets/base.html" %}{% load i18n %}
+
+{% block card_body_class %}p-0{% endblock %}
+
+{% block content %}
+{% blocktrans asvar no_maintenance_message %}No machines need maintenance right now.{% endblocktrans %}
+<ul class="list">
+{% if placeholder %}
+    {% for i in "123" %}
+    <li class="list-row items-center">
+        <div class="skeleton w-8 h-8 rounded-box shrink-0"></div>
+        <div class="skeleton h-4 w-32"></div>
+    </li>
+    {% endfor %}
+{% else %}
+    {% for machine in widget.data.machines %}
+    <li class="list-row items-center">
+        <div class="avatar avatar-placeholder">
+            <div class="bg-base-300 text-base-content w-8 rounded-box">
+                <i data-lucide="wrench" class="w-4 h-4"></i>
+            </div>
+        </div>
+        <div class="min-w-0 flex-1">
+            <a class="link-hover font-medium truncate block" href="{% url 'machines:detail' machine.pk %}">{{ machine.name }}</a>
+            <div class="text-xs text-base-content/60 truncate">{{ machine.location|default:_("No location") }}</div>
+        </div>
+        <span class="badge badge-warning badge-soft badge-sm">{% trans "Maintenance" %}</span>
+    </li>
+    {% empty %}
+    <li>{% include 'snippets/empty.html' with icon='circle-check' message=no_maintenance_message %}</li>
+    {% endfor %}
+{% endif %}
+</ul>
+{% if not placeholder and widget.data.machines %}
+<div class="flex justify-end p-2">
+    <a href="{% url 'machines:list' %}?filter_status=maintenance" class="btn btn-primary btn-sm">{% trans "More" %}</a>
+</div>
+{% endif %}
+{% endblock %}

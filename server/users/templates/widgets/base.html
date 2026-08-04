@@ -1,7 +1,17 @@
 {% load i18n %}
 <div id="widget-{{ widget.pk }}" class="col-span-12 md:col-span-{{ widget.width|default:4 }} mb-3 widget">
     <div class="card card-border border-base-300 bg-base-100">
-        <div class="flex items-center gap-2 px-4 py-2 border-b border-base-300">
+        <div class="flex items-center gap-2 px-4 py-2 border-b border-base-300 group">
+            <div class="tooltip" data-tip="{% trans "Drag, or focus and press arrow keys, to reorder" %}">
+                <button
+                    type="button"
+                    class="btn btn-ghost btn-square btn-xs only-edit-mode cursor-grab active:cursor-grabbing shrink-0"
+                    aria-label="{% trans "Reorder widget" %}"
+                    data-drag-handle
+                    draggable="true">
+                    <i data-lucide="grip-vertical" class="w-4 h-4"></i>
+                </button>
+            </div>
             <i data-lucide="{{ widget.icon }}" class="w-4 h-4 text-base-content/50 shrink-0"></i>
             <div class="grow min-w-0">
                 {% block title %}
@@ -13,7 +23,7 @@
                 <div class="tooltip" data-tip="{% trans "Refresh" %}">
                     <button
                         type="button"
-                        class="btn btn-ghost btn-square btn-sm not-edit-mode"
+                        class="btn btn-ghost btn-square btn-xs not-edit-mode hidden group-hover:block"
                         aria-label="{% trans "Refresh" %}"
                         hx-get="{% url "users:widgets:home" %}?widget_id={{ widget.pk }}"
                         hx-target="closest .widget"
@@ -23,7 +33,7 @@
                     </button>
                 </div>
                 <div class="tooltip" data-tip="{% trans "Configure" %}">
-                    <button type="button" class="btn btn-soft btn-square btn-sm only-edit-mode"
+                    <button type="button" class="btn btn-soft btn-square btn-xs only-edit-mode"
                         aria-label="{% trans "Configure" %}"
                         hx-get="{% url "users:widgets:update" widget.pk %}"
                         hx-target="#widget-modal .widget-modal-body"
@@ -36,7 +46,7 @@
                 <div class="tooltip" data-tip="{% trans "Remove" %}">
                     <button
                         type="button"
-                        class="btn btn-error btn-soft btn-square btn-sm only-edit-mode"
+                        class="btn btn-error btn-soft btn-square btn-xs only-edit-mode"
                         aria-label="{% trans "Remove" %}"
                         hx-delete="{% url 'users:widgets:delete' widget.pk %}"
                         hx-confirm="{% trans "Are you sure?" %}"
@@ -53,3 +63,8 @@
         {% endblock %}
     </div>
 </div>
+{% if not placeholder %}
+<script>
+{% block script_extra %}{% endblock %}
+</script>
+{% endif %}

@@ -26,7 +26,7 @@
                 <td>{% include "cells/permission_level.html" with permission_level=qualification.permission_level %}</td>
                 <td style="max-width: 600px;">{{ qualification.comment }}</td>
                 <td>{% if qualification.instructed_by %}
-                    <a class="link" href="{% url "people:detail" qualification.instructed_by.pk %}">{{ qualification.instructed_by }}</a>
+                    {% include "cells/person.html" with person=qualification.instructed_by %}
                     {% else %}--{% endif %}
                 </td>
                 <td>{% user_date qualification.created "DATE_FORMAT" %}</td>
