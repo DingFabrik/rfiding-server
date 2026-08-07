@@ -1,42 +1,75 @@
 {% extends base_template %}
-{% load i18n %}
+{% load i18n %}{% load base_extra %}
 {% load humanize %}
 
-{% block breadcrumb_icon %}history{% endblock %}
-{% block breadcrumb_label %}{% trans "Audit Log" %}{% endblock %}
+{% block breadcrumb_icon %}
+  history
+{% endblock %}
+{% block breadcrumb_label %}
+  {% trans 'Audit Log' %}
+{% endblock %}
 
 {% block table %}
-    <thead>
-      <tr>
-          <th>{% trans "Timestamp" %}</th>
-          <th>{% trans "User" %}</th>
-          <th>{% trans "Action" %}</th>
-          <th>{% trans "Object" %}</th>
-          <th>{% trans "Changes" %}</th>
-      </tr>
-    </thead>
-{% for object in object_list %}
-<tr>
-    <td class="whitespace-nowrap">{% include "snippets/timestamp.html" with timestamp=object.timestamp %}</td>
-    <td>
-    {% if object.actor %}
-        <a class="link-hover link-primary" href="{% url "users:detail" object.actor_id %}">{{ object.actor }}</a>
-    {% else %}
-        System
-    {% endif %}
-</td>
-<td class="whitespace-nowrap">
-  {% include "auditlog/logentry_action.html" with action=object.action %}
-</td>
-<td><i>{{ object.content_type.name }}</i> {{ object.object_repr }}</td>
-{% if object.action == 1%}
-<td>
-    <h6 class="font-semibold">{% blocktrans count object.changes_dict|length as count %}1 change{% plural %}{{ count }} changes{% endblocktrans %}</h6>
-    <small>{% for change in object.changes_dict %}{{ change }}{% if not forloop.last %}{% if forloop.revcounter == 2 %} {% trans "and" %} {% else %}, {% endif %}{% else %}{% endif %}{% endfor %}</small>
-</td>
-{% else %}
-<td></td>
-{% endif %}
-</tr>
-{% endfor %}
+  <thead>
+    <tr>
+      <th>
+        {% trans 'Timestamp' %}
+      </th>
+      <th>
+        {% trans 'User' %}
+      </th>
+      <th>
+        {% trans 'Action' %}
+      </th>
+      <th>
+      </th>
+      <th>
+        {% trans 'Object' %}
+      </th>
+      <th>
+        {% trans 'Changes' %}
+      </th>
+    </tr>
+  </thead>
+  {% for object in object_list %}
+    <tr>
+      <td class="whitespace-nowrap">
+        {% include 'snippets/timestamp.html' with timestamp=object.timestamp %}
+      </td>
+      <td>
+        {% if object.actor %}
+          <a class="link-hover link-primary" href="{% url 'users:detail' object.actor_id %}">{{ object.actor }}</a>
+        {% else %}
+          System
+        {% endif %}
+      </td>
+      <td class="whitespace-nowrap">
+        {% include 'auditlog/logentry_action.html' with action=object.action %}
+      </td>
+      <td>
+        <span class="badge badge-ghost badge-sm"><i data-lucide="{{ object.content_type.app_label|app_icon }}" class="w-3 h-3"></i> {{ object.content_type.name }}</span>
+      </td>
+      <td>
+        <a class="link link-primary link-hover" href="{% url object.content_type.app_label|add:':detail' object.object_pk %}">{{ object.object_repr }}</a>
+      </td>
+      {% if object.action == 1 %}
+        <td>
+          <h6 class="font-semibold">{% blocktrans count object.changes_dict|length as count %}1 change{% plural %}{{ count }} changes{% endblocktrans %}</h6>
+          <small>
+            {% for change in object.changes_dict %}
+              {{ change }}{% if not forloop.last %}
+                {% if forloop.revcounter == 2 %}
+                  {% trans 'and' %}
+                {% else %}
+                  ,
+                {% endif %}
+              {% endif %}
+            {% endfor %}
+          </small>
+        </td>
+      {% else %}
+        <td></td>
+      {% endif %}
+    </tr>
+  {% endfor %}
 {% endblock %}

@@ -1,7 +1,7 @@
 {% load i18n %}{% if action == 0 %}
 <span class="badge badge-soft badge-success badge-sm"><i data-lucide="circle-plus" class="w-3 h-3"></i><span class="hidden md:inline">{% trans "Created" %}</span></span>
 {% elif action == 1 %}
-<span class="badge badge-soft badge-neutral badge-sm"><i data-lucide="square-pen" class="w-3 h-3"></i><span class="hidden md:inline">{% trans "Updated" %}</span></span>
+<span class="badge badge-soft badge-neutral badge-sm"><i data-lucide="square-pen" class="w-3 h-3"></i><span class="hidden md:inline">{% trans "Edited" %}</span></span>
 {% elif action == 2 %}
 <span class="badge badge-soft badge-error badge-sm"><i data-lucide="trash-2" class="w-3 h-3"></i><span class="hidden md:inline">{% trans "Deleted" %}</span></span>
 {% endif %}

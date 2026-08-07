@@ -1,6 +1,6 @@
 {% extends "widgets/base.html" %}{% load i18n %}
 
-{% block card_body_class %}p-0{% endblock %}
+{% block card_body_class %}p-0 gap-0{% endblock %}
 
 {% block content %}
 {% blocktrans asvar no_maintenance_message %}No machines need maintenance right now.{% endblocktrans %}
@@ -14,13 +14,8 @@
     {% endfor %}
 {% else %}
     {% for machine in widget.data.machines %}
-    <li class="list-row items-center">
-        <div class="avatar avatar-placeholder">
-            <div class="bg-base-300 text-base-content w-8 rounded-box">
-                <i data-lucide="wrench" class="w-4 h-4"></i>
-            </div>
-        </div>
-        <div class="min-w-0 flex-1">
+    <li class="list-row items-center p-2">
+        <div class="list-col-grow">
             <a class="link-hover font-medium truncate block" href="{% url 'machines:detail' machine.pk %}">{{ machine.name }}</a>
             <div class="text-xs text-base-content/60 truncate">{{ machine.location|default:_("No location") }}</div>
         </div>
@@ -32,7 +27,7 @@
 {% endif %}
 </ul>
 {% if not placeholder and widget.data.machines %}
-<div class="flex justify-end p-2">
+<div class="flex justify-end pb-2 px-2">
     <a href="{% url 'machines:list' %}?filter_status=maintenance" class="btn btn-primary btn-sm">{% trans "More" %}</a>
 </div>
 {% endif %}

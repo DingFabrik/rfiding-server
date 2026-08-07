@@ -1,6 +1,6 @@
 {% extends "widgets/base.html" %}{% load i18n %}
 
-{% block card_body_class %}p-0{% endblock %}
+{% block card_body_class %}p-0 gap-0{% endblock %}
 
 {% block content %}
 <div class="max-w-full overflow-x-auto">
@@ -36,7 +36,7 @@
         </tbody>
 </table>
 </div>
-<div class="flex justify-end p-2">
+<div class="flex justify-end pb-2 px-2">
     <a href="{% url 'access_log:list' %}" class="btn btn-primary btn-sm">{% trans "More" %}</a>
 </div>
 {% endblock %}

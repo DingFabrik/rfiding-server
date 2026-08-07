@@ -1,6 +1,6 @@
-{% extends "widgets/base.html" %}{% load i18n %}
+{% extends "widgets/base.html" %}{% load i18n %}{% load base_extra %}
 
-{% block card_body_class %}p-0{% endblock %}
+{% block card_body_class %}p-0 gap-0{% endblock %}
 
 {% block content %}
 <div class="max-w-full overflow-x-auto">
@@ -10,6 +10,7 @@
             <th>{% trans "Date" %}</th>
             <th>{% trans "User" %}</th>
             <th>{% trans "Action" %}</th>
+            <th></th>
             <th>{% trans "Object" %}</th>
         </tr>
         </thead>
@@ -29,7 +30,7 @@
     <td>{% include "snippets/timestamp.html" with timestamp=object.timestamp %}</td>
     <td>
         {% if object.actor %}
-            <a class="link-hover" href="{% url "users:detail" object.actor_id %}">{{ object.actor }}</a>
+            <a class="link link-primary link-hover" href="{% url "users:detail" object.actor_id %}">{{ object.actor }}</a>
         {% else %}
             {% trans "System" %}
         {% endif %}
@@ -37,14 +38,19 @@
     <td class="whitespace-nowrap">
   {% include "auditlog/logentry_action.html" with action=object.action %}
     </td>
-    <td class="truncate max-w-48"><i>{{ object.content_type.name }}</i> {{ object.object_repr }}</td>
-</tr>
+      <td>
+        <span class="badge badge-ghost badge-sm"><i data-lucide="{{ object.content_type.app_label|app_icon }}" class="w-3 h-3"></i> {{ object.content_type.name }}</span>
+      </td>
+      <td>
+        <a class="link link-primary link-hover" href="{% url object.content_type.app_label|add:':detail' object.object_pk %}">{{ object.object_repr }}</a>
+      </td>
+    </tr>
 {% endfor %}
 {% endif %}
         </tbody>
 </table>
 </div>
-<div class="flex justify-end p-2">
+<div class="flex justify-end pb-2 px-2">
     <a href="{% url 'auditlog' %}" class="btn btn-primary btn-sm">{% trans "More" %}</a>
 </div>
 {% endblock %}

@@ -292,7 +292,6 @@ class MachineTime(TimestampedModel):
     end_time = models.TimeField(verbose_name=_("End Time"))
 
     def __str__(self):
-
         return f"{self.get_weekdays_display()} {formats.time_format(self.start_time) if isinstance(self.start_time, datetime.time) else self.start_time} - {formats.time_format(self.end_time) if isinstance(self.end_time, datetime.time) else self.end_time}"
 
     def get_weekdays_display(self):

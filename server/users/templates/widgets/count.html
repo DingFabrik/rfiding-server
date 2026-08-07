@@ -1,8 +1,8 @@
 {% extends "widgets/base.html" %}{% load i18n %}
 
 {% block content %}
-<div class="flex divide-x divide-base-200 text-center">
-    <div class="flex-1 px-2">
+<div class="flex gap-3 divide-x divide-base-200 text-center">
+    <div class="flex-1">
         {% if placeholder %}
             <div class="skeleton h-8 w-16 mx-auto mb-1"></div>
         {% else %}
@@ -10,7 +10,7 @@
         {% endif %}
         <p class="text-xs font-semibold uppercase tracking-wide text-base-content/50 m-0">{% trans "Active" %}</p>
     </div>
-    <div class="flex-1 px-2">
+    <div class="flex-1">
         {% if placeholder %}
             <div class="skeleton h-8 w-16 mx-auto mb-1"></div>
         {% else %}
