@@ -16,10 +16,10 @@ from machines.models import Machine
 
 logger = logging.getLogger(__name__)
 
-seconds_ago = (
+duplicate_seconds_ago = (
     settings.ACCESS_LOG_DUPLICATE_SECONDS
     if hasattr(settings, "ACCESS_LOG_DUPLICATE_SECONDS")
-    else 1
+    else 
 )
 delete_days = (
     settings.ACCESS_LOG_DELETE_DAYS
@@ -34,7 +34,7 @@ anonymize_days = (
 
 
 @shared_task
-def save_access_log(machine, token_id, log_type):
+def save_access_log(machine, token_id, log_type, timestamp=None):
     if not isinstance(machine, Machine):
         machine = Machine.objects.get(pk=machine)
     if log_type == LOG_TYPE_BOOTED and not machine.log_booted:
@@ -45,7 +45,7 @@ def save_access_log(machine, token_id, log_type):
         return
     if log_type == LOG_TYPE_UNSUCCESSFUL and not machine.log_unsuccessful:
         return
-    ago = timezone.now() - timedelta(seconds=seconds_ago)
+    ago = timezone.now() - timedelta(seconds=duplicate_seconds_ago)
     if AccessLog.objects.filter(
         machine_id=machine.pk, token_id=token_id, type=log_type, timestamp__gte=ago
     ).exists():
@@ -54,6 +54,7 @@ def save_access_log(machine, token_id, log_type):
         machine_id=machine.pk,
         token_id=token_id,
         type=log_type,
+        timestamp=timestamp or timezone.now(),
     )
 
 

@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from rest_framework.response import Response
 from rest_framework.exceptions import NotFound, PermissionDenied
 from rest_framework import status, permissions
@@ -15,7 +17,7 @@ class MachineConfigView(BaseAPIView):
         mac_address = formatted_mac(request.GET.get("machine", None))
         machine = self.get_machine(mac_address)
 
-        save_access_log.delay(machine.id, None, LOG_TYPE_BOOTED)
+        save_access_log.delay(machine.id, None, LOG_TYPE_BOOTED, timestamp=datetime.datetime.now())
         return Response(
             {
                 "runtimer": machine.runtimer.seconds * 1000 + machine.runtimer.microseconds // 1000,

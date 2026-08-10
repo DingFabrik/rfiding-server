@@ -108,7 +108,7 @@ def check_access(machine, tokenID, compartmentID=None):
             space_state = SpaceState.objects.first()
             if space_state is not None and not space_state.is_open:
                 raise PermissionDenied("Space is closed")
-    save_access_log.delay(machine.id, token["id"], LOG_TYPE_ENABLED)
+    save_access_log.delay(machine.id, token["id"], LOG_TYPE_ENABLED, timestamp=datetime.datetime.now())
 
     now = datetime.datetime.now()
     return {

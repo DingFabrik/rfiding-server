@@ -1,3 +1,5 @@
+import datetime
+
 from rest_framework.response import Response
 from rest_framework.exceptions import NotFound, PermissionDenied
 from rest_framework import status, permissions
@@ -82,7 +84,7 @@ class MachineConfigView(BaseAPIView):
     required_post_parameters = ["mac_address"]
 
     def get(self, request, format=None):
-        save_access_log.delay(self.machine.id, None, LOG_TYPE_BOOTED)
+        save_access_log.delay(self.machine.id, None, LOG_TYPE_BOOTED, timestamp=datetime.datetime.now())
         return Response(
             MachineConfigSerializer(
                 {
@@ -113,7 +115,7 @@ class MachineConfigView(BaseAPIView):
         if was_changed:
             self.machine.save()
 
-        save_access_log.delay(self.machine.id, None, LOG_TYPE_BOOTED)
+        save_access_log.delay(self.machine.id, None, LOG_TYPE_BOOTED, timestamp=datetime.datetime.now())
         return Response(
             MachineConfigSerializer(
                 {
@@ -155,7 +157,7 @@ class CheckMachineAccessView(BaseAPIView):
             )
         finally:
             if not was_successful:
-                save_access_log.delay(self.machine.id, None, LOG_TYPE_UNSUCCESSFUL)
+                save_access_log.delay(self.machine.id, None, LOG_TYPE_UNSUCCESSFUL, timestamp=datetime.datetime.now())
 
 
 class MachineDisableView(BaseAPIView):
@@ -169,7 +171,7 @@ class MachineDisableView(BaseAPIView):
                 self.machine = self.machine.children.get(compartment_id=compartmentID)
             except Machine.DoesNotExist:
                 raise NotFound("Machine does not exist") from None
-        save_access_log.delay(self.machine.id, None, LOG_TYPE_DISABLED)
+        save_access_log.delay(self.machine.id, None, LOG_TYPE_DISABLED, timestamp=datetime.datetime.now())
         return Response({})
 
 class MachineControlView(BaseAPIView):
