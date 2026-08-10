@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 duplicate_seconds_ago = (
     settings.ACCESS_LOG_DUPLICATE_SECONDS
     if hasattr(settings, "ACCESS_LOG_DUPLICATE_SECONDS")
-    else 
+    else 10
 )
 delete_days = (
     settings.ACCESS_LOG_DELETE_DAYS
