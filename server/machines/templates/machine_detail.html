@@ -50,7 +50,7 @@
   </div>
 
   {% if object.type != 'lock_group' %}
-    <div class="stats stats-vertical sm:stats-horizontal border border-neutral/10 bg-base-300 w-full mb-6">
+    <div class="stats stats-vertical lg:stats-horizontal border border-neutral/10 bg-base-300 w-full mb-6">
       <div class="stat py-3">
         <div class="stat-figure text-primary">
           <i data-lucide="shield-check" class="w-8 h-8"></i>
@@ -95,7 +95,7 @@
         <button role="tab" class="tab tab-active" id="overview-tab" data-tabs-target="#overview-tab-pane" aria-selected="true"><i data-lucide="shield-check" class="w-4 h-4 mr-1"></i>{% trans 'Overview' %}</button>
         <div class="tab-content grid grid-cols-12 gap-2" role="tabpanel" id="overview-tab-pane" aria-labelledby="overview-tab">
           {% if machine.needs_qualification %}
-            <div class="col-span-9">
+            <div class="col-span-12 lg:col-span-9">
               <div class="bg-base-100 border-neutral/10 border rounded-box pt-4">
                 <div class="flex justify-between items-center mx-4">
               <h2 class="text-xs font-semibold uppercase tracking-wide text-base-content/50">{% trans 'Qualifications' %}</h2>
@@ -114,7 +114,7 @@
             </div>
           {% endif %}
             </div>
-          <div class="flex flex-col col-span-3 gap-2">
+          <div class="flex flex-col col-span-12 lg:col-span-3 gap-2">
           <div class="bg-base-100 border-neutral/10 border rounded-box p-4">
             <h2 class="text-xs font-semibold uppercase tracking-wide text-base-content/50 mb-2">{% trans 'Details' %}</h2>
             <ul class="list text-sm">
