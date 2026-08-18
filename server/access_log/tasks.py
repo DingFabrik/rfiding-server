@@ -21,6 +21,11 @@ duplicate_seconds_ago = (
     if hasattr(settings, "ACCESS_LOG_DUPLICATE_SECONDS")
     else 10
 )
+enabled_duration_max_seconds = (
+    settings.ACCESS_LOG_ENABLED_DURATION_MAX_SECONDS
+    if hasattr(settings, "ACCESS_LOG_ENABLED_DURATION_MAX_SECONDS")
+    else 3600 * 5
+)
 delete_days = (
     settings.ACCESS_LOG_DELETE_DAYS
     if hasattr(settings, "ACCESS_LOG_DELETE_DAYS")
@@ -50,11 +55,30 @@ def save_access_log(machine, token_id, log_type, timestamp=None):
         machine_id=machine.pk, token_id=token_id, type=log_type, timestamp__gte=ago
     ).exists():
         return
+    enabled_duration = None
+    log_timestamp = timestamp or timezone.now()
+    if log_type == LOG_TYPE_DISABLED:
+        last_enabled_log = AccessLog.objects.filter(
+            machine_id=machine.pk, token_id=token_id, type=LOG_TYPE_ENABLED
+        ).order_by("-timestamp").first()
+        if last_enabled_log:
+            enabled_duration = log_timestamp - last_enabled_log.timestamp
+            if enabled_duration.total_seconds() < 0:
+                logger.warning(
+                    f"Access log for machine {machine.pk} and token {token_id} has negative enabled duration. Setting to None."
+                )
+                enabled_duration = None
+            if enabled_duration and enabled_duration.total_seconds() > enabled_duration_max_seconds:
+                logger.warning(
+                    f"Access log for machine {machine.pk} and token {token_id} has enabled duration greater than {enabled_duration_max_seconds} seconds. Setting to None."
+                )
+                enabled_duration = None
     AccessLog.objects.create(
         machine_id=machine.pk,
         token_id=token_id,
         type=log_type,
-        timestamp=timestamp or timezone.now(),
+        timestamp=log_timestamp,
+        enabled_duration=enabled_duration,
     )
 
 

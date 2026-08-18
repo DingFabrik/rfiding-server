@@ -9,6 +9,7 @@ LOG_TYPE_UNSUCCESSFUL = "unsuccessful"
 
 LOG_TYPES = (
     (LOG_TYPE_BOOTED, _("Booted")),
+    (LOG_TYPE_REGISTERED, _("Registered")),
     (LOG_TYPE_ENABLED, _("Enabled")),
     (LOG_TYPE_DISABLED, _("Disabled")),
     (LOG_TYPE_UNSUCCESSFUL, _("Unsuccessful")),
@@ -31,6 +32,12 @@ class AccessLog(models.Model):
     )
     machine = models.ForeignKey(
         "machines.Machine", on_delete=models.CASCADE, verbose_name=_("Machine")
+    )
+    enabled_duration = models.DurationField(
+        null=True,
+        blank=True,
+        verbose_name=_("Enabled Duration"),
+        help_text=_("Duration the machine was enabled for this access. Only set for 'disabled' events."),
     )
     type = models.CharField(max_length=20, choices=LOG_TYPES, verbose_name=_("Type"))
 
