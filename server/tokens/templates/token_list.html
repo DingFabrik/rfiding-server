@@ -4,15 +4,9 @@
 {% block top_actions %}
   <div class="flex flex-wrap items-center gap-2">
     {% if perms.tokens.create_token %}
-      <a href="{% url 'tokens:unknown' %}" class="btn btn-primary btn-sm"><i data-lucide="plus" class="w-4 h-4"></i>{% trans 'Assign Token' %}</a>
+      <a href="{% url 'tokens:unknown' %}" class="btn btn-primary"><i data-lucide="plus" class="w-5 h-5"></i>{% trans 'Assign Token' %}</a>
     {% endif %}
   </div>
-{% endblock %}
-
-{% block bottom_actions %}
-  {% if perms.tokens.create_token and paginator.count > 1 %}
-    <a href="{% url 'tokens:unknown' %}" class="btn btn-primary btn-square tooltip" data-tip="{% trans 'Assign Token' %}"><i data-lucide="plus" class="w-4 h-4"></i></a>
-  {% endif %}
 {% endblock %}
 
 {% block empty_state %}

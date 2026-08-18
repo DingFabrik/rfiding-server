@@ -1,4 +1,4 @@
-{% load i18n %}<div class="max-w-full overflow-x-auto rounded-box border border-base-content/10"><table id="unknown_token_container" class="table" {% if is_partial %}hx-swap-oob="outerHTML"{% endif %}>
+{% load i18n %}<div class="rounded-box border border-neutral/10"><table id="unknown_token_container" class="table" {% if is_partial %}hx-swap-oob="outerHTML"{% endif %}>
     <thead>
         <tr>
             <th>{% trans "Serial" %}</th>
@@ -16,12 +16,14 @@
 <td>{% include "snippets/timestamp.html" with timestamp=token.created %}</td>
 {% if can_create_token or can_create_blacklistedtoken %}
 <td>
+              <div class="flex gap-2 justify-end">
 {% if can_create_token %}
 <a href="{% url "tokens:assign" token.serial %}" class="tooltip" data-tip="{% trans 'Assign' %}"><i data-lucide="link-hover link-primary" class="w-4 h-4"></i></a>
 {% endif %}
 {% if can_create_blacklistedtoken %}
 <a href="{% url "tokens:blacklist-token" token.serial %}" class="tooltip" data-tip="{% trans 'Blacklist' %}"><i data-lucide="ban" class="w-4 h-4 text-error"></i></a>
 {% endif %}
+              </div>
 </td>
 {% endif %}
 </tr>

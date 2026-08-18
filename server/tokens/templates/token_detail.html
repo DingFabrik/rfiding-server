@@ -6,10 +6,10 @@
 {% block top_actions %}
 <div class="join">
 {% if can_edit %}
-<a href="{% url request.resolver_match.namespace|add:':update' object.pk %}" class="btn btn-primary btn-sm join-item {% if object.archived %}btn-disabled{% endif %}" aria-disabled="{% if object.archived %}true{% else %}false{% endif %}"><i data-lucide="square-pen" class="w-4 h-4"></i>{% trans "Edit "%}</a>
+<a href="{% url request.resolver_match.namespace|add:':update' object.pk %}" class="btn btn-primary join-item {% if object.archived %}btn-disabled{% endif %}" aria-disabled="{% if object.archived %}true{% else %}false{% endif %}"><i data-lucide="square-pen" class="w-5 h-5"></i>{% trans "Edit "%}</a>
 {% endif %}
 {% if can_delete %}
-<a href="{% url request.resolver_match.namespace|add:':delete' object.pk %}" class="btn btn-error btn-sm join-item {% if object.archived %}btn-disabled{% endif %}" aria-disabled="{% if object.archived %}true{% else %}false{% endif %}" {% if not object.archived %}data-modal-target="confirmArchiveModal"{% endif %}><i data-lucide="archive" class="w-4 h-4"></i>{% trans "Archive"%}</a>
+<a href="{% url request.resolver_match.namespace|add:':delete' object.pk %}" class="btn btn-error join-item {% if object.archived %}btn-disabled{% endif %}" aria-disabled="{% if object.archived %}true{% else %}false{% endif %}" {% if not object.archived %}data-modal-target="confirmArchiveModal"{% endif %}><i data-lucide="archive" class="w-5 h-5"></i>{% trans "Archive"%}</a>
 {% endif %}
 </div>
 {% endblock %}
@@ -25,7 +25,9 @@
     {% if object.format_label %}
       <span class="badge badge-soft badge-sm font-mono"><i data-lucide="tag" class="w-3 h-3"></i>{{ object.format_label }}</span>
     {% endif %}
+    {% if not object.archived %}
     <span>{% include "snippets/active_toggle.html" %}</span>
+    {% endif %}
   </div>
 
     <div class="stats stats-vertical sm:stats-horizontal border border-neutral/10 bg-base-300 w-full mb-6">
@@ -52,8 +54,7 @@
     </div>
   </div>
 
-    <div class="stats stats-vertical sm:stats-horizontal border border-neutral/10 bg-base-300 w-full mb-6">
-    <div class="bg-base-100 p-4">
+    <div class="border border-neutral/10 bg-base-100 p-4 w-full rounded-box mb-6">
       <h2 class="text-xs font-semibold uppercase tracking-wide text-base-content/50 mb-2">{% trans 'Details' %}</h2>
       <ul class="list text-sm">
         <li class="list-row items-center px-0 py-1.5 border-b border-base-200">
@@ -81,17 +82,12 @@
           </li>
         {% endif %}
       </ul>
-    </div>
   </div>
 
   <div class="mb-5">
     <h2 class="text-xs font-semibold uppercase tracking-wide text-base-content/50 mb-2">{% trans 'Access Log' %}</h2>
-    <div class="card card-border bg-base-100">
-      <div class="card-body p-0">
-        {% url "access_log:for-token" object.pk as access_log_url %}
-        {% trans "Load Access Log" as access_log_label %}
-        {% include "snippets/async_button.html" with url=access_log_url label=access_log_label %}
-      </div>
+    <div class="bg-base-100 border border-neutral/10 rounded-box"
+      hx-get="{% url "access_log:for-token" object.pk %}" hx-trigger="load">
     </div>
   </div>
 {% endblock %}

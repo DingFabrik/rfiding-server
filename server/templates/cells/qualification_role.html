@@ -1,0 +1,15 @@
+{% load i18n %}{% if qualification.is_instructor %}
+  <div class="badge badge-soft badge-sm badge-primary">
+    {% trans 'Instructor' %}
+  </div>
+{% endif %}
+{% if qualification.is_maintainer %}
+  <div class="badge badge-soft badge-sm badge-info">
+    {% trans 'Maintainer' %}
+  </div>
+{% endif %}
+{% if not qualification.is_instructor and not qualification.is_maintainer %}
+  <div class="badge badge-soft badge-sm badge-neutral">
+    {% trans 'User' %}
+  </div>
+{% endif %}

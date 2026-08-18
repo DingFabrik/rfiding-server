@@ -18,7 +18,7 @@
 {% block content %}
   <div id="access_log_container">
     {% if object_list %}
-      <div class="max-w-full overflow-x-auto {% if not is_partial %} rounded-box border border-base-content/10 {% endif %}">
+      <div class="{% if not is_partial %} rounded-box border border-neutral/10 {% endif %}">
         <table class="table">
           <thead>
             <tr>

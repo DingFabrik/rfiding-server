@@ -1,8 +1,8 @@
-<div class="clickable active_toggle" hx-get="{% url request.resolver_match.namespace|add:':toggle-active' pk=object.pk %}">
+{% load i18n %}<div class="clickable active_toggle cursor-pointer" hx-get="{% url request.resolver_match.namespace|add:':toggle-active' pk=object.pk %}">
   {% if object.is_active %}
-  <i data-lucide="circle-check-big" class="w-4 h-4 text-success" aria-hidden="true"></i>
+  <div class="badge badge-soft badge-sm badge-success"><i data-lucide="circle-check-big" class="w-4 h-4 text-success" aria-hidden="true"></i>{% trans 'Active' %}</div>
   {% else %}
-  <i data-lucide="circle-x" class="w-4 h-4 text-error" aria-hidden="true"></i>
+  <div class="badge badge-soft badge-sm badge-error"><i data-lucide="circle-x" class="w-4 h-4 text-error" aria-hidden="true"></i>{% trans 'Inactive' %}</div>
   {% endif %}
   <span class="htmx-indicator loading loading-spinner loading-sm" role="status">
     <span class="sr-only">Loading...</span>

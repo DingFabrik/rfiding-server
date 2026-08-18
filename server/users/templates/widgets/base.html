@@ -1,7 +1,7 @@
 {% load i18n %}
 <div id="widget-{{ widget.pk }}" class="col-span-12 md:col-span-{{ widget.width|default:4 }} mb-3 widget">
-    <div class="card card-border border-base-300 bg-base-100">
-        <div class="flex items-center gap-2 px-4 py-2 border-b border-base-300 group">
+    <div class="card card-border border-neutral/10 bg-base-100">
+        <div class="flex items-center gap-2 px-4 py-2 border-b border-neutral/10 group">
             <div class="tooltip" data-tip="{% trans "Drag, or focus and press arrow keys, to reorder" %}">
                 <button
                     type="button"

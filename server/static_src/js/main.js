@@ -17,6 +17,7 @@ window.urlMap = {
 };
 
 window.createIcons = function () {
+    console.log("Creating icons");
     createIcons({ icons });
 }
 
@@ -91,6 +92,7 @@ function initPopover(toggle, pkAttr, urlKey) {
                 url: window.urlMap[urlKey] + '?' + pkAttr.replace(/^data-/, '').replace(/-/g, '_') + '=' + pk,
                 success: function (response) {
                     $(content).html(response);
+                    window.createIcons();
                 }
             });
         };
@@ -133,14 +135,14 @@ document.addEventListener('click', function (event) {
     pane.classList.remove('hidden');
 });
 
-window.addEventListener('htmx:beforeRequest', function(event) {
+window.addEventListener('htmx:beforeRequest', function (event) {
     const alert = document.querySelector('.alert');
     if (alert) {
         alert.classList.add('invisible');
     }
 });
 
-window.addEventListener('htmx:beforeSwap', function(event) {
+window.addEventListener('htmx:beforeSwap', function (event) {
     if (event.detail.xhr.status >= 400) {
         console.log('Error', event.detail.xhr.status);
         if (event.detail.target.querySelector('.alert')) {
@@ -149,12 +151,12 @@ window.addEventListener('htmx:beforeSwap', function(event) {
     }
 });
 
-window.addEventListener('htmx:afterSwap', function(event) {
+window.addEventListener('htmx:afterSwap', function (event) {
     initPopovers();
     window.createIcons();
 })
 
-window.addEventListener('htmx:responseError', function(event) {
+window.addEventListener('htmx:responseError', function (event) {
     event.detail.target.innerHTML = '<div class="alert alert-error" role="alert"><h4 class="font-bold">An error occurred.</h4><span>' + event.detail.xhr.statusText + '</span></div>';
 });
 

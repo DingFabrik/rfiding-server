@@ -2,37 +2,51 @@
 {% load i18n %}
 
 {% block empty_state %}
-{% include "snippets/empty_list.html" with model=model icon="user" %}
+  {% include 'snippets/empty_list.html' with model=model icon='user' %}
 {% endblock %}
 
 {% block table %}
-    <thead>
-        <tr>
-            <th>{% trans "Member ID" %}</th>
-            <th>{% trans "Name" %}</th>
-            <th>{% trans "E-Mail" %}</th>
-            <th>{% trans "Active" %}</th>
-            {% if perms.people.modify_person or perms.people.qualify_person %}
-            <th></th>
+  <thead>
+    <tr>
+      <th>
+        {% trans 'Member ID' %}
+      </th>
+      <th>
+        {% trans 'Name' %}
+      </th>
+      <th>
+        {% trans 'E-Mail' %}
+      </th>
+      <th>
+        {% trans 'Active' %}
+      </th>
+      {% if perms.people.modify_person or perms.people.qualify_person %}
+        <th></th>
+      {% endif %}
+    </tr>
+  </thead>
+  {% for object in people %}
+    <tr>
+      <td>{{ object.member_id|default:'--' }}</td>
+      <td>
+        <a class="link-hover link-primary" href="{% url 'people:detail' object.pk %}">{{ object.name }}</a>
+      </td>
+      <td>{{ object.email }}</td>
+      <td>
+        {% include 'snippets/active_toggle.html' %}
+      </td>
+      {% if perms.people.modify_person or perms.people.qualify_person %}
+        <td>
+          <div class="flex gap-2 justify-end">
+            {% if perms.people.modify_person %}
+              <a href="{% url 'people:update' object.pk %}" class="tooltip" data-tip="{% trans 'Edit' %}"><i data-lucide="square-pen" class="w-4 h-4"></i></a>
             {% endif %}
-        </tr>
-        </thead>
-{% for object in people %}
-<tr>
-<td>{{ object.member_id | default:"--" }}</td>
-<td><a class="link-hover link-primary" href="{% url "people:detail" object.pk %}">{{ object.name }}</a></td>
-<td>{{ object.email }}</td>
-<td>{% include 'snippets/active_toggle.html' %}</td>
-{% if perms.people.modify_person or perms.people.qualify_person %}
-<td>
-{% if perms.people.modify_person %}
-<a href="{% url 'people:update' object.pk %}" class="tooltip" data-tip="{% trans 'Edit' %}"><i data-lucide="square-pen" class="w-4 h-4"></i></a>
-{% endif %}
-{% if perms.people.qualify_person %}
-<a href="{% url "people:qualify" object.pk %}" class="tooltip" data-tip="{% trans 'Qualify' %}"><i data-lucide="layers" class="w-4 h-4"></i></a>
-{% endif %}
-</td>
-{% endif %}
-</tr>
-{% endfor %}
+            {% if perms.people.qualify_person %}
+              <a href="{% url 'people:qualify' object.pk %}" class="tooltip" data-tip="{% trans 'Qualify' %}"><i data-lucide="shield-plus" class="w-4 h-4"></i></a>
+            {% endif %}
+          </div>
+        </td>
+      {% endif %}
+    </tr>
+  {% endfor %}
 {% endblock %}

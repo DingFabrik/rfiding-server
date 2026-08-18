@@ -20,7 +20,7 @@
 {% block top_actions %}
 <div class="flex flex-wrap items-center gap-2">
     {% if can_create %}
-    <a href="{% url request.resolver_match.namespace|add:':create' %}" class="btn btn-primary btn-sm"><i data-lucide="plus" class="w-4 h-4"></i>{% with model|verbose_name as modelname %}{% blocktrans %}Add {{ modelname }}{% endblocktrans %}{% endwith %}</a>
+    <a href="{% url request.resolver_match.namespace|add:':create' %}" class="btn btn-primary"><i data-lucide="plus" class="w-5 h-5"></i>{% with model|verbose_name as modelname %}{% blocktrans %}Add {{ modelname }}{% endblocktrans %}{% endwith %}</a>
     {% endif %}
 </div>
 {% endblock %}
@@ -34,10 +34,10 @@
     {% include "snippets/empty_list.html" with model=model %}
     {% endblock %}
     {% else %}
-        <div class="card card-border bg-base-100">
+        <div class="card card-border border-neutral/10 bg-base-100">
           <div class="card-body p-0">
             {% block table_outer %}
-                <div class="max-w-full overflow-x-auto">
+                <div>
                   <table class="table">
                     {% block table %}
                     {% endblock %}
@@ -53,13 +53,13 @@
     </div>
     </div>
     <div class="w-full lg:w-64 shrink-0">
-      <div class="card card-border bg-base-100 mb-3">
+      <div class="card card-border border-neutral/10 bg-base-100 mb-3">
         <div class="card-body gap-3">
           {% include "snippets/search_form.html" %}
         </div>
       </div>
     {% if filter_choices %}
-        <div class="card card-border bg-base-100 mb-3">
+        <div class="card card-border border-neutral/10 bg-base-100 mb-3">
             <div class="card-body gap-3">
                 <h2 class="text-xs font-semibold uppercase tracking-wide text-base-content/50">{% trans "Filter" %}</h2>
                 {% for key, choice in filter_choices.items %}

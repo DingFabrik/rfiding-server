@@ -28,7 +28,7 @@
   </div>
 
   {% if location.parent or location.description %}
-  <div class="border border-base-300 rounded-box bg-base-100 p-4 mb-6 lg:max-w-md">
+  <div class="border border-neutral/10 rounded-box bg-base-100 p-4 mb-6 lg:max-w-md">
     <h2 class="text-xs font-semibold uppercase tracking-wide text-base-content/50 mb-2">{% trans 'Details' %}</h2>
     <ul class="list text-sm">
       {% if location.parent %}
@@ -50,7 +50,7 @@
       <h2 class="text-xs font-semibold uppercase tracking-wide text-base-content/50 mb-2">{% trans 'Devices' %}</h2>
       <div class="card card-border bg-base-100">
         <div class="card-body p-2">
-          <div class="max-w-full overflow-x-auto">
+          <div class="">
             <table class="table">
               <thead>
                 <tr>

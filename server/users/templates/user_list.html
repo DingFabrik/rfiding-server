@@ -2,24 +2,30 @@
 {% load i18n %}
 
 {% block empty_state %}
-{% include "snippets/empty_list.html" with model=model icon="id-card" can_create=can_create %}
+  {% include 'snippets/empty_list.html' with model=model icon='id-card' can_create=can_create %}
 {% endblock %}
 
 {% block table %}
-    <thead>
-        <tr>
-            <th>{% trans "Name" %}</th>
-            <th>{% trans "E-Mail Address" %}</th>
-        </tr>
-        </thead>
-{% for user in users %}
-<tr>
-{% if perms.users.modify_user %}
-<td><a class="link-hover link-primary" href="{% url "users:update" user.pk %}">{{ user.name }}</a></td>
-{% else %}
-<td>{{ user.name }}</td>
-{% endif %}
-<td>{{ user.email }}</td>
-</tr>
-{% endfor %}
+  <thead>
+    <tr>
+      <th>
+        {% trans 'Name' %}
+      </th>
+      <th>
+        {% trans 'E-Mail Address' %}
+      </th>
+    </tr>
+  </thead>
+  {% for user in users %}
+    <tr>
+      {% if perms.users.modify_user %}
+        <td>
+          <a class="link-hover link-primary" href="{% url 'users:update' user.pk %}">{{ user.name }}</a>
+        </td>
+      {% else %}
+        <td>{{ user.name }}</td>
+      {% endif %}
+      <td>{{ user.email }}</td>
+    </tr>
+  {% endfor %}
 {% endblock %}

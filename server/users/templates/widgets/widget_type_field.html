@@ -10,7 +10,7 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
         {% for group, options, index in field|optgroups %}
             {% for option in options %}
-            <label class="flex items-center gap-3 rounded-box border border-base-300 p-3 cursor-pointer has-[:checked]:border-primary has-[:checked]:bg-primary/5">
+            <label class="flex items-center gap-3 rounded-box border border-neutral/10 p-3 cursor-pointer has-[:checked]:border-primary has-[:checked]:bg-primary/5">
                 <input
                     type="radio"
                     name="{{ field.html_name }}"

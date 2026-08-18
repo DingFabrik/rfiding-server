@@ -4,17 +4,6 @@
 
 {% block title %}{{ person.name }}{% endblock %}
 
-{% block top_actions %}
-  <div class="join">
-    {% if can_edit %}
-      <a href="{% url 'people:update' person.pk %}" class="btn btn-primary btn-sm join-item"><i data-lucide="square-pen" class="w-4 h-4"></i>{% trans 'Edit' %}</a>
-    {% endif %}
-    {% if can_delete %}
-      <a href="{% url 'people:delete' person.pk %}" class="btn btn-error btn-sm join-item" data-modal-target="confirmDeleteModal"><i data-lucide="trash-2" class="w-4 h-4"></i>{% trans 'Delete' %}</a>
-    {% endif %}
-  </div>
-{% endblock %}
-
 {% block content %}
   <div class="flex flex-wrap items-center gap-2 mb-5 -mt-2">
     {% if person.member_id %}
@@ -50,7 +39,7 @@
     </div>
   </div>
 
-  <div class="grid grid-cols-1 lg:grid-cols-3 gap-px bg-base-300 border border-base-300 rounded-box overflow-hidden mb-6">
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-px bg-base-300 border border-neutral/10 rounded-box overflow-hidden mb-6">
     <div class="bg-base-100 p-4">
       <h2 class="text-xs font-semibold uppercase tracking-wide text-base-content/50 mb-2">{% trans 'Details' %}</h2>
       <ul class="list text-sm">
@@ -88,9 +77,9 @@
   </div>
 
   <div class="mb-5">
-    <div role="tablist" class="tabs tabs-lift">
+    <div role="tablist" class="tabs tabs-box">
       <button role="tab" class="tab tab-active" id="qualifications-tab" data-tabs-target="#qualifications-tab-pane" aria-selected="true"><i data-lucide="shield-check" class="w-4 h-4 mr-1"></i>{% trans 'Qualifications' %}</button>
-      <div class="tab-content bg-base-100 border-base-300" role="tabpanel" id="qualifications-tab-pane" aria-labelledby="qualifications-tab">
+      <div class="tab-content bg-base-100 border-neutral/10" role="tabpanel" id="qualifications-tab-pane" aria-labelledby="qualifications-tab">
         {% if perms.people.qualify_person %}
           <div class="flex justify-end mb-2 mx-6 mt-6">
             <a class="btn btn-primary btn-sm" href="{% url 'people:qualify' person.pk %}"><i data-lucide="shield-plus" class="w-4 h-4"></i>{% trans 'Add Qualification' %}</a>
@@ -100,7 +89,7 @@
       </div>
       {% if perms.access_log.view_access_log %}
         <button role="tab" class="tab" id="accesslog-tab" hx-get="{% url 'access_log:for-person' object.pk %}" hx-target="#accesslog-tab-pane" data-tabs-target="#accesslog-tab-pane" aria-selected="false"><i data-lucide="list" class="w-4 h-4 mr-1"></i>{% trans 'Access Log' %}</button>
-        <div class="tab-content bg-base-100 border-base-300" role="tabpanel" class="hidden" id="accesslog-tab-pane" aria-labelledby="accesslog-tab">
+        <div class="tab-content bg-base-100 border-neutral/10" role="tabpanel" class="hidden" id="accesslog-tab-pane" aria-labelledby="accesslog-tab">
           <div class="flex flex-col gap-2 p-6">
             <div class="skeleton h-4 w-full"></div>
             <div class="skeleton h-4 w-full"></div>
@@ -111,7 +100,7 @@
       {% endif %}
       {% if perms.people.comment_person %}
         <button role="tab" class="tab" id="comments-tab" data-tabs-target="#comments-tab-pane" aria-selected="false"><i data-lucide="message-square" class="w-4 h-4 mr-1"></i>{% trans 'Comments' %}</button>
-        <div class="tab-content bg-base-100 border-base-300 p-6" role="tabpanel" class="hidden" id="comments-tab-pane" aria-labelledby="comments-tab">
+        <div class="tab-content bg-base-100 border-neutral/10 p-6" role="tabpanel" class="hidden" id="comments-tab-pane" aria-labelledby="comments-tab">
           {% include 'comment_display.html' with comment_url='people:add-comment' %}
         </div>
       {% endif %}

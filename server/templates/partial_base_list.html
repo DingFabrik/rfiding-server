@@ -4,10 +4,10 @@
       {% include 'snippets/empty_list.html' with model=model %}
     {% endblock %}
   {% else %}
-    <div class="card card-border bg-base-100">
+    <div class="card card-border border-neutral/10 bg-base-100">
       <div class="card-body p-2">
         {% block table_outer %}
-          <div class="max-w-full overflow-x-auto">
+          <div class="">
             <table class="table">
               {% block table %}
 

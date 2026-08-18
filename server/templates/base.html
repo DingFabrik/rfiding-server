@@ -22,7 +22,7 @@
     data-theme="{{ user.theme|default:"blue" }}-{{ user.theme_mode|default:"light" }}"
     hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
     {% if user.is_authenticated %}
-    <div class="navbar bg-base-100 border-base-300 fixed top-0 z-30 border-b shadow-sm">
+    <div class="navbar bg-base-100 border-neutral/10 fixed top-0 z-30 border-b shadow-sm">
       <div class="navbar-start">
         <a class="btn btn-ghost px-2" href="{% url 'home' %}">
           <img src="{% static "images/logo_dark.svg" %}" alt="Logo" width="40" height="40">

@@ -2,28 +2,35 @@
 {% load i18n %}
 
 {% block empty_state %}
-{% include "snippets/empty_list.html" with model=model icon="map-pin" can_create=can_create %}
+  {% include 'snippets/empty_list.html' with model=model icon='map-pin' can_create=can_create %}
 {% endblock %}
 
 {% block table %}
-    <thead>
-        <tr>
-            <th>{% trans "Name" %}</th>
-            {% if perms.locations.modify_location %}
-            <th></th>
+  <thead>
+    <tr>
+      <th>
+        {% trans 'Name' %}
+      </th>
+      {% if perms.locations.modify_location %}
+        <th></th>
+      {% endif %}
+    </tr>
+  </thead>
+  {% for object in locations %}
+    <tr>
+      <td>
+        <a class="link-hover link-primary" href="{% url 'locations:detail' object.pk %}">{{ object.name }}</a>
+      </td>
+      {% if perms.locations.modify_location %}
+        <td>
+          <div class="flex gap-2 justify-end">
+            <a href="{% url 'locations:update' object.pk %}" class="tooltip" data-tip="{% trans 'Edit' %}"><i data-lucide="square-pen" class="w-4 h-4"></i></a>
+            {% if perms.locations.delete_location %}
+              <a href="{% url 'locations:delete' object.pk %}" class="tooltip" data-tip="{% trans 'Delete' %}"><i data-lucide="trash-2" class="w-4 h-4 text-error"></i></a>
             {% endif %}
-        </tr>
-        </thead>
-{% for object in locations %}
-<tr>
-<td><a class="link-hover link-primary" href="{% url "locations:detail" object.pk %}">{{ object.name }}</a></td>
-{% if perms.locations.modify_location %}
-<td>
-{% if perms.locations.modify_location %}
-<a href="{% url 'locations:update' object.pk %}" class="tooltip" data-tip="{% trans 'Edit' %}"><i data-lucide="square-pen" class="w-4 h-4"></i></a>
-{% endif %}
-</td>
-{% endif %}
-</tr>
-{% endfor %}
+          </div>
+        </td>
+      {% endif %}
+    </tr>
+  {% endfor %}
 {% endblock %}

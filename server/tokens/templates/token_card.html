@@ -1,5 +1,5 @@
 {% load i18n %}
-<div class="card card-border {% if token.is_active %}border-success{% elif token.archived %}border-base-300{% else %}border-error{% endif %} mb-2">
+<div class="card card-border {% if token.is_active %}border-success{% elif token.archived %}border-neutral/10{% else %}border-error{% endif %} mb-2">
     <div class="card-body gap-1 p-4">
         <div class="flex items-center gap-2">
             <i data-lucide="radio-tower" class="w-4 h-4 {% if token.is_active %}text-success{% else %}text-error{% endif %}"></i>
