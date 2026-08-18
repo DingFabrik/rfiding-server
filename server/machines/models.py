@@ -203,6 +203,13 @@ class Machine(TimestampedModel):
         verbose_name=_("Allowed on Holidays"),
         help_text=_("If set, the machine can be used on holidays."),
     )
+    
+    maintenance_message = models.TextField(
+        null=True,
+        blank=True,
+        verbose_name=_("Maintenance Message"),
+        help_text=_("Reason why the machine is in maintenance mode."),
+    )
 
     comments = GenericRelation("comments.Comment")
 

@@ -2,19 +2,15 @@
 <div id="qualifications_container">
   {% if qualifications %}
     <div class="max-w-full overflow-x-auto {% if not is_partial %} rounded-box border border-base-content/10{% endif %}">
-    <table class="table table-sm table-zebra mb-4 mt-1">
+    <table class="table mb-4 mt-1">
       <thead>
         <tr>
           <th>
             {% trans 'Name' %}
           </th>
-          <th>{% trans "Is Instructor" %}</th>
-          <th>{% trans "Is Maintainer" %}</th>
+          <th>{% trans "Role" %}</th>
           <th>{% trans 'Permission Level' %}</th>
           <th>{% trans 'Instructed by' %}</th>
-          <th>
-            {% trans 'Comment' %}
-          </th>
           <th>
             {% trans 'Date' %}
           </th>
@@ -26,9 +22,20 @@
       <tbody>
         {% for qualification in qualifications %}
           <tr>
-            <td>{% include "cells/machine.html" with machine=qualification.machine %}</td>
-            <td>{% include "snippets/boolean.html" with object=qualification.is_instructor %}</td>
-            <td>{% include "snippets/boolean.html" with object=qualification.is_maintainer %}</td>
+            <td>{% include "cells/machine.html" with machine=qualification.machine %}
+              {% if qualification.comment %}<p class="text-base-content/60 text-xs">{{qualification.comment}}</p>{% endif %}
+            </td>
+            <td>
+              {% if qualification.is_instructor %}
+                <div class="badge badge-soft badge-sm badge-primary">{% trans "Instructor" %}</div>
+              {% endif %}
+              {% if qualification.is_maintainer %}
+                <div class="badge badge-soft badge-sm badge-warning">{% trans "Maintainer" %}</div>
+              {% endif %}
+              {% if not qualification.is_instructor and not qualification.is_maintainer %}
+                <div class="badge badge-soft badge-sm badge-neutral">{% trans "User" %}</div>
+              {% endif %}
+            </td>
             <td>{% include "cells/permission_level.html" with permission_level=qualification.permission_level %}</td>
             <td>
               {% if qualification.instructed_by %}
@@ -37,7 +44,6 @@
                 --
               {% endif %}
             </td>
-            <td>{{ qualification.comment|default:'' }}</td>
             <td>{% user_date qualification.created "DATE_FORMAT" %}</td>
             {% if perms.people.qualify_person %}
               <td>
