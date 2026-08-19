@@ -16,7 +16,19 @@ class QualifyPersonForm(forms.ModelForm):
 
     class Meta:
         model = Qualification
-        fields = ["machine", "person", "instructed_by", "permission_level", "is_instructor", "is_maintainer", "comment"]
+        fields = [
+            "machine",
+            "person",
+            "instructed_by",
+            "permission_level",
+            "is_instructor",
+            "is_maintainer",
+            "comment",
+            "last_used",
+            "expires_at",
+            "expired",
+            "notified_at",
+        ]
         widgets = {
             "person": forms.HiddenInput(),
             "machine": forms.HiddenInput(),
@@ -28,6 +40,10 @@ class QualifyPersonForm(forms.ModelForm):
             ),
             "comment": forms.Textarea(attrs={"rows": 4}),
         }
+
+    # Fields only relevant once a qualification exists, shown read only for debugging.
+    read_only_expiration_fields = ("last_used", "expires_at", "expired")
+    editable_expiration_fields = ("notified_at",)
 
     def __init__(self, *args, **kwargs):
         super(QualifyPersonForm, self).__init__(*args, **kwargs)
@@ -42,3 +58,8 @@ class QualifyPersonForm(forms.ModelForm):
             instructors.insert(0, ("", "---------"))
             self.fields["instructed_by"].choices = instructors
             self.fields["instructed_by"].widget.choices = instructors
+            for field_name in self.read_only_expiration_fields:
+                self.fields[field_name].disabled = True
+        else:
+            for field_name in self.read_only_expiration_fields + self.editable_expiration_fields:
+                del self.fields[field_name]

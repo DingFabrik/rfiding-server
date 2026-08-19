@@ -93,6 +93,7 @@ def check_access(machine, tokenID, compartmentID=None):
         if (
             qualification is None
             or qualification.permission_level == PERMISSION_LEVELS[2][0]
+            or qualification.expired is not None
         ):
             if checked_machine.state == Machine.MachineStatus.MAINTENANCE:
                 is_system_maintainer = Person.objects.filter(
@@ -108,6 +109,7 @@ def check_access(machine, tokenID, compartmentID=None):
             space_state = SpaceState.objects.first()
             if space_state is not None and not space_state.is_open:
                 raise PermissionDenied("Space is closed")
+        qualification.mark_used()
     save_access_log.delay(machine.id, token["id"], LOG_TYPE_ENABLED, timestamp=datetime.datetime.now())
 
     now = datetime.datetime.now()

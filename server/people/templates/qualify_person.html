@@ -32,6 +32,15 @@
     {{ form.is_instructor|as_crispy_field }}
     {{ form.is_maintainer|as_crispy_field }}
     {{ form.comment|as_crispy_field}}
+    {% if form.instance.pk %}
+        <fieldset class="fieldset border border-neutral/10 rounded-box p-4 mb-3">
+            <legend class="fieldset-legend px-2">{% trans "Expiration (debug)" %}</legend>
+            {{ form.last_used|as_crispy_field }}
+            {{ form.expires_at|as_crispy_field }}
+            {{ form.expired|as_crispy_field }}
+            {{ form.notified_at|as_crispy_field }}
+        </fieldset>
+    {% endif %}
     <button class="btn btn-primary btn-block mb-3" type="submit">{% trans "Save" %}</button>
 </form>
 {% endblock %}

@@ -91,6 +91,12 @@ class ConfigureMachineForm(forms.ModelForm):
         self.helper.layout = Layout(
             AppendedText("runtimer", "h:m:s"),
             AppendedText("min_power", "w"),
+            Fieldset(
+                _("Qualification Expiration"),
+                AppendedText("qualification_expiry_unused_days", _("days")),
+                AppendedText("qualification_expiry_used_days", _("days")),
+                css_id="qualification-expiration-fieldset",
+            ),
         )
         self.helper.form_tag = False
 
@@ -99,7 +105,9 @@ class ConfigureMachineForm(forms.ModelForm):
         fields = [
             "runtimer",
             "min_power",
-            "allowed_on_holidays"
+            "allowed_on_holidays",
+            "qualification_expiry_unused_days",
+            "qualification_expiry_used_days",
         ]
 
 

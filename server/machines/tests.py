@@ -1,4 +1,7 @@
+from django.contrib.auth import get_user_model
+from django.test import TestCase
 from django.urls import reverse
+from django.utils import timezone
 from freezegun import freeze_time
 from machines.models import Machine, MachineTime
 from rest_framework import status
@@ -290,6 +293,39 @@ class V1CheckMachineTests(APITestCase):
         response = self.client.get(V1CheckMachineTests.url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(response.data["access"], 0)
+
+    def test_expired_qualification_disallows(self):
+        from django.utils import timezone
+
+        data = {"machine": "aabbccddeeff", "tokenUid": "456"}
+        machine = Machine.objects.create(
+            mac_address="aa:bb:cc:dd:ee:ff", hostname="test", name="test"
+        )
+        person = Person.objects.create(name="test", email="test@example.com")
+        Qualification.objects.create(
+            machine=machine, person=person, expired=timezone.now()
+        )
+        Token.objects.create(serial="456", person=person)
+        response = self.client.get(V1CheckMachineTests.url, data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.data["error"], "No Access!")
+
+    def test_access_marks_qualification_used_and_sets_expiry(self):
+        data = {"machine": "aabbccddeeff", "tokenUid": "456"}
+        machine = Machine.objects.create(
+            mac_address="aa:bb:cc:dd:ee:ff",
+            hostname="test",
+            name="test",
+            qualification_expiry_used_days=90,
+        )
+        person = Person.objects.create(name="test", email="test@example.com")
+        qualification = Qualification.objects.create(machine=machine, person=person)
+        Token.objects.create(serial="456", person=person)
+        response = self.client.get(V1CheckMachineTests.url, data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        qualification.refresh_from_db()
+        self.assertIsNotNone(qualification.last_used)
+        self.assertIsNotNone(qualification.expires_at)
 
 class V2CheckMachineTests(APITestCase):
     url = reverse("api:v2:machine_check")
@@ -631,3 +667,49 @@ class V2CheckMachineTests(APITestCase):
         response = self.client.get(V2CheckMachineTests.url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(response.data["access"], 0)
+
+
+class MachineQualificationsTableTests(TestCase):
+    def setUp(self):
+        self.user = get_user_model().objects.create_superuser(
+            email="admin@example.com", password="pass"
+        )
+        self.client.force_login(self.user)
+        self.machine = Machine.objects.create(
+            mac_address="aa:bb:cc:dd:ee:ff",
+            hostname="test",
+            name="test",
+            qualification_expiry_unused_days=3,
+        )
+        self.person = Person.objects.create(name="test", email="test@example.com")
+
+    def test_detail_page_shows_expiration_column(self):
+        Qualification.objects.create(machine=self.machine, person=self.person)
+        response = self.client.get(
+            reverse("machines:detail", kwargs={"pk": self.machine.pk})
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Expiration")
+
+    def test_far_future_expiration_is_hidden(self):
+        self.machine.qualification_expiry_unused_days = 365
+        self.machine.save()
+        Qualification.objects.create(
+            machine=self.machine, person=self.person, permission_level="always"
+        )
+        response = self.client.get(
+            reverse("machines:detail", kwargs={"pk": self.machine.pk})
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertNotContains(response, "text-warning")
+
+    def test_qualifications_list_page_shows_expired_status(self):
+        Qualification.objects.create(
+            machine=self.machine, person=self.person, expired=timezone.now()
+        )
+        response = self.client.get(
+            reverse("machines:qualifications", kwargs={"pk": self.machine.pk})
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "octagon-x")
+        self.assertContains(response, "text-error")

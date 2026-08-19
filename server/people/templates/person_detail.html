@@ -85,7 +85,7 @@
             <a class="btn btn-primary btn-sm" href="{% url 'people:qualify' person.pk %}"><i data-lucide="shield-plus" class="w-4 h-4"></i>{% trans 'Add Qualification' %}</a>
           </div>
         {% endif %}
-        {% include 'person_qualifications_table.html' with is_partial=True set_history=False %}
+        {% include 'qualifications_table.html' with is_partial=True subject='person' %}
       </div>
       {% if perms.access_log.view_access_log %}
         <button role="tab" class="tab" id="accesslog-tab" hx-get="{% url 'access_log:for-person' object.pk %}" hx-target="#accesslog-tab-pane" data-tabs-target="#accesslog-tab-pane" aria-selected="false"><i data-lucide="list" class="w-4 h-4 mr-1"></i>{% trans 'Access Log' %}</button>

@@ -1,4 +1,8 @@
+from datetime import timedelta
+
+from django.conf import settings
 from django.db import models
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django.utils.translation import gettext
 from django.urls import reverse
@@ -8,6 +12,12 @@ from django.contrib.contenttypes.fields import GenericRelation
 from base.models import TimestampedModel
 
 from machines.models import Machine
+
+QUALIFICATION_EXPIRY_WARNING_DAYS = (
+    settings.QUALIFICATION_EXPIRY_WARNING_DAYS
+    if hasattr(settings, "QUALIFICATION_EXPIRY_WARNING_DAYS")
+    else 7
+)
 
 
 class Person(TimestampedModel):
@@ -101,6 +111,63 @@ class Qualification(TimestampedModel):
         ),
         verbose_name=_("Is Maintainer"),
     )
+
+    last_used = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name=_("Last Used"),
+        help_text=_("When this qualification was last used to access the machine."),
+    )
+    expires_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name=_("Expires At"),
+        help_text=_(
+            "When this qualification will expire if it is not used again. Empty if "
+            "expiration is disabled for this machine."
+        ),
+    )
+    expired = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name=_("Expired"),
+        help_text=_("When this qualification expired."),
+    )
+    notified_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name=_("Notified At"),
+        help_text=_(
+            "When the person was last notified of the upcoming expiration. Clear to "
+            "send a notification again."
+        ),
+    )
+
+    def compute_expires_at(self):
+        """Return when this qualification would expire if not used again, or None if disabled."""
+        if self.last_used is None:
+            days = self.machine.qualification_expiry_unused_days
+            base = self.created
+        else:
+            days = self.machine.qualification_expiry_used_days
+            base = self.last_used
+        if not days:
+            return None
+        return base + timedelta(days=days)
+
+    def mark_used(self):
+        self.last_used = timezone.now()
+        self.expires_at = self.compute_expires_at()
+        self.notified_at = None
+        self.save(update_fields=["last_used", "expires_at", "notified_at"])
+
+    @property
+    def expires_soon(self):
+        if self.expired is not None or self.expires_at is None:
+            return False
+        return self.expires_at <= timezone.now() + timedelta(
+            days=QUALIFICATION_EXPIRY_WARNING_DAYS
+        )
 
     def __str__(self):
         return gettext(f"{self.person} qualified on {self.machine}")

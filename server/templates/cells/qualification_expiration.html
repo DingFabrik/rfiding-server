@@ -1,0 +1,8 @@
+{% load i18n %}
+{% if qualification.expired %}
+  <i data-lucide="octagon-x" class="w-4 h-4 mr-1 inline text-error" aria-hidden="true"></i><span class="text-error">{% include 'cells/timestamp.html' with timestamp=qualification.expired %}</span>
+{% elif qualification.expires_soon %}
+  <span class="text-warning">{% include 'cells/timestamp.html' with timestamp=qualification.expires_at %}</span>
+{% else %}
+  --
+{% endif %}

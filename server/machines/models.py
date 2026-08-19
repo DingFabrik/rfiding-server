@@ -211,6 +211,25 @@ class Machine(TimestampedModel):
         help_text=_("Reason why the machine is in maintenance mode."),
     )
 
+    qualification_expiry_unused_days = models.PositiveIntegerField(
+        null=True,
+        blank=True,
+        verbose_name=_("Qualification Expiry (Unused)"),
+        help_text=_(
+            "Number of days after which a qualification for this machine expires if it "
+            "has never been used. Leave empty to disable this expiration."
+        ),
+    )
+    qualification_expiry_used_days = models.PositiveIntegerField(
+        null=True,
+        blank=True,
+        verbose_name=_("Qualification Expiry (After Use)"),
+        help_text=_(
+            "Number of days after its last use after which a qualification for this "
+            "machine expires. Leave empty to disable this expiration."
+        ),
+    )
+
     comments = GenericRelation("comments.Comment")
 
     class Meta:

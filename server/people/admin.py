@@ -13,7 +13,8 @@ class PersonAdmin(admin.ModelAdmin):
 
 
 class QualificationAdmin(admin.ModelAdmin):
-    pass
+    list_display = ("person", "machine", "last_used", "expires_at", "expired", "notified_at")
+    list_filter = ("expired",)
 
 admin.site.register(Person, PersonAdmin)
 admin.site.register(Qualification, QualificationAdmin)

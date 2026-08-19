@@ -7,7 +7,7 @@
         <thead>
           <tr>
             <th>
-              {% trans 'Name' %}
+              {% if subject == 'machine' %}{% trans 'Machine' %}{% else %}{% trans 'Name' %}{% endif %}
             </th>
             <th>
               {% trans 'Role' %}
@@ -21,6 +21,9 @@
             <th>
               {% trans 'Date' %}
             </th>
+            <th>
+              {% trans 'Expiration' %}
+            </th>
             {% if perms.people.qualify_person %}
               <th></th>
             {% endif %}
@@ -30,7 +33,11 @@
           {% for qualification in qualifications %}
             <tr>
               <td>
-                {% include 'cells/person.html' with person=qualification.person %}
+                {% if subject == 'machine' %}
+                  {% include 'cells/machine.html' with machine=qualification.machine %}
+                {% else %}
+                  {% include 'cells/person.html' with person=qualification.person %}
+                {% endif %}
                 {% if qualification.comment %}
                   <p class="text-base-content/60 text-xs">{{ qualification.comment }}</p>
                 {% endif %}
@@ -51,6 +58,9 @@
               <td>
                 {% user_date qualification.created 'DATE_FORMAT' %}
               </td>
+              <td>
+                {% include 'cells/qualification_expiration.html' %}
+              </td>
               {% if perms.people.qualify_person %}
                 <td>
                   <div class="flex gap-2 justify-end">
@@ -64,11 +74,15 @@
         </tbody>
       </table>
     </div>
-    {% url 'machines:qualifications' machine.pk as page_path %}
     {% include 'base_pagination.html' with page_obj=qualifications target='qualifications_container' %}
   {% else %}
     <div class="mb-6 mx-6 mt-4">
-      {% include 'snippets/empty.html' with icon='ban' message='There are no people qualified for this machine'|translate %}
+      {% if subject == 'machine' %}
+        {% include 'snippets/empty.html' with icon='ban' message='There are no people qualified for this machine'|translate %}
+      {% else %}
+        {% blocktrans asvar empty_message with name=person.name %}<b>{{ name }}</b> is not qualified for any machines.{% endblocktrans %}
+        {% include 'snippets/empty.html' with icon='ban' message=empty_message %}
+      {% endif %}
     </div>
   {% endif %}
 </div>
