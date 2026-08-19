@@ -28,11 +28,11 @@
     {% endif %}
     <div class="join">
       {% if can_edit %}
-        <a href="{% url request.resolver_match.namespace|add:':update' object.pk %}" class="btn btn-primary join-item"><i data-lucide="square-pen" class="w-5 h-5"></i>{% trans 'Edit ' %}</a>
-        <a href="{% url request.resolver_match.namespace|add:':configure' object.pk %}" class="btn join-item"><i data-lucide="sliders-horizontal" class="w-5 h-5"></i>{% trans 'Configure' %}</a>
+        <a href="{% url request.resolver_match.namespace|add:':update' object.pk %}" class="btn btn-primary join-item"><i data-lucide="square-pen" class="w-5 h-5"></i><span class="hidden md:inline">{% trans 'Edit ' %}</span></a>
+        <a href="{% url request.resolver_match.namespace|add:':configure' object.pk %}" class="btn join-item"><i data-lucide="sliders-horizontal" class="w-5 h-5"></i><span class="hidden md:inline">{% trans 'Configure' %}</span></a>
       {% endif %}
       {% if can_delete %}
-        <a href="{% url request.resolver_match.namespace|add:':delete' object.pk %}" class="btn btn-error join-item" data-modal-target="confirmDeleteModal"><i data-lucide="trash-2" class="w-5 h-5"></i>{% trans 'Delete' %}</a>
+        <a href="{% url request.resolver_match.namespace|add:':delete' object.pk %}" class="btn btn-error join-item" data-modal-target="confirmDeleteModal"><i data-lucide="trash-2" class="w-5 h-5"></i><span class="hidden md:inline">{% trans 'Delete' %}</span></a>
       {% endif %}
     </div>
   </div>

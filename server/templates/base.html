@@ -39,7 +39,7 @@
       </div>
       <div class="navbar-end gap-1">
         {% if space_state %}
-          <a href="{% url "space:status" %}" class="badge {% if space_state.is_open %}badge-success{% else %}badge-error{% endif %} hidden md:inline-flex">{{ space_state }}</a>
+          <a href="{% url "space:status" %}" class="badge {% if space_state.is_open %}badge-success{% else %}badge-error{% endif %} inline-flex">{{ space_state }}</a>
         {% endif %}
         <button type="button" class="btn btn-outline btn-primary btn-sm hidden md:inline-flex" data-modal-target="searchUniversalModal">
           <i data-lucide="search" class="w-4 h-4"></i> {% trans "Search" %}
@@ -64,7 +64,7 @@
           <li class="menu-title">{{ user.name|default:user.email }}</li>
           {% for item in side_menu %}
             {% if item.type == "divider" %}
-              <li class="divider"></li>
+              <li></li>
             {% else %}
               {% if item.has_permission %}
                 <li><a class="{% if item.active %}menu-active{% endif %}" href="{{ item.url }}"><i data-lucide="{{ item.icon }}" class="w-4 h-4"></i> {{ item.name }}</a></li>
@@ -90,18 +90,15 @@
           popover
           id="mobile-menu"
           style="position-anchor:--mobile-menu">
-          {% if space_state %}
-            <li class="px-2 py-1"><a href="{% url "space:status" %}" class="badge {% if space_state.is_open %}badge-success{% else %}badge-error{% endif %}">{{ space_state }}</a></li>
-          {% endif %}
           {% for item in menu %}
             {% if item.has_permission %}
               <li><a class="{% if item.active %}menu-active{% endif %}" href="{{ item.url }}"><i data-lucide="{{ item.icon }}" class="w-4 h-4"></i> {{ item.name }}</a></li>
             {% endif %}
           {% endfor %}
-          <li class="divider my-0"></li>
+          <li></li>
           {% for item in side_menu %}
             {% if item.type == "divider" %}
-              <li class="divider my-0"></li>
+              <li></li>
             {% else %}
               {% if item.has_permission %}
                 <li><a class="{% if item.active %}menu-active{% endif %}" href="{{ item.url }}"><i data-lucide="{{ item.icon }}" class="w-4 h-4"></i> {{ item.name }}</a></li>
