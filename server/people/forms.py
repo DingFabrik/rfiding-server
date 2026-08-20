@@ -2,12 +2,19 @@ from django import forms
 from django.utils.translation import gettext_lazy as _
 
 from .models import Person, Qualification
+from .conf import PERSON_ENABLE_SLACK_EMAIL, PERSON_ENABLE_EMAIL
 
-
+def make_person_fields():
+    fields = ["member_id", "name", "language", "notes", "is_active"]
+    if PERSON_ENABLE_SLACK_EMAIL:
+        fields.insert(1, "slack_email")
+    if PERSON_ENABLE_EMAIL:
+        fields.insert(1, "email")
+    return fields
 class PersonForm(forms.ModelForm):
     class Meta:
         model = Person
-        fields = ["member_id", "name", "email", "is_active", "is_system_maintainer", "notes"]
+        fields = make_person_fields()
 
 
 class QualifyPersonForm(forms.ModelForm):
@@ -61,5 +68,7 @@ class QualifyPersonForm(forms.ModelForm):
             for field_name in self.read_only_expiration_fields:
                 self.fields[field_name].disabled = True
         else:
-            for field_name in self.read_only_expiration_fields + self.editable_expiration_fields:
+            for field_name in (
+                self.read_only_expiration_fields + self.editable_expiration_fields
+            ):
                 del self.fields[field_name]

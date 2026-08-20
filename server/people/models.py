@@ -12,6 +12,7 @@ from django.contrib.contenttypes.fields import GenericRelation
 from base.models import TimestampedModel
 
 from machines.models import Machine
+from .conf import PERSON_DEFAULT_LANGUAGE
 
 QUALIFICATION_EXPIRY_WARNING_DAYS = (
     settings.QUALIFICATION_EXPIRY_WARNING_DAYS
@@ -19,10 +20,18 @@ QUALIFICATION_EXPIRY_WARNING_DAYS = (
     else 7
 )
 
-
 class Person(TimestampedModel):
     name = models.CharField(max_length=100, verbose_name=_("Name"))
-    email = models.EmailField(unique=True, verbose_name=_("Email address"))
+    email = models.EmailField(unique=True, null=True, verbose_name=_("E-Mail address"))
+    slack_email = models.CharField(max_length=100, unique=True, verbose_name=_("Slack e-mail"),
+                                    null=True, blank=True,
+                                    help_text=_("Slack account e-mail for sending notifications."))
+    slack_conversation_id = models.CharField(max_length=100, unique=True, verbose_name=_("Slack conversation ID"),
+                                             null=True, blank=True)
+    language = models.CharField(
+        _("Language"), max_length=10, default=PERSON_DEFAULT_LANGUAGE, choices=settings.LANGUAGES,
+        help_text=_("Preferred language for notifications and emails.")
+    )
     notes = models.TextField(null=True, blank=True, verbose_name=_("Notes"))
     member_id = models.IntegerField(
         null=True, blank=True, unique=True, verbose_name=_("Member ID")
@@ -35,6 +44,7 @@ class Person(TimestampedModel):
         ),
         verbose_name=_("Is System Maintainer"),
     )
+    
     comments = GenericRelation("comments.Comment")
 
     class Meta:
