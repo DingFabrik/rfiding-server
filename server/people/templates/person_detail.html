@@ -7,7 +7,7 @@
 {% block content %}
   <div class="flex flex-wrap items-center gap-2 mb-5 -mt-2">
     {% if person.member_id %}
-      <span class="badge badge-soft badge-sm font-mono"></i>#{{ person.member_id }}</span>
+      <span class="badge badge-soft badge-sm"></i>{% include 'snippets/id_display.html' with value=person.member_id %}</span>
     {% endif %}
     {% if person.is_system_maintainer %}
       <span class="badge badge-soft badge-accent badge-sm"><i data-lucide="wrench" class="w-3 h-3"></i>{% trans 'System Maintainer' %}</span>
@@ -45,7 +45,7 @@
       <ul class="list text-sm">
         <li class="list-row items-center px-0 py-1.5 border-b border-base-200">
           <span class="text-base-content/60">{% trans 'Member ID' %}</span>
-          <span class="font-medium font-mono text-right">{{ person.member_id|default:'--' }}</span>
+          <span class="font-medium text-right">{% include 'snippets/id_display.html' with value=person.member_id %}</span>
         </li>
         <li class="list-row items-center px-0 py-1.5 border-b border-base-200">
           <span class="text-base-content/60">{% trans 'E-Mail' %}</span>

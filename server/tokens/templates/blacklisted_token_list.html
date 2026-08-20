@@ -16,7 +16,7 @@
 <ul class="list">
 {% for object in tokens %}
   <li class="list-row items-center">
-    <span class="font-mono">{{ object.serial }}</span>
+    {% include 'snippets/id_display.html' with value=object.serial %}
     {% if perms.tokens.delete_blacklistedtoken %}
       <a href="{% url "tokens:delete-blacklisted" object.pk %}" class="tooltip" data-tip="{% trans 'Delete' %}"><i data-lucide="trash-2" class="w-4 h-4 text-error"></i></a>
     {% endif %}

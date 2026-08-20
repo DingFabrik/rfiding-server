@@ -27,7 +27,7 @@
   </thead>
   {% for object in people %}
     <tr>
-      <td>{{ object.member_id|default:'--' }}</td>
+      <td>{% include 'snippets/id_display.html' with value=object.member_id %}</td>
       <td>
         <a class="link-hover link-primary" href="{% url 'people:detail' object.pk %}">{{ object.name }}</a>
       </td>

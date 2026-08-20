@@ -39,7 +39,7 @@
   {% include "auditlog/logentry_action.html" with action=object.action %}
     </td>
       <td>
-        <span class="badge badge-ghost badge-sm"><i data-lucide="{{ object.content_type.app_label|app_icon }}" class="w-3 h-3"></i> {{ object.content_type.name }}</span>
+        <span class="badge badge-ghost badge-sm"><i data-lucide="{{ object.content_type.app_label|app_icon }}" class="w-3 h-3"></i><span class="hidden md:inline">{{ object.content_type.name }}</span></span>
       </td>
       <td>
         <a class="link link-primary link-hover" href="{% url object.content_type.app_label|add:':detail' object.object_pk %}">{{ object.object_repr }}</a>

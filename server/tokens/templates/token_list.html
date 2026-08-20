@@ -39,7 +39,7 @@
   {% for object in tokens %}
     <tr>
       <td>
-        <a class="link-hover link-primary" href="{% url 'tokens:detail' object.pk %}">{{ object.serial }}</a>
+        <a class="link-hover link-primary" href="{% url 'tokens:detail' object.pk %}">{% include 'snippets/id_display.html' with value=object.serial %}</a>
       </td>
       <td>{{ object.format_label }}</td>
       <td>{{ object.type|default:'--' }}</td>

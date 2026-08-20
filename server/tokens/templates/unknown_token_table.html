@@ -11,7 +11,7 @@
         </thead>
 {% for token in tokens %}
 <tr>
-<td>{{ token.serial }}</td>
+<td>{% include 'snippets/id_display.html' with value=token.serial %}</td>
 <td>{{ token.machine }}</td>
 <td>{% include "snippets/timestamp.html" with timestamp=token.created %}</td>
 {% if can_create_token or can_create_blacklistedtoken %}

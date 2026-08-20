@@ -1,5 +1,5 @@
 {% if token %}
-<a href="{% url 'tokens:detail' token.pk %}" class="link-hover link-primary" data-popover-toggle="token-popover" data-token-pk="{{ token.pk }}">{{ token }}</a>
+<a href="{% url 'tokens:detail' token.pk %}" class="link-hover link-primary" data-popover-toggle="token-popover" data-token-pk="{{ token.pk }}">{% include 'snippets/id_display.html' with value=token.serial %}</a>
 {% else %}
 ----
 {% endif %}

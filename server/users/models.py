@@ -139,6 +139,9 @@ class RFIDingUser(AbstractUser):
         verbose_name = _("User")
         verbose_name_plural = _("Users")
         ordering = ["email"]
+        
+    def __str__(self):
+        return self.name
 
 
 USER_WIDGETS = [
