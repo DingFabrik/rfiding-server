@@ -17,13 +17,13 @@
 {% block content %}
   <div class="flex flex-wrap items-center gap-3 mb-5 -mt-2">
     {% if object.archived %}
-      <span class="badge badge-error badge-sm font-mono"><i data-lucide="archive" class="w-3 h-3"></i>{% trans 'Archived' %}</span>
+      <span class="badge badge-error badge-sm"><i data-lucide="archive" class="w-3 h-3"></i>{% trans 'Archived' %}</span>
     {% endif %}
     {% if object.type %}
       <span class="badge badge-soft badge-sm">{{ object.type }}</span>
     {% endif %}
     {% if object.format_label %}
-      <span class="badge badge-soft badge-sm font-mono"><i data-lucide="tag" class="w-3 h-3"></i>{{ object.format_label }}</span>
+      <span class="badge badge-soft badge-sm"><i data-lucide="tag" class="w-3 h-3"></i>{{ object.format_label }}</span>
     {% endif %}
     {% if not object.archived %}
     <span>{% include "snippets/active_toggle.html" %}</span>
@@ -59,7 +59,7 @@
       <ul class="list text-sm">
         <li class="list-row items-center px-0 py-1.5 border-b border-base-200">
           <span class="text-base-content/60">{% trans 'Label' %}</span>
-          <span class="font-medium font-mono text-right">{{ object.format_label|default:'--' }}</span>
+          <span class="font-medium text-right">{{ object.format_label|default:'--' }}</span>
         </li>
         <li class="list-row items-center px-0 py-1.5 border-b border-base-200">
           <span class="text-base-content/60">{% trans 'Type' %}</span>
