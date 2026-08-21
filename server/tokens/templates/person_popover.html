@@ -1,7 +1,7 @@
 <div>
     <h6 class="font-bold mb-1">{{ object.name }}</h6>
     <ul class="list-none">
-        <li><span class="font-bold text-base-content/70">Member ID:</span> {{ object.member_id }}</li>
+        <li><span class="font-bold text-base-content/70">Member ID:</span> {% include "snippets/id_display.html" with value=object.id %}</li>
         <li><span class="font-bold text-base-content/70">Email:</span> {{ object.email }}</li>
         <li><span class="font-bold text-base-content/70">Is Active:</span> {% include "snippets/active_toggle.html" %}</li>
     </ul>

@@ -18,7 +18,7 @@
 <td>
               <div class="flex gap-2 justify-end">
 {% if can_create_token %}
-<a href="{% url "tokens:assign" token.serial %}" class="tooltip" data-tip="{% trans 'Assign' %}"><i data-lucide="link-hover link-primary" class="w-4 h-4"></i></a>
+<a href="{% url "tokens:assign" token.serial %}" class="tooltip" data-tip="{% trans 'Assign' %}"><i data-lucide="radio-tower" class="w-4 h-4"></i></a>
 {% endif %}
 {% if can_create_blacklistedtoken %}
 <a href="{% url "tokens:blacklist-token" token.serial %}" class="tooltip" data-tip="{% trans 'Blacklist' %}"><i data-lucide="ban" class="w-4 h-4 text-error"></i></a>

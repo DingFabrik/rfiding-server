@@ -1,8 +1,13 @@
 {% load base_extra %}{% load i18n %}<div>
     <h6 class="font-bold mb-1">{{ object.name }}</h6>
     <ul class="list-none">
+        <li><span class="font-bold text-base-content/70">{% trans "Type" %}:</span> {{ object.get_type_display }}</li>
+        {% if object.hostname %}
         <li><span class="font-bold text-base-content/70">{% trans "Hostname" %}:</span> {{ object.hostname }}</li>
+        {% endif %}
+        {% if object.location %}
         <li><span class="font-bold text-base-content/70">{% trans "Location" %}:</span> {{ object.location|default:"--" }}</li>
+        {% endif %}
         <li><span class="font-bold text-base-content/70">{% trans "State" %}:</span> {% include "snippets/machine_state_label.html" with object=object %}</li>
         <li><span class="font-bold text-base-content/70">{% trans "Last Access" %}:</span> {% user_date last_access.timestamp|default:_('Never') "SHORT_DATETIME_FORMAT" %}</li>
     </ul>

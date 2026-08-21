@@ -31,9 +31,27 @@ def mark_expired(modeladmin, request, queryset):
 def mark_unexpired(modeladmin, request, queryset):
     queryset.update(expired=None, expires_at=None)
 
+class ExpiredListFilter(admin.SimpleListFilter):
+    title = _("Qualification Expired")
+    parameter_name = "expired"
+
+    def lookups(self, request, model_admin):
+        return [
+            ("yes", _("Yes")),
+            ("no", _("No")),
+        ]
+
+    def queryset(self, request, queryset):
+        if self.value() == "yes":
+            return queryset.filter(expired__isnull=False)
+        if self.value() == "no":
+            return queryset.filter(expired__isnull=True)
+
+
 class QualificationAdmin(admin.ModelAdmin):
-    list_display = ("person", "machine", "last_used", "expires_at", "expired", "notified_at")
-    list_filter = ("expired",)
+    search_fields = ("person__name", "machine__name", "machine__hostname")
+    list_display = ("person", "machine", "permission_level", "is_instructor", "is_maintainer", "last_used", "expired")
+    list_filter = (ExpiredListFilter, "permission_level", "is_instructor", "is_maintainer")
     
     actions = [mark_expired, mark_unexpired]
 
