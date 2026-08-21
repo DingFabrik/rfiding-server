@@ -126,12 +126,34 @@ class RFIDingUser(AbstractUser):
         choices=MACHINE_FILTER_CHOICES["status"]["options"],
     )
 
+    class ThemeMode(models.TextChoices):
+        LIGHT = "light", _("Always Light")
+        DARK = "dark", _("Always Dark")
+        SYSTEM = "system", _("Follow System")
+
     theme_mode = models.CharField(
         max_length=10,
-        choices=[("light", _("Light")), ("dark", _("Dark")), ("auto", _("Auto"))],
-        default="auto",
+        choices=ThemeMode.choices,
+        default=ThemeMode.SYSTEM,
+        help_text=_(
+            "Whether the interface always uses the light or dark theme below, or "
+            "follows your device's setting."
+        ),
     )
-    theme = models.CharField(max_length=10, choices=THEME_COLORS, default="default")
+    light_theme = models.CharField(
+        _("Light Theme"),
+        max_length=10,
+        choices=THEME_COLORS,
+        default="default",
+        help_text=_("Theme used in light mode."),
+    )
+    dark_theme = models.CharField(
+        _("Dark Theme"),
+        max_length=10,
+        choices=THEME_COLORS,
+        default="default",
+        help_text=_("Theme used in dark mode."),
+    )
 
     objects = UserManager()
 

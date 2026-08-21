@@ -24,7 +24,8 @@ class ProfileForm(forms.ModelForm):
             Fieldset(
                 _("Display"),
                 "theme_mode",
-                "theme",
+                "light_theme",
+                "dark_theme",
             ),
             Fieldset(
                 _("Lists"),
@@ -51,7 +52,8 @@ class ProfileForm(forms.ModelForm):
             "default_people_filter",
             "default_machines_filter",
             "theme_mode",
-            "theme",
+            "light_theme",
+            "dark_theme",
         ]
 
 class UserForm(forms.ModelForm):
