@@ -1,3 +1,4 @@
+import secrets
 from datetime import timedelta
 
 from django.conf import settings
@@ -12,7 +13,7 @@ from django.contrib.contenttypes.fields import GenericRelation
 from base.models import TimestampedModel
 
 from machines.models import Machine
-from .conf import PERSON_DEFAULT_LANGUAGE
+from .conf import PERSON_DEFAULT_LANGUAGE, PERSON_DETAIL_KEY_VALID_HOURS
 
 QUALIFICATION_EXPIRY_WARNING_DAYS = (
     settings.QUALIFICATION_EXPIRY_WARNING_DAYS
@@ -45,6 +46,21 @@ class Person(TimestampedModel):
         verbose_name=_("Is System Maintainer"),
     )
     
+    detail_key = models.CharField(
+        max_length=64,
+        null=True,
+        blank=True,
+        unique=True,
+        verbose_name=_("Detail Key"),
+        help_text=_(
+            "Random key granting access to this person's self-service detail page. "
+            "Valid until Detail Key Expires At."
+        ),
+    )
+    detail_key_expires_at = models.DateTimeField(
+        null=True, blank=True, verbose_name=_("Detail Key Expires At")
+    )
+
     comments = GenericRelation("comments.Comment")
 
     class Meta:
@@ -64,6 +80,26 @@ class Person(TimestampedModel):
 
     def get_update_url(self):
         return reverse("people:update", kwargs={"pk": self.pk})
+
+    def generate_detail_key(self):
+        """Generate a new self-service detail page key, valid for PERSON_DETAIL_KEY_VALID_HOURS."""
+        self.detail_key = secrets.token_urlsafe(32)
+        self.detail_key_expires_at = timezone.now() + timedelta(
+            hours=PERSON_DETAIL_KEY_VALID_HOURS
+        )
+        self.save(update_fields=["detail_key", "detail_key_expires_at"])
+        return self.detail_key
+
+    def get_detail_url(self):
+        return reverse("people:public-detail", kwargs={"key": self.detail_key})
+
+    @property
+    def detail_key_valid(self):
+        return (
+            bool(self.detail_key)
+            and self.detail_key_expires_at is not None
+            and self.detail_key_expires_at > timezone.now()
+        )
 
     def __str__(self):
         if self.member_id is None:

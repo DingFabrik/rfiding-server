@@ -6,6 +6,11 @@ from . import ajax
 app_name = "people"
 
 urlpatterns = [
+    path(
+        "view/<str:key>",
+        views.PersonPublicDetailView.as_view(),
+        name="public-detail",
+    ),
     path("", views.PersonListView.as_view(), name="list"),
     path("<int:pk>", views.PersonDetailView.as_view(), name="detail"),
     path("add", views.PersonCreateView.as_view(), name="create"),

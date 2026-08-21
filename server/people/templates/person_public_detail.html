@@ -1,0 +1,11 @@
+{% extends "base_slim.html" %}
+{% load i18n %}
+
+{% block title %}{{ person.name }}{% endblock %}
+
+{% block content %}
+  <div class="bg-base-100 border border-neutral/10 rounded-box p-4 mb-6">
+    <h2 class="text-xs font-semibold uppercase tracking-wide text-base-content/50 mb-2">{% trans 'Your Qualifications' %}</h2>
+    {% include 'qualifications_table.html' with is_partial=True subject='person' %}
+  </div>
+{% endblock %}

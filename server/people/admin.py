@@ -7,13 +7,20 @@ from base.admin import mark_active, mark_inactive
 from .conf import PERSON_ENABLE_SLACK_EMAIL, PERSON_ENABLE_EMAIL
 
 
+@admin.action(description=_("Generate a new self-service detail page key"))
+def generate_detail_key(modeladmin, request, queryset):
+    for person in queryset:
+        person.generate_detail_key()
+
+
 class PersonAdmin(admin.ModelAdmin):
     list_display = ("member_id", "name", "email", "is_system_maintainer", "is_active")
     search_fields = ("name", "email")
     list_filter = ("is_active", "language", "is_system_maintainer")
+    readonly_fields = ("detail_key", "detail_key_expires_at")
 
-    actions = [mark_active, mark_inactive]
-    
+    actions = [mark_active, mark_inactive, generate_detail_key]
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.exclude = []

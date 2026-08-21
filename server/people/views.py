@@ -1,8 +1,10 @@
 from typing import Any
 from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.core.exceptions import PermissionDenied
 from django.db.models.base import Model as Model
 from django.db.models.query import QuerySet
 from django.core.paginator import Paginator
+from django.shortcuts import get_object_or_404
 from django.views.generic import (
     DetailView,
     CreateView,
@@ -84,6 +86,35 @@ class PersonDetailView(TitleMixin, PermissionRequiredMixin, DetailView):
         )
         qualifications_paginator = Paginator(
             qualifications, self.request.user.page_length
+        )
+        context["qualifications"] = qualifications_paginator.get_page(1)
+        return context
+
+
+class PersonPublicDetailView(TitleMixin, DetailView):
+    model = Person
+    template_name = "person_public_detail.html"
+    context_object_name = "person"
+    public_qualifications_page_length = 50
+
+    def get_object(self, queryset=None):
+        person = get_object_or_404(Person, detail_key=self.kwargs["key"])
+        if not person.detail_key_valid:
+            raise PermissionDenied(_("This link has expired."))
+        return person
+
+    def get_title(self):
+        return self.object.name
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        qualifications = (
+            self.object.qualifications.select_related("machine")
+            .select_related("instructed_by")
+            .all()
+        )
+        qualifications_paginator = Paginator(
+            qualifications, self.public_qualifications_page_length
         )
         context["qualifications"] = qualifications_paginator.get_page(1)
         return context
