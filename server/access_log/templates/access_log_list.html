@@ -7,19 +7,11 @@
 
 {% block table %}
     <thead>
-        <tr>
-            <th>{% trans "Date" %}</th>
-            <th>{% trans "Machine" %}</th>
-            <th>{% trans "Action" %}</th>
-            <th>{% trans "Token" %}</th>
-        </tr>
-        </thead>
-{% for object in object_list %}
-<tr>
-    <td>{% include "snippets/timestamp.html" with timestamp=object.timestamp %}</td>
-    <td>{% include "cells/machine.html" with machine=object.machine %}</td>
-    <td>{% include "cells/access_log_type.html" %}</td>
-    <td>{% include "cells/token.html" with token=object.token %}</td>
-</tr>
-{% endfor %}
+      {% include "cells/access_log_header.html" %}
+    </thead>
+    <tbody>
+    {% for object in object_list %}
+      {% include "cells/access_log_row.html" %}
+    {% endfor %}
+    </tbody>
 {% endblock %}

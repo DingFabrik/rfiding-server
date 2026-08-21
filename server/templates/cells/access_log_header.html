@@ -1,0 +1,6 @@
+{% load i18n %}<tr>
+  <th>{% trans 'Date' %}</th>
+  {% if subject_type != 'machine' %}<th>{% trans 'Machine' %}</th>{% endif %}
+  <th>{% trans 'Action' %}</th>
+  {% if subject_type != 'token' %}<th>{% trans 'Token' %}</th>{% endif %}
+</tr>

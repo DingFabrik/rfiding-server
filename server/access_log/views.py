@@ -43,32 +43,65 @@ class AccessLogListView(TitleMixin, PartialListMixin, ListView):
         return context
 
 
-class AccessLogForTokenView(TitleMixin, PartialListMixin, ListView):
-    title = _("Access Logs")
+class AccessLogForSubjectView(TitleMixin, PartialListMixin, ListView):
+    """Base for the "access log for one token/person/machine" pages.
+
+    Subclasses only need to set subject_type, get_queryset() and
+    get_subject(), everything else (title, template, empty state, "go to X"
+    link) is derived from that.
+    """
+
     model = AccessLog
     context_object_name = "access_logs"
     ordering = ["-timestamp"]
-    template_name = "access_log_for_token.html"
+    template_name = "access_log_for_subject.html"
+    subject_type = None
+    subject_labels = {
+        "token": _("token"),
+        "person": _("person"),
+        "machine": _("machine"),
+    }
+    empty_messages = {
+        "token": _("This token has not been used yet."),
+        "person": _("This person has not accessed anything yet."),
+        "machine": _("This machine has not been used yet."),
+    }
 
-    def get_queryset(self) -> QuerySet[Any]:
-        return super().get_queryset().filter(token__pk=self.kwargs["token"])
+    def get_subject(self):
+        raise NotImplementedError
+
+    def get_title(self):
+        return _("Access Log for %(subject)s") % {"subject": self.get_subject()}
 
     def get_paginate_by(self, queryset):
         return self.request.user.page_length
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        subject = self.get_subject()
         context["model"] = self.model
-        context["token"] = Token.objects.get(pk=self.kwargs["token"])
+        context["subject_type"] = self.subject_type
+        context["subject"] = subject
+        context["subject_url"] = subject.get_absolute_url()
+        context["subject_action_label"] = _("Go to %(subject_type)s") % {
+            "subject_type": self.subject_labels[self.subject_type]
+        }
+        context["empty_message"] = self.empty_messages[self.subject_type]
         return context
 
 
-class AccessLogForPersonView(TitleMixin, PartialListMixin, ListView):
-    title = _("Access Logs")
-    model = AccessLog
-    context_object_name = "access_logs"
-    ordering = ["-timestamp"]
-    template_name = "access_log_for_person.html"
+class AccessLogForTokenView(AccessLogForSubjectView):
+    subject_type = "token"
+
+    def get_queryset(self) -> QuerySet[Any]:
+        return super().get_queryset().filter(token__pk=self.kwargs["token"])
+
+    def get_subject(self):
+        return Token.objects.get(pk=self.kwargs["token"])
+
+
+class AccessLogForPersonView(AccessLogForSubjectView):
+    subject_type = "person"
 
     def get_queryset(self) -> QuerySet[Any]:
         return (
@@ -78,31 +111,15 @@ class AccessLogForPersonView(TitleMixin, PartialListMixin, ListView):
             .filter(token__person__pk=self.kwargs["person"])
         )
 
-    def get_paginate_by(self, queryset):
-        return self.request.user.page_length
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["model"] = self.model
-        context["person"] = Person.objects.get(pk=self.kwargs["person"])
-        return context
+    def get_subject(self):
+        return Person.objects.get(pk=self.kwargs["person"])
 
 
-class AccessLogForMachineView(TitleMixin, PartialListMixin, ListView):
-    title = _("Access Logs")
-    model = AccessLog
-    context_object_name = "access_logs"
-    ordering = ["-timestamp"]
-    template_name = "access_log_for_machine.html"
+class AccessLogForMachineView(AccessLogForSubjectView):
+    subject_type = "machine"
 
     def get_queryset(self) -> QuerySet[Any]:
         return super().get_queryset().filter(machine__pk=self.kwargs["machine"])
 
-    def get_paginate_by(self, queryset):
-        return self.request.user.page_length
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["model"] = self.model
-        context["machine"] = Machine.objects.get(pk=self.kwargs["machine"])
-        return context
+    def get_subject(self):
+        return Machine.objects.get(pk=self.kwargs["machine"])

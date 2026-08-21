@@ -1,0 +1,36 @@
+{% extends base_template %}
+{% load i18n %}
+
+{% block title %}
+  {% blocktrans with name=subject %}Access Log for {{ name }}{% endblocktrans %}
+{% endblock %}
+
+{% block top_actions %}
+  <a href="{{ subject_url }}" class="btn btn-outline btn-primary">{{ subject_action_label }}</a>
+{% endblock %}
+{% block bottom_actions %}
+{% endblock %}
+
+{% block content %}
+  <div id="access_log_container">
+    {% if object_list %}
+      <div class="{% if not is_partial %} rounded-box border border-neutral/10 {% endif %}">
+        <table class="table">
+          <thead>
+            {% include 'cells/access_log_header.html' %}
+          </thead>
+          <tbody>
+          {% for object in object_list %}
+            {% include 'cells/access_log_row.html' %}
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% include 'base_pagination.html' with target='access_log_container' %}
+    {% else %}
+      <div class="m-6">
+        {% include 'snippets/empty.html' with icon='history' message=empty_message %}
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}

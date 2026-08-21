@@ -1,0 +1,18 @@
+<tr>
+  <td>
+    {% include 'snippets/timestamp.html' with timestamp=object.timestamp %}
+  </td>
+  {% if subject_type != 'machine' %}
+    <td>
+      {% include 'cells/machine.html' with machine=object.machine %}
+    </td>
+  {% endif %}
+  <td>
+    {% include 'cells/access_log_type.html' %}
+  </td>
+  {% if subject_type != 'token' %}
+    <td>
+      {% include 'cells/token.html' with token=object.token %}
+    </td>
+  {% endif %}
+</tr>
