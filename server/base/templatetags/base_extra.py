@@ -1,6 +1,7 @@
 from django import template
 from django.utils.translation import gettext_lazy as _
 from django.utils import formats
+from django.utils.functional import Promise
 
 from users.models import RFIDingUser
 from base.app_icons import app_icon as _app_icon
@@ -95,8 +96,8 @@ def translate(text):
 def user_date(context, date, format="DATE_FORMAT"):
     if date is None:
         return None
-    if isinstance(date, str):
-        return date
+    if isinstance(date, (str, Promise)):
+        return str(date)
     if format in context:
         return formats.date_format(date, context[format])
     add_time = False

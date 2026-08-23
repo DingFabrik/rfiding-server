@@ -340,7 +340,7 @@ class MachineTime(TimestampedModel):
                 days.append(_("Saturday"))
             elif day == 6:
                 days.append(_("Sunday"))
-        return ", ".join(days)
+        return ", ".join(str(day) for day in days)
 
 
 class MachineRegistrationRequest(TimestampedModel):

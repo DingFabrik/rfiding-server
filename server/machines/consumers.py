@@ -14,6 +14,8 @@ logger = logging.getLogger(__name__)
 
 
 class MachineStateConsumer(AsyncJsonWebsocketConsumer):
+    manager = None
+
     async def connect(self):
         user = self.scope["user"]
         if not user.is_authenticated or not await sync_to_async(user.has_perm)("machines.view_machine_state"):
@@ -67,6 +69,8 @@ def parse_log_message(message):
         return message.hex()
 
 class MachineLogConsumer(AsyncJsonWebsocketConsumer):
+    manager = None
+
     async def connect(self):
         user = self.scope["user"]
         if not user.is_authenticated or not await sync_to_async(user.has_perm)("machines.view_machine_state"):

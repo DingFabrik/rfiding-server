@@ -13,7 +13,7 @@
         <li><a class="{% if item.active %}menu-active{% endif %}" href="{{ item.url }}"><i data-lucide="{{ item.icon }}" class="w-4 h-4"></i> {{ item.name }}</a></li>
       {% endif %}
     {% endfor %}
-    <li class="menu-title mt-2">{% trans "More" %}</li>
+        <li></li>
     {% for item in side_menu %}
       {% if item.type == "divider" %}
         <li></li>

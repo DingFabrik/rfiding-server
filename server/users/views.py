@@ -188,7 +188,7 @@ class GroupCreateView(TitleMixin, PermissionRequiredMixin, CreateView):
 
     model = Group
     form_class = GroupForm
-    template_name = "base_form.html"
+    template_name = "group_form.html"
     success_url = reverse_lazy("users:groups:list")
 
 
@@ -197,7 +197,7 @@ class GroupUpdateView(TitleMixin, PermissionRequiredMixin, UpdateView):
 
     model = Group
     form_class = GroupForm
-    template_name = "base_form.html"
+    template_name = "group_form.html"
     success_url = reverse_lazy("users:groups:list")
 
     def get_title(self):

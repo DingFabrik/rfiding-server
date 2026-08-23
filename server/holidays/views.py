@@ -24,7 +24,7 @@ class HolidayCreateView(TitleMixin, PermissionRequiredMixin, CreateView):
     title = _("Create Holiday")
 
     model = Holiday
-    template_name = "base_form.html"
+    template_name = "holiday_form.html"
     fields = ["name", "date", "repeats_annually"]
     success_url = reverse_lazy("holidays:list")
 
@@ -34,7 +34,7 @@ class HolidayUpdateView(TitleMixin, PermissionRequiredMixin, UpdateView):
     title = _("Edit Holiday")
 
     model = Holiday
-    template_name = "base_form.html"
+    template_name = "holiday_form.html"
     fields = ["name", "date", "repeats_annually"]
     success_url = reverse_lazy("holidays:list")
 

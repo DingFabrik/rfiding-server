@@ -17,7 +17,7 @@ def menu_processor(request):
             "url": reverse("tokens:list"),
             "icon": APP_ICONS["tokens"],
             "has_permission": request.user.has_perm("tokens.view_token"),
-            "active": request.resolver_match.app_name == "tokens",
+            "active": request.resolver_match.app_name == "tokens" and request.resolver_match.url_name != "blacklisted",
         },
         {
             "name": _("People"),
@@ -98,7 +98,7 @@ def menu_processor(request):
             "url": reverse("tokens:types:list"),
             "icon": APP_ICONS["tokens"],
             "has_permission": request.user.has_perm("tokens.view_tokentype"),
-            "active": request.resolver_match.url_name == "types",
+            "active": request.resolver_match.namespace == "tokens:types",
         },
         {
             "name": _("Django Admin"),

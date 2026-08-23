@@ -269,7 +269,7 @@ class TokenTypeCreateView(PermissionRequiredMixin, CreateView):
     permission_required = "tokens.add_tokentype"
 
     model = TokenType
-    template_name = "base_form.html"
+    template_name = "tokentype_form.html"
     fields = ["name", "description", "label_prefix", "label_id_padding"]
     success_url = reverse_lazy("tokens:types:list")
 
@@ -278,7 +278,7 @@ class TokenTypeUpdateView(PermissionRequiredMixin, UpdateView):
     permission_required = "tokens.change_tokentype"
 
     model = TokenType
-    template_name = "base_form.html"
+    template_name = "tokentype_form.html"
     fields = ["name", "description", "label_prefix", "label_id_padding"]
     context_object_name = "type"
     success_url = reverse_lazy("tokens:types:list")

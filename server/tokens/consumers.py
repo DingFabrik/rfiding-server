@@ -22,7 +22,7 @@ class UnknownTokenConsumer(AsyncWebsocketConsumer):
 
     async def disconnect(self, code):
         await channel_layer.group_discard("unknown_tokens", self.channel_name)
-        return super().disconnect(code)
+        return await super().disconnect(code)
 
     async def receive(self, text_data):
         data = json.loads(text_data)
