@@ -8,29 +8,29 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('comments', '0001_initial'),
+        ("comments", "0001_initial"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='comment',
-            name='author',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL, verbose_name='Author'),
+            model_name="comment",
+            name="author",
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL, verbose_name="Author"),
         ),
         migrations.AlterField(
-            model_name='comment',
-            name='created',
-            field=models.DateTimeField(auto_now_add=True, verbose_name='Created'),
+            model_name="comment",
+            name="created",
+            field=models.DateTimeField(auto_now_add=True, verbose_name="Created"),
         ),
         migrations.AlterField(
-            model_name='comment',
-            name='text',
-            field=models.TextField(verbose_name='Text'),
+            model_name="comment",
+            name="text",
+            field=models.TextField(verbose_name="Text"),
         ),
         migrations.AlterField(
-            model_name='comment',
-            name='updated',
-            field=models.DateTimeField(auto_now=True, verbose_name='Updated'),
+            model_name="comment",
+            name="updated",
+            field=models.DateTimeField(auto_now=True, verbose_name="Updated"),
         ),
     ]

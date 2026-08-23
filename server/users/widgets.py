@@ -15,7 +15,6 @@ SPACE_HEATMAP_WEEKS = 12
 
 
 def _split_seconds_by_day(start, end):
-    """Yield (date, seconds) for the portion of [start, end) falling on each day."""
     tz = start.tzinfo
     day = start.date()
     while day <= end.date():

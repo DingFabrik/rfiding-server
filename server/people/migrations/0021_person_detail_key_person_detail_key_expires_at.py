@@ -6,18 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('people', '0020_person_language_person_slack_conversation_id_and_more'),
+        ("people", "0020_person_language_person_slack_conversation_id_and_more"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='person',
-            name='detail_key',
-            field=models.CharField(blank=True, help_text="Random key granting access to this person's self-service detail page. Valid until Detail Key Expires At.", max_length=64, null=True, unique=True, verbose_name='Detail Key'),
+            model_name="person",
+            name="detail_key",
+            field=models.CharField(blank=True, help_text="Random key granting access to this person's self-service detail page. Valid until Detail Key Expires At.", max_length=64, null=True, unique=True, verbose_name="Detail Key"),
         ),
         migrations.AddField(
-            model_name='person',
-            name='detail_key_expires_at',
-            field=models.DateTimeField(blank=True, null=True, verbose_name='Detail Key Expires At'),
+            model_name="person",
+            name="detail_key_expires_at",
+            field=models.DateTimeField(blank=True, null=True, verbose_name="Detail Key Expires At"),
         ),
     ]

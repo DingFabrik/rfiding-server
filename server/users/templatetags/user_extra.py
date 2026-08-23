@@ -20,12 +20,6 @@ def _effective_theme_settings(user):
 
 @register.simple_tag
 def theme_html_attrs(user):
-    """The data-theme attribute for <html>, resolved without any JavaScript.
-
-    "system" mode renders the light theme here (for browsers/crawlers that
-    ignore the accompanying prefers-color-scheme override) - see
-    theme_style_block for the dark override.
-    """
     mode, light_theme, dark_theme = _effective_theme_settings(user)
     if mode == RFIDingUser.ThemeMode.DARK:
         name = theme_name(dark_theme, "dark")
@@ -36,7 +30,6 @@ def theme_html_attrs(user):
 
 @register.simple_tag
 def theme_style_block(user):
-    """A prefers-color-scheme override so "system" mode needs no JavaScript."""
     mode, light_theme, dark_theme = _effective_theme_settings(user)
     if mode != RFIDingUser.ThemeMode.SYSTEM:
         return ""

@@ -283,8 +283,6 @@ class Machine(TimestampedModel):
         if not times.exists():
             return datetime.time(23, 59, 59)
         now = datetime.datetime.now()
-        # Order deterministically: if overlapping windows are configured for
-        # "now", prefer the one that closes soonest (most conservative).
         match = (
             times.filter(weekdays__contains=now.weekday())
             .filter(start_time__lte=now.time())

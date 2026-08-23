@@ -6,23 +6,23 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('holidays', '0001_initial'),
+        ("holidays", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='holiday',
-            name='date',
-            field=models.DateField(unique=True, verbose_name='Date'),
+            model_name="holiday",
+            name="date",
+            field=models.DateField(unique=True, verbose_name="Date"),
         ),
         migrations.AlterField(
-            model_name='holiday',
-            name='name',
-            field=models.CharField(max_length=100, verbose_name='Name'),
+            model_name="holiday",
+            name="name",
+            field=models.CharField(max_length=100, verbose_name="Name"),
         ),
         migrations.AlterField(
-            model_name='holiday',
-            name='repeats_annually',
-            field=models.BooleanField(default=False, verbose_name='Repeats Annually'),
+            model_name="holiday",
+            name="repeats_annually",
+            field=models.BooleanField(default=False, verbose_name="Repeats Annually"),
         ),
     ]

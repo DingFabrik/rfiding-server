@@ -132,7 +132,7 @@ class NotifyExpiringQualificationsTaskTests(TestCase):
         self.assertIsNotNone(qualification.notified_at)
 
     def test_does_not_notify_twice(self):
-        qualification = Qualification.objects.create(machine=self.machine, person=self.person)
+        Qualification.objects.create(machine=self.machine, person=self.person)
         expire_qualifications()
         notify_expiring_qualifications()
         count = notify_expiring_qualifications()
@@ -141,14 +141,14 @@ class NotifyExpiringQualificationsTaskTests(TestCase):
     def test_does_not_notify_far_out_expiration(self):
         self.machine.qualification_expiry_unused_days = 365
         self.machine.save()
-        qualification = Qualification.objects.create(machine=self.machine, person=self.person)
+        Qualification.objects.create(machine=self.machine, person=self.person)
         expire_qualifications()
         count = notify_expiring_qualifications()
         self.assertEqual(count, 0)
 
     def test_does_not_notify_already_expired(self):
         with freeze_time(timezone.now() - timedelta(days=20)):
-            qualification = Qualification.objects.create(machine=self.machine, person=self.person)
+            Qualification.objects.create(machine=self.machine, person=self.person)
         expire_qualifications()
         count = notify_expiring_qualifications()
         self.assertEqual(count, 0)

@@ -6,18 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('firmware', '0001_initial'),
+        ("firmware", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='firmware',
-            name='created',
-            field=models.DateTimeField(auto_now_add=True, verbose_name='Created'),
+            model_name="firmware",
+            name="created",
+            field=models.DateTimeField(auto_now_add=True, verbose_name="Created"),
         ),
         migrations.AlterField(
-            model_name='firmware',
-            name='updated',
-            field=models.DateTimeField(auto_now=True, verbose_name='Updated'),
+            model_name="firmware",
+            name="updated",
+            field=models.DateTimeField(auto_now=True, verbose_name="Updated"),
         ),
     ]

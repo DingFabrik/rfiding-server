@@ -7,28 +7,28 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('users', '0023_alter_rfidinguser_date_format'),
+        ("users", "0023_alter_rfidinguser_date_format"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='userwidget',
-            name='position',
-            field=models.IntegerField(default=-1, verbose_name='Position'),
+            model_name="userwidget",
+            name="position",
+            field=models.IntegerField(default=-1, verbose_name="Position"),
         ),
         migrations.AlterField(
-            model_name='userwidget',
-            name='settings',
-            field=models.JSONField(blank=True, default=dict, verbose_name='Settings'),
+            model_name="userwidget",
+            name="settings",
+            field=models.JSONField(blank=True, default=dict, verbose_name="Settings"),
         ),
         migrations.AlterField(
-            model_name='userwidget',
-            name='widget',
-            field=models.CharField(choices=[('token_counts', 'Token Counts'), ('people_counts', 'People Counts'), ('machine_counts', 'Machine Counts'), ('access_log_latest', 'Latest Access Log'), ('access_log_chart', 'Access Activity Chart'), ('audit_log_latest', 'Recent Audit Log'), ('pending_registration_requests', 'Pending Registration Requests'), ('space_status', 'Space Status'), ('machines_maintenance', 'Machines Needing Maintenance')], max_length=100, verbose_name='Widget'),
+            model_name="userwidget",
+            name="widget",
+            field=models.CharField(choices=[("token_counts", "Token Counts"), ("people_counts", "People Counts"), ("machine_counts", "Machine Counts"), ("access_log_latest", "Latest Access Log"), ("access_log_chart", "Access Activity Chart"), ("audit_log_latest", "Recent Audit Log"), ("pending_registration_requests", "Pending Registration Requests"), ("space_status", "Space Status"), ("machines_maintenance", "Machines Needing Maintenance")], max_length=100, verbose_name="Widget"),
         ),
         migrations.AlterField(
-            model_name='userwidget',
-            name='width',
-            field=models.IntegerField(default=4, help_text='Width of the widget in columns (2-12)', validators=[django.core.validators.MinValueValidator(2), django.core.validators.MaxValueValidator(12)], verbose_name='Width'),
+            model_name="userwidget",
+            name="width",
+            field=models.IntegerField(default=4, help_text="Width of the widget in columns (2-12)", validators=[django.core.validators.MinValueValidator(2), django.core.validators.MaxValueValidator(12)], verbose_name="Width"),
         ),
     ]

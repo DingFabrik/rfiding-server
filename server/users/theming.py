@@ -48,12 +48,10 @@ def theme_color_slug(color):
 
 
 def theme_name(color, mode):
-    """The compiled daisyUI theme name for a color choice + mode ('light'/'dark')."""
     return f"{theme_color_slug(color)}-{mode}"
 
 
 def theme_css_declarations(color, mode):
-    """CSS custom property declarations for a color choice + mode, mirroring main.css."""
     slug = theme_color_slug(color)
     accent, accent_content = THEME_ACCENT_COLORS.get(slug, THEME_ACCENT_COLORS["blue"])
     base = THEME_MODE_BASE[mode]

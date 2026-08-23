@@ -11,7 +11,7 @@ class Command(BaseCommand):
 
     @transaction.atomic
     def handle(self, *args, **options):
-        entries = (
+        (
             AccessLog.objects.annotate(time=Trunc("timestamp", "second"))
             .values("time", "token")
             .annotate(count=Count("time"))

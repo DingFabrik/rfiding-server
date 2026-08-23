@@ -48,7 +48,6 @@ class QualifyPersonForm(forms.ModelForm):
             "comment": forms.Textarea(attrs={"rows": 4}),
         }
 
-    # Fields only relevant once a qualification exists, shown read only for debugging.
     read_only_expiration_fields = ("last_used", "expires_at", "expired")
     editable_expiration_fields = ("notified_at",)
 

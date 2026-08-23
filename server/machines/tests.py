@@ -447,7 +447,7 @@ class V2CheckMachineTests(APITestCase):
 
     def test_needs_qualification_false_allows_anyone(self):
         data = {"mac_address": "aabbccddeeff", "tokenUid": "456"}
-        machine = Machine.objects.create(
+        Machine.objects.create(
             mac_address="aa:bb:cc:dd:ee:ff",
             hostname="test",
             name="test",
@@ -461,7 +461,7 @@ class V2CheckMachineTests(APITestCase):
 
     def test_maintenance_system_maintainer_bypass_without_qualification(self):
         data = {"mac_address": "aabbccddeeff", "tokenUid": "456"}
-        machine = Machine.objects.create(
+        Machine.objects.create(
             mac_address="aa:bb:cc:dd:ee:ff",
             hostname="test",
             name="test",
@@ -477,7 +477,7 @@ class V2CheckMachineTests(APITestCase):
 
     def test_maintenance_non_system_maintainer_without_qualification_denied(self):
         data = {"mac_address": "aabbccddeeff", "tokenUid": "456"}
-        machine = Machine.objects.create(
+        Machine.objects.create(
             mac_address="aa:bb:cc:dd:ee:ff",
             hostname="test",
             name="test",

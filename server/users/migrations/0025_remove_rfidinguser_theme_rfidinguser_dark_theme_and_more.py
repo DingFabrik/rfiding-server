@@ -25,29 +25,29 @@ def rename_system_mode_to_auto(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('users', '0024_alter_userwidget_position_alter_userwidget_settings_and_more'),
+        ("users", "0024_alter_userwidget_position_alter_userwidget_settings_and_more"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='rfidinguser',
-            name='dark_theme',
-            field=models.CharField(choices=[('default', 'Default (Blue)'), ('purple', 'Purple'), ('red', 'Red'), ('orange', 'Orange'), ('yellow', 'Yellow'), ('green', 'Green'), ('pink', 'Pink'), ('teal', 'Teal'), ('cyan', 'Cyan')], default='default', help_text='Theme used in dark mode.', max_length=10, verbose_name='Dark Theme'),
+            model_name="rfidinguser",
+            name="dark_theme",
+            field=models.CharField(choices=[("default", "Default (Blue)"), ("purple", "Purple"), ("red", "Red"), ("orange", "Orange"), ("yellow", "Yellow"), ("green", "Green"), ("pink", "Pink"), ("teal", "Teal"), ("cyan", "Cyan")], default="default", help_text="Theme used in dark mode.", max_length=10, verbose_name="Dark Theme"),
         ),
         migrations.AddField(
-            model_name='rfidinguser',
-            name='light_theme',
-            field=models.CharField(choices=[('default', 'Default (Blue)'), ('purple', 'Purple'), ('red', 'Red'), ('orange', 'Orange'), ('yellow', 'Yellow'), ('green', 'Green'), ('pink', 'Pink'), ('teal', 'Teal'), ('cyan', 'Cyan')], default='default', help_text='Theme used in light mode.', max_length=10, verbose_name='Light Theme'),
+            model_name="rfidinguser",
+            name="light_theme",
+            field=models.CharField(choices=[("default", "Default (Blue)"), ("purple", "Purple"), ("red", "Red"), ("orange", "Orange"), ("yellow", "Yellow"), ("green", "Green"), ("pink", "Pink"), ("teal", "Teal"), ("cyan", "Cyan")], default="default", help_text="Theme used in light mode.", max_length=10, verbose_name="Light Theme"),
         ),
         migrations.RunPython(copy_theme_to_light_and_dark, noop),
         migrations.RunPython(rename_auto_mode_to_system, rename_system_mode_to_auto),
         migrations.RemoveField(
-            model_name='rfidinguser',
-            name='theme',
+            model_name="rfidinguser",
+            name="theme",
         ),
         migrations.AlterField(
-            model_name='rfidinguser',
-            name='theme_mode',
-            field=models.CharField(choices=[('light', 'Always Light'), ('dark', 'Always Dark'), ('system', 'Follow System')], default='system', help_text="Whether the interface always uses the light or dark theme below, or follows your device's setting.", max_length=10),
+            model_name="rfidinguser",
+            name="theme_mode",
+            field=models.CharField(choices=[("light", "Always Light"), ("dark", "Always Dark"), ("system", "Follow System")], default="system", help_text="Whether the interface always uses the light or dark theme below, or follows your device's setting.", max_length=10),
         ),
     ]

@@ -7,33 +7,33 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('locations', '0002_alter_location_options'),
+        ("locations", "0002_alter_location_options"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='location',
-            name='created',
-            field=models.DateTimeField(auto_now_add=True, verbose_name='Created'),
+            model_name="location",
+            name="created",
+            field=models.DateTimeField(auto_now_add=True, verbose_name="Created"),
         ),
         migrations.AlterField(
-            model_name='location',
-            name='description',
-            field=models.TextField(blank=True, verbose_name='Description'),
+            model_name="location",
+            name="description",
+            field=models.TextField(blank=True, verbose_name="Description"),
         ),
         migrations.AlterField(
-            model_name='location',
-            name='name',
-            field=models.CharField(max_length=100, verbose_name='Name'),
+            model_name="location",
+            name="name",
+            field=models.CharField(max_length=100, verbose_name="Name"),
         ),
         migrations.AlterField(
-            model_name='location',
-            name='parent',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='children', to='locations.location', verbose_name='Parent'),
+            model_name="location",
+            name="parent",
+            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name="children", to="locations.location", verbose_name="Parent"),
         ),
         migrations.AlterField(
-            model_name='location',
-            name='updated',
-            field=models.DateTimeField(auto_now=True, verbose_name='Updated'),
+            model_name="location",
+            name="updated",
+            field=models.DateTimeField(auto_now=True, verbose_name="Updated"),
         ),
     ]

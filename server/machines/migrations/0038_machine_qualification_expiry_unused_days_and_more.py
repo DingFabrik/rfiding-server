@@ -6,18 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('machines', '0037_alter_machine_options_machine_maintenance_message_and_more'),
+        ("machines", "0037_alter_machine_options_machine_maintenance_message_and_more"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='machine',
-            name='qualification_expiry_unused_days',
-            field=models.PositiveIntegerField(blank=True, help_text='Number of days after which a qualification for this machine expires if it has never been used. Leave empty to disable this expiration.', null=True, verbose_name='Qualification Expiry (Unused)'),
+            model_name="machine",
+            name="qualification_expiry_unused_days",
+            field=models.PositiveIntegerField(blank=True, help_text="Number of days after which a qualification for this machine expires if it has never been used. Leave empty to disable this expiration.", null=True, verbose_name="Qualification Expiry (Unused)"),
         ),
         migrations.AddField(
-            model_name='machine',
-            name='qualification_expiry_used_days',
-            field=models.PositiveIntegerField(blank=True, help_text='Number of days after its last use after which a qualification for this machine expires. Leave empty to disable this expiration.', null=True, verbose_name='Qualification Expiry (After Use)'),
+            model_name="machine",
+            name="qualification_expiry_used_days",
+            field=models.PositiveIntegerField(blank=True, help_text="Number of days after its last use after which a qualification for this machine expires. Leave empty to disable this expiration.", null=True, verbose_name="Qualification Expiry (After Use)"),
         ),
     ]

@@ -7,35 +7,35 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('access_log', '0006_alter_accesslog_options_alter_accesslog_token'),
-        ('machines', '0037_alter_machine_options_machine_maintenance_message_and_more'),
-        ('tokens', '0016_alter_blacklistedtoken_created_and_more'),
+        ("access_log", "0006_alter_accesslog_options_alter_accesslog_token"),
+        ("machines", "0037_alter_machine_options_machine_maintenance_message_and_more"),
+        ("tokens", "0016_alter_blacklistedtoken_created_and_more"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='accesslog',
-            name='enabled_duration',
-            field=models.DurationField(blank=True, help_text="Duration the machine was enabled for this access. Only set for 'disabled' events.", null=True, verbose_name='Enabled Duration'),
+            model_name="accesslog",
+            name="enabled_duration",
+            field=models.DurationField(blank=True, help_text="Duration the machine was enabled for this access. Only set for 'disabled' events.", null=True, verbose_name="Enabled Duration"),
         ),
         migrations.AlterField(
-            model_name='accesslog',
-            name='machine',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='machines.machine', verbose_name='Machine'),
+            model_name="accesslog",
+            name="machine",
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to="machines.machine", verbose_name="Machine"),
         ),
         migrations.AlterField(
-            model_name='accesslog',
-            name='timestamp',
-            field=models.DateTimeField(auto_now_add=True, verbose_name='Timestamp'),
+            model_name="accesslog",
+            name="timestamp",
+            field=models.DateTimeField(auto_now_add=True, verbose_name="Timestamp"),
         ),
         migrations.AlterField(
-            model_name='accesslog',
-            name='token',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='tokens.token', verbose_name='Token'),
+            model_name="accesslog",
+            name="token",
+            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to="tokens.token", verbose_name="Token"),
         ),
         migrations.AlterField(
-            model_name='accesslog',
-            name='type',
-            field=models.CharField(choices=[('booted', 'Booted'), ('registered', 'Registered'), ('enabled', 'Enabled'), ('disabled', 'Disabled'), ('unsuccessful', 'Unsuccessful')], max_length=20, verbose_name='Type'),
+            model_name="accesslog",
+            name="type",
+            field=models.CharField(choices=[("booted", "Booted"), ("registered", "Registered"), ("enabled", "Enabled"), ("disabled", "Disabled"), ("unsuccessful", "Unsuccessful")], max_length=20, verbose_name="Type"),
         ),
     ]

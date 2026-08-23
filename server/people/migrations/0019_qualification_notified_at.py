@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('people', '0018_qualification_expired_qualification_expires_at_and_more'),
+        ("people", "0018_qualification_expired_qualification_expires_at_and_more"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='qualification',
-            name='notified_at',
-            field=models.DateTimeField(blank=True, help_text='When the person was last notified of the upcoming expiration. Clear to send a notification again.', null=True, verbose_name='Notified At'),
+            model_name="qualification",
+            name="notified_at",
+            field=models.DateTimeField(blank=True, help_text="When the person was last notified of the upcoming expiration. Clear to send a notification again.", null=True, verbose_name="Notified At"),
         ),
     ]

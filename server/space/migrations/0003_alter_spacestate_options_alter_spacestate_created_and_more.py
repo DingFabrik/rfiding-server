@@ -6,22 +6,22 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('space', '0002_alter_spacestate_options'),
+        ("space", "0002_alter_spacestate_options"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='spacestate',
-            options={'ordering': ['-created'], 'verbose_name': 'Space State', 'verbose_name_plural': 'Space States'},
+            name="spacestate",
+            options={"ordering": ["-created"], "verbose_name": "Space State", "verbose_name_plural": "Space States"},
         ),
         migrations.AlterField(
-            model_name='spacestate',
-            name='created',
-            field=models.DateTimeField(auto_now_add=True, verbose_name='Created'),
+            model_name="spacestate",
+            name="created",
+            field=models.DateTimeField(auto_now_add=True, verbose_name="Created"),
         ),
         migrations.AlterField(
-            model_name='spacestate',
-            name='updated',
-            field=models.DateTimeField(auto_now=True, verbose_name='Updated'),
+            model_name="spacestate",
+            name="updated",
+            field=models.DateTimeField(auto_now=True, verbose_name="Updated"),
         ),
     ]

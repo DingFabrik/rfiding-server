@@ -71,7 +71,5 @@ async def aupdate_space_state(new_state):
             "space_state", {"type": "space_state", "state": state.is_open}
         )
     for reporter in state_reporters:
-        # Reporters make blocking network calls (requests/slack_sdk); run them
-        # in a thread so a slow/dead endpoint doesn't stall the event loop.
         await asyncio.to_thread(reporter.report, state)
     return state
