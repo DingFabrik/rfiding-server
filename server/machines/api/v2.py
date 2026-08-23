@@ -3,29 +3,14 @@ import datetime
 from rest_framework.response import Response
 from rest_framework.exceptions import NotFound, PermissionDenied
 from rest_framework import status, permissions
-from django.conf import settings
 
-from .common import formatted_mac, BaseAPIView
+from .common import formatted_mac, BaseAPIView, MachineApiKeyPermission
 from access_log.models import LOG_TYPE_BOOTED, LOG_TYPE_DISABLED, LOG_TYPE_UNSUCCESSFUL
 from access_log.tasks import save_access_log
 from machines.serializers import MachineConfigSerializer
 from machines.socket_helper import send_socket_action
 from machines.api.common import check_access
 from machines.models import Machine, MachineRegistrationRequest
-
-ENFORCE_API_KEYS = (
-    settings.ENFORCE_API_KEYS if hasattr(settings, "ENFORCE_API_KEYS") else False
-)
-
-class MachineApiKeyPermission(permissions.BasePermission):
-    def has_permission(self, request, view):
-        mac_address = formatted_mac(
-            request.GET.get("mac_address", request.data.get("mac_address", None))
-        )
-        view.machine = view.get_machine(mac_address)
-        if view.machine.api_key is not None:
-            return request.META.get("api-key", None) == view.machine.api_key
-        return True
 
 
 class MachineRegisterView(BaseAPIView):

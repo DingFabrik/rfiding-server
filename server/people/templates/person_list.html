@@ -20,7 +20,7 @@
       <th>
         {% trans 'Active' %}
       </th>
-      {% if perms.people.modify_person or perms.people.qualify_person %}
+      {% if perms.people.change_person or perms.people.qualify_person %}
         <th></th>
       {% endif %}
     </tr>
@@ -35,10 +35,10 @@
       <td>
         {% include 'snippets/active_toggle.html' %}
       </td>
-      {% if perms.people.modify_person or perms.people.qualify_person %}
+      {% if perms.people.change_person or perms.people.qualify_person %}
         <td>
           <div class="flex gap-2 justify-end">
-            {% if perms.people.modify_person %}
+            {% if perms.people.change_person %}
               <a href="{% url 'people:update' object.pk %}" class="tooltip" data-tip="{% trans 'Edit' %}"><i data-lucide="square-pen" class="w-4 h-4 me-1"></i></a>
             {% endif %}
             {% if perms.people.qualify_person %}

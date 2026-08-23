@@ -18,7 +18,7 @@
       <th>
         {% trans 'Repeats Annually' %}
       </th>
-      {% if perms.holidays.modify_holiday %}
+      {% if perms.holidays.change_holiday %}
         <th></th>
       {% endif %}
     </tr>
@@ -30,7 +30,7 @@
         {% user_date object.date 'DATE_FORMAT' %}
       </td>
       <td>{{ object.repeats_annually|yesno:_('Yes,No') }}</td>
-      {% if perms.holidays.modify_holiday %}
+      {% if perms.holidays.change_holiday %}
         <td>
           <div class="flex gap-2 justify-end">
             <a href="{% url 'holidays:update' object.pk %}" class="tooltip" data-tip="{% trans 'Edit' %}"><i data-lucide="square-pen" class="w-4 h-4 me-1"></i></a>

@@ -17,4 +17,3 @@ class Command(BaseCommand):
             .annotate(count=Count("time"))
             .filter(count__gt=1)
         )
-        print(entries)

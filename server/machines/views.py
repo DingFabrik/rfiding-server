@@ -318,7 +318,7 @@ class MachineQualificationsListView(BaseListView):
 
 
 class MachineInstructorListView(BaseListView):
-    permission_required = "people.view_instructor"
+    permission_required = "people.view_qualification"
     model = Qualification
     template_name = "machine_instructor_list.html"
     context_object_name = "instructors"
@@ -459,7 +459,6 @@ class QualifyMachineView(TitleMixin, PermissionRequiredMixin, CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["machine"] = self.get_object()
-        print(context)
         return context
 
     def get_success_url(self):

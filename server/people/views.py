@@ -211,7 +211,7 @@ class RevokeQualificationPersonView(
     def get_title(self):
         return _(f"Revoke Qualification for {self.get_person().name}")
 
-    def get_object(self, queryset: QuerySet[Any] | None = ...) -> Model:
+    def get_object(self, queryset):
         return self.model.objects.filter(
             person=self.kwargs["pk"], pk=self.kwargs["qualification"]
         ).first()
@@ -239,7 +239,7 @@ class EditQualificationPersonView(TitleMixin, PermissionRequiredMixin, UpdateVie
     def get_title(self):
         return _(f"Edit Qualification for {self.get_person().name}")
 
-    def get_object(self, queryset: QuerySet[Any] | None = ...) -> Model:
+    def get_object(self, queryset):
         return self.model.objects.filter(
             person=self.kwargs["pk"], pk=self.kwargs["qualification"]
         ).first()

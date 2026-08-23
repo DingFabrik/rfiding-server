@@ -3,7 +3,7 @@
 
 {% block top_actions %}
   <div class="flex flex-wrap items-center gap-2">
-    {% if perms.tokens.create_token %}
+    {% if perms.tokens.add_token %}
       <a href="{% url 'tokens:unknown' %}" class="btn btn-primary"><i data-lucide="plus" class="w-5 h-5"></i>{% trans 'Assign Token' %}</a>
     {% endif %}
   </div>
@@ -31,7 +31,7 @@
       <th>
         {% trans 'Owner' %}
       </th>
-      {% if perms.tokens.modify_token %}
+      {% if perms.tokens.change_token %}
         <th></th>
       {% endif %}
     </tr>
@@ -57,7 +57,7 @@
       {% else %}
         <td>{{ object.person }}</td>
       {% endif %}
-      {% if perms.tokens.modify_token %}
+      {% if perms.tokens.change_token %}
         <td>
           <a href="{% url 'tokens:update' object.pk %}" class="tooltip" data-tip="{% trans 'Edit' %}"><i data-lucide="square-pen" class="w-4 h-4"></i></a>
         </td>

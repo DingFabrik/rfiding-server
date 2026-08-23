@@ -102,5 +102,4 @@ def anonymize_old_access_log():
 
     count = find_old_access_log(anonymize_days).update(token=None)
     logger.debug(f"Anonymized {count} old access log entries")
-    print(f"Anonymized {count} old access log entries")
     return count

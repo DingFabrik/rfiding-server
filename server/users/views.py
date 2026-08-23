@@ -19,7 +19,7 @@ from django.contrib.auth.views import PasswordChangeView
 from django.contrib.auth.models import Group
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 
 from base.views import TitleMixin, BaseListView, PartialMixin
 from .widgets import WidgetDataProvider
@@ -145,14 +145,16 @@ class UserDeleteView(TitleMixin, PermissionRequiredMixin, DeleteView):
     success_url = reverse_lazy("users:list")
 
 
-class AdminChangePasswordView(TitleMixin, FormView):
+class AdminChangePasswordView(TitleMixin, PermissionRequiredMixin, FormView):
+    permission_required = "users.change_rfidinguser"
+
     title = _("Change Password")
     form_class = AdminPasswordChangeForm
     template_name = "change_password.html"
     success_url = reverse_lazy("users:list")
 
     def get_object(self):
-        return RFIDingUser.objects.get(pk=self.kwargs["pk"])
+        return get_object_or_404(RFIDingUser, pk=self.kwargs["pk"])
 
     def get_form(self) -> BaseForm:
         if self.request.POST:
@@ -160,6 +162,10 @@ class AdminChangePasswordView(TitleMixin, FormView):
                 user=self.get_object(), data=self.request.POST
             )
         return AdminPasswordChangeForm(user=self.get_object())
+
+    def form_valid(self, form):
+        form.save()
+        return super().form_valid(form)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

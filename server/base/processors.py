@@ -89,14 +89,14 @@ def menu_processor(request):
             "name": _("Blacklisted Tokens"),
             "url": reverse("tokens:blacklisted"),
             "icon": APP_ICONS["tokens"],
-            "has_permission": request.user.has_perm("auth.view_blacklistedtoken"),
+            "has_permission": request.user.has_perm("tokens.view_blacklistedtoken"),
             "active": request.resolver_match.url_name == "blacklisted",
         },
         {
             "name": _("Token Types"),
             "url": reverse("tokens:types:list"),
             "icon": APP_ICONS["tokens"],
-            "has_permission": request.user.has_perm("auth.view_tokentype"),
+            "has_permission": request.user.has_perm("tokens.view_tokentype"),
             "active": request.resolver_match.url_name == "types",
         },
         {

@@ -2,44 +2,42 @@ from datetime import datetime
 
 from rest_framework.response import Response
 from rest_framework.exceptions import NotFound, PermissionDenied
-from rest_framework import status, permissions
+from rest_framework import status
 
-from .common import check_access, formatted_mac, BaseAPIView
+from .common import check_access, BaseAPIView, MachineApiKeyPermission
 from access_log.models import LOG_TYPE_BOOTED
 from access_log.tasks import save_access_log
 
 
+class V1MachineApiKeyPermission(MachineApiKeyPermission):
+    machine_param = "machine"
+
+
 class MachineConfigView(BaseAPIView):
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [V1MachineApiKeyPermission]
     required_get_parameters = ["machine"]
 
     def get(self, request, format=None):
-        mac_address = formatted_mac(request.GET.get("machine", None))
-        machine = self.get_machine(mac_address)
-
-        save_access_log.delay(machine.id, None, LOG_TYPE_BOOTED, timestamp=datetime.datetime.now())
+        save_access_log.delay(self.machine.id, None, LOG_TYPE_BOOTED, timestamp=datetime.now())
         return Response(
             {
-                "runtimer": machine.runtimer.seconds * 1000 + machine.runtimer.microseconds // 1000,
-                "minPower": machine.min_power,
-                "controlParameter": machine.control_parameter if machine.control_parameter else "",
+                "runtimer": self.machine.runtimer.seconds * 1000 + self.machine.runtimer.microseconds // 1000,
+                "minPower": self.machine.min_power,
+                "controlParameter": self.machine.control_parameter if self.machine.control_parameter else "",
             },
             status=status.HTTP_200_OK,
         )
 
 
 class CheckMachineAccessView(BaseAPIView):
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [V1MachineApiKeyPermission]
     required_get_parameters = ["machine", "tokenUid"]
 
     def get(self, request, format=None):
-        mac_address = formatted_mac(request.GET.get("machine", None))
         tokenID = request.GET.get("tokenUid", None).lower()
 
-        machine = self.get_machine(mac_address)
-
         try:
-            return_data = check_access(machine, tokenID)
+            return_data = check_access(self.machine, tokenID)
             return Response(return_data, status=status.HTTP_200_OK)
         except PermissionDenied as e:
             return Response(

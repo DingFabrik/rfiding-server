@@ -87,7 +87,7 @@
         {% endif %}
         {% include 'qualifications_table.html' with is_partial=True subject='person' %}
       </div>
-      {% if perms.access_log.view_access_log %}
+      {% if perms.access_log.view_accesslog %}
         <button role="tab" class="tab" id="accesslog-tab" hx-get="{% url 'access_log:for-person' object.pk %}" hx-target="#accesslog-tab-pane" data-tabs-target="#accesslog-tab-pane" aria-selected="false"><i data-lucide="list" class="w-4 h-4 mr-1"></i>{% trans 'Access Log' %}</button>
         <div class="tab-content bg-base-100 border-neutral/10" role="tabpanel" class="hidden" id="accesslog-tab-pane" aria-labelledby="accesslog-tab">
           <div class="flex flex-col gap-2 p-6">

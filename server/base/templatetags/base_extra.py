@@ -98,7 +98,6 @@ def user_date(context, date, format="DATE_FORMAT"):
     if isinstance(date, str):
         return date
     if format in context:
-        print("Cached format", context[format])
         return formats.date_format(date, context[format])
     add_time = False
     used_format = format

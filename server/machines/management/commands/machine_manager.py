@@ -132,7 +132,6 @@ async def handle_client(client):
         data = await loop.sock_recv(client, 1024)
         if data == b"":
             break
-        print(data.decode())
         json_data = json.loads(data.decode())
         action = json_data["action"]
         pk = json_data["pk"]

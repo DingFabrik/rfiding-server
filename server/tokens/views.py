@@ -80,7 +80,7 @@ class TokenListView(BaseListView):
 
 
 class UnknownTokenListView(PermissionRequiredMixin, ListView):
-    permission_required = "tokens.view_unknown_token"
+    permission_required = "tokens.view_unknowntoken"
 
     model = UnknownToken
     template_name = "unknown_token_list.html"
@@ -88,15 +88,15 @@ class UnknownTokenListView(PermissionRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["can_create_token"] = self.request.user.has_perm("tokens.create_token")
+        context["can_create_token"] = self.request.user.has_perm("tokens.add_token")
         context["can_create_blacklistedtoken"] = self.request.user.has_perm(
-            "tokens.create_blacklistedtoken"
+            "tokens.add_blacklistedtoken"
         )
         return context
 
 
 class ClearUnknownTokensView(PermissionRequiredMixin, View):
-    permission_required = "tokens.delete_unknown_token"
+    permission_required = "tokens.delete_unknowntoken"
 
     def get(self, request):
         clear_unknown_tokens()
@@ -104,7 +104,7 @@ class ClearUnknownTokensView(PermissionRequiredMixin, View):
 
 
 class AssignTokenView(PermissionRequiredMixin, CreateView):
-    permission_required = "tokens.create_token"
+    permission_required = "tokens.add_token"
 
     model = Token
     template_name = "token_form.html"
@@ -205,7 +205,7 @@ class PersonForTokenPopoverView(PermissionRequiredMixin, TemplateView):
 
 
 class BlacklistTokenView(PermissionRequiredMixin, View):
-    permission_required = "tokens.create_blacklistedtoken"
+    permission_required = "tokens.add_blacklistedtoken"
 
     def get(self, request: HttpRequest, *args: str, **kwargs: Any) -> HttpResponse:
         serial = kwargs["serial"]

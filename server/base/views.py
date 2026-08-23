@@ -86,7 +86,7 @@ class BaseListView(PartialListMixin, TitleMixin, PermissionRequiredMixin, ListVi
         context = super().get_context_data(**kwargs)
         context["model"] = self.model
         context["can_create"] = self.request.user.has_perm(
-            f"{self.model._meta.app_label}.create_{self.model._meta.model_name}"
+            f"{self.model._meta.app_label}.add_{self.model._meta.model_name}"
         )
         context["can_edit"] = self.request.user.has_perm(
             f"{self.model._meta.app_label}.change_{self.model._meta.model_name}"

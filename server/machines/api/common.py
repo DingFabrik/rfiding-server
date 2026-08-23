@@ -1,7 +1,10 @@
 import datetime
+import hmac
 from rest_framework.views import APIView
+from rest_framework import permissions
 from rest_framework.exceptions import ValidationError, NotFound, PermissionDenied
 from django.db.models import Q
+from django.conf import settings
 
 from machines.models import Machine
 from holidays.utils import is_today_holiday
@@ -37,7 +40,6 @@ class BaseAPIView(APIView):
             raise NotFound("Machine does not exist") from None
 
     def initial(self, request, *args, **kwargs):
-        super().initial(request, *args, **kwargs)
         if request.method.lower() == "get" and self.required_get_parameters:
             for param in self.required_get_parameters:
                 if request.GET.get(param, None) is None:
@@ -50,6 +52,32 @@ class BaseAPIView(APIView):
             for param in self.required_delete_parameters:
                 if request.GET.get(param, None) is None:
                     raise ValidationError(f"Missing {param}")
+        super().initial(request, *args, **kwargs)
+
+
+class MachineApiKeyPermission(permissions.BasePermission):
+    """Requires a matching Api-Key header when the machine has an api_key set.
+
+    If the machine has no api_key configured, unauthenticated access is
+    allowed unless ENFORCE_API_KEYS is set.
+    """
+
+    machine_param = "mac_address"
+
+    def has_permission(self, request, view):
+        mac_address = formatted_mac(
+            request.GET.get(
+                self.machine_param, request.data.get(self.machine_param, None)
+            )
+        )
+        view.machine = view.get_machine(mac_address)
+        api_key = view.machine.api_key
+        if api_key:
+            provided_key = request.headers.get("Api-Key")
+            return provided_key is not None and hmac.compare_digest(
+                provided_key, api_key
+            )
+        return not getattr(settings, "ENFORCE_API_KEYS", False)
 
 
 def check_access(machine, tokenID, compartmentID=None):

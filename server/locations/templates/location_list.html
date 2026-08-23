@@ -11,7 +11,7 @@
       <th>
         {% trans 'Name' %}
       </th>
-      {% if perms.locations.modify_location %}
+      {% if perms.locations.change_location %}
         <th></th>
       {% endif %}
     </tr>
@@ -21,7 +21,7 @@
       <td>
         <a class="link-hover link-primary" href="{% url 'locations:detail' object.pk %}">{{ object.name }}</a>
       </td>
-      {% if perms.locations.modify_location %}
+      {% if perms.locations.change_location %}
         <td>
           <div class="flex gap-2 justify-end">
             <a href="{% url 'locations:update' object.pk %}" class="tooltip" data-tip="{% trans 'Edit' %}"><i data-lucide="square-pen" class="w-4 h-4 me-1"></i></a>

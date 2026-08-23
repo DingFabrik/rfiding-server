@@ -51,7 +51,6 @@ class InstructorPersonAutocompleteView(APIView):
         people = get_people(request, request.GET.get("term", None))
         people = people.filter(is_active=True)
         people = people.exclude(can_instruct__machine__id=machine)
-        print(people)
         return Response(
             [
                 {"value": person.id, "label": f"{person.name} ({person.email})"}

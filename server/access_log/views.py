@@ -1,4 +1,5 @@
 from typing import Any
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.db.models.query import QuerySet
 from django.views.generic import ListView
 from django.utils.translation import gettext_lazy as _
@@ -10,7 +11,9 @@ from machines.models import Machine
 from people.models import Person
 
 
-class AccessLogListView(TitleMixin, PartialListMixin, ListView):
+class AccessLogListView(TitleMixin, PermissionRequiredMixin, PartialListMixin, ListView):
+    permission_required = "access_log.view_accesslog"
+
     title = _("Access Logs")
     model = AccessLog
     queryset = AccessLog.objects.select_related("token").select_related("machine").all()
@@ -43,13 +46,15 @@ class AccessLogListView(TitleMixin, PartialListMixin, ListView):
         return context
 
 
-class AccessLogForSubjectView(TitleMixin, PartialListMixin, ListView):
+class AccessLogForSubjectView(TitleMixin, PermissionRequiredMixin, PartialListMixin, ListView):
     """Base for the "access log for one token/person/machine" pages.
 
     Subclasses only need to set subject_type, get_queryset() and
     get_subject(), everything else (title, template, empty state, "go to X"
     link) is derived from that.
     """
+
+    permission_required = "access_log.view_accesslog"
 
     model = AccessLog
     context_object_name = "access_logs"
