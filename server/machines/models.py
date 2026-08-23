@@ -244,6 +244,11 @@ class Machine(TimestampedModel):
     def __str__(self):
         return self.name
 
+    def save(self, *args, **kwargs):
+        if self.mac_address:
+            self.mac_address = self.mac_address.lower()
+        super().save(*args, **kwargs)
+
     @property
     def has_api(self):
         return (

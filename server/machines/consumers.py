@@ -6,6 +6,7 @@ import datetime
 import re
 from asgiref.sync import sync_to_async
 
+from .api.common import formatted_mac
 from .management.commands.machine_manager import ConnectionManager
 from .models import Machine
 
@@ -20,9 +21,9 @@ class MachineStateConsumer(AsyncJsonWebsocketConsumer):
         self.scope["can_send_commands"] = await sync_to_async(user.has_perm)("machines.send_machine_commands")
         await self.accept()
 
-        mac_address = self.scope["url_route"]["kwargs"]["mac_address"]
+        mac_address = formatted_mac(self.scope["url_route"]["kwargs"]["mac_address"])
         machine = await Machine.objects.aget(
-            mac_address__iexact=mac_address, state=Machine.MachineStatus.ACTIVE
+            mac_address=mac_address, state=Machine.MachineStatus.ACTIVE
         )
 
         self.manager = ConnectionManager(machine)
@@ -73,9 +74,9 @@ class MachineLogConsumer(AsyncJsonWebsocketConsumer):
             return await self.close()
         await self.accept()
 
-        mac_address = self.scope["url_route"]["kwargs"]["mac_address"]
+        mac_address = formatted_mac(self.scope["url_route"]["kwargs"]["mac_address"])
         machine = await Machine.objects.aget(
-            mac_address__iexact=mac_address, state=Machine.MachineStatus.ACTIVE
+            mac_address=mac_address, state=Machine.MachineStatus.ACTIVE
         )
 
         self.manager = ConnectionManager(machine)
