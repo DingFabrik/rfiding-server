@@ -1,0 +1,21 @@
+[run]
+source = .
+branch = True
+omit =
+    manage.py
+    */migrations/*
+    */tests/*
+    rfiding/asgi.py
+    rfiding/wsgi.py
+    rfiding/settings*.py
+
+[report]
+skip_covered = False
+show_missing = True
+exclude_also =
+    if TYPE_CHECKING:
+    raise NotImplementedError
+    def __repr__
+
+[html]
+directory = htmlcov

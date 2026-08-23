@@ -1,9 +1,8 @@
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
-
 from people.models import Person
-from .models import Comment
+from ..models import Comment
 
 
 class CommentCreateViewHtmxTests(TestCase):

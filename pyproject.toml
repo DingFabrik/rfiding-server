@@ -29,6 +29,7 @@ factory-boy = "^3.3.1"
 sphinx = "^9.1.0"
 sphinxcontrib-httpdomain = "^2.0.0"
 furo = "^2025.9.25"
+coverage = "^7.15.4"
 
 [tool.ruff]
 target-version = "py313"

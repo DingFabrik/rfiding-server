@@ -11,3 +11,5 @@ node_modules
 /server/static/js/main.js.map
 /docs/_build
 .vscode
+.coverage
+htmlcov/

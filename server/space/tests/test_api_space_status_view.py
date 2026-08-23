@@ -2,8 +2,7 @@ from django.test import override_settings
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
-
-from .models import SpaceState
+from ..models import SpaceState
 
 
 @override_settings(SPACE_STATE_SECRET="test-secret")
