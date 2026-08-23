@@ -108,7 +108,7 @@ class Person(TimestampedModel):
 
 
 PERMISSION_LEVELS = (
-    ("if_space_open", _("Space is open")),
+    ("if_space_open", _("If Open")),
     ("always", _("Always")),
     ("never", _("Never")),
 )

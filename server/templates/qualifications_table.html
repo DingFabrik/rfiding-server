@@ -64,7 +64,7 @@
               {% if perms.people.qualify_person %}
                 <td>
                   <div class="flex gap-2 justify-end">
-                    <a href="{% url 'people:edit-qualification' qualification.person.pk qualification.pk %}" class="tooltip" data-tip="{% trans 'Edit' %}"><i data-lucide="square-pen" class="w-4 h-4"></i></a>
+                    <a href="{% url 'people:edit-qualification' qualification.person.pk qualification.pk %}" class="tooltip" data-tip="{% trans 'Edit' %}"><i data-lucide="square-pen" class="w-4 h-4 me-1"></i></a>
                     <a class="tooltip" data-tip="{% trans 'Revoke' %}" href="{% url 'people:revoke-qualification' qualification.person.pk qualification.pk %}?next={{ request.path }}" data-modal-target="hx_delete_modals" hx-get="{% url 'people:revoke-qualification' qualification.person.pk qualification.pk %}?next={{ request.path }}" hx-target="#hx_delete_modals" hx-trigger="click">{% include 'snippets/hoverable_revoke.html' %}</a>
                   </div>
                 </td>

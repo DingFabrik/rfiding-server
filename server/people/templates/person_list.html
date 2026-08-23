@@ -39,7 +39,7 @@
         <td>
           <div class="flex gap-2 justify-end">
             {% if perms.people.modify_person %}
-              <a href="{% url 'people:update' object.pk %}" class="tooltip" data-tip="{% trans 'Edit' %}"><i data-lucide="square-pen" class="w-4 h-4"></i></a>
+              <a href="{% url 'people:update' object.pk %}" class="tooltip" data-tip="{% trans 'Edit' %}"><i data-lucide="square-pen" class="w-4 h-4 me-1"></i></a>
             {% endif %}
             {% if perms.people.qualify_person %}
               <a href="{% url 'people:qualify' object.pk %}" class="tooltip" data-tip="{% trans 'Qualify' %}"><i data-lucide="shield-plus" class="w-4 h-4"></i></a>

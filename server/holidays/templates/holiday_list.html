@@ -33,7 +33,7 @@
       {% if perms.holidays.modify_holiday %}
         <td>
           <div class="flex gap-2 justify-end">
-            <a href="{% url 'holidays:update' object.pk %}" class="tooltip" data-tip="{% trans 'Edit' %}"><i data-lucide="square-pen" class="w-4 h-4"></i></a>
+            <a href="{% url 'holidays:update' object.pk %}" class="tooltip" data-tip="{% trans 'Edit' %}"><i data-lucide="square-pen" class="w-4 h-4 me-1"></i></a>
             {% if perms.holidays.delete_holiday %}
               <a href="{% url 'holidays:delete' object.pk %}" class="tooltip" data-tip="{% trans 'Delete' %}"><i data-lucide="trash-2" class="w-4 h-4 text-error"></i></a>
             {% endif %}

@@ -44,7 +44,7 @@
       {% if can_edit %}
         <td>
           <div class="flex gap-2 justify-end">
-            <a href="{% url 'machines:update' object.pk %}" class="tooltip" data-tip="{% trans 'Edit' %}"><i data-lucide="square-pen" class="w-4 h-4"></i></a>
+            <a href="{% url 'machines:update' object.pk %}" class="tooltip" data-tip="{% trans 'Edit' %}"><i data-lucide="square-pen" class="w-4 h-4 me-1"></i></a>
             <a href="{% url 'machines:configure' object.pk %}" class="tooltip" data-tip="{% trans 'Configure' %}"><i data-lucide="sliders-horizontal" class="w-4 h-4"></i></a>
           </div>
         </td>

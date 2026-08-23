@@ -24,7 +24,7 @@
       {% if perms.locations.modify_location %}
         <td>
           <div class="flex gap-2 justify-end">
-            <a href="{% url 'locations:update' object.pk %}" class="tooltip" data-tip="{% trans 'Edit' %}"><i data-lucide="square-pen" class="w-4 h-4"></i></a>
+            <a href="{% url 'locations:update' object.pk %}" class="tooltip" data-tip="{% trans 'Edit' %}"><i data-lucide="square-pen" class="w-4 h-4 me-1"></i></a>
             {% if perms.locations.delete_location %}
               <a href="{% url 'locations:delete' object.pk %}" class="tooltip" data-tip="{% trans 'Delete' %}"><i data-lucide="trash-2" class="w-4 h-4 text-error"></i></a>
             {% endif %}
