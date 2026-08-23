@@ -1,0 +1,27 @@
+{% load static %}
+{% load i18n %}
+<label for="sidebar-drawer" aria-label="{% trans "Close menu" %}" class="drawer-overlay"></label>
+<aside class="bg-base-100 border-neutral/10 min-h-full w-64 border-r flex flex-col">
+  <div class="p-3">
+    <a class="btn btn-ghost px-2" href="{% url 'home' %}">
+      <img src="{% static "images/logo_dark.svg" %}" alt="Logo" width="40" height="40">
+    </a>
+  </div>
+  <ul class="menu w-full flex-1 flex-nowrap overflow-y-auto px-2 pb-3">
+    {% for item in menu %}
+      {% if item.has_permission %}
+        <li><a class="{% if item.active %}menu-active{% endif %}" href="{{ item.url }}"><i data-lucide="{{ item.icon }}" class="w-4 h-4"></i> {{ item.name }}</a></li>
+      {% endif %}
+    {% endfor %}
+    <li class="menu-title mt-2">{% trans "More" %}</li>
+    {% for item in side_menu %}
+      {% if item.type == "divider" %}
+        <li></li>
+      {% else %}
+        {% if item.has_permission %}
+          <li><a class="{% if item.active %}menu-active{% endif %}" href="{{ item.url }}"><i data-lucide="{{ item.icon }}" class="w-4 h-4"></i> {{ item.name }}</a></li>
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+  </ul>
+</aside>

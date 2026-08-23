@@ -4,15 +4,7 @@
 <!doctype html>
 <html lang="en" class="h-full bg-base-200" {% theme_html_attrs user %}>
   <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="author" content="">
-
-    <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
-    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/favicon-32x32.png' %}">
-    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/favicon-16x16.png' %}">
-    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'images/apple-touch-icon.png' %}">
-    <link rel="manifest" href="{% static 'site.webmanifest' %}">
+    {% include "partials/head_links.html" %}
 
     <title>{% block html_title %}{{ html_title }}{% endblock html_title %} ・ RFIDing</title>
 
@@ -22,101 +14,18 @@
   <body
     class="bg-base-200 flex flex-col min-h-full"
     hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
-    {% if user.is_authenticated %}
-    <div class="navbar bg-base-100 border-neutral/10 fixed top-0 z-30 border-b shadow-sm">
-      <div class="navbar-start">
-        <a class="btn btn-ghost px-2" href="{% url 'home' %}">
-          <img src="{% static "images/logo_dark.svg" %}" alt="Logo" width="40" height="40">
-        </a>
-      </div>
-      <div class="navbar-center hidden lg:flex">
-        <ul class="menu menu-horizontal px-1">
-          {% for item in menu %}
-            {% if item.has_permission %}
-              <li><a class="{% if item.active %}menu-active{% endif %}" href="{{ item.url }}"><i data-lucide="{{ item.icon }}" class="w-4 h-4"></i> {{ item.name }}</a></li>
-            {% endif %}
-          {% endfor %}
-        </ul>
-      </div>
-      <div class="navbar-end gap-1">
-        {% if space_state %}
-          <a href="{% url "space:status" %}" class="badge {% if space_state.is_open %}badge-success{% else %}badge-error{% endif %} inline-flex">{{ space_state }}</a>
-        {% endif %}
-        <button type="button" class="btn btn-outline btn-primary btn-sm hidden md:inline-flex" data-modal-target="searchUniversalModal">
-          <i data-lucide="search" class="w-4 h-4"></i> {% trans "Search" %}
-          <kbd class="kbd kbd-xs gap-0.5"><i data-lucide="command" class="w-3 h-3"></i>K</kbd>
-        </button>
-        <button type="button" class="btn btn-ghost btn-circle md:hidden" data-modal-target="searchUniversalModal" aria-label="{% trans "Search" %}">
-          <i data-lucide="search" class="w-5 h-5"></i>
-        </button>
-
-        <button
-          class="btn btn-ghost btn-circle hidden lg:inline-flex"
-          popovertarget="user-menu"
-          style="anchor-name:--user-menu"
-          aria-label="{% trans "Account" %}">
-          <i data-lucide="circle-user" class="w-5 h-5"></i>
-        </button>
-        <ul
-          class="dropdown dropdown-end menu bg-base-100 rounded-box z-30 mt-3 w-56 p-2 shadow-lg"
-          popover
-          id="user-menu"
-          style="position-anchor:--user-menu">
-          <li class="menu-title">{{ user.name|default:user.email }}</li>
-          {% for item in side_menu %}
-            {% if item.type == "divider" %}
-              <li></li>
-            {% else %}
-              {% if item.has_permission %}
-                <li><a class="{% if item.active %}menu-active{% endif %}" href="{{ item.url }}"><i data-lucide="{{ item.icon }}" class="w-4 h-4"></i> {{ item.name }}</a></li>
-              {% endif %}
-            {% endif %}
-          {% endfor %}
-          <li>
-            <form method="post" action="{% url "logout" %}">
-              {% csrf_token %}
-              <button type="submit"><i data-lucide="log-out" class="w-4 h-4"></i> {% trans "Sign out" %}</button>
-            </form>
-          </li>
-        </ul>
-        <button
-          class="btn btn-ghost btn-circle lg:hidden"
-          popovertarget="mobile-menu"
-          style="anchor-name:--mobile-menu"
-          aria-label="{% trans "Menu" %}">
-          <i data-lucide="menu" class="w-5 h-5"></i>
-        </button>
-        <ul
-          class="dropdown dropdown-end menu bg-base-100 rounded-box z-30 mt-3 w-64 p-2 shadow-lg lg:hidden"
-          popover
-          id="mobile-menu"
-          style="position-anchor:--mobile-menu">
-          {% for item in menu %}
-            {% if item.has_permission %}
-              <li><a class="{% if item.active %}menu-active{% endif %}" href="{{ item.url }}"><i data-lucide="{{ item.icon }}" class="w-4 h-4"></i> {{ item.name }}</a></li>
-            {% endif %}
-          {% endfor %}
-          <li></li>
-          {% for item in side_menu %}
-            {% if item.type == "divider" %}
-              <li></li>
-            {% else %}
-              {% if item.has_permission %}
-                <li><a class="{% if item.active %}menu-active{% endif %}" href="{{ item.url }}"><i data-lucide="{{ item.icon }}" class="w-4 h-4"></i> {{ item.name }}</a></li>
-              {% endif %}
-            {% endif %}
-          {% endfor %}
-          <li>
-            <form method="post" action="{% url "logout" %}">
-              {% csrf_token %}
-              <button type="submit" class="btn"><i data-lucide="log-out" class="w-4 h-4"></i> {% trans "Sign out" %}</button>
-            </form>
-          </li>
-        </ul>
-      </div>
-    </div>
+    {% if user.is_authenticated and nav_style == "sidebar" %}
+      {# Sidebar navigation: a daisyUI drawer, permanently open at lg+ (see partials/sidebar_menu.html). #}
+      <div class="drawer lg:drawer-open flex-1">
+        <input id="sidebar-drawer" type="checkbox" class="drawer-toggle">
+        <div class="drawer-content flex flex-col min-h-full">
+          {% include "partials/sidebar_topbar.html" %}
+    {% else %}
+      {% if user.is_authenticated %}
+        {% include "partials/navbar.html" %}
+      {% endif %}
     {% endif %}
-<main id="main" role="main" class="container mx-auto px-4 pt-20 mb-3 flex-shrink-0 {% block container_classes %}{% endblock %}" {% block container_div %}{% endblock %}>
+<main id="main" role="main" class="container mx-auto px-4 {% if user.is_authenticated and nav_style == "sidebar" %}pt-4{% else %}pt-20{% endif %} mb-3 flex-shrink-0 {% block container_classes %}{% endblock %}" {% block container_div %}{% endblock %}>
   {% block main %}
   <div class="mb-3 flex flex-wrap items-start justify-between gap-2">
     <div>
@@ -134,6 +43,13 @@
 </main>
   {% block extra_content %}
   {% endblock %}
+    {% if user.is_authenticated and nav_style == "sidebar" %}
+        </div>
+        <div class="drawer-side z-40">
+          {% include "partials/sidebar_menu.html" %}
+        </div>
+      </div>
+    {% endif %}
   <dialog id="hx_delete_modals" class="modal"></dialog>
   {% include 'modals/search_universal.html' %}
     {% include "footer.html" %}

@@ -26,6 +26,7 @@ class ProfileForm(forms.ModelForm):
                 "theme_mode",
                 "light_theme",
                 "dark_theme",
+                "nav_style",
             ),
             Fieldset(
                 _("Lists"),
@@ -54,6 +55,7 @@ class ProfileForm(forms.ModelForm):
             "theme_mode",
             "light_theme",
             "dark_theme",
+            "nav_style",
         ]
 
 class UserForm(forms.ModelForm):

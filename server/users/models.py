@@ -155,6 +155,18 @@ class RFIDingUser(AbstractUser):
         help_text=_("Theme used in dark mode."),
     )
 
+    class NavStyle(models.TextChoices):
+        NAVBAR = "navbar", _("Top Navigation Bar")
+        SIDEBAR = "sidebar", _("Sidebar")
+
+    nav_style = models.CharField(
+        _("Navigation Style"),
+        max_length=10,
+        choices=NavStyle.choices,
+        default=NavStyle.NAVBAR,
+        help_text=_("Whether navigation is shown as a top bar or a sidebar."),
+    )
+
     objects = UserManager()
 
     class Meta:

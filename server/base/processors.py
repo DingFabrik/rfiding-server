@@ -3,6 +3,7 @@ from django.utils.translation import gettext_lazy as _
 from django.conf import settings as SETTINGS
 
 from base.app_icons import APP_ICONS
+from users.models import RFIDingUser
 
 
 def version_processor(request):
@@ -121,4 +122,10 @@ def menu_processor(request):
             "active": request.resolver_match.url_name == "profile",
         },
     ]
-    return {"menu": menu, "side_menu": side_menu}
+    nav_style = (
+        request.user.nav_style
+        if request.user.is_authenticated
+        else RFIDingUser.NavStyle.NAVBAR
+    )
+
+    return {"menu": menu, "side_menu": side_menu, "nav_style": nav_style}
