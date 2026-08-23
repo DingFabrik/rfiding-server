@@ -90,6 +90,7 @@ def check_access(machine, tokenID, compartmentID=None):
             .order_by()
             .first()
         )
+        is_maintainer_bypass = False
         if (
             qualification is None
             or qualification.permission_level == PERMISSION_LEVELS[2][0]
@@ -102,14 +103,16 @@ def check_access(machine, tokenID, compartmentID=None):
                 ).exists()
                 if not is_system_maintainer:
                     raise PermissionDenied("Machine in maintenance")
+                is_maintainer_bypass = True
             else:
                 raise PermissionDenied("No Access!")
 
-        if qualification.permission_level == PERMISSION_LEVELS[0][0]:
-            space_state = SpaceState.objects.first()
-            if space_state is not None and not space_state.is_open:
-                raise PermissionDenied("Space is closed")
-        qualification.mark_used()
+        if not is_maintainer_bypass:
+            if qualification.permission_level == PERMISSION_LEVELS[0][0]:
+                space_state = SpaceState.objects.first()
+                if space_state is not None and not space_state.is_open:
+                    raise PermissionDenied("Space is closed")
+            qualification.mark_used()
     save_access_log.delay(machine.id, token["id"], LOG_TYPE_ENABLED, timestamp=datetime.datetime.now())
 
     now = datetime.datetime.now()

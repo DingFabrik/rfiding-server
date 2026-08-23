@@ -20,6 +20,7 @@ aioesphomeapi = "^45.7.0"
 celery = {extras = ["redis"], version = "^5.6.0"}
 django-celery-beat = { git = "https://github.com/celery/django-celery-beat.git" }
 django-celery-results = "^2.6.0"
+slack-sdk = "^3.43.0"
 
 [tool.poetry.group.dev.dependencies]
 django-debug-toolbar = "^7.0.0"
@@ -28,9 +29,6 @@ factory-boy = "^3.3.1"
 sphinx = "^9.1.0"
 sphinxcontrib-httpdomain = "^2.0.0"
 furo = "^2025.9.25"
-
-[tool.poetry.group.slack.dependencies]
-slack-sdk = "^3.43.0"
 
 [tool.ruff]
 target-version = "py313"

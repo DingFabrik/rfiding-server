@@ -40,8 +40,9 @@ def notify_expiring_qualifications(days_before=QUALIFICATION_EXPIRY_WARNING_DAYS
         expires_at__isnull=False,
         expires_at__lte=threshold,
     ).select_related("person", "machine"):
-        send_qualification_expiration_notification(qualification)
-        qualification.notified_at = timezone.now()
-        qualification.save(update_fields=["notified_at"])
-        notified_count += 1
+        sent_via = send_qualification_expiration_notification(qualification)
+        if sent_via:
+            qualification.notified_at = timezone.now()
+            qualification.save(update_fields=["notified_at"])
+            notified_count += 1
     return notified_count

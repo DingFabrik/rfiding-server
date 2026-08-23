@@ -14,7 +14,7 @@ def widget_icon(widget_type):
 
 def _effective_theme_settings(user):
     if not getattr(user, "is_authenticated", False):
-        return RFIDingUser.ThemeMode.LIGHT, "default", "default"
+        return RFIDingUser.ThemeMode.SYSTEM, "default", "default"
     return user.theme_mode, user.light_theme, user.dark_theme
 
 

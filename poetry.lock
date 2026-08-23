@@ -1815,7 +1815,7 @@ version = "3.43.0"
 description = "The Slack API Platform SDK for Python"
 optional = false
 python-versions = ">=3.7"
-groups = ["slack"]
+groups = ["main"]
 files = [
     {file = "slack_sdk-3.43.0-py2.py3-none-any.whl", hash = "sha256:4b6557c65577fc172f685af218b811f9f3b4909e24cddd839ada09565f10c585"},
     {file = "slack_sdk-3.43.0.tar.gz", hash = "sha256:0553152e46c4259eb69f7464cdadc35ba4802ca10f9f5a849c92cf03d6c2ba07"},
@@ -2440,4 +2440,4 @@ testing = ["coverage[toml]", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.12"
-content-hash = "c9ccd43ed2c7aa721625183ffa337cd4c3d8f01277032f592e1e21e2b413b8e6"
+content-hash = "ee9760eaae1528e8ba0a69af287472207a974fdd927cb05fb1d627971c2cde9a"
