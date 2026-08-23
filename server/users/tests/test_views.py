@@ -226,8 +226,6 @@ class GroupCrudViewsTests(TestCase):
         self.assertTrue(response.context["can_delete"])
 
     def test_create_group_page_renders(self):
-        # Regression: base_form.html's breadcrumb links to a "<namespace>:detail"
-        # URL that doesn't exist for groups; group_form.html overrides it.
         response = self.client.get(reverse("users:groups:create"))
         self.assertEqual(response.status_code, 200)
 

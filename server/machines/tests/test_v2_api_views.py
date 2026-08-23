@@ -250,8 +250,6 @@ class MachineControlViewTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_rejects_invalid_action(self):
-        # NB: `action` is required in the POST body (required_post_parameters)
-        # but the actual action value used is read from the query string.
         response = self.client.post(
             self.url + "?action=bogus",
             {

@@ -20,8 +20,6 @@ class WeekdayFormFieldTests(TestCase):
         self.assertIsInstance(field.widget, custom_widget)
 
     def test_drops_max_length_kwarg(self):
-        # Should not raise even though TypedMultipleChoiceField doesn't
-        # accept max_length (the model field always passes it through).
         field = WeekdayFormField(max_length=20)
         self.assertNotIn("max_length", field.widget_attrs(field.widget))
 

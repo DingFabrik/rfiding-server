@@ -126,7 +126,6 @@ class MachineStateConsumerTests(TransactionTestCase):
             self.assertTrue(connected)
             await communicator.receive_nothing(timeout=0.1)
 
-            # The consumer wires state_update as the manager's callback.
             await fake_manager.on_state_change({"state": "enabled"})
             response = await communicator.receive_from()
             self.assertIn("Enabled", response)

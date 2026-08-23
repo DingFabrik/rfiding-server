@@ -137,7 +137,6 @@ class TokenDetailViewTests(TokenViewsTestCase):
 
 class TokenUpdateViewTests(TokenViewsTestCase):
     def test_updates_token(self):
-        # `purpose` isn't part of TokenForm's editable fields; `notes` is.
         token_type = TokenType.objects.create(name="RFID")
         token = Token.objects.create(serial="1", person=self.person, purpose="test")
         response = self.client.post(
@@ -256,8 +255,6 @@ class TokenTypeViewsTests(TokenViewsTestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_create_page_renders(self):
-        # Regression: base_form.html's breadcrumb links to a "<namespace>:detail"
-        # URL that doesn't exist for token types; tokentype_form.html overrides it.
         response = self.client.get(reverse("tokens:types:create"))
         self.assertEqual(response.status_code, 200)
 

@@ -70,7 +70,7 @@ def menu_processor(request):
             "url": reverse("users:groups:list"),
             "icon": APP_ICONS["groups"],
             "has_permission": request.user.has_perm("auth.view_group"),
-            "active": request.resolver_match.app_name == "groups",
+            "active": request.resolver_match.namespace == "users:groups",
         },
         {
             "name": _("Holidays"),

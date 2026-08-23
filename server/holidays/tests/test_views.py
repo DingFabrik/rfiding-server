@@ -31,8 +31,6 @@ class HolidayViewsTests(TestCase):
         self.assertTrue(Holiday.objects.filter(name="New Year").exists())
 
     def test_update_page_renders(self):
-        # Regression: base_form.html's breadcrumb links to a "<namespace>:detail"
-        # URL that doesn't exist for holidays; holiday_form.html overrides it.
         holiday = Holiday.objects.create(
             name="Old", date="2024-12-25", repeats_annually=True
         )

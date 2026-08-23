@@ -3,8 +3,6 @@
 from django.db import migrations
 
 def migrate_instructors(apps, schema_editor):
-    # We can't import the Person model directly as it may be a newer
-    # version than this migration expects. We use the historical version.
     Instructor = apps.get_model("people", "Instructor")
     Qualification = apps.get_model("people", "Qualification")
     for instructor in Instructor.objects.all():

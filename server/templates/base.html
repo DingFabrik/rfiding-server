@@ -15,7 +15,6 @@
     class="bg-base-200 flex flex-col min-h-full"
     hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
     {% if user.is_authenticated and nav_style == "sidebar" %}
-      {# Sidebar navigation: a daisyUI drawer, permanently open at lg+ (see partials/sidebar_menu.html). #}
       <div class="drawer lg:drawer-open flex-1">
         <input id="sidebar-drawer" type="checkbox" class="drawer-toggle">
         <div class="drawer-content flex flex-col min-h-full">

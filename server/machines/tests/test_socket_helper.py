@@ -34,7 +34,6 @@ class SendSocketActionTests(TestCase):
                 mock_socket_cls.return_value.__enter__.side_effect = socket.error(
                     "boom"
                 )
-                # Should not raise.
                 socket_helper.send_socket_action(1, "enable")
 
 

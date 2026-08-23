@@ -89,7 +89,6 @@ class AccessLogChartTests(TestCase):
         )
         AccessLog.objects.create(machine=machine, type=LOG_TYPE_ENABLED)
         AccessLog.objects.create(machine=machine, type=LOG_TYPE_ENABLED)
-        # A non-"enabled" event on the same day should not be counted.
         AccessLog.objects.create(machine=machine, type=LOG_TYPE_DISABLED)
 
         provider = WidgetDataProvider()
