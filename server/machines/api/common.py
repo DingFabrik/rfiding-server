@@ -5,6 +5,8 @@ from rest_framework import permissions
 from rest_framework.exceptions import ValidationError, NotFound, PermissionDenied
 from django.db.models import Q
 from django.conf import settings
+from django.db import transaction
+from django.utils import timezone
 
 from machines.models import Machine
 from holidays.utils import is_today_holiday
@@ -18,6 +20,8 @@ from space.models import SpaceState
 def formatted_mac(mac_address):
     if mac_address is None:
         return None
+    if not isinstance(mac_address, str):
+        raise ValidationError("mac_address must be a string")
     if ":" not in mac_address:
         return ":".join(
             mac_address[i : i + 2].lower() for i in range(0, len(mac_address), 2)
@@ -31,12 +35,16 @@ class BaseAPIView(APIView):
     required_delete_parameters = None
 
     def get_machine(self, mac_address):
+        if mac_address is None:
+            raise NotFound("Machine does not exist")
         try:
             return Machine.objects.get(
                 ~Q(state=Machine.MachineStatus.INACTIVE),
                 mac_address=mac_address
             )
         except Machine.DoesNotExist:
+            raise NotFound("Machine does not exist") from None
+        except Machine.MultipleObjectsReturned:
             raise NotFound("Machine does not exist") from None
 
     def initial(self, request, *args, **kwargs):
@@ -102,9 +110,18 @@ def check_access(machine, tokenID, compartmentID=None):
             .get(serial=tokenID, archived=None, is_active=True, person__is_active=True)
         )
     except Token.DoesNotExist:
-        if not BlacklistedToken.objects.filter(serial=tokenID).exists():
+        serial_max_length = Token._meta.get_field("serial").max_length
+        if (
+            len(tokenID) <= serial_max_length
+            and not BlacklistedToken.objects.filter(serial=tokenID).exists()
+        ):
             UnknownToken.objects.get_or_create(serial=tokenID, machine_id=checked_machine.id)
         raise NotFound("Invalid Token") from None
+
+    def log_enabled():
+        save_access_log.delay(
+            machine.id, token["id"], LOG_TYPE_ENABLED, timestamp=timezone.now()
+        )
 
     if checked_machine.needs_qualification:
         person = token["person__id"]
@@ -140,8 +157,13 @@ def check_access(machine, tokenID, compartmentID=None):
                 space_state = SpaceState.objects.first()
                 if space_state is not None and not space_state.is_open:
                     raise PermissionDenied("Space is closed")
-            qualification.mark_used()
-    save_access_log.delay(machine.id, token["id"], LOG_TYPE_ENABLED, timestamp=datetime.datetime.now())
+            with transaction.atomic():
+                qualification.mark_used()
+                transaction.on_commit(log_enabled)
+        else:
+            log_enabled()
+    else:
+        log_enabled()
 
     now = datetime.datetime.now()
     return {

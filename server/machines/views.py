@@ -305,7 +305,7 @@ class MachineQualificationsListView(BaseListView):
     def get_queryset(self):
         queryset = (
             Qualification.objects.filter(machine=self.kwargs["pk"])
-            .select_related("person")
+            .select_related("person", "instructed_by")
             .all()
         )
         return queryset

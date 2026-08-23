@@ -272,7 +272,7 @@ class PersonQualificationsListView(BaseListView):
     def get_queryset(self):
         queryset = (
             Qualification.objects.filter(person=self.kwargs["pk"])
-            .select_related("machine")
+            .select_related("machine", "instructed_by")
             .all()
         )
         return queryset

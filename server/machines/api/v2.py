@@ -1,5 +1,7 @@
 import datetime
+import logging
 
+from django.utils import timezone
 from rest_framework.response import Response
 from rest_framework.exceptions import NotFound, PermissionDenied
 from rest_framework import status, permissions
@@ -11,6 +13,8 @@ from machines.serializers import MachineConfigSerializer
 from machines.socket_helper import send_socket_action
 from machines.api.common import check_access
 from machines.models import Machine, MachineRegistrationRequest
+
+logger = logging.getLogger(__name__)
 
 
 class MachineRegisterView(BaseAPIView):
@@ -69,7 +73,7 @@ class MachineConfigView(BaseAPIView):
     required_post_parameters = ["mac_address"]
 
     def get(self, request, format=None):
-        save_access_log.delay(self.machine.id, None, LOG_TYPE_BOOTED, timestamp=datetime.datetime.now())
+        save_access_log.delay(self.machine.id, None, LOG_TYPE_BOOTED, timestamp=timezone.now())
         return Response(
             MachineConfigSerializer(
                 {
@@ -100,7 +104,7 @@ class MachineConfigView(BaseAPIView):
         if was_changed:
             self.machine.save()
 
-        save_access_log.delay(self.machine.id, None, LOG_TYPE_BOOTED, timestamp=datetime.datetime.now())
+        save_access_log.delay(self.machine.id, None, LOG_TYPE_BOOTED, timestamp=timezone.now())
         return Response(
             MachineConfigSerializer(
                 {
@@ -136,13 +140,17 @@ class CheckMachineAccessView(BaseAPIView):
             return Response(
                 {"error": str(e), "access": 0}, status=status.HTTP_404_NOT_FOUND
             )
-        except Exception as e:
+        except Exception:
+            logger.exception(
+                "Unexpected error checking access for machine %s", self.machine.pk
+            )
             return Response(
-                {"error": str(e), "access": 0}, status=status.HTTP_403_FORBIDDEN
+                {"error": "Internal error", "access": 0},
+                status=status.HTTP_403_FORBIDDEN,
             )
         finally:
             if not was_successful:
-                save_access_log.delay(self.machine.id, None, LOG_TYPE_UNSUCCESSFUL, timestamp=datetime.datetime.now())
+                save_access_log.delay(self.machine.id, None, LOG_TYPE_UNSUCCESSFUL, timestamp=timezone.now())
 
 
 class MachineDisableView(BaseAPIView):
@@ -156,7 +164,7 @@ class MachineDisableView(BaseAPIView):
                 self.machine = self.machine.children.get(compartment_id=compartmentID)
             except Machine.DoesNotExist:
                 raise NotFound("Machine does not exist") from None
-        save_access_log.delay(self.machine.id, None, LOG_TYPE_DISABLED, timestamp=datetime.datetime.now())
+        save_access_log.delay(self.machine.id, None, LOG_TYPE_DISABLED, timestamp=timezone.now())
         return Response({})
 
 class MachineControlView(BaseAPIView):

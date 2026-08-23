@@ -15,10 +15,8 @@ from base.models import TimestampedModel
 from machines.models import Machine
 from .conf import PERSON_DEFAULT_LANGUAGE, PERSON_DETAIL_KEY_VALID_HOURS
 
-QUALIFICATION_EXPIRY_WARNING_DAYS = (
-    settings.QUALIFICATION_EXPIRY_WARNING_DAYS
-    if hasattr(settings, "QUALIFICATION_EXPIRY_WARNING_DAYS")
-    else 7
+QUALIFICATION_EXPIRY_WARNING_DAYS = getattr(
+    settings, "QUALIFICATION_EXPIRY_WARNING_DAYS", 7
 )
 
 class Person(TimestampedModel):

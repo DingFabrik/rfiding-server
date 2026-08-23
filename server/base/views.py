@@ -6,6 +6,7 @@ from auditlog.models import LogEntry
 from django.utils.translation import gettext_lazy as _
 from django.core.cache import cache
 from django.http import HttpRequest
+from django.shortcuts import get_object_or_404
 from django.utils.cache import get_cache_key
 
 from rfiding import settings
@@ -97,14 +98,18 @@ class BaseListView(PartialListMixin, TitleMixin, PermissionRequiredMixin, ListVi
 
 class BaseToggleActiveView(PermissionRequiredMixin, TemplateView):
     template_name = "snippets/active_toggle.html"
+    http_method_names = ["post"]
+
+    def post(self, request, *args, **kwargs):
+        object = get_object_or_404(self.model, pk=self.kwargs["pk"])
+        object.is_active = not object.is_active
+        object.save()
+        self.object = object
+        return self.render_to_response(self.get_context_data(**kwargs))
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-
-        object = self.model.objects.get(pk=self.kwargs["pk"])
-        object.is_active = not object.is_active
-        object.save()
-        context["object"] = object
+        context["object"] = self.object
         return context
 
 

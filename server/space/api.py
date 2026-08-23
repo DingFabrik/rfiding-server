@@ -1,3 +1,5 @@
+import hmac
+
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions
@@ -10,8 +12,9 @@ class APISpaceStatusView(APIView):
     permission_classes = [permissions.AllowAny]
 
     def get(self, request, format=None):
-        if request.GET.get("secret", None) is not None:
-            if request.GET.get("secret", None) != SETTINGS.SPACE_STATE_SECRET:
+        secret = request.GET.get("secret", None)
+        if secret is not None:
+            if not hmac.compare_digest(secret, SETTINGS.SPACE_STATE_SECRET):
                 return Response(
                     {"error": "invalid secret"}, status=status.HTTP_403_FORBIDDEN
                 )

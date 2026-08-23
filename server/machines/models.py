@@ -5,7 +5,6 @@ from base.models import TimestampedModel
 from django.utils.translation import gettext_lazy as _
 from django.urls import reverse
 from auditlog.registry import auditlog
-from django.conf import settings
 from datetime import timedelta
 from django.contrib.contenttypes.fields import GenericRelation
 from django.utils import formats
@@ -40,11 +39,6 @@ class WeekdayField(models.CharField):
 
     def get_db_prep_value(self, value, connection=None, prepared=False):
         return ",".join([str(x) for x in value or []])
-
-
-ENFORCE_API_KEYS = (
-    settings.ENFORCE_API_KEYS if hasattr(settings, "ENFORCE_API_KEYS") else False
-)
 
 
 class Machine(TimestampedModel):
@@ -289,18 +283,18 @@ class Machine(TimestampedModel):
         if not times.exists():
             return datetime.time(23, 59, 59)
         now = datetime.datetime.now()
-        try:
-            return (
-                times.filter(weekdays__contains=now.weekday())
-                .filter(start_time__lte=now.time())
-                .filter(end_time__gte=now.time())
-                .first()
-                .end_time
-            )
-        except AttributeError:
+        # Order deterministically: if overlapping windows are configured for
+        # "now", prefer the one that closes soonest (most conservative).
+        match = (
+            times.filter(weekdays__contains=now.weekday())
+            .filter(start_time__lte=now.time())
+            .filter(end_time__gte=now.time())
+            .order_by("end_time")
+            .first()
+        )
+        if match is None:
             return None
-        except MachineTime.DoesNotExist:
-            return None
+        return match.end_time
 
     @staticmethod
     def get_valid_end_time_for_machine(machine_id):

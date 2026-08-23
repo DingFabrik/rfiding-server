@@ -8,6 +8,8 @@ import requests
 
 logger = logging.getLogger(__name__)
 
+REPORTER_REQUEST_TIMEOUT_SECONDS = 5
+
 
 space_name = settings.SPACE_NAME
 
@@ -33,7 +35,9 @@ class SlackReporter(StateReporter):
     def __init__(self, settings):
         from slack_sdk import WebClient
 
-        self.client = WebClient(token=settings["SLACK_TOKEN"])
+        self.client = WebClient(
+            token=settings["SLACK_TOKEN"], timeout=REPORTER_REQUEST_TIMEOUT_SECONDS
+        )
         if "SLACK_CHANNEL" in settings:
             self.channel = settings["SLACK_CHANNEL"]
         if "SLACK_BOT_NAME" in settings:
@@ -87,8 +91,14 @@ class HttpReporter(StateReporter):
         )
         specific_url = "OPEN_URL" if state.is_open else "CLOSE_URL"
         if self.settings.get(specific_url, None) is not None:
-            requests.get(self.settings[specific_url])
+            requests.get(
+                self.settings[specific_url], timeout=REPORTER_REQUEST_TIMEOUT_SECONDS
+            )
             return
         params = self.settings.get("PARAMS", {})
         params["state"] = "1" if state.is_open else "0"
-        requests.get(self.settings["URL"], params=params)
+        requests.get(
+            self.settings["URL"],
+            params=params,
+            timeout=REPORTER_REQUEST_TIMEOUT_SECONDS,
+        )

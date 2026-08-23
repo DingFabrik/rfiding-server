@@ -1,3 +1,4 @@
+import hmac
 import json
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from django.conf import settings as SETTINGS
@@ -35,9 +36,9 @@ class SpaceStateConsumer(AsyncJsonWebsocketConsumer):
         json_data = json.loads(text_data)
 
         if json_data["method"] == "change_state":
-            if (
-                "secret" not in json_data
-                or json_data["secret"] != SETTINGS.SPACE_STATE_SECRET
+            secret = json_data.get("secret")
+            if not isinstance(secret, str) or not hmac.compare_digest(
+                secret, SETTINGS.SPACE_STATE_SECRET
             ):
                 await self.send(json.dumps({"error": "invalid secret"}))
                 await self.close()

@@ -6,6 +6,8 @@ from django.db.models import Q
 
 from .models import Person
 
+AUTOCOMPLETE_RESULT_LIMIT = 20
+
 
 class HasViewPersonPermission(BasePermission):
     def has_permission(self, request, view):
@@ -13,6 +15,8 @@ class HasViewPersonPermission(BasePermission):
 
 
 def get_people(request, term):
+    if not term:
+        return Person.objects.none()
     return Person.objects.filter(Q(name__icontains=term) | Q(email__icontains=term))
 
 class PersonAutocompleteView(APIView):
@@ -21,7 +25,7 @@ class PersonAutocompleteView(APIView):
 
     def get(self, request, machine=None):
         people = get_people(request, request.GET.get("term", None))
-        people = people.filter(is_active=True)
+        people = people.filter(is_active=True)[:AUTOCOMPLETE_RESULT_LIMIT]
         returned = []
         for person in people:
             returned.append(
@@ -39,8 +43,9 @@ class QualifyablePersonAutocompleteView(APIView):
     def get(self, request, machine=None):
         people = get_people(request, request.GET.get("term", None))
         people = people.filter(is_active=True)
-        people = people.exclude(qualifications__machine__id=machine)
-        people.select_related("instructors")
+        people = people.exclude(qualifications__machine__id=machine)[
+            :AUTOCOMPLETE_RESULT_LIMIT
+        ]
         returned = []
         for person in people:
             returned.append(
@@ -61,7 +66,7 @@ class InstructorPersonAutocompleteView(APIView):
         people = people.filter(is_active=True)
         people = people.exclude(
             qualifications__machine_id=machine, qualifications__is_instructor=True
-        )
+        )[:AUTOCOMPLETE_RESULT_LIMIT]
         return Response(
             [
                 {"value": person.id, "label": f"{person.name} ({person.email})"}

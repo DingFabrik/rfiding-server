@@ -54,7 +54,9 @@ class WidgetDataProvider():
 
     def prepare_access_log_latest(self):
         if "latestAccessLog" not in self.data:
-            self.data["latestAccessLog"] = AccessLog.objects.all()
+            self.data["latestAccessLog"] = AccessLog.objects.select_related(
+                "machine", "token"
+            ).all()
 
     def prepare_access_log_chart(self):
         if "accessLogByDay" not in self.data:
@@ -79,7 +81,7 @@ class WidgetDataProvider():
     def prepare_audit_log_latest(self):
         if "latestAuditLog" not in self.data:
             self.data["latestAuditLog"] = LogEntry.objects.select_related(
-                "content_type"
+                "content_type", "actor"
             ).order_by("-timestamp")
 
     def prepare_pending_registration_requests(self):

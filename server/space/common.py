@@ -1,3 +1,5 @@
+import asyncio
+
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 from django.conf import settings
@@ -69,5 +71,7 @@ async def aupdate_space_state(new_state):
             "space_state", {"type": "space_state", "state": state.is_open}
         )
     for reporter in state_reporters:
-        reporter.report(state)
+        # Reporters make blocking network calls (requests/slack_sdk); run them
+        # in a thread so a slow/dead endpoint doesn't stall the event loop.
+        await asyncio.to_thread(reporter.report, state)
     return state

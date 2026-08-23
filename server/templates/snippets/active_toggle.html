@@ -1,4 +1,4 @@
-{% load i18n %}<div class="clickable active_toggle cursor-pointer" hx-get="{% url request.resolver_match.namespace|add:':toggle-active' pk=object.pk %}">
+{% load i18n %}<div class="clickable active_toggle cursor-pointer" hx-post="{% url request.resolver_match.namespace|add:':toggle-active' pk=object.pk %}">
   {% if object.is_active %}
   <div class="badge badge-soft badge-sm badge-success"><i data-lucide="circle-check-big" class="w-4 h-4 text-success" aria-hidden="true"></i>{% trans 'Active' %}</div>
   {% else %}

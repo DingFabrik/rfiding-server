@@ -1,5 +1,6 @@
-from datetime import datetime
+import logging
 
+from django.utils import timezone
 from rest_framework.response import Response
 from rest_framework.exceptions import NotFound, PermissionDenied
 from rest_framework import status
@@ -7,6 +8,8 @@ from rest_framework import status
 from .common import check_access, BaseAPIView, MachineApiKeyPermission
 from access_log.models import LOG_TYPE_BOOTED
 from access_log.tasks import save_access_log
+
+logger = logging.getLogger(__name__)
 
 
 class V1MachineApiKeyPermission(MachineApiKeyPermission):
@@ -18,7 +21,7 @@ class MachineConfigView(BaseAPIView):
     required_get_parameters = ["machine"]
 
     def get(self, request, format=None):
-        save_access_log.delay(self.machine.id, None, LOG_TYPE_BOOTED, timestamp=datetime.now())
+        save_access_log.delay(self.machine.id, None, LOG_TYPE_BOOTED, timestamp=timezone.now())
         return Response(
             {
                 "runtimer": self.machine.runtimer.seconds * 1000 + self.machine.runtimer.microseconds // 1000,
@@ -47,7 +50,11 @@ class CheckMachineAccessView(BaseAPIView):
             return Response(
                 {"error": str(e), "access": 0}, status=status.HTTP_404_NOT_FOUND
             )
-        except Exception as e:
+        except Exception:
+            logger.exception(
+                "Unexpected error checking access for machine %s", self.machine.pk
+            )
             return Response(
-                {"error": str(e), "access": 0}, status=status.HTTP_403_FORBIDDEN
+                {"error": "Internal error", "access": 0},
+                status=status.HTTP_403_FORBIDDEN,
             )

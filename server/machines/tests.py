@@ -445,6 +445,50 @@ class V2CheckMachineTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(response.data["error"], "No Access!")
 
+    def test_needs_qualification_false_allows_anyone(self):
+        data = {"mac_address": "aabbccddeeff", "tokenUid": "456"}
+        machine = Machine.objects.create(
+            mac_address="aa:bb:cc:dd:ee:ff",
+            hostname="test",
+            name="test",
+            needs_qualification=False,
+        )
+        person = Person.objects.create(name="test", email="test@example.com")
+        Token.objects.create(serial="456", person=person)
+        response = self.client.get(V2CheckMachineTests.url, data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["access"], 1)
+
+    def test_maintenance_system_maintainer_bypass_without_qualification(self):
+        data = {"mac_address": "aabbccddeeff", "tokenUid": "456"}
+        machine = Machine.objects.create(
+            mac_address="aa:bb:cc:dd:ee:ff",
+            hostname="test",
+            name="test",
+            state=Machine.MachineStatus.MAINTENANCE,
+        )
+        person = Person.objects.create(
+            name="test", email="test@example.com", is_system_maintainer=True
+        )
+        Token.objects.create(serial="456", person=person)
+        response = self.client.get(V2CheckMachineTests.url, data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["access"], 1)
+
+    def test_maintenance_non_system_maintainer_without_qualification_denied(self):
+        data = {"mac_address": "aabbccddeeff", "tokenUid": "456"}
+        machine = Machine.objects.create(
+            mac_address="aa:bb:cc:dd:ee:ff",
+            hostname="test",
+            name="test",
+            state=Machine.MachineStatus.MAINTENANCE,
+        )
+        person = Person.objects.create(name="test", email="test@example.com")
+        Token.objects.create(serial="456", person=person)
+        response = self.client.get(V2CheckMachineTests.url, data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.data["error"], "Machine in maintenance")
+
     def test_qualification(self):
         data = {"mac_address": "aabbccddeeff", "tokenUid": "456"}
         machine = Machine.objects.create(
@@ -733,6 +777,33 @@ class MachineApiKeyTests(APITestCase):
         data = {"machine": "aabbccddeeff", "tokenUid": "456"}
         response = self.client.get(self.v1_url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+
+class MachineApiEdgeCaseTests(APITestCase):
+    config_url = reverse("api:v2:machine_config")
+    check_url = reverse("api:v2:machine_check")
+
+    def test_non_string_mac_address_is_bad_request_not_500(self):
+        response = self.client.post(
+            self.config_url, {"mac_address": 12345}, format="json"
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_list_mac_address_is_bad_request_not_500(self):
+        response = self.client.post(
+            self.config_url,
+            {"mac_address": ["aa:bb:cc:dd:ee:ff"]},
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_oversized_token_does_not_500(self):
+        Machine.objects.create(
+            mac_address="aa:bb:cc:dd:ee:ff", hostname="test", name="test"
+        )
+        data = {"mac_address": "aabbccddeeff", "tokenUid": "x" * 500}
+        response = self.client.get(self.check_url, data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
 
 class MachineQualificationsTableTests(TestCase):

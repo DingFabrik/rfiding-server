@@ -16,29 +16,21 @@ from machines.models import Machine
 
 logger = logging.getLogger(__name__)
 
-duplicate_seconds_ago = (
-    settings.ACCESS_LOG_DUPLICATE_SECONDS
-    if hasattr(settings, "ACCESS_LOG_DUPLICATE_SECONDS")
-    else 10
+duplicate_seconds_ago = getattr(settings, "ACCESS_LOG_DUPLICATE_SECONDS", 10)
+enabled_duration_max_seconds = getattr(
+    settings, "ACCESS_LOG_ENABLED_DURATION_MAX_SECONDS", 3600 * 5
 )
-enabled_duration_max_seconds = (
-    settings.ACCESS_LOG_ENABLED_DURATION_MAX_SECONDS
-    if hasattr(settings, "ACCESS_LOG_ENABLED_DURATION_MAX_SECONDS")
-    else 3600 * 5
-)
-delete_days = (
-    settings.ACCESS_LOG_DELETE_DAYS
-    if hasattr(settings, "ACCESS_LOG_DELETE_DAYS")
-    else 0
-)
-anonymize_days = (
-    settings.ACCESS_LOG_ANONYMIZE_DAYS
-    if hasattr(settings, "ACCESS_LOG_ANONYMIZE_DAYS")
-    else 0
-)
+delete_days = getattr(settings, "ACCESS_LOG_DELETE_DAYS", 0)
+anonymize_days = getattr(settings, "ACCESS_LOG_ANONYMIZE_DAYS", 0)
 
 
-@shared_task
+@shared_task(
+    autoretry_for=(Exception,),
+    retry_backoff=True,
+    retry_backoff_max=600,
+    retry_jitter=True,
+    max_retries=5,
+)
 def save_access_log(machine, token_id, log_type, timestamp=None):
     if not isinstance(machine, Machine):
         machine = Machine.objects.get(pk=machine)
