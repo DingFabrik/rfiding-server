@@ -212,9 +212,9 @@ class RevokeQualificationPersonView(
         return _(f"Revoke Qualification for {self.get_person().name}")
 
     def get_object(self, queryset):
-        return self.model.objects.filter(
-            person=self.kwargs["pk"], pk=self.kwargs["qualification"]
-        ).first()
+        return get_object_or_404(
+            self.model, person=self.kwargs["pk"], pk=self.kwargs["qualification"]
+        )
 
     def get_success_url(self):
         if self.request.GET.get("next"):
@@ -240,9 +240,9 @@ class EditQualificationPersonView(TitleMixin, PermissionRequiredMixin, UpdateVie
         return _(f"Edit Qualification for {self.get_person().name}")
 
     def get_object(self, queryset):
-        return self.model.objects.filter(
-            person=self.kwargs["pk"], pk=self.kwargs["qualification"]
-        ).first()
+        return get_object_or_404(
+            self.model, person=self.kwargs["pk"], pk=self.kwargs["qualification"]
+        )
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)

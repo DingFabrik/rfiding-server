@@ -22,7 +22,7 @@ def formatted_mac(mac_address):
         return ":".join(
             mac_address[i : i + 2].lower() for i in range(0, len(mac_address), 2)
         )
-    return mac_address
+    return mac_address.lower()
 
 
 class BaseAPIView(APIView):
@@ -34,7 +34,7 @@ class BaseAPIView(APIView):
         try:
             return Machine.objects.get(
                 ~Q(state=Machine.MachineStatus.INACTIVE),
-                mac_address__iexact=mac_address
+                mac_address=mac_address
             )
         except Machine.DoesNotExist:
             raise NotFound("Machine does not exist") from None

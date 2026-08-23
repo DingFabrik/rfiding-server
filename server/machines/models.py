@@ -286,7 +286,7 @@ class Machine(TimestampedModel):
 
     @staticmethod
     def get_valid_end_time_for_times(times):
-        if not times.all():
+        if not times.exists():
             return datetime.time(23, 59, 59)
         now = datetime.datetime.now()
         try:

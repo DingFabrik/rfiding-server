@@ -1,9 +1,15 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.permissions import BasePermission
 from rest_framework import status
 from django.db.models import Q
 
 from .models import Machine
+
+
+class HasViewMachinePermission(BasePermission):
+    def has_permission(self, request, view):
+        return bool(request.user and request.user.has_perm("machines.view_machine"))
 
 
 def get_machines(request, term):
@@ -12,6 +18,7 @@ def get_machines(request, term):
 
 class MachineAutocompleteView(APIView):
     queryset = Machine.objects.all()
+    permission_classes = [HasViewMachinePermission]
 
     def get(self, request, format=None):
         machines = get_machines(request, request.GET.get("term", None))
@@ -23,6 +30,7 @@ class MachineAutocompleteView(APIView):
 
 class QualifyableMachineAutocompleteView(APIView):
     queryset = Machine.objects.all()
+    permission_classes = [HasViewMachinePermission]
 
     def get(self, request, person=None):
         machines = get_machines(request, request.GET.get("term", None))

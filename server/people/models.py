@@ -223,6 +223,11 @@ class Qualification(TimestampedModel):
         verbose_name_plural = _("Qualifications")
         permissions = (("qualify_person", _("Can manage qualifications")),)
         ordering = ["machine", "person__name"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["person", "machine"], name="unique_qualification_person_machine"
+            ),
+        ]
 
 
 auditlog.register(Person, mask_fields=["email"], exclude_fields=["created", "updated"])

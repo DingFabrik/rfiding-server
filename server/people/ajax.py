@@ -1,9 +1,15 @@
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.permissions import BasePermission
 from django.db.models import Q
 
 from .models import Person
+
+
+class HasViewPersonPermission(BasePermission):
+    def has_permission(self, request, view):
+        return bool(request.user and request.user.has_perm("people.view_person"))
 
 
 def get_people(request, term):
@@ -11,6 +17,7 @@ def get_people(request, term):
 
 class PersonAutocompleteView(APIView):
     queryset = Person.objects.all()
+    permission_classes = [HasViewPersonPermission]
 
     def get(self, request, machine=None):
         people = get_people(request, request.GET.get("term", None))
@@ -27,6 +34,7 @@ class PersonAutocompleteView(APIView):
 
 class QualifyablePersonAutocompleteView(APIView):
     queryset = Person.objects.all()
+    permission_classes = [HasViewPersonPermission]
 
     def get(self, request, machine=None):
         people = get_people(request, request.GET.get("term", None))
@@ -46,11 +54,14 @@ class QualifyablePersonAutocompleteView(APIView):
 
 class InstructorPersonAutocompleteView(APIView):
     queryset = Person.objects.all()
+    permission_classes = [HasViewPersonPermission]
 
     def get(self, request, machine=None):
         people = get_people(request, request.GET.get("term", None))
         people = people.filter(is_active=True)
-        people = people.exclude(can_instruct__machine__id=machine)
+        people = people.exclude(
+            qualifications__machine_id=machine, qualifications__is_instructor=True
+        )
         return Response(
             [
                 {"value": person.id, "label": f"{person.name} ({person.email})"}
