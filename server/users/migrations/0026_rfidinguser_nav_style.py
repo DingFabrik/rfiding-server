@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('users', '0025_remove_rfidinguser_theme_rfidinguser_dark_theme_and_more'),
+        ("users", "0025_remove_rfidinguser_theme_rfidinguser_dark_theme_and_more"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='rfidinguser',
-            name='nav_style',
-            field=models.CharField(choices=[('navbar', 'Top Navigation Bar'), ('sidebar', 'Sidebar')], default='navbar', help_text='Whether navigation is shown as a top bar or a sidebar.', max_length=10, verbose_name='Navigation Style'),
+            model_name="rfidinguser",
+            name="nav_style",
+            field=models.CharField(choices=[("navbar", "Top Navigation Bar"), ("sidebar", "Sidebar")], default="navbar", help_text="Whether navigation is shown as a top bar or a sidebar.", max_length=10, verbose_name="Navigation Style"),
         ),
     ]
