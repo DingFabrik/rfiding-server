@@ -20,7 +20,7 @@ from comments.views import CommentCreateView
 from comments.forms import CommentForm
 from .models import Person, Qualification
 from .forms import PersonForm, QualifyPersonForm
-from base.filters import PEOPLE_FILTER_CHOICES
+from .filters import PersonFilterSet
 
 
 PEOPLE_SORT_CHOICES = (
@@ -44,23 +44,11 @@ class PersonListView(BaseListView):
     template_name = "person_list.html"
     context_object_name = "people"
     sort_fields = PEOPLE_SORT_CHOICES_KEYS
-
-    def get_queryset(self):
-        queryset = super().get_queryset()
-        status_filter = self.request.GET.get("filter_status", self.request.user.default_people_filter)
-        if status_filter == "all":
-            queryset = queryset
-        elif status_filter == "inactive":
-            queryset = queryset.filter(is_active=False)
-        else:
-            queryset = queryset.filter(is_active=True)
-        return queryset
+    filterset_class = PersonFilterSet
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["sort_choices"] = PEOPLE_SORT_CHOICES
-        context["filter_choices"] = PEOPLE_FILTER_CHOICES
-        context["filter_default"] = self.request.user.default_people_filter
         return context
 
 

@@ -62,6 +62,7 @@ class AboutView(TitleMixin, TemplateView):
 class BaseListView(PartialListMixin, TitleMixin, PermissionRequiredMixin, ListView):
     search_field = "name"
     sort_fields = []
+    filterset_class = None
 
     def get_title(self):
         return self.model._meta.verbose_name_plural
@@ -72,12 +73,18 @@ class BaseListView(PartialListMixin, TitleMixin, PermissionRequiredMixin, ListVi
             return queryset.order_by(sort)
         return queryset
 
+    def get_filterset(self, queryset):
+        return self.filterset_class(self.request.GET, queryset, request=self.request)
+
     def get_queryset(self):
         queryset = super().get_queryset()
         if "search" in self.request.GET:
             queryset = queryset.filter(
                 **{f"{self.search_field}__icontains": self.request.GET["search"]}
             )
+        if self.filterset_class:
+            self.filterset = self.get_filterset(queryset)
+            queryset = self.filterset.qs
         return self.sort_queryset(queryset)
 
     def get_paginate_by(self, queryset):
@@ -93,6 +100,9 @@ class BaseListView(PartialListMixin, TitleMixin, PermissionRequiredMixin, ListVi
             f"{self.model._meta.app_label}.change_{self.model._meta.model_name}"
         )
         context["model_count"] = self.get_queryset().count()
+        if self.filterset_class:
+            context["filter_choices"] = self.filterset.get_filter_choices()
+            context["filter_defaults"] = self.filterset.get_filter_defaults()
         return context
 
 

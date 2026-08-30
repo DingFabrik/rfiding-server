@@ -5,11 +5,13 @@ from django.utils.translation import gettext_lazy as _
 from django.conf import settings
 from auditlog.registry import auditlog
 
-from base.filters import (
-    TOKEN_FILTER_CHOICES,
-    PEOPLE_FILTER_CHOICES,
-    MACHINE_FILTER_CHOICES,
-)
+from machines.filters import MachineFilterSet
+from people.filters import PersonFilterSet
+from tokens.filters import TokenFilterSet
+
+TOKEN_STATUS_CHOICES = TokenFilterSet.declared_filters["status"].get_options()
+PEOPLE_STATUS_CHOICES = PersonFilterSet.declared_filters["status"].get_options()
+MACHINE_STATUS_CHOICES = MachineFilterSet.declared_filters["status"].get_options()
 
 
 class UserManager(BaseUserManager):
@@ -110,20 +112,20 @@ class RFIDingUser(AbstractUser):
     default_token_filter = models.CharField(
         _("Default Token Filter"),
         max_length=20,
-        default=TOKEN_FILTER_CHOICES["status"]["options"][0][0],
-        choices=TOKEN_FILTER_CHOICES["status"]["options"],
+        default=TOKEN_STATUS_CHOICES[0][0],
+        choices=TOKEN_STATUS_CHOICES,
     )
     default_people_filter = models.CharField(
         _("Default People Filter"),
         max_length=20,
-        default=PEOPLE_FILTER_CHOICES["status"]["options"][0][0],
-        choices=PEOPLE_FILTER_CHOICES["status"]["options"],
+        default=PEOPLE_STATUS_CHOICES[0][0],
+        choices=PEOPLE_STATUS_CHOICES,
     )
     default_machines_filter = models.CharField(
         _("Default Machine Filter"),
         max_length=100,
-        default=MACHINE_FILTER_CHOICES["status"]["options"][0][0],
-        choices=MACHINE_FILTER_CHOICES["status"]["options"],
+        default=MACHINE_STATUS_CHOICES[0][0],
+        choices=MACHINE_STATUS_CHOICES,
     )
 
     class ThemeMode(models.TextChoices):

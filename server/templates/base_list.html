@@ -75,10 +75,12 @@
                     hx-trigger="change"
                     hx-indicator="#list_loading_indicator"
                     hx-push-url="true">
-                    {% with filter=request.GET|get_item:"filter_{{ key }}"|default:filter_default %}
+                    {% with default=filter_defaults|get_item:key %}
+                    {% with filter=request.GET|get_item:"filter_{{ key }}"|default:default %}
                         {% for option in choice.options %}
                             <option value="{{ option.0 }}" {% if option.0 == filter %}selected{% endif %}>{{ option.1 }}</option>
                         {% endfor %}
+                    {% endwith %}
                     {% endwith %}
                     </select>
                 </div>

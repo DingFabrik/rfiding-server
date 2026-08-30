@@ -21,7 +21,7 @@ from .models import Token, TokenType, UnknownToken, BlacklistedToken
 from .forms import TokenForm
 from people.models import Person
 from .common import clear_unknown_tokens
-from base.filters import TOKEN_FILTER_CHOICES
+from .filters import TokenFilterSet
 
 
 TOKEN_SORT_CHOICES = (
@@ -48,34 +48,11 @@ class TokenListView(BaseListView):
     context_object_name = "tokens"
     search_field = "serial"
     sort_fields = TOKEN_SORT_CHOICES_KEYS
-
-    def get_queryset(self):
-        queryset = super().get_queryset()
-        status_filter = self.request.GET.get("filter_status", self.request.user.default_token_filter)
-        if status_filter == "all":
-            queryset = queryset.filter(archived__isnull=True)
-        elif status_filter == "inactive":
-            queryset = queryset.filter(is_active=False, archived__isnull=True)
-        elif status_filter == "archived":
-            queryset = queryset.filter(archived__isnull=False)
-        else:
-            queryset = queryset.filter(is_active=True, archived__isnull=True)
-        type_filter = self.request.GET.get("filter_type", "all")
-        if type_filter != "all":
-            queryset = queryset.filter(type=type_filter)
-        return queryset
+    filterset_class = TokenFilterSet
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["sort_choices"] = TOKEN_SORT_CHOICES
-        token_types = TokenType.objects.all()
-        filter_choices = TOKEN_FILTER_CHOICES.copy()
-        if token_types.exists():
-            filter_choices["type"]["options"] = [
-                ("all", _("All"))
-            ] + [(str(token_type.pk), token_type.name) for token_type in token_types]
-        context["filter_choices"] = filter_choices
-        context["filter_default"] = self.request.user.default_token_filter
         return context
 
 
