@@ -89,6 +89,7 @@ urlpatterns = [
     path("firmware/", include("firmware.urls", namespace="firmware")),
     path("__debug__/", include("debug_toolbar.urls")),
     path("api/", include((api_urls, "api"), namespace="api")),
+    path("api/rest/", include("api.urls", namespace="rest")),
     path("about/", AboutView.as_view(), name="about"),
     path("auditlog/", AuditlogView.as_view(), name="auditlog"),
 ]

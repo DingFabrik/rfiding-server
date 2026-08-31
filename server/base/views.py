@@ -13,6 +13,7 @@ from rfiding import settings
 from machines.models import Machine
 from people.models import Person
 from tokens.models import Token
+from base.services import toggle_active
 class PartialMixin:
     full_base_template = "base.html"
     partial_base_template = "partial_base.html"
@@ -112,9 +113,7 @@ class BaseToggleActiveView(PermissionRequiredMixin, TemplateView):
 
     def post(self, request, *args, **kwargs):
         object = get_object_or_404(self.model, pk=self.kwargs["pk"])
-        object.is_active = not object.is_active
-        object.save()
-        self.object = object
+        self.object = toggle_active(object)
         return self.render_to_response(self.get_context_data(**kwargs))
 
     def get_context_data(self, **kwargs):

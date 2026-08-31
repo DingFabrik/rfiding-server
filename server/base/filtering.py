@@ -86,6 +86,20 @@ class DRFFilterBackend:
 
     def filter_queryset(self, request, queryset, view):
         filterset_class = getattr(view, "filterset_class", None)
-        if filterset_class is None:
             return queryset
         return filterset_class(request.query_params, queryset, request=request).qs
+
+    def get_schema_operation_parameters(self, view):
+        filterset_class = getattr(view, "filterset_class", None)
+        if filterset_class is None:
+            return []
+        return [
+            {
+                "name": f"{filterset_class.param_prefix}{name}",
+                "required": False,
+                "in": "query",
+                "description": str(filter_.label) if filter_.label else name,
+                "schema": {"type": "string"},
+            }
+            for name, filter_ in filterset_class.declared_filters.items()
+        ]

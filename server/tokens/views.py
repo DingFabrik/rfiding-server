@@ -13,14 +13,13 @@ from django.views.generic import (
 )
 from django.urls import reverse_lazy
 from django.shortcuts import redirect, get_object_or_404
-from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from base.views import BaseToggleActiveView, BaseListView
 from .models import Token, TokenType, UnknownToken, BlacklistedToken
 from .forms import TokenForm
 from people.models import Person
-from .common import clear_unknown_tokens
+from .common import clear_unknown_tokens, blacklist_token
 from .filters import TokenFilterSet
 
 
@@ -149,10 +148,7 @@ class TokenArchiveView(PermissionRequiredMixin, DeleteView):
     success_url = reverse_lazy("tokens:list")
 
     def handle(self):
-        token = self.get_object()
-        token.is_active = False
-        token.archived = timezone.now()
-        token.save()
+        self.get_object().archive()
         return redirect(self.success_url)
 
     def delete(self, request: HttpRequest, *args: str, **kwargs: Any) -> HttpResponse:
@@ -185,9 +181,7 @@ class BlacklistTokenView(PermissionRequiredMixin, View):
     permission_required = "tokens.add_blacklistedtoken"
 
     def get(self, request: HttpRequest, *args: str, **kwargs: Any) -> HttpResponse:
-        serial = kwargs["serial"]
-        UnknownToken.objects.filter(serial=serial).delete()
-        BlacklistedToken.objects.create(serial=serial)
+        blacklist_token(kwargs["serial"])
         return redirect("tokens:blacklisted")
 
 

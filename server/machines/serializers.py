@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from datetime import timedelta
 
-from .models import Machine
+from .models import Machine, MachineTime, MachineRegistrationRequest, MachineControlKey
 from .client_modules import (
     ACCESS_CONTROL_MODULES,
     STATUS_DISPLAY_MODULES,
@@ -13,6 +13,30 @@ class MachineSerializer(serializers.ModelSerializer):
     class Meta:
         model = Machine
         fields = "__all__"
+        extra_kwargs = {
+            "encryption_key": {"write_only": True},
+            "api_key": {"write_only": True},
+        }
+
+
+class MachineTimeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MachineTime
+        fields = ["id", "machine", "weekdays", "start_time", "end_time"]
+
+
+class MachineRegistrationRequestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MachineRegistrationRequest
+        fields = ["id", "mac_address", "hostname", "ip_address", "created"]
+        read_only_fields = fields
+
+
+class MachineControlKeySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MachineControlKey
+        fields = ["key", "machine", "purpose", "last_used", "created"]
+        read_only_fields = ["key", "last_used", "created"]
 
 
 class DurationMillisecondsField(serializers.Field):

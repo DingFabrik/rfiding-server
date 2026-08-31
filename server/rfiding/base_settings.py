@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django.contrib.humanize",
     "rest_framework",
+    "drf_spectacular",
+    "oauth2_provider",
     "crispy_forms",
     "django_celery_results",
     "django_celery_beat",
@@ -56,6 +58,7 @@ INSTALLED_APPS = [
     "tokens",
     "users",
     "comments",
+    "api",
 ]
 
 MIDDLEWARE = [
@@ -152,7 +155,44 @@ INTERNAL_IPS = [
 REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
     # or allow read-only access for unauthenticated users.
-    "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.DjangoModelPermissions"]
+    "DEFAULT_PERMISSION_CLASSES": ["api.permissions.DjangoModelPermissionsWithView"],
+    # Session/Basic stay first so pre-existing session-authenticated dashboard-internal
+    # DRF views (ajax autocomplete, etc.) keep their original 401-vs-403 behavior -
+    # DRF picks authenticators[0].authenticate_header() for that, and OAuth2's header
+    # would otherwise coerce every anonymous 403 into a 401. The new `/api/rest/`
+    # viewsets pin `authentication_classes = [OAuth2Authentication]` explicitly
+    # (see api.viewsets.base.OAuth2OnlyMixin) so they are OAuth2-only regardless of
+    # this order.
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.SessionAuthentication",
+        "rest_framework.authentication.BasicAuthentication",
+        "oauth2_provider.contrib.rest_framework.OAuth2Authentication",
+    ],
+    "DEFAULT_FILTER_BACKENDS": [
+        "base.filtering.DRFFilterBackend",
+        "rest_framework.filters.SearchFilter",
+        "rest_framework.filters.OrderingFilter",
+    ],
+    "DEFAULT_PAGINATION_CLASS": "api.pagination.PageLengthPagination",
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+}
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Rfiding Admin API",
+    "DESCRIPTION": "REST API covering the data and actions available in the Rfiding admin dashboard.",
+    "VERSION": VERSION,
+    "SERVE_INCLUDE_SCHEMA": False,
+    "ENUM_NAME_OVERRIDES": {
+        "ThemeColorEnum": "users.models.THEME_COLORS",
+    },
+}
+
+OAUTH2_PROVIDER = {
+    "SCOPES": {
+        "read": "Read access to your account and the data it can see in the dashboard",
+        "write": "Write access to perform dashboard actions",
+    },
+    "ACCESS_TOKEN_EXPIRE_SECONDS": 60 * 60 * 8,
 }
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "daisyui"

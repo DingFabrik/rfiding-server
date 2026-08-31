@@ -1,6 +1,8 @@
 from django.db import models
 from django.urls import reverse
+from django.utils import timezone
 from base.models import TimestampedModel
+from base.services import toggle_active
 from django.utils.translation import gettext_lazy as _
 from auditlog.registry import auditlog
 from django.db.models.signals import post_save
@@ -64,6 +66,15 @@ class Token(TimestampedModel):
         if self.type and self.label_id:
             return self.type.format_label_id(self.label_id)
         return self.label_id or self.purpose
+
+    def archive(self):
+        self.is_active = False
+        self.archived = timezone.now()
+        self.save()
+        return self
+
+    def toggle_active(self):
+        return toggle_active(self)
 
     class Meta:
         verbose_name = _("Token")

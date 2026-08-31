@@ -1,9 +1,11 @@
 from django.views.generic import CreateView
 from django.utils.translation import gettext_lazy as _
 from django.shortcuts import render
+from django.http import HttpResponseRedirect
 
 from .models import Comment
 from .forms import CommentForm
+from .services import create_comment
 from base.views import TitleMixin, PermissionRequiredMixin, PartialMixin
 class CommentCreateView(TitleMixin, PartialMixin, PermissionRequiredMixin, CreateView):
     permission_required = "machines.view_machine"
@@ -24,12 +26,12 @@ class CommentCreateView(TitleMixin, PartialMixin, PermissionRequiredMixin, Creat
         return self.content_object
 
     def form_valid(self, form):
-        form.instance.content_object = self.get_content_object()
-        form.instance.author = self.request.user
-        response = super().form_valid(form)
+        self.object = create_comment(
+            self.get_content_object(), self.request.user, form.cleaned_data["text"]
+        )
         if self.is_partial:
             return self.render_tab_pane()
-        return response
+        return HttpResponseRedirect(self.get_success_url())
 
     def form_invalid(self, form):
         if self.is_partial:
