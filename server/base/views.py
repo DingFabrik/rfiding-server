@@ -60,7 +60,7 @@ class AboutView(TitleMixin, TemplateView):
         return context
 
 
-
+class ResultCountMixin:
     def get_result_count(self, context):
         paginator = context.get("paginator")
         if paginator is not None:
