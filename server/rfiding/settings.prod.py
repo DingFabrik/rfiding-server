@@ -12,6 +12,15 @@ STATIC_ROOT = "/var/www/example.com/static/"
 # Set all hosts your deploy will be available from
 ALLOWED_HOSTS = []
 
+# Shared across web and Celery workers, unlike the LocMemCache default. Point
+# this at the same Redis you use for the Celery broker.
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": "redis://localhost:6379/1",
+    }
+}
+
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels.layers.InMemoryChannelLayer",

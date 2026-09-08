@@ -17,12 +17,21 @@ def bulk_qualify(*, machine=None, people=None, person=None, machines=None, **fie
         pairs = [(person_obj, machine) for person_obj in people]
     else:
         pairs = [(person, machine_obj) for machine_obj in machines]
+    if not pairs:
+        return []
 
-    qualifications = []
     with transaction.atomic():
-        for person_obj, machine_obj in pairs:
-            qualification, _created = Qualification.objects.get_or_create(
-                person=person_obj, machine=machine_obj, defaults=fields
-            )
-            qualifications.append(qualification)
-    return qualifications
+        Qualification.objects.bulk_create(
+            [
+                Qualification(person=person_obj, machine=machine_obj, **fields)
+                for person_obj, machine_obj in pairs
+            ],
+            ignore_conflicts=True,
+        )
+
+    return list(
+        Qualification.objects.filter(
+            person__in=[person_obj for person_obj, _ in pairs],
+            machine__in=[machine_obj for _, machine_obj in pairs],
+        )
+    )

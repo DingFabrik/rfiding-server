@@ -1,5 +1,10 @@
+from django.core.cache import cache
 from django.db import models
+from django.db.models.signals import post_delete, post_save
+from django.dispatch import receiver
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+
 
 class Holiday(models.Model):
     name = models.CharField(max_length=100, verbose_name=_("Name"))
@@ -10,23 +15,14 @@ class Holiday(models.Model):
         verbose_name = _("Holiday")
         verbose_name_plural = _("Holidays")
         ordering = ["date"]
-        
-    cache = {
-        "date": None,
-        "holiday": None
-    }
 
     def __str__(self):
         return f"{self.name} on {self.date}"
-    
-    def save(self,
-        force_insert=False,
-        force_update=False,
-        using=None,
-        update_fields=None,):
-        Holiday.cache["date"] = None
-        Holiday.cache["holiday"] = None
-        return super().save(force_insert=force_insert,
-                            force_update=force_update,
-                            using=using,
-                            update_fields=update_fields)
+
+
+@receiver(post_save, sender=Holiday)
+@receiver(post_delete, sender=Holiday)
+def invalidate_is_today_holiday(sender, instance, **kwargs):
+    from .utils import is_today_holiday_cache_key
+
+    cache.delete(is_today_holiday_cache_key(timezone.localdate()))

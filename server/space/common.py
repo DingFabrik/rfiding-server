@@ -18,8 +18,8 @@ if hasattr(settings, "SPACE_REPORTERS"):
         reporter = getattr(
             __import__(module, fromlist=[reporter_class_name]), reporter_class_name
         )
-        settings = reporter_conf.get("SETTINGS", {})
-        state_reporters.append(reporter(settings))
+        reporter_settings = reporter_conf.get("SETTINGS", {})
+        state_reporters.append(reporter(reporter_settings))
 
 
 def get_current_space_state():

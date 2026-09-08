@@ -111,10 +111,8 @@ def check_access(machine, tokenID, compartmentID=None):
         raise PermissionDenied("Machine is restricted")
 
     try:
-        token = (
-            Token.objects.select_related("person")
-            .values("id", "person__id")
-            .get(serial=tokenID, archived=None, is_active=True, person__is_active=True)
+        token = Token.objects.values("id", "person__id").get(
+            serial=tokenID, archived=None, is_active=True, person__is_active=True
         )
     except Token.DoesNotExist:
         serial_max_length = Token._meta.get_field("serial").max_length

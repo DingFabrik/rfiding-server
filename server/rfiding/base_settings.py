@@ -102,6 +102,15 @@ DATABASES = {
     }
 }
 
+# Per-process and therefore NOT shared between web and Celery workers. Anything
+# that must be consistent across processes (e.g. holidays.utils.is_today_holiday)
+# needs a shared backend - settings.prod.py overrides this with Redis.
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+    }
+}
+
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},

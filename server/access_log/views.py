@@ -4,7 +4,7 @@ from django.db.models.query import QuerySet
 from django.views.generic import ListView
 from django.utils.translation import gettext_lazy as _
 
-from base.views import PartialListMixin, TitleMixin
+from base.views import PartialListMixin, ResultCountMixin, TitleMixin
 from .models import AccessLog
 from .filters import AccessLogFilterSet
 from tokens.models import Token
@@ -12,7 +12,9 @@ from machines.models import Machine
 from people.models import Person
 
 
-class AccessLogListView(TitleMixin, PermissionRequiredMixin, PartialListMixin, ListView):
+class AccessLogListView(
+    ResultCountMixin, TitleMixin, PermissionRequiredMixin, PartialListMixin, ListView
+):
     permission_required = "access_log.view_accesslog"
 
     title = _("Access Logs")
@@ -39,7 +41,7 @@ class AccessLogListView(TitleMixin, PermissionRequiredMixin, PartialListMixin, L
         context["can_create"] = False
         context["filter_choices"] = self.filterset.get_filter_choices()
         context["filter_defaults"] = self.filterset.get_filter_defaults()
-        context["model_count"] = self.get_queryset().count()
+        context["model_count"] = self.get_result_count(context)
         context["model"] = self.model
         return context
 

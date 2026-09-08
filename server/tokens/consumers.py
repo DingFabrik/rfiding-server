@@ -34,7 +34,7 @@ class UnknownTokenConsumer(AsyncWebsocketConsumer):
     async def unknown_token_list_changed(self, event):
         tokens = [
             token
-            async for token in UnknownToken.objects.prefetch_related("machine").all()
+            async for token in UnknownToken.objects.select_related("machine").all()
         ]
         if len(tokens) == 0:
             html = render_to_string("unknown_tokens_empty.html")

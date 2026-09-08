@@ -60,7 +60,15 @@ class AboutView(TitleMixin, TemplateView):
         return context
 
 
-class BaseListView(PartialListMixin, TitleMixin, PermissionRequiredMixin, ListView):
+
+    def get_result_count(self, context):
+        paginator = context.get("paginator")
+        if paginator is not None:
+            return paginator.count
+        return len(context["object_list"])
+
+
+class BaseListView(ResultCountMixin, PartialListMixin, TitleMixin, PermissionRequiredMixin, ListView):
     search_field = "name"
     sort_fields = []
     filterset_class = None
@@ -100,7 +108,7 @@ class BaseListView(PartialListMixin, TitleMixin, PermissionRequiredMixin, ListVi
         context["can_edit"] = self.request.user.has_perm(
             f"{self.model._meta.app_label}.change_{self.model._meta.model_name}"
         )
-        context["model_count"] = self.get_queryset().count()
+        context["model_count"] = self.get_result_count(context)
         if self.filterset_class:
             context["filter_choices"] = self.filterset.get_filter_choices()
             context["filter_defaults"] = self.filterset.get_filter_defaults()

@@ -1,4 +1,6 @@
+from django.conf import settings
 from django.utils import translation
+from django.utils.cache import patch_vary_headers
 
 
 class LanguageMiddleware:
@@ -7,7 +9,16 @@ class LanguageMiddleware:
 
     def __call__(self, request):
         user = request.user
-        if user.is_authenticated:
-            if user.language is not None:
-                translation.activate(user.language)
-        return self.get_response(request)
+        language = user.language if user.is_authenticated else None
+        language = language or settings.LANGUAGE_CODE
+
+        translation.activate(language)
+        request.LANGUAGE_CODE = translation.get_language()
+        try:
+            response = self.get_response(request)
+        finally:
+            translation.deactivate()
+
+        response.setdefault("Content-Language", language)
+        patch_vary_headers(response, ("Accept-Language",))
+        return response

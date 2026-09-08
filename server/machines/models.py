@@ -302,8 +302,6 @@ class Machine(TimestampedModel):
 
     @staticmethod
     def get_valid_end_time_for_times(times):
-        if not times.exists():
-            return datetime.time(23, 59, 59)
         now = datetime.datetime.now()
         match = (
             times.filter(weekdays__contains=now.weekday())
@@ -312,9 +310,11 @@ class Machine(TimestampedModel):
             .order_by("end_time")
             .first()
         )
-        if match is None:
-            return None
-        return match.end_time
+        if match is not None:
+            return match.end_time
+        if not times.exists():
+            return datetime.time(23, 59, 59)
+        return None
 
     @staticmethod
     def get_valid_end_time_for_machine(machine_id):

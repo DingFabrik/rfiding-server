@@ -59,8 +59,12 @@ class UnknownTokenListView(PermissionRequiredMixin, ListView):
     permission_required = "tokens.view_unknowntoken"
 
     model = UnknownToken
+    queryset = UnknownToken.objects.select_related("machine")
     template_name = "unknown_token_list.html"
     context_object_name = "tokens"
+
+    def get_paginate_by(self, queryset):
+        return self.request.user.page_length
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
