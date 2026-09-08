@@ -103,7 +103,7 @@
               <h2 class="text-xs font-semibold uppercase tracking-wide text-base-content/50">{% trans 'Qualifications' %}</h2>
               <div class="flex justify-end mb-2">
                 {% if perms.people.qualify_person %}
-                  <a class="btn btn-primary btn-sm" href="{% url 'machines:qualify' machine.pk %}"><i data-lucide="user-plus" class="w-4 h-4"></i>{% trans 'Qualify Person' %}</a>
+                  <a class="btn btn-primary btn-sm" href="{% url 'machines:qualify' machine.pk %}" data-modal-target="hx_modal" hx-get="{% url 'machines:qualify' machine.pk %}" hx-target="#hx_modal" hx-trigger="click"><i data-lucide="user-plus" class="w-4 h-4"></i>{% trans 'Qualify Person' %}</a>
                 {% endif %}
               </div>
             </div>

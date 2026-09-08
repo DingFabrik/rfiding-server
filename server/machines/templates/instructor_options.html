@@ -1,0 +1,4 @@
+<option value="">---------</option>
+{% for qualification in instructors %}
+<option value="{{ qualification.person.pk }}">{{ qualification.person.name }}</option>
+{% endfor %}

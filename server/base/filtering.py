@@ -86,6 +86,11 @@ class DRFFilterBackend:
 
     def filter_queryset(self, request, queryset, view):
         filterset_class = getattr(view, "filterset_class", None)
+        # Only apply on the list action - like the dashboard's BaseListView, this
+        # filters listings (including their default status filter); it must not
+        # narrow single-object lookups (retrieve/update/destroy/detail actions),
+        # or e.g. toggling a person inactive would make them unreachable afterwards.
+        if filterset_class is None or getattr(view, "action", None) != "list":
             return queryset
         return filterset_class(request.query_params, queryset, request=request).qs
 

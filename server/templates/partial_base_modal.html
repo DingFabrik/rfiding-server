@@ -2,12 +2,14 @@
   {% block notitle %}
   <h3 class="text-lg font-bold">{% block title %}{% endblock %}</h3>
   {% endblock %}
-  <div class="py-4">
+  <div class="pt-4">
     {% block content %}{% endblock %}
   </div>
+  {% if buttons %}
   <div class="modal-action">
     {% block buttons %}{% endblock %}
   </div>
+  {% endif %}
 </div>
 <form method="dialog" class="modal-backdrop"><button>{% trans "close" %}</button></form>
 

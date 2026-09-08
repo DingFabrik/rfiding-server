@@ -1,7 +1,7 @@
 from django import forms
 from django.utils.translation import gettext_lazy as _
 
-from .models import Person, Qualification
+from .models import Person, Qualification, PERMISSION_LEVELS
 from .conf import PERSON_ENABLE_SLACK_EMAIL, PERSON_ENABLE_EMAIL
 
 def make_person_fields():
@@ -71,3 +71,26 @@ class QualifyPersonForm(forms.ModelForm):
                 self.read_only_expiration_fields + self.editable_expiration_fields
             ):
                 del self.fields[field_name]
+
+
+class BulkQualifyForm(forms.Form):
+    instructed_by = forms.ModelChoiceField(
+        label=_("Instructed By"),
+        queryset=Person.objects.filter(is_active=True),
+        required=False,
+    )
+    permission_level = forms.ChoiceField(
+        label=_("Permission Level"), choices=PERMISSION_LEVELS
+    )
+    is_instructor = forms.BooleanField(label=_("Is Instructor"), required=False)
+    is_maintainer = forms.BooleanField(label=_("Is Maintainer"), required=False)
+    comment = forms.CharField(
+        label=_("Comment"), required=False, widget=forms.Textarea(attrs={"rows": 4})
+    )
+
+    def __init__(self, *args, machine=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if machine is not None:
+            self.fields["instructed_by"].queryset = Person.objects.filter(
+                qualifications__machine=machine, qualifications__is_instructor=True
+            ).order_by("name")

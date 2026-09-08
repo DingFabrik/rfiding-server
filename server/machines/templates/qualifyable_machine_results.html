@@ -1,0 +1,11 @@
+{% load i18n %}
+{% for machine in machines %}
+<button type="button"
+        class="qualify-result-row btn btn-ghost btn-sm w-full justify-start"
+        data-id="{{ machine.pk }}"
+        data-label="{{ machine.name }}{% if machine.hostname %} ({{ machine.hostname }}){% endif %}">
+    {{ machine.name }}{% if machine.hostname %} <span class="opacity-60">({{ machine.hostname }})</span>{% endif %}
+</button>
+{% empty %}
+<div class="text-sm opacity-60 px-2 py-1">{% trans "No matches." %}</div>
+{% endfor %}

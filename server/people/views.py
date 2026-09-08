@@ -11,6 +11,7 @@ from django.views.generic import (
     UpdateView,
     DeleteView,
     TemplateView,
+    FormView,
 )
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
@@ -18,8 +19,10 @@ from django.utils.translation import gettext_lazy as _
 from base.views import BaseToggleActiveView, BaseListView, PartialMixin, TitleMixin
 from comments.views import CommentCreateView
 from comments.forms import CommentForm
+from machines.models import Machine
 from .models import Person, Qualification
-from .forms import PersonForm, QualifyPersonForm
+from .forms import PersonForm, QualifyPersonForm, BulkQualifyForm
+from .services import bulk_qualify
 from .filters import PersonFilterSet
 
 
@@ -150,12 +153,13 @@ class PersonToggleActiveView(BaseToggleActiveView):
     model = Person
 
 
-class QualifyPersonView(TitleMixin, PermissionRequiredMixin, CreateView):
+class QualifyPersonView(TitleMixin, PartialMixin, PermissionRequiredMixin, FormView):
     permission_required = "people.qualify_person"
 
-    model = Qualification
-    template_name = "qualify_person.html"
-    form_class = QualifyPersonForm
+    template_name = "qualify_bulk.html"
+    form_class = BulkQualifyForm
+    full_base_template = "base_slim.html"
+    partial_base_template = "partial_base_modal.html"
 
     object = None
 
@@ -167,13 +171,26 @@ class QualifyPersonView(TitleMixin, PermissionRequiredMixin, CreateView):
     def get_title(self):
         return _(f"Qualify {self.get_object().name}")
 
-    def get_initial(self):
-        return {"person": self.kwargs["pk"]}
-
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
         context["person"] = self.get_object()
+        if self.request.method == "POST":
+            context["selected_machines"] = Machine.objects.filter(
+                pk__in=self.request.POST.getlist("machine_ids")
+            )
         return context
+
+    def form_valid(self, form):
+        machines = Machine.objects.filter(
+            pk__in=self.request.POST.getlist("machine_ids"),
+            needs_qualification=True,
+            state=Machine.MachineStatus.ACTIVE,
+        )
+        if not machines:
+            form.add_error(None, _("Select at least one machine."))
+            return self.form_invalid(form)
+        bulk_qualify(person=self.get_object(), machines=machines, **form.cleaned_data)
+        return super().form_valid(form)
 
     def get_success_url(self):
         return reverse_lazy("people:detail", kwargs={"pk": self.kwargs["pk"]})
@@ -199,7 +216,7 @@ class RevokeQualificationPersonView(
     def get_title(self):
         return _(f"Revoke Qualification for {self.get_person().name}")
 
-    def get_object(self, queryset):
+    def get_object(self, queryset=None):
         return get_object_or_404(
             self.model, person=self.kwargs["pk"], pk=self.kwargs["qualification"]
         )
@@ -210,12 +227,14 @@ class RevokeQualificationPersonView(
         return reverse_lazy("people:detail", kwargs={"pk": self.kwargs["pk"]})
 
 
-class EditQualificationPersonView(TitleMixin, PermissionRequiredMixin, UpdateView):
+class EditQualificationPersonView(TitleMixin, PartialMixin, PermissionRequiredMixin, UpdateView):
     permission_required = "people.qualify_person"
 
     model = Qualification
     form_class = QualifyPersonForm
     template_name = "qualify_person.html"
+    full_base_template = "base_slim.html"
+    partial_base_template = "partial_base_modal.html"
 
     person = None
 
@@ -227,7 +246,7 @@ class EditQualificationPersonView(TitleMixin, PermissionRequiredMixin, UpdateVie
     def get_title(self):
         return _(f"Edit Qualification for {self.get_person().name}")
 
-    def get_object(self, queryset):
+    def get_object(self, queryset=None):
         return get_object_or_404(
             self.model, person=self.kwargs["pk"], pk=self.kwargs["qualification"]
         )

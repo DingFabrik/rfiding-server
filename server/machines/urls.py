@@ -25,6 +25,11 @@ urlpatterns = [
         name="autocomplete-qualifyable",
     ),
     path(
+        "autocomplete/instructors/<int:pk>",
+        ajax.MachineInstructorOptionsView.as_view(),
+        name="instructor-options",
+    ),
+    path(
         "<int:pk>/qualifications",
         views.MachineQualificationsListView.as_view(),
         name="qualifications",

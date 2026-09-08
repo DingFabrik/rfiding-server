@@ -5,6 +5,7 @@ from django.views.generic import (
     UpdateView,
     DeleteView,
     TemplateView,
+    FormView,
 )
 from django.core.paginator import Paginator
 from django.urls import reverse_lazy
@@ -18,8 +19,9 @@ from comments.views import CommentCreateView
 from .models import Machine, MachineRegistrationRequest
 from .forms import MachineForm, ConfigureMachineForm, MachineTimeFormset
 from .statistics import compute_machine_statistics
-from people.models import Qualification
-from people.forms import QualifyPersonForm
+from people.models import Qualification, Person
+from people.forms import BulkQualifyForm
+from people.services import bulk_qualify
 from .filters import MachineFilterSet
 
 MACHINE_SORT_CHOICES = (
@@ -337,12 +339,13 @@ class MachineStatisticsView(
         return context
 
 
-class QualifyMachineView(TitleMixin, PermissionRequiredMixin, CreateView):
+class QualifyMachineView(TitleMixin, PartialMixin, PermissionRequiredMixin, FormView):
     permission_required = "people.qualify_person"
 
-    model = Qualification
-    template_name = "qualify_person.html"
-    form_class = QualifyPersonForm
+    template_name = "qualify_bulk.html"
+    form_class = BulkQualifyForm
+    full_base_template = "base_slim.html"
+    partial_base_template = "partial_base_modal.html"
 
     object = None
 
@@ -354,13 +357,29 @@ class QualifyMachineView(TitleMixin, PermissionRequiredMixin, CreateView):
     def get_title(self):
         return _(f"Qualify for {self.get_object().name}")
 
-    def get_initial(self):
-        return {"machine": self.kwargs["pk"]}
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["machine"] = self.get_object()
+        return kwargs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["machine"] = self.get_object()
+        if self.request.method == "POST":
+            context["selected_people"] = Person.objects.filter(
+                pk__in=self.request.POST.getlist("person_ids")
+            )
         return context
+
+    def form_valid(self, form):
+        people = Person.objects.filter(
+            pk__in=self.request.POST.getlist("person_ids"), is_active=True
+        )
+        if not people:
+            form.add_error(None, _("Select at least one person."))
+            return self.form_invalid(form)
+        bulk_qualify(machine=self.get_object(), people=people, **form.cleaned_data)
+        return super().form_valid(form)
 
     def get_success_url(self):
         return reverse_lazy("machines:detail", kwargs={"pk": self.kwargs["pk"]})

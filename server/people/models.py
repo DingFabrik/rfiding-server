@@ -137,14 +137,14 @@ class Qualification(TimestampedModel):
     is_instructor = models.BooleanField(
         default=False,
         help_text=_(
-            "Instructors can give safety briefings and qualify other people on this machine."
+            "Give safety briefings and qualify other people on this machine."
         ),
         verbose_name=_("Is Instructor"),
     )
     is_maintainer = models.BooleanField(
         default=False,
         help_text=_(
-            "Maintainers can perform maintenance on this machine and activate it in maintenance state."
+            "Perform maintenance on this machine and activate it in maintenance state."
         ),
         verbose_name=_("Is Maintainer"),
     )

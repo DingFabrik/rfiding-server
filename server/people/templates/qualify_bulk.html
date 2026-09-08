@@ -1,0 +1,137 @@
+{% extends base_template %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+{% if machine %}
+    {% blocktrans %}Qualify People for <span class="text-primary">{{ machine }}</span>{% endblocktrans %}
+{% elif person %}
+    {% blocktrans %}Qualify <span class="text-primary">{{ person }}</span> for Machines{% endblocktrans %}
+{% endif %}
+{% endblock %}
+
+{% block content %}
+<form action="" method="post">
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+    <div class="alert alert-error mb-3">{{ form.non_field_errors }}</div>
+    {% endif %}
+
+    {% if machine %}
+    <div class="mb-3">
+        <label class="label text-sm" for="id_person_search">{% trans "People" %}</label>
+        <input type="search" id="id_person_search" name="term" class="input input-sm w-full"
+               placeholder="{% trans 'Search by name or email' %}"
+               hx-get="{% url 'people:autocomplete-qualifyable' machine.pk %}"
+               hx-trigger="input changed delay:300ms"
+               hx-target="#search-results"
+               hx-include="[name='person_ids']">
+        <div id="search-results" class="mt-2 max-h-64 overflow-y-auto"></div>
+        <div id="selected-container" class="flex flex-wrap gap-1 mt-2">
+            {% for selected in selected_people %}
+            <span class="badge badge-soft badge-success gap-1 qualify-chip">{{ selected.name }}<input type="hidden" name="person_ids" value="{{ selected.pk }}"><button type="button" class="qualify-chip-remove" aria-label="{% trans 'Remove' %}">&times;</button></span>
+            {% endfor %}
+        </div>
+    </div>
+    {% elif person %}
+    <div class="mb-3">
+        <label class="label text-sm" for="id_machine_search">{% trans "Machines" %}</label>
+        <input type="search" id="id_machine_search" name="term" class="input input-sm w-full"
+               placeholder="{% trans 'Search by name or hostname' %}"
+               hx-get="{% url 'machines:autocomplete-qualifyable' person.pk %}"
+               hx-trigger="input changed delay:300ms"
+               hx-target="#search-results"
+               hx-include="[name='machine_ids']">
+        <div id="search-results" class="mt-2 max-h-64 overflow-y-auto"></div>
+        <div id="selected-container" class="flex flex-wrap gap-1 mt-2">
+            {% for selected in selected_machines %}
+            <span class="badge badge-outline gap-1 qualify-chip">{{ selected.name }}<input type="hidden" name="machine_ids" value="{{ selected.pk }}"><button type="button" class="qualify-chip-remove" aria-label="{% trans 'Remove' %}">&times;</button></span>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    {{ form.instructed_by|as_crispy_field }}
+    {{ form.permission_level|as_crispy_field }}
+    {{ form.is_instructor|as_crispy_field }}
+    {{ form.is_maintainer|as_crispy_field }}
+    {{ form.comment|as_crispy_field }}
+    <div class="flex items-center gap-2 mb-3">
+        <button class="btn btn-primary flex-1" type="submit">{% trans "Save" %}</button>
+        <button type="button" class="btn" data-modal-close>{% trans "Cancel" %}</button>
+    </div>
+</form>
+{% endblock %}
+
+{% block script_extra %}
+(function () {
+    var idName = "{% if machine %}person_ids{% else %}machine_ids{% endif %}";
+    var container = document.getElementById("selected-container");
+    var results = document.getElementById("search-results");
+
+    function makeChip(id, label) {
+        var chip = document.createElement("span");
+        chip.className = "badge badge-soft badge-success gap-1 qualify-chip";
+        chip.append(label + " ");
+
+        var hidden = document.createElement("input");
+        hidden.type = "hidden";
+        hidden.name = idName;
+        hidden.value = id;
+        chip.appendChild(hidden);
+
+        var remove = document.createElement("button");
+        remove.type = "button";
+        remove.className = "qualify-chip-remove";
+        remove.setAttribute("aria-label", "{% trans 'Remove' %}");
+        remove.textContent = "×";
+        chip.appendChild(remove);
+
+        return chip;
+    }
+
+    {% if person %}
+    var instructedBySelect = document.getElementById("id_instructed_by");
+    var defaultInstructedByOptions = instructedBySelect ? instructedBySelect.innerHTML : "";
+    var instructorOptionsUrlBase = "{% url 'machines:instructor-options' 1 %}".replace(/\/1$/, "/");
+
+    function onSelectionChanged() {
+        if (!instructedBySelect) return;
+        var ids = Array.prototype.map.call(
+            container.querySelectorAll("input[name='machine_ids']"),
+            function (input) { return input.value; }
+        );
+        if (ids.length === 1) {
+            htmx.ajax("GET", instructorOptionsUrlBase + ids[0], {
+                target: "#id_instructed_by",
+                swap: "innerHTML",
+            });
+        } else {
+            instructedBySelect.innerHTML = defaultInstructedByOptions;
+        }
+    }
+    {% else %}
+    function onSelectionChanged() {}
+    {% endif %}
+
+    results.addEventListener("click", function (event) {
+        var row = event.target.closest(".qualify-result-row");
+        var resultContainer = row.parentElement;
+        if (!row) return;
+        container.appendChild(makeChip(row.dataset.id, row.dataset.label));
+        row.remove();
+        if (!resultContainer.innerHTML.trim()) {
+            resultContainer.classList.add("hidden");
+        }
+        onSelectionChanged();
+    });
+
+    container.addEventListener("click", function (event) {
+        var button = event.target.closest(".qualify-chip-remove");
+        if (!button) return;
+        button.closest(".qualify-chip").remove();
+        onSelectionChanged();
+    });
+})();
+{% endblock %}

@@ -1,0 +1,13 @@
+{% load i18n %}
+<div class="rounded-box border border-base-300 bg-base-200 p-1 block empty:hidden">
+{% for person in people %}
+<button type="button"
+        class="qualify-result-row btn btn-ghost w-full justify-start align-b"
+        data-id="{{ person.pk }}"
+        data-label="{{ person.name }} ({{ person.email }})">
+     {{ person.name }} <span class="opacity-60">({% include 'snippets/id_display.html' with value=person.member_id %})</span>
+</button>
+{% empty %}
+<div class="text-sm opacity-60 px-2 py-1">{% trans "No matches." %}</div>
+{% endfor %}
+</div>

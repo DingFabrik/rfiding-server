@@ -50,3 +50,13 @@ class MachineQualificationsTableTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "octagon-x")
         self.assertContains(response, "text-error")
+
+    def test_qualifications_list_shows_person_column(self):
+        Qualification.objects.create(machine=self.machine, person=self.person)
+        response = self.client.get(
+            reverse("machines:qualifications", kwargs={"pk": self.machine.pk})
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(
+            response, reverse("people:detail", kwargs={"pk": self.person.pk})
+        )

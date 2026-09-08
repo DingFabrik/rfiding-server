@@ -1,3 +1,5 @@
+import re
+
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
@@ -61,13 +63,16 @@ class QualifyableMachineAutocompleteViewTests(TestCase):
             "machines:autocomplete-qualifyable", kwargs={"person": self.person.pk}
         )
 
+    def result_ids(self, response):
+        return [int(pk) for pk in re.findall(rb'data-id="(\d+)"', response.content)]
+
     def test_requires_permission(self):
         self.client.logout()
         response = self.client.get(self.url, {"term": "Laser"})
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 302)
 
     def test_excludes_inactive_and_non_qualifying_machines(self):
-        Machine.objects.create(
+        qualifying = Machine.objects.create(
             mac_address="aa:bb:cc:dd:ee:01",
             hostname="m1",
             name="Laser Needs Qualification",
@@ -88,9 +93,7 @@ class QualifyableMachineAutocompleteViewTests(TestCase):
         )
 
         response = self.client.get(self.url, {"term": "Laser"})
-        labels = [m["label"] for m in response.data]
-        self.assertEqual(len(labels), 1)
-        self.assertIn("m1", labels[0])
+        self.assertEqual(self.result_ids(response), [qualifying.pk])
 
     def test_excludes_machines_person_already_qualified_on(self):
         machine = Machine.objects.create(
@@ -102,22 +105,42 @@ class QualifyableMachineAutocompleteViewTests(TestCase):
         Qualification.objects.create(person=self.person, machine=machine)
 
         response = self.client.get(self.url, {"term": "Laser"})
-        self.assertEqual(response.data, [])
+        self.assertEqual(self.result_ids(response), [])
 
-    def test_includes_instructors_for_each_machine(self):
+    def test_excludes_already_selected_machines(self):
         machine = Machine.objects.create(
             mac_address="aa:bb:cc:dd:ee:01",
             hostname="m1",
             name="Laser",
             needs_qualification=True,
         )
-        Qualification.objects.create(
-            person=self.instructor, machine=machine, is_instructor=True
+        response = self.client.get(
+            self.url, {"term": "Laser", "machine_ids": [str(machine.pk)]}
         )
+        self.assertEqual(self.result_ids(response), [])
 
-        response = self.client.get(self.url, {"term": "Laser"})
-        self.assertEqual(len(response.data), 1)
-        self.assertEqual(
-            response.data[0]["instructors"],
-            [{"value": self.instructor.pk, "label": "Bob"}],
+
+class MachineInstructorOptionsViewTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_superuser(
+            email="admin@example.com", password="pass"
         )
+        self.client.force_login(self.user)
+        self.machine = Machine.objects.create(
+            mac_address="aa:bb:cc:dd:ee:ff", hostname="laser1", name="Laser Cutter"
+        )
+        self.instructor = Person.objects.create(name="Bob", email="bob@example.com")
+        Qualification.objects.create(
+            person=self.instructor, machine=self.machine, is_instructor=True
+        )
+        self.url = reverse("machines:instructor-options", kwargs={"pk": self.machine.pk})
+
+    def test_requires_permission(self):
+        self.client.logout()
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 302)
+
+    def test_lists_only_instructors_for_that_machine(self):
+        response = self.client.get(self.url)
+        self.assertContains(response, "Bob")
+        self.assertContains(response, '<option value="">')

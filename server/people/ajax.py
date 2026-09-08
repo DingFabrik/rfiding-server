@@ -1,8 +1,12 @@
+from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.db.models import Q
+from django.shortcuts import render
+from django.views import View
+
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import BasePermission
-from django.db.models import Q
 
 from .models import Person
 
@@ -18,6 +22,7 @@ def get_people(request, term):
     if not term:
         return Person.objects.none()
     return Person.objects.filter(Q(name__icontains=term) | Q(email__icontains=term))
+
 
 class PersonAutocompleteView(APIView):
     queryset = Person.objects.all()
@@ -36,25 +41,25 @@ class PersonAutocompleteView(APIView):
             )
         return Response(returned, status=status.HTTP_200_OK)
 
-class QualifyablePersonAutocompleteView(APIView):
-    queryset = Person.objects.all()
-    permission_classes = [HasViewPersonPermission]
+
+class QualifyablePersonAutocompleteView(PermissionRequiredMixin, View):
+    """Search partial backing the multi-select "qualify person(s) for a
+    machine" flow - renders matching, not-yet-qualified, not-already-selected
+    people as clickable rows for htmx to swap into the results list."""
+
+    permission_required = "people.view_person"
 
     def get(self, request, machine=None):
         people = get_people(request, request.GET.get("term", None))
         people = people.filter(is_active=True)
-        people = people.exclude(qualifications__machine__id=machine)[
-            :AUTOCOMPLETE_RESULT_LIMIT
-        ]
-        returned = []
-        for person in people:
-            returned.append(
-                {
-                    "value": person.id,
-                    "label": f"{person.name} ({person.email})",
-                }
-            )
-        return Response(returned, status=status.HTTP_200_OK)
+        people = people.exclude(qualifications__machine__id=machine)
+        people = people.exclude(pk__in=request.GET.getlist("person_ids"))
+        people = people[:AUTOCOMPLETE_RESULT_LIMIT]
+        return render(
+            request,
+            "qualifyable_person_results.html",
+            {"people": people},
+        )
 
 
 class InstructorPersonAutocompleteView(APIView):

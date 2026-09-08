@@ -1,11 +1,14 @@
+from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.db.models import Q
+from django.shortcuts import render
+from django.views import View
+
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import BasePermission
 from rest_framework import status
-from django.db.models import Q, Prefetch
 
 from .models import Machine
-from people.models import Qualification
 
 AUTOCOMPLETE_RESULT_LIMIT = 20
 
@@ -35,34 +38,42 @@ class MachineAutocompleteView(APIView):
         )
 
 
-class QualifyableMachineAutocompleteView(APIView):
-    queryset = Machine.objects.all()
-    permission_classes = [HasViewMachinePermission]
+class QualifyableMachineAutocompleteView(PermissionRequiredMixin, View):
+    """Search partial backing the multi-select "qualify person for
+    machine(s)" flow - renders matching, qualifiable, not-already-selected
+    machines as clickable rows for htmx to swap into the results list."""
+
+    permission_required = "machines.view_machine"
 
     def get(self, request, person=None):
         machines = get_machines(request, request.GET.get("term", None))
-        machines = machines.filter(needs_qualification=True, state=Machine.MachineStatus.ACTIVE)
+        machines = machines.filter(
+            needs_qualification=True, state=Machine.MachineStatus.ACTIVE
+        )
         machines = machines.exclude(qualified_people__person__id=person)
-        machines = machines.prefetch_related(
-            Prefetch(
-                "qualified_people",
-                queryset=Qualification.objects.filter(is_instructor=True)
-                .select_related("person")
-                .order_by("person__name"),
-                to_attr="prefetched_instructors",
-            )
-        )[:AUTOCOMPLETE_RESULT_LIMIT]
-        returned = []
-        for machine in machines:
-            instructors = [
-                {"value": qualification.person.pk, "label": qualification.person.name}
-                for qualification in machine.prefetched_instructors
-            ]
-            returned.append(
-                {
-                    "value": machine.id,
-                    "label": f"{machine.name} ({machine.hostname})",
-                    "instructors": instructors,
-                }
-            )
-        return Response(returned, status=status.HTTP_200_OK)
+        machines = machines.exclude(pk__in=request.GET.getlist("machine_ids"))
+        machines = machines[:AUTOCOMPLETE_RESULT_LIMIT]
+        return render(
+            request,
+            "qualifyable_machine_results.html",
+            {"machines": machines},
+        )
+
+
+class MachineInstructorOptionsView(PermissionRequiredMixin, View):
+    """`<option>` list of one machine's instructors - used to dynamically
+    scope the "Instructed By" field while qualifying a person for machines,
+    only while exactly one machine is currently selected."""
+
+    permission_required = "machines.view_machine"
+
+    def get(self, request, pk):
+        machine = Machine.objects.get(pk=pk)
+        instructors = machine.instructors.select_related("person").order_by(
+            "person__name"
+        )
+        return render(
+            request,
+            "instructor_options.html",
+            {"instructors": instructors},
+        )

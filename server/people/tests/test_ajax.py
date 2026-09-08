@@ -73,9 +73,19 @@ class QualifyablePersonAutocompleteViewTests(TestCase):
 
     def test_excludes_already_qualified_people(self):
         response = self.client.get(self.url, {"term": "ualified"})
-        labels = [r["label"] for r in response.data]
-        self.assertNotIn("Qualified (q@example.com)", labels)
-        self.assertIn("Unqualified (u@example.com)", labels)
+        self.assertNotContains(response, "Qualified (q@example.com)")
+        self.assertContains(response, "Unqualified (u@example.com)")
+
+    def test_excludes_already_selected_people(self):
+        response = self.client.get(
+            self.url, {"term": "Unqualified", "person_ids": [str(self.unqualified.pk)]}
+        )
+        self.assertNotContains(response, "Unqualified (u@example.com)")
+
+    def test_requires_permission(self):
+        self.client.logout()
+        response = self.client.get(self.url, {"term": "ualified"})
+        self.assertEqual(response.status_code, 302)
 
 
 class InstructorPersonAutocompleteViewTests(TestCase):

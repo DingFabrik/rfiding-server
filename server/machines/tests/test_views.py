@@ -424,12 +424,24 @@ class QualifyMachineViewTests(TestCase):
         response = self.client.get(reverse("machines:qualify", kwargs={"pk": self.machine.pk}))
         self.assertEqual(response.context["machine"], self.machine)
 
+    def test_plain_get_renders_full_page(self):
+        response = self.client.get(reverse("machines:qualify", kwargs={"pk": self.machine.pk}))
+        self.assertTemplateUsed(response, "base_slim.html")
+        self.assertTemplateNotUsed(response, "partial_base_modal.html")
+
+    def test_htmx_get_renders_modal_fragment(self):
+        response = self.client.get(
+            reverse("machines:qualify", kwargs={"pk": self.machine.pk}),
+            HTTP_HX_REQUEST="true",
+        )
+        self.assertTemplateUsed(response, "partial_base_modal.html")
+        self.assertTemplateNotUsed(response, "base_slim.html")
+
     def test_creates_qualification_and_redirects_to_detail(self):
         response = self.client.post(
             reverse("machines:qualify", kwargs={"pk": self.machine.pk}),
             {
-                "machine": self.machine.pk,
-                "person": self.person.pk,
+                "person_ids": [self.person.pk],
                 "permission_level": "if_space_open",
             },
         )
@@ -439,6 +451,30 @@ class QualifyMachineViewTests(TestCase):
         self.assertTrue(
             Qualification.objects.filter(machine=self.machine, person=self.person).exists()
         )
+
+    def test_creates_multiple_qualifications_in_one_submit(self):
+        other = Person.objects.create(name="q", email="q@example.com")
+        response = self.client.post(
+            reverse("machines:qualify", kwargs={"pk": self.machine.pk}),
+            {
+                "person_ids": [self.person.pk, other.pk],
+                "permission_level": "if_space_open",
+            },
+        )
+        self.assertRedirects(
+            response, reverse("machines:detail", kwargs={"pk": self.machine.pk})
+        )
+        self.assertEqual(
+            Qualification.objects.filter(machine=self.machine).count(), 2
+        )
+
+    def test_no_selection_redisplays_with_error(self):
+        response = self.client.post(
+            reverse("machines:qualify", kwargs={"pk": self.machine.pk}),
+            {"permission_level": "if_space_open"},
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(Qualification.objects.filter(machine=self.machine).exists())
 
 
 class MachineRegistrationRequestDeleteViewTests(TestCase):
@@ -466,3 +502,14 @@ class MachineCommentCreateViewTests(TestCase):
             reverse("machines:add-comment", kwargs={"pk": machine.pk}), {"text": "hello"}
         )
         self.assertEqual(response.status_code, 302)
+
+
+class QualifyMachineViewSearchInputTests(TestCase):
+    def test_person_search_input_has_name_term(self):
+        user = User.objects.create_superuser(email="admin3@example.com", password="pass")
+        self.client.force_login(user)
+        machine = Machine.objects.create(
+            mac_address="aa:bb:cc:dd:ee:ff", hostname="m", name="m"
+        )
+        response = self.client.get(reverse("machines:qualify", kwargs={"pk": machine.pk}))
+        self.assertContains(response, 'id="id_person_search" name="term"')
