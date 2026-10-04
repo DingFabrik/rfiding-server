@@ -13,3 +13,4 @@ node_modules
 .vscode
 .coverage
 htmlcov/
+/server/db.sqlite3-shm

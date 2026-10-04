@@ -1,0 +1,318 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Statistics" %}{% endblock %}
+
+{% block top_actions %}
+<form method="get">
+  <select
+    class="select select-sm"
+    name="days"
+    aria-label="{% trans 'Days to show' %}"
+    onchange="this.form.submit()">
+    {% for choice in days_choices %}
+    <option value="{{ choice.0 }}" {% if choice.0 == selected_days %}selected{% endif %}>{{ choice.1 }}</option>
+    {% endfor %}
+  </select>
+  <noscript><button type="submit" class="btn btn-sm">{% trans "Apply" %}</button></noscript>
+</form>
+{% endblock %}
+
+{% block content %}
+{% with day_count=selected_days %}
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-5 gap-4 mb-4">
+  <div class="stat min-w-0 bg-base-100 rounded-box border border-neutral/10">
+    <div class="stat-figure text-base-content/40"><i data-lucide="log-in" class="w-6 h-6"></i></div>
+    <div class="stat-title">{% trans "Accesses" %}</div>
+    <div class="stat-value tabular-nums">{{ total_accesses }}</div>
+    <div class="stat-desc whitespace-normal">
+      {% if access_change is None %}
+        {% blocktrans %}No data for the previous {{ day_count }} days{% endblocktrans %}
+      {% else %}
+        <span class="{% if access_change >= 0 %}text-success{% else %}text-error{% endif %}">{% if access_change >= 0 %}+{% endif %}{{ access_change|floatformat:0 }}%</span>
+        {% blocktrans %}vs. previous {{ day_count }} days{% endblocktrans %}
+      {% endif %}
+    </div>
+  </div>
+  <div class="stat min-w-0 bg-base-100 rounded-box border border-neutral/10">
+    <div class="stat-figure text-base-content/40"><i data-lucide="users" class="w-6 h-6"></i></div>
+    <div class="stat-title">{% trans "Active people" %}</div>
+    <div class="stat-value tabular-nums">{{ active_people }}</div>
+    <div class="stat-desc whitespace-normal">{% trans "Used at least one machine" %}</div>
+  </div>
+  <div class="stat min-w-0 bg-base-100 rounded-box border border-neutral/10">
+    <div class="stat-figure text-base-content/40"><i data-lucide="hard-drive" class="w-6 h-6"></i></div>
+    <div class="stat-title">{% trans "Machines used" %}</div>
+    <div class="stat-value tabular-nums">{{ active_machines }}</div>
+    <div class="stat-desc whitespace-normal">{% blocktrans count counter=idle_machine_count %}{{ counter }} active machine unused{% plural %}{{ counter }} active machines unused{% endblocktrans %}</div>
+  </div>
+  <div class="stat min-w-0 bg-base-100 rounded-box border border-neutral/10">
+    <div class="stat-figure text-base-content/40"><i data-lucide="timer" class="w-6 h-6"></i></div>
+    <div class="stat-title">{% trans "Usage time" %}</div>
+    <div class="stat-value tabular-nums">{{ usage_hours|floatformat:0 }} h</div>
+    <div class="stat-desc whitespace-normal">{% trans "Across all machines" %}</div>
+  </div>
+  <div class="stat min-w-0 bg-base-100 rounded-box border border-neutral/10">
+    <div class="stat-figure text-base-content/40"><i data-lucide="shield-x" class="w-6 h-6"></i></div>
+    <div class="stat-title">{% trans "Denied attempts" %}</div>
+    <div class="stat-value tabular-nums">{{ unsuccessful_attempts }}</div>
+    <div class="stat-desc whitespace-normal">{% blocktrans with granted=qualifications_granted expired=qualifications_expired %}{{ granted }} qualifications granted, {{ expired }} expired{% endblocktrans %}</div>
+  </div>
+</div>
+
+<div class="card card-border border-neutral/10 bg-base-100 mb-4">
+  <div class="card-body">
+    <h2 class="card-title text-lg">{% blocktrans %}Access by day (last {{ day_count }} days){% endblocktrans %}</h2>
+    <div class="h-[300px]"><canvas id="daily_usage"></canvas></div>
+  </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
+  <div class="card card-border border-neutral/10 bg-base-100">
+    <div class="card-body">
+      <h2 class="card-title text-lg">{% trans "Access by hour" %}</h2>
+      <div class="h-[250px]"><canvas id="hourly_usage"></canvas></div>
+    </div>
+  </div>
+  <div class="card card-border border-neutral/10 bg-base-100">
+    <div class="card-body">
+      <h2 class="card-title text-lg">{% trans "Access by weekday" %}</h2>
+      <div class="h-[250px]"><canvas id="weekday_usage"></canvas></div>
+    </div>
+  </div>
+</div>
+
+{% if space_usage %}
+<div class="card card-border border-neutral/10 bg-base-100 mb-4">
+  <div class="card-body">
+    <h2 class="card-title text-lg">{% trans "Opening hours and usage" %}</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-2">
+      <div>
+        <div class="text-xs text-base-content/60">{% trans "Hours open" %}</div>
+        <div class="text-2xl font-bold tabular-nums">{{ space_usage.open_hours|floatformat:0 }} h</div>
+      </div>
+      <div>
+        <div class="text-xs text-base-content/60">{% trans "Accesses while closed" %}</div>
+        <div class="text-2xl font-bold tabular-nums">{{ space_usage.accesses_closed }} <span class="text-sm font-normal text-base-content/60">({{ space_usage.closed_percent|floatformat:0 }}%)</span></div>
+      </div>
+      <div>
+        <div class="text-xs text-base-content/60">{% trans "Machine hours per open hour" %}</div>
+        <div class="text-2xl font-bold tabular-nums">{{ space_usage.machines_running|floatformat:1 }}</div>
+      </div>
+    </div>
+    <div class="h-[300px]"><canvas id="space_usage"></canvas></div>
+  </div>
+</div>
+{{ space_usage.by_day|json_script:"space-usage-by-day" }}
+{% endif %}
+
+{% blocktrans asvar no_usage_message %}No machine usage recorded in this timeframe.{% endblocktrans %}
+<div class="grid grid-cols-1 xl:grid-cols-2 gap-4 mb-4">
+  <div class="card card-border border-neutral/10 bg-base-100">
+    <div class="card-body">
+      <h2 class="card-title text-lg">{% trans "Most used machines" %}</h2>
+      {% if top_machines %}
+      <div class="overflow-x-auto">
+        <table class="table table-sm">
+          <thead>
+            <tr>
+              <th>{% trans "Machine" %}</th>
+              <th class="text-right">{% trans "Accesses" %}</th>
+              <th class="text-right">{% trans "People" %}</th>
+              <th class="text-right">{% trans "Usage" %}</th>
+              <th class="text-right">{% trans "Denied" %}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in top_machines %}
+            <tr>
+              <td>{% if perms.machines.view_machine %}<a class="link-hover link-primary" href="{% url 'machines:detail' row.machine %}">{{ row.machine__name }}</a>{% else %}{{ row.machine__name }}{% endif %}</td>
+              <td class="text-right tabular-nums">{{ row.accesses }}</td>
+              <td class="text-right tabular-nums">{{ row.people }}</td>
+              <td class="text-right tabular-nums">{{ row.usage_hours|floatformat:1 }} h</td>
+              <td class="text-right tabular-nums">{{ row.unsuccessful }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      {% include 'snippets/empty.html' with icon='bar-chart-3' message=no_usage_message %}
+      {% endif %}
+    </div>
+  </div>
+
+  {% if perms.people.view_person %}
+  <div class="card card-border border-neutral/10 bg-base-100">
+    <div class="card-body">
+      <h2 class="card-title text-lg">{% trans "Most active people" %}</h2>
+      {% if top_people %}
+      <div class="overflow-x-auto">
+        <table class="table table-sm">
+          <thead>
+            <tr>
+              <th>{% trans "Person" %}</th>
+              <th class="text-right">{% trans "Accesses" %}</th>
+              <th class="text-right">{% trans "Machines" %}</th>
+              <th class="text-right">{% trans "Usage" %}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in top_people %}
+            <tr>
+              <td><a class="link-hover link-primary" href="{% url 'people:detail' row.token__person %}">{{ row.token__person__name }}</a></td>
+              <td class="text-right tabular-nums">{{ row.accesses }}</td>
+              <td class="text-right tabular-nums">{{ row.machines }}</td>
+              <td class="text-right tabular-nums">{{ row.usage_hours|floatformat:1 }} h</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      {% include 'snippets/empty.html' with icon='users' message=no_usage_message %}
+      {% endif %}
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+{% if idle_machines %}
+<div class="card card-border border-neutral/10 bg-base-100 mb-4">
+  <div class="card-body">
+    <h2 class="card-title text-lg">{% trans "Unused active machines" %}</h2>
+    <p class="text-sm text-base-content/60">{% blocktrans %}Active machines nobody used in the last {{ day_count }} days.{% endblocktrans %}</p>
+    <div class="flex flex-wrap gap-2">
+      {% for machine in idle_machines %}
+      {% if perms.machines.view_machine %}
+      <a class="badge badge-soft" href="{% url 'machines:detail' machine.pk %}">{{ machine.name }}</a>
+      {% else %}
+      <span class="badge badge-soft">{{ machine.name }}</span>
+      {% endif %}
+      {% endfor %}
+      {% if idle_machine_count > idle_machines|length %}
+      <span class="badge badge-ghost">{% blocktrans with total=idle_machine_count %}{{ total }} in total{% endblocktrans %}</span>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<div class="grid grid-cols-1 xl:grid-cols-2 gap-4 mb-4">
+  <div class="card card-border border-neutral/10 bg-base-100">
+    <div class="card-body">
+      <h2 class="card-title text-lg">{% trans "Unused qualifications" %}</h2>
+      <p class="text-sm text-base-content/60">{% blocktrans with unused=unused_qualifications.unused_total qualified=unused_qualifications.qualified_total %}{{ unused }} of {{ qualified }} active qualifications were not used in the last {{ day_count }} days.{% endblocktrans %}</p>
+      {% if unused_qualifications.machines %}
+      <div class="overflow-x-auto">
+        <table class="table table-sm">
+          <thead>
+            <tr>
+              <th>{% trans "Machine" %}</th>
+              <th class="text-right">{% trans "Qualified" %}</th>
+              <th class="text-right">{% trans "Unused" %}</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in unused_qualifications.machines %}
+            <tr>
+              <td>{% if perms.machines.view_machine %}<a class="link-hover link-primary" href="{% url 'machines:detail' row.machine %}">{{ row.machine__name }}</a>{% else %}{{ row.machine__name }}{% endif %}</td>
+              <td class="text-right tabular-nums">{{ row.qualified }}</td>
+              <td class="text-right tabular-nums">{{ row.unused }}</td>
+              <td class="w-28">
+                <div class="flex items-center gap-2">
+                  <progress class="progress progress-warning w-16" value="{{ row.unused_percent|floatformat:0 }}" max="100"></progress>
+                  <span class="text-xs tabular-nums text-base-content/60">{{ row.unused_percent|floatformat:0 }}%</span>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  {% if perms.people.view_person %}
+  <div class="card card-border border-neutral/10 bg-base-100">
+    <div class="card-body">
+      <h2 class="card-title text-lg">{% trans "Qualifications expiring soon" %}</h2>
+      <p class="text-sm text-base-content/60">{% blocktrans count counter=expiring_qualification_count with days=expiring_soon_days %}{{ counter }} qualification expires in the next {{ days }} days.{% plural %}{{ counter }} qualifications expire in the next {{ days }} days.{% endblocktrans %}</p>
+      {% if expiring_qualifications %}
+      <div class="overflow-x-auto">
+        <table class="table table-sm">
+          <thead>
+            <tr>
+              <th>{% trans "Person" %}</th>
+              <th>{% trans "Machine" %}</th>
+              <th class="text-right">{% trans "Expires" %}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for qualification in expiring_qualifications %}
+            <tr>
+              <td><a class="link-hover link-primary" href="{% url 'people:detail' qualification.person.pk %}">{{ qualification.person.name }}</a></td>
+              <td>{{ qualification.machine.name }}</td>
+              <td class="text-right whitespace-nowrap" title="{{ qualification.expires_at }}">{% blocktrans with time=qualification.expires_at|timeuntil %}in {{ time }}{% endblocktrans %}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endwith %}
+
+{{ access_by_day|json_script:"access-by-day" }}
+{{ access_by_hour|json_script:"access-by-hour" }}
+{{ access_by_weekday|json_script:"access-by-weekday" }}
+{% endblock %}
+
+{% block script_extra %}
+(function() {
+    const load = (id) => JSON.parse(document.getElementById(id).textContent);
+    const barChart = (canvasId, rows, labelKey) => new Chart(document.getElementById(canvasId), {
+        type: 'bar',
+        data: {
+            labels: rows.map(row => row[labelKey]),
+            datasets: [{
+                label: '{% trans "Accesses" %}',
+                data: rows.map(row => row.count)
+            }]
+        },
+        options: {
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
+        }
+    });
+
+    barChart('daily_usage', load('access-by-day'), 'day');
+    barChart('hourly_usage', load('access-by-hour'), 'hour');
+    barChart('weekday_usage', load('access-by-weekday'), 'weekday');
+
+    const spaceData = document.getElementById('space-usage-by-day');
+    if (spaceData) {
+        const rows = JSON.parse(spaceData.textContent);
+        new Chart(document.getElementById('space_usage'), {
+            data: {
+                labels: rows.map(row => row.day),
+                datasets: [
+                    { type: 'bar', label: '{{ _("Hours open")|escapejs }}', data: rows.map(row => row.open_hours) },
+                    { type: 'line', label: '{{ _("Machine usage hours")|escapejs }}', data: rows.map(row => row.usage_hours), pointRadius: 0, tension: 0.3 }
+                ]
+            },
+            options: {
+                maintainAspectRatio: false,
+                interaction: { mode: 'index', intersect: false },
+                scales: { y: { beginAtZero: true } }
+            }
+        });
+    }
+})();
+{% endblock %}

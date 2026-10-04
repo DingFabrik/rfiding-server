@@ -172,7 +172,7 @@ class Machine(TimestampedModel):
         help_text=_("Log when machine is disabled again"),
     )
     log_unsuccessful = models.BooleanField(
-        default=False,
+        default=True,
         verbose_name=_("Log Unsuccessful"),
         help_text=_("Log unsuccessful unlock attempts"),
     )

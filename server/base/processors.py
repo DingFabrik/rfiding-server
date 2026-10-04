@@ -46,6 +46,13 @@ def _build_menus(request):
             "has_permission": request.user.has_perm("access_log.view_accesslog"),
             "active": app_name == "access_log",
         },
+        {
+            "name": _("Statistics"),
+            "url": reverse("statistics"),
+            "icon": "bar-chart-3",
+            "has_permission": request.user.has_perm("access_log.view_accesslog"),
+            "active": url_name == "statistics",
+        },
     ]
 
     side_menu = [

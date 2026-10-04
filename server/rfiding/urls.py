@@ -27,6 +27,7 @@ from django.conf import settings
 
 from base.views import AboutView, AuditlogView, UniversalSearchView
 from users.views import HomeView
+from access_log.views import StatisticsView
 from machines.api import v1, v2
 from space.api import APISpaceStatusView
 
@@ -90,6 +91,7 @@ urlpatterns = [
     path("__debug__/", include("debug_toolbar.urls")),
     path("api/", include((api_urls, "api"), namespace="api")),
     path("api/rest/", include("api.urls", namespace="rest")),
+    path("statistics/", StatisticsView.as_view(), name="statistics"),
     path("about/", AboutView.as_view(), name="about"),
     path("auditlog/", AuditlogView.as_view(), name="auditlog"),
 ]
