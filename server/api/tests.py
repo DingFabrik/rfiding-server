@@ -119,6 +119,23 @@ class UserApiPermissionTests(TestCase):
         other.refresh_from_db()
         self.assertTrue(other.check_password("pw"))
 
+    def test_change_permission_cannot_reactivate_more_privileged_user(self):
+        self.user.user_permissions.add(
+            Permission.objects.get(codename="change_rfidinguser")
+        )
+        group = Group.objects.create(name="admins")
+        group.permissions.add(Permission.objects.get(codename="delete_rfidinguser"))
+        other = RFIDingUser.objects.create_user(
+            email="other@example.com", password="pw", is_active=False
+        )
+        other.groups.add(group)
+        response = self.client.patch(
+            f"/api/rest/v1/users/{other.pk}/", {"is_active": True}, format="json"
+        )
+        self.assertEqual(response.status_code, 403)
+        other.refresh_from_db()
+        self.assertFalse(other.is_active)
+
     def test_change_permission_can_edit_equally_privileged_user(self):
         self.user.user_permissions.add(
             Permission.objects.get(codename="change_rfidinguser")

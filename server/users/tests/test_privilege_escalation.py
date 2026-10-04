@@ -39,6 +39,15 @@ class UserManagementEscalationTests(TestCase):
                 response = self.client.get(reverse(name, kwargs={"pk": target.pk}))
                 self.assertEqual(response.status_code, 403, (name, target))
 
+    def test_cannot_edit_or_reactivate_more_privileged_inactive_user(self):
+        other = User.objects.create_user(email="other@example.com", password="pw", is_active=False)
+        other.groups.add(self.admin_group)
+        response = self.client.get(reverse("users:update", kwargs={"pk": other.pk}))
+        self.assertEqual(response.status_code, 403)
+        self.client.post(reverse("users:update", kwargs={"pk": other.pk}), self.form_data(other))
+        other.refresh_from_db()
+        self.assertFalse(other.is_active)
+
     def test_cannot_change_more_privileged_users_password(self):
         other = User.objects.create_user(email="other@example.com", password="pw")
         other.groups.add(self.admin_group)
