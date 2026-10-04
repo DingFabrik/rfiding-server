@@ -63,6 +63,30 @@
             <div class="card-body gap-3">
                 <h2 class="text-xs font-semibold uppercase tracking-wide text-base-content/50">{% trans "Filter" %}</h2>
                 {% for key, choice in filter_choices.items %}
+                {% if choice.multiple %}
+                <fieldset id="id_filter_{{ key }}">
+                    <legend class="label text-sm mb-1">{{ choice.label }}</legend>
+                    {# Always submitted, so unchecking everything isn't mistaken for "use the default". #}
+                    <input type="hidden" class="filter_choices" name="filter_{{ key }}" value="">
+                    {% for option in choice.options %}
+                    <label class="label text-sm text-base-content cursor-pointer w-full py-0.5">
+                        <input
+                        type="checkbox"
+                        class="checkbox checkbox-sm filter_choices"
+                        name="filter_{{ key }}"
+                        value="{{ option.0 }}"
+                        {% if option.0 in choice.value %}checked{% endif %}
+                        hx-get="{{ request.path }}"
+                        hx-include="#id_search, #id_sort, .filter_choices"
+                        hx-target="#list_container"
+                        hx-trigger="change"
+                        hx-indicator="#list_loading_indicator"
+                        hx-push-url="true">
+                        {{ option.1 }}
+                    </label>
+                    {% endfor %}
+                </fieldset>
+                {% else %}
                 <div>
                     <label for="id_filter_{{ key }}" class="label text-sm">{{ choice.label }}</label>
                     <select
@@ -75,15 +99,12 @@
                     hx-trigger="change"
                     hx-indicator="#list_loading_indicator"
                     hx-push-url="true">
-                    {% with default=filter_defaults|get_item:key %}
-                    {% with filter=request.GET|get_item:"filter_{{ key }}"|default:default %}
                         {% for option in choice.options %}
-                            <option value="{{ option.0 }}" {% if option.0 == filter %}selected{% endif %}>{{ option.1 }}</option>
+                            <option value="{{ option.0 }}" {% if option.0|stringformat:"s" == choice.value|stringformat:"s" %}selected{% endif %}>{{ option.1 }}</option>
                         {% endfor %}
-                    {% endwith %}
-                    {% endwith %}
                     </select>
                 </div>
+                {% endif %}
                 {% endfor %}
             </div>
         </div>

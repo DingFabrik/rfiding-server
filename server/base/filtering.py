@@ -1,6 +1,8 @@
 
 
 class Filter:
+    multiple = False
+
     def __init__(self, field=None, *, lookup="exact", label=None, choices=None, mapping=None, default=None):
         self.field = field
         self.lookup = lookup
@@ -19,12 +21,47 @@ class Filter:
             return self.default(request)
         return self.default
 
+    def get_value(self, data, param_name, request):
+        value = data.get(param_name)
+        if value is None:
+            value = self.get_default(request)
+        return value
+
     def resolve(self, value):
         if self.mapping is not None:
             if value in self.mapping:
                 return self.mapping[value]
             return self.mapping.get("default", {})
         if value == "all":
+            return None
+        field = self.field or self.name
+        return {f"{field}__{self.lookup}": value}
+
+
+class MultipleChoiceFilter(Filter):
+    """Filter that accepts several values for the same parameter (e.g. checkboxes).
+
+    As soon as the parameter is present the submitted values are used, so an
+    empty value (as sent by a hidden input when nothing is checked) means
+    "nothing selected" rather than falling back to the default.
+    """
+
+    multiple = True
+
+    def __init__(self, field=None, *, lookup="in", **kwargs):
+        super().__init__(field, lookup=lookup, **kwargs)
+
+    def get_value(self, data, param_name, request):
+        if param_name not in data:
+            default = self.get_default(request)
+            return None if default is None else list(default)
+        values = []
+        for value in data.getlist(param_name):
+            values.extend(v for v in value.split(",") if v)
+        return values
+
+    def resolve(self, value):
+        if "all" in value:
             return None
         field = self.field or self.name
         return {f"{field}__{self.lookup}": value}
@@ -59,9 +96,7 @@ class FilterSet(metaclass=FilterSetMeta):
     def qs(self):
         queryset = self.queryset
         for name, filter_ in self.declared_filters.items():
-            value = self.data.get(self.param_name(name))
-            if value is None:
-                value = filter_.get_default(self.request)
+            value = filter_.get_value(self.data, self.param_name(name), self.request)
             if value is None:
                 continue
             kwargs = filter_.resolve(value)
@@ -71,7 +106,14 @@ class FilterSet(metaclass=FilterSetMeta):
 
     def get_filter_choices(self):
         return {
-            name: {"label": filter_.label, "options": filter_.get_options()}
+            name: {
+                "label": filter_.label,
+                "options": filter_.get_options(),
+                "multiple": filter_.multiple,
+                "value": filter_.get_value(
+                    self.data, self.param_name(name), self.request
+                ),
+            }
             for name, filter_ in self.declared_filters.items()
         }
 
@@ -104,7 +146,11 @@ class DRFFilterBackend:
                 "required": False,
                 "in": "query",
                 "description": str(filter_.label) if filter_.label else name,
-                "schema": {"type": "string"},
+                "schema": (
+                    {"type": "array", "items": {"type": "string"}}
+                    if filter_.multiple
+                    else {"type": "string"}
+                ),
             }
             for name, filter_ in filterset_class.declared_filters.items()
         ]

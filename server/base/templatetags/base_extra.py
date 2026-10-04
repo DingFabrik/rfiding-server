@@ -1,4 +1,7 @@
+from urllib.parse import urlencode
+
 from django import template
+from django.http import QueryDict
 from django.utils.translation import gettext_lazy as _
 from django.utils import formats
 from django.utils.functional import Promise
@@ -82,7 +85,10 @@ def build_url_params(params, **kwargs):
         params[kwarg] = kwargs[kwarg]
     if len(params) == 0:
         return ""
-    return "?" + "&".join([f"{k}={v}" for k, v in params.items()])
+    if isinstance(params, QueryDict):
+        # Keeps repeated keys, e.g. several checked filter values.
+        return "?" + params.urlencode()
+    return "?" + urlencode(params)
 
 
 @register.filter(name="translate")

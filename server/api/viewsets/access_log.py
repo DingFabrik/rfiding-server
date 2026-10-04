@@ -1,7 +1,7 @@
 from rest_framework import viewsets
 
 from access_log.models import AccessLog
-from access_log.filters import AccessLogFilterSet
+from access_log.filters import AccessLogApiFilterSet
 from access_log.serializers import AccessLogSerializer
 
 from .base import OAuth2OnlyMixin
@@ -10,7 +10,7 @@ from .base import OAuth2OnlyMixin
 class AccessLogViewSet(OAuth2OnlyMixin, viewsets.ReadOnlyModelViewSet):
     queryset = AccessLog.objects.select_related("token", "machine").order_by("-timestamp")
     serializer_class = AccessLogSerializer
-    filterset_class = AccessLogFilterSet
+    filterset_class = AccessLogApiFilterSet
     ordering_fields = ["timestamp"]
 
     def get_queryset(self):

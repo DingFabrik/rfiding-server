@@ -6,5 +6,13 @@ from .models import AccessLog
 class AccessLogSerializer(serializers.ModelSerializer):
     class Meta:
         model = AccessLog
-        fields = ["id", "timestamp", "token", "machine", "enabled_duration", "type"]
+        fields = [
+            "id",
+            "timestamp",
+            "token",
+            "machine",
+            "enabled_duration",
+            "type",
+            "unsuccessful_reason",
+        ]
         read_only_fields = fields

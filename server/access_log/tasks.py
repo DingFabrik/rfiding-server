@@ -31,7 +31,7 @@ anonymize_days = getattr(settings, "ACCESS_LOG_ANONYMIZE_DAYS", 0)
     retry_jitter=True,
     max_retries=5,
 )
-def save_access_log(machine, token_id, log_type, timestamp=None):
+def save_access_log(machine, token_id, log_type, timestamp=None, reason=None):
     if not isinstance(machine, Machine):
         machine = Machine.objects.get(pk=machine)
     if log_type == LOG_TYPE_BOOTED and not machine.log_booted:
@@ -44,7 +44,11 @@ def save_access_log(machine, token_id, log_type, timestamp=None):
         return
     ago = timezone.now() - timedelta(seconds=duplicate_seconds_ago)
     if AccessLog.objects.filter(
-        machine_id=machine.pk, token_id=token_id, type=log_type, timestamp__gte=ago
+        machine_id=machine.pk,
+        token_id=token_id,
+        type=log_type,
+        unsuccessful_reason=reason,
+        timestamp__gte=ago,
     ).exists():
         return
     enabled_duration = None
@@ -71,6 +75,7 @@ def save_access_log(machine, token_id, log_type, timestamp=None):
         type=log_type,
         timestamp=log_timestamp,
         enabled_duration=enabled_duration,
+        unsuccessful_reason=reason,
     )
 
 

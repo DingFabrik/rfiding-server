@@ -6,7 +6,12 @@ from rest_framework.exceptions import NotFound, PermissionDenied
 from rest_framework import status, permissions
 
 from .common import formatted_mac, BaseAPIView, MachineApiKeyPermission
-from access_log.models import LOG_TYPE_BOOTED, LOG_TYPE_DISABLED, LOG_TYPE_UNSUCCESSFUL
+from access_log.models import (
+    LOG_TYPE_BOOTED,
+    LOG_TYPE_DISABLED,
+    LOG_TYPE_UNSUCCESSFUL,
+    UnsuccessfulReason,
+)
 from access_log.tasks import save_access_log
 from machines.serializers import MachineConfigSerializer
 from machines.socket_helper import send_socket_action
@@ -127,15 +132,21 @@ class CheckMachineAccessView(BaseAPIView):
         compartmentID = request.GET.get("compartmentID", None)
 
         was_successful = False
+        reason = UnsuccessfulReason.INTERNAL_ERROR
+        token_id = None
         try:
             return_data = check_access(self.machine, tokenID, compartmentID)
             was_successful = True
             return Response(return_data, status=status.HTTP_200_OK)
         except PermissionDenied as e:
+            reason = getattr(e, "reason", reason)
+            token_id = getattr(e, "token_id", None)
             return Response(
                 {"error": str(e), "access": 0}, status=status.HTTP_403_FORBIDDEN
             )
         except NotFound as e:
+            reason = getattr(e, "reason", reason)
+            token_id = getattr(e, "token_id", None)
             return Response(
                 {"error": str(e), "access": 0}, status=status.HTTP_404_NOT_FOUND
             )
@@ -149,7 +160,13 @@ class CheckMachineAccessView(BaseAPIView):
             )
         finally:
             if not was_successful:
-                save_access_log.delay(self.machine.id, None, LOG_TYPE_UNSUCCESSFUL, timestamp=timezone.now())
+                save_access_log.delay(
+                    self.machine.id,
+                    token_id,
+                    LOG_TYPE_UNSUCCESSFUL,
+                    timestamp=timezone.now(),
+                    reason=reason,
+                )
 
 
 class MachineDisableView(BaseAPIView):

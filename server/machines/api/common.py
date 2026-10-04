@@ -8,12 +8,12 @@ from django.conf import settings
 from django.db import transaction
 from django.utils import timezone
 
-from machines.models import Machine, PERMISSION_LEVELS
+from machines.models import Machine
 from holidays.utils import is_today_holiday
 from tokens.models import Token, UnknownToken, BlacklistedToken
 from access_log.tasks import save_access_log
-from access_log.models import LOG_TYPE_ENABLED
-from people.models import Person, Qualification
+from access_log.models import LOG_TYPE_ENABLED, UnsuccessfulReason
+from people.models import PERMISSION_LEVELS, Person, Qualification
 from space.models import SpaceState
 
 
@@ -88,11 +88,21 @@ class MachineApiKeyPermission(permissions.BasePermission):
         return not getattr(settings, "ENFORCE_API_KEYS", False)
 
 
-def check_space_open(permission_level):
-    if permission_level == PERMISSION_LEVELS[0][0]:
-        space_state = SpaceState.objects.first()
-        if space_state is not None and not space_state.is_open:
-            raise PermissionDenied("Space is closed")
+class AccessFailureMixin:
+    """Carries why an access check failed, so the caller can log it."""
+
+    def __init__(self, detail, reason, token_id=None):
+        super().__init__(detail)
+        self.reason = reason
+        self.token_id = token_id
+
+
+class AccessDenied(AccessFailureMixin, PermissionDenied):
+    pass
+
+
+class AccessNotFound(AccessFailureMixin, NotFound):
+    pass
 
 
 def check_access(machine, tokenID, compartmentID=None):
@@ -101,14 +111,18 @@ def check_access(machine, tokenID, compartmentID=None):
         try:
             checked_machine = machine.children.get(compartment_id=compartmentID)
         except Machine.DoesNotExist:
-            raise NotFound("Machine does not exist") from None
+            raise AccessNotFound(
+                "Machine does not exist", UnsuccessfulReason.UNKNOWN_COMPARTMENT
+            ) from None
     if checked_machine.type == "lock_group":
-        raise PermissionDenied("Machine is a lock group")
+        raise AccessDenied("Machine is a lock group", UnsuccessfulReason.LOCK_GROUP)
     if not checked_machine.allowed_on_holidays and is_today_holiday():
-        raise PermissionDenied("Machine is restricted on holidays")
+        raise AccessDenied(
+            "Machine is restricted on holidays", UnsuccessfulReason.HOLIDAY
+        )
     end_time = Machine.get_valid_end_time_for_machine(checked_machine.id)
     if end_time is None:
-        raise PermissionDenied("Machine is restricted")
+        raise AccessDenied("Machine is restricted", UnsuccessfulReason.OUTSIDE_HOURS)
 
     try:
         token = Token.objects.values("id", "person__id").get(
@@ -121,7 +135,15 @@ def check_access(machine, tokenID, compartmentID=None):
             and not BlacklistedToken.objects.filter(serial=tokenID).exists()
         ):
             UnknownToken.objects.get_or_create(serial=tokenID, machine_id=checked_machine.id)
-        raise NotFound("Invalid Token") from None
+        # The token may exist but be archived/deactivated or belong to an inactive person.
+        inactive_token_id = (
+            Token.objects.filter(serial=tokenID).values_list("id", flat=True).first()
+        )
+        if inactive_token_id is not None:
+            raise AccessNotFound(
+                "Invalid Token", UnsuccessfulReason.INACTIVE_TOKEN, inactive_token_id
+            ) from None
+        raise AccessNotFound("Invalid Token", UnsuccessfulReason.UNKNOWN_TOKEN) from None
 
     def log_enabled():
         save_access_log.delay(
@@ -141,33 +163,43 @@ def check_access(machine, tokenID, compartmentID=None):
             .first()
         )
         is_maintainer_bypass = False
-        if (
-            qualification is None
-            or qualification.permission_level == PERMISSION_LEVELS[2][0]
-            or qualification.expired is not None
-        ):
+        if qualification is None:
+            denied_reason = UnsuccessfulReason.NOT_QUALIFIED
+        elif qualification.permission_level == PERMISSION_LEVELS[2][0]:
+            denied_reason = UnsuccessfulReason.QUALIFICATION_BLOCKED
+        elif qualification.expired is not None:
+            denied_reason = UnsuccessfulReason.QUALIFICATION_EXPIRED
+        else:
+            denied_reason = None
+        if denied_reason is not None:
             if checked_machine.state == Machine.MachineStatus.MAINTENANCE:
                 is_system_maintainer = Person.objects.filter(
                     id=person,
                     is_system_maintainer=True
                 ).exists()
                 if not is_system_maintainer:
-                    raise PermissionDenied("Machine in maintenance")
+                    raise AccessDenied(
+                        "Machine in maintenance",
+                        UnsuccessfulReason.MAINTENANCE,
+                        token["id"],
+                    )
                 is_maintainer_bypass = True
             else:
-                raise PermissionDenied("No Access!")
+                raise AccessDenied("No Access!", denied_reason, token["id"])
 
         if not is_maintainer_bypass:
-            check_space_open(qualification.permission_level)
+            if qualification.permission_level == PERMISSION_LEVELS[0][0]:
+                space_state = SpaceState.objects.first()
+                if space_state is not None and not space_state.is_open:
+                    raise AccessDenied(
+                        "Space is closed", UnsuccessfulReason.SPACE_CLOSED, token["id"]
+                    )
             with transaction.atomic():
                 qualification.mark_used()
                 transaction.on_commit(log_enabled)
         else:
             log_enabled()
     else:
-        if checked_machine.permission_level == PERMISSION_LEVELS[2][0]:
-            raise PermissionDenied("No Access!")
-        check_space_open(checked_machine.permission_level)
         log_enabled()
 
     now = datetime.datetime.now()
