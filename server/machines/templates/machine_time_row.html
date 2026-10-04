@@ -1,0 +1,27 @@
+{% load i18n %}
+{% load crispy_forms_filters %}
+<div class="grid grid-cols-1 sm:grid-cols-[auto_1fr_1fr_auto] gap-3 items-start" data-time-row>
+  {{ timeform.id }}
+  <div>
+    <span class="label block mb-1">{% trans 'Weekdays' %}</span>
+    <div class="join" role="group" aria-label="{% trans 'Weekdays' %}">
+      {% for day in timeform.weekdays %}
+        <input type="checkbox" class="join-item btn btn-sm btn-outline btn-primary" name="{{ day.data.name }}" value="{{ day.data.value }}" id="{{ day.id_for_label }}" aria-label="{{ day.choice_label|slice:':2' }}" title="{{ day.choice_label }}"{% if day.data.selected %} checked{% endif %}>
+      {% endfor %}
+    </div>
+    {% if timeform.weekdays.errors %}
+      <p class="label text-xs text-error">{{ timeform.weekdays.errors|join:' ' }}</p>
+    {% endif %}
+  </div>
+  <div>{{ timeform.start_time|as_crispy_field }}</div>
+  <div>{{ timeform.end_time|as_crispy_field }}</div>
+  <div class="sm:pt-7">
+    <label class="btn btn-ghost btn-sm has-[:checked]:btn-error has-[:checked]:btn-soft" title="{% trans 'Remove this time window when saving' %}">
+      <input type="checkbox" class="hidden" name="{{ timeform.DELETE.html_name }}" id="{{ timeform.DELETE.auto_id }}" data-time-delete{% if timeform.DELETE.value %} checked{% endif %}>
+      <i data-lucide="trash-2" class="w-4 h-4"></i>{% trans 'Remove' %}
+    </label>
+  </div>
+  {% if timeform.non_field_errors %}
+    <p class="label text-xs text-error sm:col-span-4">{{ timeform.non_field_errors|join:' ' }}</p>
+  {% endif %}
+</div>

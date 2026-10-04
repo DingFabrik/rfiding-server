@@ -1,3 +1,4 @@
+import re
 from datetime import timedelta
 from unittest.mock import patch
 
@@ -8,14 +9,32 @@ from django.utils import timezone
 
 from access_log.models import AccessLog, LOG_TYPE_ENABLED
 from locations.models import Location
-from machines.models import Machine, MachineRegistrationRequest
+from machines.models import Machine, MachineRegistrationRequest, MachineTime
 from people.models import Person, Qualification
 
 User = get_user_model()
 
 
+def time_formset_data(total=0, initial=0):
+    return {
+        "times-TOTAL_FORMS": str(total),
+        "times-INITIAL_FORMS": str(initial),
+        "times-MIN_NUM_FORMS": "0",
+        "times-MAX_NUM_FORMS": "7",
+    }
+
+
 def minimal_machine_data(**overrides):
-    data = {"name": "Test", "type": "primary", "state": "active", "chip": "esp32", "permission_level": "always"}
+    data = {
+        "name": "Test",
+        "type": "primary",
+        "state": "active",
+        "chip": "esp32",
+        "permission_level": "always",
+        "runtimer": "0:00:00",
+        "min_power": "10",
+        **time_formset_data(),
+    }
     data.update(overrides)
     return data
 
@@ -223,7 +242,9 @@ class MachineUpdateViewTests(TestCase):
         self.assertTrue(response.context["can_delete"])
 
 
-class MachineConfigureViewTests(TestCase):
+class MachineSettingsFormTests(TestCase):
+    """The configure page was merged into the machine edit form."""
+
     def setUp(self):
         self.user = User.objects.create_superuser(
             email="admin@example.com", password="pass"
@@ -233,63 +254,109 @@ class MachineConfigureViewTests(TestCase):
             mac_address="aa:bb:cc:dd:ee:ff", hostname="m", name="m",
             runtimer=timedelta(minutes=5), min_power=10,
         )
-        self.url = reverse("machines:configure", kwargs={"pk": self.machine.pk})
+        self.url = reverse("machines:update", kwargs={"pk": self.machine.pk})
 
-    def formset_management_data(self, total=0, initial=0):
-        return {
-            "times-TOTAL_FORMS": str(total),
-            "times-INITIAL_FORMS": str(initial),
-            "times-MIN_NUM_FORMS": "0",
-            "times-MAX_NUM_FORMS": "7",
-        }
+    def sections_with_errors(self, response):
+        return [s["key"] for s in response.context["sections"] if s["has_errors"]]
 
-    def test_get_shows_empty_formset(self):
+    def test_configure_redirects_to_schedule_section(self):
+        response = self.client.get(
+            reverse("machines:configure", kwargs={"pk": self.machine.pk})
+        )
+        self.assertRedirects(response, self.url + "#schedule", fetch_redirect_response=False)
+
+    def test_get_shows_empty_formset_and_all_sections(self):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertIn("formset", response.context)
+        self.assertEqual(
+            [s["key"] for s in response.context["sections"]],
+            ["general", "access", "schedule", "session", "device", "logging"],
+        )
+        self.assertEqual(response.context["active_section"], "general")
+        self.assertEqual(self.sections_with_errors(response), [])
 
-    def test_valid_form_and_formset_saves(self):
-        data = {
-            "runtimer": "0:10:00",
-            "min_power": "20",
-            "qualification_expiry_unused_days": "",
-            "qualification_expiry_used_days": "",
-            **self.formset_management_data(),
-        }
-        response = self.client.post(self.url, data)
+    def test_saves_configuration_fields(self):
+        response = self.client.post(
+            self.url,
+            minimal_machine_data(
+                runtimer="0:10:00", min_power="20", qualification_expiry_used_days="30"
+            ),
+        )
         self.assertEqual(response.status_code, 302)
         self.machine.refresh_from_db()
         self.assertEqual(self.machine.min_power, 20)
+        self.assertEqual(self.machine.runtimer, timedelta(minutes=10))
+        self.assertEqual(self.machine.qualification_expiry_used_days, 30)
 
-    def test_valid_form_saves_new_machine_time(self):
-        data = {
-            "runtimer": "0:10:00",
-            "min_power": "20",
-            "qualification_expiry_unused_days": "",
-            "qualification_expiry_used_days": "",
-            **self.formset_management_data(total=1),
+    def test_saves_new_machine_time(self):
+        data = minimal_machine_data(**time_formset_data(total=1))
+        data.update({
             "times-0-weekdays": ["0", "1"],
             "times-0-start_time": "08:00",
             "times-0-end_time": "18:00",
-        }
+        })
         response = self.client.post(self.url, data)
         self.assertEqual(response.status_code, 302)
         self.assertEqual(self.machine.times.count(), 1)
 
-    def test_invalid_formset_rerenders_form(self):
-        data = {
-            "runtimer": "0:10:00",
-            "min_power": "20",
-            "qualification_expiry_unused_days": "",
-            "qualification_expiry_used_days": "",
-            **self.formset_management_data(total=1),
+    def test_deletes_machine_time(self):
+        time = MachineTime.objects.create(
+            machine=self.machine, weekdays=[0], start_time="08:00", end_time="18:00"
+        )
+        data = minimal_machine_data(**time_formset_data(total=1, initial=1))
+        data.update({
+            "times-0-id": str(time.pk),
+            "times-0-weekdays": ["0"],
+            "times-0-start_time": "08:00",
+            "times-0-end_time": "18:00",
+            "times-0-DELETE": "on",
+        })
+        response = self.client.post(self.url, data)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(self.machine.times.count(), 0)
+
+    def test_create_saves_machine_time(self):
+        data = minimal_machine_data(**time_formset_data(total=1))
+        data.update({
+            "times-0-weekdays": ["5", "6"],
+            "times-0-start_time": "10:00",
+            "times-0-end_time": "16:00",
+        })
+        response = self.client.post(reverse("machines:create"), data)
+        self.assertEqual(response.status_code, 302)
+        machine = Machine.objects.get(name="Test")
+        self.assertEqual(machine.times.count(), 1)
+
+    def test_invalid_formset_flags_schedule_section(self):
+        data = minimal_machine_data(name="changed", **time_formset_data(total=1))
+        data.update({
             "times-0-weekdays": ["0"],
             "times-0-start_time": "",
             "times-0-end_time": "18:00",
-        }
+        })
         response = self.client.post(self.url, data)
         self.assertEqual(response.status_code, 200)
         self.assertFalse(response.context["formset"].is_valid())
+        self.assertEqual(self.sections_with_errors(response), ["schedule"])
+        self.assertEqual(response.context["active_section"], "schedule")
+        self.machine.refresh_from_db()
+        self.assertEqual(self.machine.name, "m")
+
+    def test_invalid_fields_flag_their_sections(self):
+        response = self.client.post(
+            self.url, minimal_machine_data(name="", min_power="", ip_address="nope")
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            self.sections_with_errors(response), ["general", "session", "device"]
+        )
+        self.assertEqual(response.context["active_section"], "general")
+        content = response.content.decode()
+        dots = re.findall(r'data-section-dot aria-label="[^"]*"( hidden)?></span>', content)
+        self.assertEqual(len(dots), 6)
+        visible_dots = re.findall(r'data-section-dot aria-label="[^"]*"></span>', content)
+        self.assertEqual(len(visible_dots), 3)
 
 
 class MachineDeleteViewTests(TestCase):

@@ -1,7 +1,4 @@
 from django import forms
-from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Fieldset, Submit, HTML
-from crispy_forms.bootstrap import AppendedText, FormActions
 from django.utils.translation import gettext_lazy as _
 
 from .utils import DAY_CHOICES
@@ -9,55 +6,20 @@ from .models import Machine, MachineTime
 
 
 class MachineForm(forms.ModelForm):
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.helper = FormHelper(self)
-        self.helper.layout = Layout(
-            "name",
-            "type",
-            "parent",
-            "compartment_id",
-            "location",
-            "state",
-            "needs_qualification",
-            "permission_level",
-            Fieldset(
-                _("Network"),
-                "hostname",
-                "ip_address",
-                "mac_address",
-                css_id="network-fieldset",
-            ),
-            Fieldset(
-                _("Logging"),
-                "log_booted",
-                "log_enabled",
-                "log_disabled",
-                "log_unsuccessful",
-                css_id="logging-fieldset",
-            ),
-            Fieldset(
-                _("Security"),
-                "encryption_key",
-                "api_key",
-                css_id="security-fieldset",
-            ),
-            Fieldset(_("Client"),
-                    "chip",
-                    css_id="client-fieldset",
-                    ),
-            FormActions(
-                Submit("submit", _("Save")),
-                HTML(
-                    """{% load i18n %}{% if object and can_delete %}
-            <a class="btn btn-error" href="{% url request.resolver_match.namespace|add:':delete' object.pk %}">
-                <i data-lucide="trash-2" class="w-4 h-4"></i> {% trans 'Delete' %}
-            </a>
-        {% endif %}"""
-                ),
-            ),
-        )
+    # Fields grouped by the settings section (sidebar tab) they are shown in.
+    SECTIONS = (
+        ("general", _("General"), "info",
+         ["name", "type", "parent", "compartment_id", "location", "state"]),
+        ("access", _("Access"), "shield-check",
+         ["needs_qualification", "permission_level",
+          "qualification_expiry_unused_days", "qualification_expiry_used_days"]),
+        ("schedule", _("Schedule"), "calendar-clock", ["allowed_on_holidays"]),
+        ("session", _("Session"), "timer", ["runtimer", "min_power"]),
+        ("device", _("Device"), "cpu",
+         ["chip", "hostname", "ip_address", "mac_address", "encryption_key", "api_key"]),
+        ("logging", _("Logging"), "list",
+         ["log_enabled", "log_unsuccessful", "log_disabled", "log_booted"]),
+    )
 
     class Meta:
         model = Machine
@@ -80,37 +42,15 @@ class MachineForm(forms.ModelForm):
             "log_enabled",
             "log_disabled",
             "log_unsuccessful",
-        ]
-        widgets = {
-            "encryption_key": forms.PasswordInput(render_value=True),
-        }
-
-
-class ConfigureMachineForm(forms.ModelForm):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.helper = FormHelper(self)
-        self.helper.layout = Layout(
-            AppendedText("runtimer", "h:m:s"),
-            AppendedText("min_power", "w"),
-            Fieldset(
-                _("Qualification Expiration"),
-                AppendedText("qualification_expiry_unused_days", _("days")),
-                AppendedText("qualification_expiry_used_days", _("days")),
-                css_id="qualification-expiration-fieldset",
-            ),
-        )
-        self.helper.form_tag = False
-
-    class Meta:
-        model = Machine
-        fields = [
             "runtimer",
             "min_power",
             "allowed_on_holidays",
             "qualification_expiry_unused_days",
             "qualification_expiry_used_days",
         ]
+        widgets = {
+            "encryption_key": forms.PasswordInput(render_value=True),
+        }
 
 
 class ConfigureMachineTimeForm(forms.ModelForm):
@@ -124,5 +64,5 @@ class ConfigureMachineTimeForm(forms.ModelForm):
 
 
 MachineTimeFormset = forms.modelformset_factory(
-    MachineTime, extra=3, max_num=7, form=ConfigureMachineTimeForm
+    MachineTime, extra=0, max_num=7, can_delete=True, form=ConfigureMachineTimeForm
 )
