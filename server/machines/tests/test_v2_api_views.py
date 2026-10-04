@@ -147,7 +147,7 @@ class CheckMachineAccessViewV2Tests(APITestCase):
 
     def test_unexpected_error_is_caught_and_logs_unsuccessful(self):
         with patch(
-            "machines.api.v2.check_access", side_effect=RuntimeError("boom")
+            "machines.api.common.check_access", side_effect=RuntimeError("boom")
         ):
             response = self.client.get(
                 self.url,

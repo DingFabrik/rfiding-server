@@ -1,20 +1,29 @@
 import datetime
 import hmac
+import logging
+
 from rest_framework.views import APIView
-from rest_framework import permissions
+from rest_framework import permissions, status
+from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError, NotFound, PermissionDenied
 from django.db.models import Q
 from django.conf import settings
 from django.db import transaction
 from django.utils import timezone
 
-from machines.models import Machine
+from machines.models import Machine, PERMISSION_LEVELS
 from holidays.utils import is_today_holiday
 from tokens.models import Token, UnknownToken, BlacklistedToken
 from access_log.tasks import save_access_log
-from access_log.models import LOG_TYPE_ENABLED, UnsuccessfulReason
-from people.models import PERMISSION_LEVELS, Person, Qualification
+from access_log.models import (
+    LOG_TYPE_ENABLED,
+    LOG_TYPE_UNSUCCESSFUL,
+    UnsuccessfulReason,
+)
+from people.models import Person, Qualification
 from space.models import SpaceState
+
+logger = logging.getLogger(__name__)
 
 
 def formatted_mac(mac_address):
@@ -105,6 +114,15 @@ class AccessNotFound(AccessFailureMixin, NotFound):
     pass
 
 
+def check_space_open(permission_level, token_id):
+    if permission_level == PERMISSION_LEVELS[0][0]:
+        space_state = SpaceState.objects.first()
+        if space_state is not None and not space_state.is_open:
+            raise AccessDenied(
+                "Space is closed", UnsuccessfulReason.SPACE_CLOSED, token_id
+            )
+
+
 def check_access(machine, tokenID, compartmentID=None):
     checked_machine = machine
     if compartmentID is not None:
@@ -188,18 +206,18 @@ def check_access(machine, tokenID, compartmentID=None):
                 raise AccessDenied("No Access!", denied_reason, token["id"])
 
         if not is_maintainer_bypass:
-            if qualification.permission_level == PERMISSION_LEVELS[0][0]:
-                space_state = SpaceState.objects.first()
-                if space_state is not None and not space_state.is_open:
-                    raise AccessDenied(
-                        "Space is closed", UnsuccessfulReason.SPACE_CLOSED, token["id"]
-                    )
+            check_space_open(qualification.permission_level, token["id"])
             with transaction.atomic():
                 qualification.mark_used()
                 transaction.on_commit(log_enabled)
         else:
             log_enabled()
     else:
+        if checked_machine.permission_level == PERMISSION_LEVELS[2][0]:
+            raise AccessDenied(
+                "No Access!", UnsuccessfulReason.MACHINE_BLOCKED, token["id"]
+            )
+        check_space_open(checked_machine.permission_level, token["id"])
         log_enabled()
 
     now = datetime.datetime.now()
@@ -210,3 +228,44 @@ def check_access(machine, tokenID, compartmentID=None):
         ),
         "end_time": datetime.datetime.combine(now, end_time).strftime("%H:%M:%S"),
     }
+
+
+def check_access_response(machine, tokenID, compartmentID=None):
+    """Runs check_access and turns the outcome into an API response.
+
+    Denied attempts are written to the access log together with the reason.
+    """
+    was_successful = False
+    reason = UnsuccessfulReason.INTERNAL_ERROR
+    token_id = None
+    try:
+        return_data = check_access(machine, tokenID, compartmentID)
+        was_successful = True
+        return Response(return_data, status=status.HTTP_200_OK)
+    except PermissionDenied as e:
+        reason = getattr(e, "reason", reason)
+        token_id = getattr(e, "token_id", None)
+        return Response(
+            {"error": str(e), "access": 0}, status=status.HTTP_403_FORBIDDEN
+        )
+    except NotFound as e:
+        reason = getattr(e, "reason", reason)
+        token_id = getattr(e, "token_id", None)
+        return Response(
+            {"error": str(e), "access": 0}, status=status.HTTP_404_NOT_FOUND
+        )
+    except Exception:
+        logger.exception("Unexpected error checking access for machine %s", machine.pk)
+        return Response(
+            {"error": "Internal error", "access": 0},
+            status=status.HTTP_403_FORBIDDEN,
+        )
+    finally:
+        if not was_successful:
+            save_access_log.delay(
+                machine.id,
+                token_id,
+                LOG_TYPE_UNSUCCESSFUL,
+                timestamp=timezone.now(),
+                reason=reason,
+            )

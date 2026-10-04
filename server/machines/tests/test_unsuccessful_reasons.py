@@ -14,6 +14,8 @@ from tokens.models import Token
 
 class UnsuccessfulReasonLoggingTests(APITestCase):
     url = reverse("api:v2:machine_check")
+    machine_param = "mac_address"
+    supports_compartments = True
 
     def setUp(self):
         self.machine = Machine.objects.create(
@@ -28,7 +30,7 @@ class UnsuccessfulReasonLoggingTests(APITestCase):
     def check(self, token_uid="456", **params):
         return self.client.get(
             self.url,
-            {"mac_address": "aabbccddeeff", "tokenUid": token_uid, **params},
+            {self.machine_param: "aabbccddeeff", "tokenUid": token_uid, **params},
             format="json",
         )
 
@@ -52,6 +54,8 @@ class UnsuccessfulReasonLoggingTests(APITestCase):
         self.assertLogged(UnsuccessfulReason.INACTIVE_TOKEN, self.token)
 
     def test_unknown_compartment(self):
+        if not self.supports_compartments:
+            self.skipTest("API version has no compartments")
         response = self.check(compartmentID="7")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertLogged(UnsuccessfulReason.UNKNOWN_COMPARTMENT)
@@ -111,7 +115,7 @@ class UnsuccessfulReasonLoggingTests(APITestCase):
         self.assertLogged(UnsuccessfulReason.SPACE_CLOSED, self.token)
 
     def test_internal_error(self):
-        with patch("machines.api.v2.check_access", side_effect=RuntimeError("boom")):
+        with patch("machines.api.common.check_access", side_effect=RuntimeError("boom")):
             self.check()
         self.assertLogged(UnsuccessfulReason.INTERNAL_ERROR)
 
@@ -124,3 +128,9 @@ class UnsuccessfulReasonLoggingTests(APITestCase):
         self.assertTrue(
             AccessLog.objects.filter(unsuccessful_reason__isnull=True).exists()
         )
+
+
+class V1UnsuccessfulReasonLoggingTests(UnsuccessfulReasonLoggingTests):
+    url = reverse("api:machine_check")
+    machine_param = "machine"
+    supports_compartments = False

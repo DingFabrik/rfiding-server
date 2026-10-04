@@ -1,24 +1,15 @@
-import logging
-
 from django.utils import timezone
 from rest_framework.response import Response
-from rest_framework.exceptions import NotFound, PermissionDenied
+from rest_framework.exceptions import NotFound
 from rest_framework import status, permissions
 
 from .common import formatted_mac, BaseAPIView, MachineApiKeyPermission
-from access_log.models import (
-    LOG_TYPE_BOOTED,
-    LOG_TYPE_DISABLED,
-    LOG_TYPE_UNSUCCESSFUL,
-    UnsuccessfulReason,
-)
+from access_log.models import LOG_TYPE_BOOTED, LOG_TYPE_DISABLED
 from access_log.tasks import save_access_log
 from machines.serializers import MachineConfigSerializer
 from machines.socket_helper import send_socket_action
-from machines.api.common import check_access
+from machines.api.common import check_access_response
 from machines.models import Machine, MachineRegistrationRequest
-
-logger = logging.getLogger(__name__)
 
 
 class MachineRegisterView(BaseAPIView):
@@ -131,43 +122,7 @@ class CheckMachineAccessView(BaseAPIView):
         tokenID = request.GET.get("tokenUid", None).lower()
         compartmentID = request.GET.get("compartmentID", None)
 
-        was_successful = False
-        reason = UnsuccessfulReason.INTERNAL_ERROR
-        token_id = None
-        try:
-            return_data = check_access(self.machine, tokenID, compartmentID)
-            was_successful = True
-            return Response(return_data, status=status.HTTP_200_OK)
-        except PermissionDenied as e:
-            reason = getattr(e, "reason", reason)
-            token_id = getattr(e, "token_id", None)
-            return Response(
-                {"error": str(e), "access": 0}, status=status.HTTP_403_FORBIDDEN
-            )
-        except NotFound as e:
-            reason = getattr(e, "reason", reason)
-            token_id = getattr(e, "token_id", None)
-            return Response(
-                {"error": str(e), "access": 0}, status=status.HTTP_404_NOT_FOUND
-            )
-        except Exception:
-            logger.exception(
-                "Unexpected error checking access for machine %s", self.machine.pk
-            )
-            return Response(
-                {"error": "Internal error", "access": 0},
-                status=status.HTTP_403_FORBIDDEN,
-            )
-        finally:
-            if not was_successful:
-                save_access_log.delay(
-                    self.machine.id,
-                    token_id,
-                    LOG_TYPE_UNSUCCESSFUL,
-                    timestamp=timezone.now(),
-                    reason=reason,
-                )
-
+        return check_access_response(self.machine, tokenID, compartmentID)
 
 class MachineDisableView(BaseAPIView):
     permission_classes = [MachineApiKeyPermission]
