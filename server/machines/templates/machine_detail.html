@@ -4,7 +4,16 @@
 {% load base_extra %}
 
 {% block title %}
-  {{ object.name }}
+  <div class="flex flex-wrap items-center gap-2">
+    {{ object.name }}  
+    <span class="badge badge-soft badge-sm">{{ object.get_type_display }}</span>
+    {% if object.firmware_version %}
+      <span class="badge badge-ghost badge-sm font-mono">{% trans 'fw' %} {{ object.firmware_version }}</span>
+    {% endif %}
+    {% if object.type != 'lock_group' and not machine.has_api %}
+      {% include 'snippets/machine_state_label.html' with object=object %}
+    {% endif %}
+  </div>
 {% endblock %}
 
 {% block container_div %}
@@ -38,16 +47,6 @@
 {% endblock %}
 
 {% block content %}
-  <div class="flex flex-wrap items-center gap-2 mb-5 -mt-2">
-    <span class="badge badge-soft badge-sm">{{ object.get_type_display }}</span>
-    {% if object.firmware_version %}
-      <span class="badge badge-ghost badge-sm font-mono">{% trans 'fw' %} {{ object.firmware_version }}</span>
-    {% endif %}
-    {% if object.type != 'lock_group' and not machine.has_api %}
-      {% include 'snippets/machine_state_label.html' with object=object %}
-    {% endif %}
-  </div>
-
   {% if object.type != 'lock_group' %}
     <div class="stats stats-vertical lg:stats-horizontal border border-neutral/10 bg-base-300 w-full mb-6">
       <div class="stat py-3">
