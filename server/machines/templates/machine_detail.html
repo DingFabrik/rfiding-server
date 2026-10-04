@@ -62,6 +62,8 @@
         <div class="stat-desc">
           {% if object.needs_qualification %}
             {% blocktrans count counter=qualifications_count %}{{ counter }} person qualified{% plural %}{{ counter }} people qualified{% endblocktrans %}
+          {% else %}
+            {% trans 'Permission level' %}: {{ object.get_permission_level_display }}
           {% endif %}
         </div>
       </div>

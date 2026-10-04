@@ -12,6 +12,13 @@ from django.utils import formats
 from machines.fields import WeekdayFormField
 
 
+PERMISSION_LEVELS = (
+    ("if_space_open", _("If Open")),
+    ("always", _("Always")),
+    ("never", _("Never")),
+)
+
+
 def is_str(obj):
     return isinstance(obj, str)
 
@@ -100,6 +107,16 @@ class Machine(TimestampedModel):
         default=True,
         verbose_name=_("Needs Qualification"),
         help_text=_("If disabled, any active user can access this machine."),
+    )
+    permission_level = models.CharField(
+        max_length=20,
+        choices=PERMISSION_LEVELS,
+        default="always",
+        verbose_name=_("Permission Level"),
+        help_text=_(
+            "When users can access this machine. Only applies if the machine does "
+            "not need a qualification."
+        ),
     )
 
     mac_address = models.CharField(

@@ -322,3 +322,57 @@ class V1CheckMachineTests(APITestCase):
         qualification.refresh_from_db()
         self.assertIsNotNone(qualification.last_used)
         self.assertIsNotNone(qualification.expires_at)
+
+    def _check_open_machine(self, permission_level, space_open=None):
+        data = {"machine": "aabbccddeeff", "tokenUid": "456"}
+        Machine.objects.create(
+            mac_address="aa:bb:cc:dd:ee:ff",
+            hostname="test",
+            name="test",
+            needs_qualification=False,
+            permission_level=permission_level,
+        )
+        person = Person.objects.create(name="test", email="test@example.com")
+        Token.objects.create(serial="456", person=person)
+        if space_open is not None:
+            SpaceState.objects.create(is_open=space_open)
+        return self.client.get(V1CheckMachineTests.url, data, format="json")
+
+    def test_open_machine_always_allows_closed(self):
+        response = self._check_open_machine("always", space_open=False)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["access"], 1)
+
+    def test_open_machine_if_open_allows_open(self):
+        response = self._check_open_machine("if_space_open", space_open=True)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["access"], 1)
+
+    def test_open_machine_if_open_disallows_closed(self):
+        response = self._check_open_machine("if_space_open", space_open=False)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.data["error"], "Space is closed")
+
+    def test_open_machine_never_disallows(self):
+        response = self._check_open_machine("never", space_open=True)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.data["error"], "No Access!")
+
+    def test_machine_permission_level_ignored_when_qualification_required(self):
+        data = {"machine": "aabbccddeeff", "tokenUid": "456"}
+        machine = Machine.objects.create(
+            mac_address="aa:bb:cc:dd:ee:ff",
+            hostname="test",
+            name="test",
+            needs_qualification=True,
+            permission_level="never",
+        )
+        person = Person.objects.create(name="test", email="test@example.com")
+        Qualification.objects.create(
+            machine=machine, person=person, permission_level="always"
+        )
+        Token.objects.create(serial="456", person=person)
+        SpaceState.objects.create(is_open=False)
+        response = self.client.get(V1CheckMachineTests.url, data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["access"], 1)

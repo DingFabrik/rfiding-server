@@ -21,6 +21,7 @@ class MachineForm(forms.ModelForm):
             "location",
             "state",
             "needs_qualification",
+            "permission_level",
             Fieldset(
                 _("Network"),
                 "hostname",
@@ -71,6 +72,7 @@ class MachineForm(forms.ModelForm):
             "location",
             "state",
             "needs_qualification",
+            "permission_level",
             "chip",
             "encryption_key",
             "api_key",

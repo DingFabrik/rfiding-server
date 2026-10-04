@@ -15,7 +15,7 @@ User = get_user_model()
 
 
 def minimal_machine_data(**overrides):
-    data = {"name": "Test", "type": "primary", "state": "active", "chip": "esp32"}
+    data = {"name": "Test", "type": "primary", "state": "active", "chip": "esp32", "permission_level": "always"}
     data.update(overrides)
     return data
 

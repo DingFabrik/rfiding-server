@@ -12,7 +12,7 @@ from django.contrib.contenttypes.fields import GenericRelation
 
 from base.models import TimestampedModel
 
-from machines.models import Machine
+from machines.models import Machine, PERMISSION_LEVELS
 from .conf import PERSON_DEFAULT_LANGUAGE, PERSON_DETAIL_KEY_VALID_HOURS
 
 QUALIFICATION_EXPIRY_WARNING_DAYS = getattr(
@@ -103,13 +103,6 @@ class Person(TimestampedModel):
         if self.member_id is None:
             return f"{self.name}"
         return f"{self.name} (#{self.member_id})"
-
-
-PERMISSION_LEVELS = (
-    ("if_space_open", _("If Open")),
-    ("always", _("Always")),
-    ("never", _("Never")),
-)
 
 
 class Qualification(TimestampedModel):

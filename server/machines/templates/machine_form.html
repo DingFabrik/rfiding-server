@@ -33,7 +33,9 @@
 {% endblock %}
 
 {% block script_extra %}
-  const parentFormGroup = document.querySelector("#div_id_parent"); const typeSelect = document.querySelector("#id_type"); const typeHelpText = document.querySelector("#id_type_helptext"); const compartmentIdFormGroup = document.querySelector("#div_id_compartment_id"); const locationFormGroup = document.querySelector("#div_id_location"); const stateFormGroup = document.querySelector("#div_id_state"); const needsQualificationFormGroup = document.querySelector("#div_id_needs_qualification");
+  const parentFormGroup = document.querySelector("#div_id_parent"); const typeSelect = document.querySelector("#id_type"); const typeHelpText = document.querySelector("#id_type_helptext"); const compartmentIdFormGroup = document.querySelector("#div_id_compartment_id"); const locationFormGroup = document.querySelector("#div_id_location"); const stateFormGroup = document.querySelector("#div_id_state"); const needsQualificationFormGroup = document.querySelector("#div_id_needs_qualification"); const needsQualificationInput = document.querySelector("#id_needs_qualification"); const permissionLevelFormGroup = document.querySelector("#div_id_permission_level");
+
+  function updatePermissionLevelFormElement () { const isLockGroup = typeSelect.value === "lock_group"; if (isLockGroup || needsQualificationInput.checked) { permissionLevelFormGroup.classList.add("hidden"); } else { permissionLevelFormGroup.classList.remove("hidden"); } }
 
   const networkFieldset = document.querySelector("#network-fieldset"); const securityFieldset = document.querySelector("#security-fieldset"); const clientFieldset = document.querySelector("#client-fieldset");
 
@@ -43,5 +45,5 @@
 
   if (selectedOption.value === "compartment") { parentFormGroup.classList.remove("hidden"); compartmentIdFormGroup.classList.remove("hidden"); networkFieldset.classList.add("hidden"); securityFieldset.classList.add("hidden"); clientFieldset.classList.add("hidden"); locationFormGroup.classList.add("hidden"); } else { parentFormGroup.classList.add("hidden"); compartmentIdFormGroup.classList.add("hidden"); networkFieldset.classList.remove("hidden"); securityFieldset.classList.remove("hidden"); clientFieldset.classList.remove("hidden"); locationFormGroup.classList.remove("hidden"); }
 
-  if (selectedOption.value === "lock_group") { stateFormGroup.classList.add("hidden"); needsQualificationFormGroup.classList.add("hidden"); } else { stateFormGroup.classList.remove("hidden"); needsQualificationFormGroup.classList.remove("hidden"); } } updateMachineTypeFormElements(); document.querySelector("#id_type").addEventListener("change", function() { updateMachineTypeFormElements(); });
+  if (selectedOption.value === "lock_group") { stateFormGroup.classList.add("hidden"); needsQualificationFormGroup.classList.add("hidden"); } else { stateFormGroup.classList.remove("hidden"); needsQualificationFormGroup.classList.remove("hidden"); } updatePermissionLevelFormElement(); } updateMachineTypeFormElements(); needsQualificationInput.addEventListener("change", updatePermissionLevelFormElement); document.querySelector("#id_type").addEventListener("change", function() { updateMachineTypeFormElements(); });
 {% endblock %}

@@ -8,12 +8,12 @@ from django.conf import settings
 from django.db import transaction
 from django.utils import timezone
 
-from machines.models import Machine
+from machines.models import Machine, PERMISSION_LEVELS
 from holidays.utils import is_today_holiday
 from tokens.models import Token, UnknownToken, BlacklistedToken
 from access_log.tasks import save_access_log
 from access_log.models import LOG_TYPE_ENABLED
-from people.models import PERMISSION_LEVELS, Person, Qualification
+from people.models import Person, Qualification
 from space.models import SpaceState
 
 
@@ -88,6 +88,13 @@ class MachineApiKeyPermission(permissions.BasePermission):
         return not getattr(settings, "ENFORCE_API_KEYS", False)
 
 
+def check_space_open(permission_level):
+    if permission_level == PERMISSION_LEVELS[0][0]:
+        space_state = SpaceState.objects.first()
+        if space_state is not None and not space_state.is_open:
+            raise PermissionDenied("Space is closed")
+
+
 def check_access(machine, tokenID, compartmentID=None):
     checked_machine = machine
     if compartmentID is not None:
@@ -153,16 +160,16 @@ def check_access(machine, tokenID, compartmentID=None):
                 raise PermissionDenied("No Access!")
 
         if not is_maintainer_bypass:
-            if qualification.permission_level == PERMISSION_LEVELS[0][0]:
-                space_state = SpaceState.objects.first()
-                if space_state is not None and not space_state.is_open:
-                    raise PermissionDenied("Space is closed")
+            check_space_open(qualification.permission_level)
             with transaction.atomic():
                 qualification.mark_used()
                 transaction.on_commit(log_enabled)
         else:
             log_enabled()
     else:
+        if checked_machine.permission_level == PERMISSION_LEVELS[2][0]:
+            raise PermissionDenied("No Access!")
+        check_space_open(checked_machine.permission_level)
         log_enabled()
 
     now = datetime.datetime.now()
