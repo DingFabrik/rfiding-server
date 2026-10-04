@@ -108,6 +108,14 @@ class UnsuccessfulReasonLoggingTests(APITestCase):
         self.assertEqual(response.data["error"], "Machine in maintenance")
         self.assertLogged(UnsuccessfulReason.MAINTENANCE, self.token)
 
+    def test_machine_blocked(self):
+        self.machine.needs_qualification = False
+        self.machine.permission_level = "never"
+        self.machine.save()
+        response = self.check()
+        self.assertEqual(response.data["error"], "No Access!")
+        self.assertLogged(UnsuccessfulReason.MACHINE_BLOCKED, self.token)
+
     def test_space_closed(self):
         Qualification.objects.create(machine=self.machine, person=self.person)
         SpaceState.objects.create(is_open=False)

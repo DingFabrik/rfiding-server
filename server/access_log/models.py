@@ -27,6 +27,7 @@ class UnsuccessfulReason(models.TextChoices):
     QUALIFICATION_BLOCKED = "qualification_blocked", _("Qualification blocked")
     QUALIFICATION_EXPIRED = "qualification_expired", _("Qualification expired")
     MAINTENANCE = "maintenance", _("Machine in maintenance")
+    MACHINE_BLOCKED = "machine_blocked", _("Machine blocked")
     SPACE_CLOSED = "space_closed", _("Space is closed")
     INTERNAL_ERROR = "internal_error", _("Internal error")
 
