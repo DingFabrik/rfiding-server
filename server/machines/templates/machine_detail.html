@@ -58,14 +58,15 @@
         <div class="stat-title text-xs">
           {% trans 'Access control' %}
         </div>
-        <div class="stat-value text-lg">{{ object.needs_qualification|yesno:_('Qualification required,Open to all') }}</div>
-        <div class="stat-desc">
+        <div class="stat-value text-lg">
           {% if object.needs_qualification %}
             {% blocktrans count counter=qualifications_count %}{{ counter }} person qualified{% plural %}{{ counter }} people qualified{% endblocktrans %}
           {% else %}
             {% trans 'Permission level' %}: {{ object.get_permission_level_display }}
           {% endif %}
         </div>
+                <div class="stat-desc"></div>
+
       </div>
       <div class="stat py-3">
         <div class="stat-figure text-primary">
@@ -109,13 +110,16 @@
             </div>
               {% include 'qualifications_table.html' with is_partial=True subject='machine' %}
             </div>
+            </div>
           {% else %}
+                      <div class="col-span-12 lg:col-span-9">
+
             <div role="alert" class="alert m-6 mb-6">
               <i data-lucide="unlock" class="w-4 h-4"></i>
               <span>{% blocktrans %}All active users are qualified to use this machine{% endblocktrans %}</span>
             </div>
+          </div>
           {% endif %}
-            </div>
           <div class="flex flex-col col-span-12 lg:col-span-3 gap-2">
           <div class="bg-base-100 border-neutral/10 border rounded-box p-4">
             <h2 class="text-xs font-semibold uppercase tracking-wide text-base-content/50 mb-2">{% trans 'Details' %}</h2>
