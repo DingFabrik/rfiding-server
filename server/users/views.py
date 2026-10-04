@@ -25,6 +25,34 @@ from base.views import TitleMixin, BaseListView, PartialMixin
 from .widgets import WidgetDataProvider
 from users.models import RFIDingUser, UserWidget, WIDGET_PERMISSIONS
 from .forms import UserForm, GroupForm, ProfileForm, UserWidgetForm
+from .permissions import check_can_modify_group, check_can_modify_user
+
+
+class RequestingUserFormMixin:
+    """Pass request.user to forms that restrict what it may grant."""
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["requesting_user"] = self.request.user
+        return kwargs
+
+
+class ModifiableUserMixin:
+    """403 for users more privileged than request.user (takeover via password/email)."""
+
+    def get_object(self, queryset=None):
+        user = super().get_object(queryset)
+        check_can_modify_user(self.request.user, user)
+        return user
+
+
+class ModifiableGroupMixin:
+    """403 for groups with permissions request.user doesn't hold."""
+
+    def get_object(self, queryset=None):
+        group = super().get_object(queryset)
+        check_can_modify_group(self.request.user, group)
+        return group
 
 
 @method_decorator(login_required, name="dispatch")
@@ -92,7 +120,7 @@ class UserListView(BaseListView):
     context_object_name = "users"
 
 
-class UserCreateView(TitleMixin, PermissionRequiredMixin, CreateView):
+class UserCreateView(TitleMixin, PermissionRequiredMixin, RequestingUserFormMixin, CreateView):
     title = _("Create User")
     permission_required = "users.add_rfidinguser"
 
@@ -102,7 +130,9 @@ class UserCreateView(TitleMixin, PermissionRequiredMixin, CreateView):
     success_url = reverse_lazy("users:list")
 
 
-class UserUpdateView(TitleMixin, PermissionRequiredMixin, UpdateView):
+class UserUpdateView(
+    TitleMixin, PermissionRequiredMixin, ModifiableUserMixin, RequestingUserFormMixin, UpdateView
+):
     permission_required = "users.change_rfidinguser"
 
     model = RFIDingUser
@@ -134,7 +164,7 @@ class UserDetailView(TitleMixin, PermissionRequiredMixin, DetailView):
         return context
 
 
-class UserDeleteView(TitleMixin, PermissionRequiredMixin, DeleteView):
+class UserDeleteView(TitleMixin, PermissionRequiredMixin, ModifiableUserMixin, DeleteView):
     permission_required = "users.delete_rfidinguser"
 
     def get_title(self):
@@ -154,7 +184,9 @@ class AdminChangePasswordView(TitleMixin, PermissionRequiredMixin, FormView):
     success_url = reverse_lazy("users:list")
 
     def get_object(self):
-        return get_object_or_404(RFIDingUser, pk=self.kwargs["pk"])
+        user = get_object_or_404(RFIDingUser, pk=self.kwargs["pk"])
+        check_can_modify_user(self.request.user, user)
+        return user
 
     def get_form(self) -> BaseForm:
         if self.request.POST:
@@ -182,7 +214,7 @@ class GroupListView(BaseListView):
     context_object_name = "groups"
 
 
-class GroupCreateView(TitleMixin, PermissionRequiredMixin, CreateView):
+class GroupCreateView(TitleMixin, PermissionRequiredMixin, RequestingUserFormMixin, CreateView):
     permission_required = "auth.add_group"
     title = _("Create Group")
 
@@ -192,7 +224,9 @@ class GroupCreateView(TitleMixin, PermissionRequiredMixin, CreateView):
     success_url = reverse_lazy("users:groups:list")
 
 
-class GroupUpdateView(TitleMixin, PermissionRequiredMixin, UpdateView):
+class GroupUpdateView(
+    TitleMixin, PermissionRequiredMixin, ModifiableGroupMixin, RequestingUserFormMixin, UpdateView
+):
     permission_required = "auth.change_group"
 
     model = Group
@@ -209,7 +243,7 @@ class GroupUpdateView(TitleMixin, PermissionRequiredMixin, UpdateView):
         return context
 
 
-class GroupDeleteView(TitleMixin, PermissionRequiredMixin, DeleteView):
+class GroupDeleteView(TitleMixin, PermissionRequiredMixin, ModifiableGroupMixin, DeleteView):
     permission_required = "auth.delete_group"
 
     model = Group

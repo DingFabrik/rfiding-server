@@ -12,25 +12,21 @@ def expire_qualifications():
     """Refresh expiration dates and expire any qualification that is due."""
     now = timezone.now()
     expired_count = 0
-    changed = []
     for qualification in Qualification.objects.filter(
         expired__isnull=True
     ).select_related("machine"):
         expires_at = qualification.compute_expires_at()
-        is_changed = False
+        update_fields = []
         if expires_at != qualification.expires_at:
             qualification.expires_at = expires_at
-            is_changed = True
+            update_fields.append("expires_at")
         if expires_at is not None and expires_at <= now:
             qualification.expired = now
-            is_changed = True
+            update_fields.append("expired")
             expired_count += 1
-        if is_changed:
-            changed.append(qualification)
-    if changed:
-        Qualification.objects.bulk_update(
-            changed, ["expires_at", "expired"], batch_size=500
-        )
+        if update_fields:
+            # Per-row save, not bulk_update, so auditlog's signals record it.
+            qualification.save(update_fields=update_fields)
     return expired_count
 
 

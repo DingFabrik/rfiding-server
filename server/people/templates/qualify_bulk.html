@@ -117,8 +117,8 @@
 
     results.addEventListener("click", function (event) {
         var row = event.target.closest(".qualify-result-row");
-        var resultContainer = row.parentElement;
         if (!row) return;
+        var resultContainer = row.parentElement;
         container.appendChild(makeChip(row.dataset.id, row.dataset.label));
         row.remove();
         if (!resultContainer.innerHTML.trim()) {

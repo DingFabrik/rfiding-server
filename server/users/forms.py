@@ -1,11 +1,13 @@
 from django import forms
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import Group, Permission
+from django.db.models import Q
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Fieldset, Field, Submit, HTML
 from crispy_forms.bootstrap import FormActions
 from django.utils.translation import gettext_lazy as _
 
 from .models import RFIDingUser, UserWidget, USER_WIDGETS, WIDGET_PERMISSIONS
+from .permissions import missing_permissions, permission_names
 
 class ProfileForm(forms.ModelForm):
     
@@ -59,9 +61,12 @@ class ProfileForm(forms.ModelForm):
         ]
 
 class UserForm(forms.ModelForm):
-    
-    def __init__(self, *args, **kwargs):
+
+    def __init__(self, *args, requesting_user=None, **kwargs):
         super(UserForm, self).__init__(*args, **kwargs)
+        self.requesting_user = requesting_user
+        if requesting_user is not None and not requesting_user.is_superuser:
+            self.fields["is_superuser"].disabled = True
         self.helper = FormHelper(self)
         self.helper.layout = Layout(
             "name",
@@ -109,6 +114,21 @@ class UserForm(forms.ModelForm):
             "user_permissions": forms.SelectMultiple(attrs={"size": "17"}),
         }
 
+    def clean(self):
+        cleaned_data = super().clean()
+        if self.requesting_user is not None:
+            granted = Permission.objects.filter(
+                Q(group__in=cleaned_data.get("groups") or [])
+                | Q(pk__in=cleaned_data.get("user_permissions") or [])
+            ).select_related("content_type")
+            missing = missing_permissions(self.requesting_user, permission_names(granted))
+            if missing:
+                raise forms.ValidationError(
+                    _("You can't grant permissions you don't have: %(perms)s"),
+                    params={"perms": ", ".join(sorted(missing))},
+                )
+        return cleaned_data
+
 
 class GroupForm(forms.ModelForm):
     class Meta:
@@ -117,6 +137,24 @@ class GroupForm(forms.ModelForm):
         widgets = {
             "permissions": forms.SelectMultiple(attrs={"size": "17"}),
         }
+
+    def __init__(self, *args, requesting_user=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.requesting_user = requesting_user
+
+    def clean_permissions(self):
+        permissions = self.cleaned_data["permissions"]
+        if self.requesting_user is not None:
+            missing = missing_permissions(
+                self.requesting_user,
+                permission_names(permissions.select_related("content_type")),
+            )
+            if missing:
+                raise forms.ValidationError(
+                    _("You can't grant permissions you don't have: %(perms)s"),
+                    params={"perms": ", ".join(sorted(missing))},
+                )
+        return permissions
 
 class UserWidgetForm(forms.ModelForm):
     class Meta:

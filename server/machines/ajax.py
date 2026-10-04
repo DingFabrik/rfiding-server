@@ -1,6 +1,6 @@
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.db.models import Q
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 from django.views import View
 
 from rest_framework.views import APIView
@@ -68,7 +68,7 @@ class MachineInstructorOptionsView(PermissionRequiredMixin, View):
     permission_required = "machines.view_machine"
 
     def get(self, request, pk):
-        machine = Machine.objects.get(pk=pk)
+        machine = get_object_or_404(Machine, pk=pk)
         instructors = machine.instructors.select_related("person").order_by(
             "person__name"
         )

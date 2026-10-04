@@ -1,4 +1,6 @@
 from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import ObjectDoesNotExist
+from django.shortcuts import get_object_or_404
 from rest_framework import mixins, viewsets
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated
@@ -30,7 +32,7 @@ class CommentViewSet(
         object_id = self.request.query_params.get("object_id")
         if not content_type_id or not object_id:
             raise ValidationError("content_type and object_id query params are required.")
-        content_type = ContentType.objects.get(pk=content_type_id)
+        content_type = get_object_or_404(ContentType, pk=content_type_id)
         check_perm(
             self.request,
             f"{content_type.app_label}.view_{content_type.model}",
@@ -38,9 +40,12 @@ class CommentViewSet(
         return super().get_queryset().filter(content_type=content_type, object_id=object_id)
 
     def perform_create(self, serializer):
-        content_object = serializer.validated_data["content_type"].get_object_for_this_type(
-            pk=serializer.validated_data["object_id"]
-        )
+        try:
+            content_object = serializer.validated_data["content_type"].get_object_for_this_type(
+                pk=serializer.validated_data["object_id"]
+            )
+        except ObjectDoesNotExist:
+            raise ValidationError({"object_id": "No object with this id."})
         check_perm(self.request, comment_permission_for(content_object))
         serializer.instance = create_comment(
             content_object, self.request.user, serializer.validated_data["text"]

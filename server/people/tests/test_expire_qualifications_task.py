@@ -1,4 +1,5 @@
 from datetime import timedelta
+from auditlog.models import LogEntry
 from django.test import TestCase
 from django.utils import timezone
 from freezegun import freeze_time
@@ -24,6 +25,15 @@ class ExpireQualificationsTaskTests(TestCase):
         self.assertEqual(count, 1)
         qualification.refresh_from_db()
         self.assertIsNotNone(qualification.expired)
+
+    def test_expiry_is_recorded_in_audit_log(self):
+        with freeze_time(timezone.now() - timedelta(days=2)):
+            qualification = Qualification.objects.create(machine=self.machine, person=self.person)
+        expire_qualifications()
+        entry = LogEntry.objects.get_for_object(qualification).filter(
+            action=LogEntry.Action.UPDATE
+        ).latest("timestamp")
+        self.assertIn("expired", entry.changes_dict)
 
     def test_does_not_expire_fresh_qualification(self):
         qualification = Qualification.objects.create(machine=self.machine, person=self.person)
