@@ -9,11 +9,6 @@
   {% if object %}{{ object.name }}{% else %}{% trans 'New Machine' %}{% endif %}
 {% endblock %}
 
-{% block top_actions %}
-  <a class="btn btn-ghost" href="{% if object %}{% url 'machines:detail' object.pk %}{% else %}{% url 'machines:list' %}{% endif %}">{% trans 'Cancel' %}</a>
-  <button class="btn btn-primary" type="submit" form="machine-form">{% trans 'Save' %}</button>
-{% endblock %}
-
 {% block content %}
   {% if registration_requests %}
     <div class="mb-6">
@@ -50,24 +45,20 @@
 
     <div class="bg-base-100 rounded-box border border-neutral/10 overflow-hidden">
       <div class="flex flex-col md:flex-row md:min-h-[32rem]">
-        <div role="tablist" aria-orientation="vertical" class="tabs tabs-box rounded-none bg-base-200/60 p-2 gap-1 md:flex-col md:flex-nowrap md:w-52 md:shrink-0 border-b md:border-b-0 md:border-r border-neutral/10">
+        <ul role="tablist" aria-orientation="vertical" class="menu menu-horizontal md:menu-vertical flex-wrap md:flex-nowrap gap-1 w-full md:w-56 md:shrink-0 bg-base-200/60 border-b md:border-b-0 md:border-r border-neutral/10">
           {% for section in sections %}
-            <button type="button" role="tab" class="tab justify-start gap-2 md:w-full{% if section.key == active_section %} tab-active{% endif %}" id="section-{{ section.key }}-tab" data-tabs-target="#section-{{ section.key }}" data-section="{{ section.key }}" aria-controls="section-{{ section.key }}" aria-selected="{% if section.key == active_section %}true{% else %}false{% endif %}">
-              <i data-lucide="{{ section.icon }}" class="w-4 h-4"></i>
-              <span>{{ section.label }}</span>
-              <span class="status status-error md:ml-auto" data-section-dot aria-label="{% trans 'Contains errors' %}"{% if not section.has_errors %} hidden{% endif %}></span>
-            </button>
+            <li role="presentation" data-section-item="{{ section.key }}">
+              <button type="button" role="tab" class="{% if section.key == active_section %}menu-active{% endif %}" id="section-{{ section.key }}-tab" data-section="{{ section.key }}" aria-controls="section-{{ section.key }}" aria-selected="{% if section.key == active_section %}true{% else %}false{% endif %}">
+                <i data-lucide="{{ section.icon }}" class="w-4 h-4"></i>
+                <span>{{ section.label }}</span>
+                <span class="status status-error md:ml-auto" data-section-dot aria-label="{% trans 'Contains errors' %}"{% if not section.has_errors %} hidden{% endif %}></span>
+              </button>
+            </li>
           {% endfor %}
-          {% if object and can_delete %}
-            <button type="button" role="tab" class="tab justify-start gap-2 md:w-full md:mt-auto text-error" id="section-delete-tab" data-tabs-target="#section-delete" data-section="delete" aria-controls="section-delete" aria-selected="false">
-              <i data-lucide="trash-2" class="w-4 h-4"></i>
-              <span>{% trans 'Delete machine' %}</span>
-            </button>
-          {% endif %}
-        </div>
+        </ul>
 
         <div class="flex-1 min-w-0 p-6">
-          <div role="tabpanel" id="section-general" aria-labelledby="section-general-tab" data-section="general" class="max-w-xl{% if active_section != 'general' %} hidden{% endif %}">
+          <div role="tabpanel" id="section-general" aria-labelledby="section-general-tab" data-section="general" class="{% if active_section != 'general' %}hidden{% endif %}">
             <h2 class="text-lg font-semibold mb-4">{% trans 'General' %}</h2>
             {{ form.name|as_crispy_field }}
             {{ form.type|as_crispy_field }}
@@ -79,7 +70,7 @@
             </div>
           </div>
 
-          <div role="tabpanel" id="section-access" aria-labelledby="section-access-tab" data-section="access" class="max-w-xl{% if active_section != 'access' %} hidden{% endif %}">
+          <div role="tabpanel" id="section-access" aria-labelledby="section-access-tab" data-section="access" class="{% if active_section != 'access' %}hidden{% endif %}">
             <h2 class="text-lg font-semibold mb-4">{% trans 'Access' %}</h2>
             {{ form.needs_qualification|as_crispy_field }}
             {{ form.permission_level|as_crispy_field }}
@@ -111,7 +102,7 @@
             </div>
           </div>
 
-          <div role="tabpanel" id="section-session" aria-labelledby="section-session-tab" data-section="session" class="max-w-xl{% if active_section != 'session' %} hidden{% endif %}">
+          <div role="tabpanel" id="section-session" aria-labelledby="section-session-tab" data-section="session" class="{% if active_section != 'session' %}hidden{% endif %}">
             <h2 class="text-lg font-semibold mb-4">{% trans 'Session' %}</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-4">
               {% crispy_addon form.runtimer append="h:m:s" %}
@@ -119,9 +110,9 @@
             </div>
           </div>
 
-          <div role="tabpanel" id="section-device" aria-labelledby="section-device-tab" data-section="device" class="max-w-2xl{% if active_section != 'device' %} hidden{% endif %}">
+          <div role="tabpanel" id="section-device" aria-labelledby="section-device-tab" data-section="device" class="{% if active_section != 'device' %}hidden{% endif %}">
             <h2 class="text-lg font-semibold mb-4">{% trans 'Device' %}</h2>
-            <div class="max-w-xs">{{ form.chip|as_crispy_field }}</div>
+            {{ form.chip|as_crispy_field }}
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-x-4">
               {{ form.hostname|as_crispy_field }}
               {{ form.ip_address|as_crispy_field }}
@@ -131,7 +122,7 @@
             {{ form.api_key|as_crispy_field }}
           </div>
 
-          <div role="tabpanel" id="section-logging" aria-labelledby="section-logging-tab" data-section="logging" class="max-w-xl{% if active_section != 'logging' %} hidden{% endif %}">
+          <div role="tabpanel" id="section-logging" aria-labelledby="section-logging-tab" data-section="logging" class="{% if active_section != 'logging' %}hidden{% endif %}">
             <h2 class="text-lg font-semibold mb-1">{% trans 'Logging' %}</h2>
             <p class="text-sm text-base-content/60 mb-4">{% trans 'Which events of this machine are written to the access log.' %}</p>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6">
@@ -142,21 +133,16 @@
             </div>
           </div>
 
-          {% if object and can_delete %}
-            <div role="tabpanel" id="section-delete" aria-labelledby="section-delete-tab" data-section="delete" class="max-w-xl hidden">
-              <h2 class="text-lg font-semibold mb-1">{% trans 'Delete machine' %}</h2>
-              <p class="text-sm text-base-content/60 mb-4">{% trans 'Removes the machine together with its qualifications and active times. To take it out of use temporarily, set its state to inactive instead.' %}</p>
-              <a class="btn btn-error" href="{% url 'machines:delete' object.pk %}">
-                <i data-lucide="trash-2" class="w-4 h-4"></i>
-                {% blocktrans with name=object.name %}Delete {{ name }}…{% endblocktrans %}
-              </a>
-            </div>
-          {% endif %}
         </div>
       </div>
 
       <div class="flex flex-wrap items-center justify-between gap-3 px-6 py-4 border-t border-neutral/10">
-        <span class="text-sm text-base-content/60">{% trans 'Saves all sections at once.' %}</span>
+        {% if object and can_delete %}
+            <a class="btn btn-error" href="{% url request.resolver_match.namespace|add:':delete' object.pk %}">
+              <i data-lucide="trash-2" class="w-4 h-4"></i>
+              <span>{% trans 'Delete' %}</span>
+            </a>
+        {% endif %}
         <div class="flex gap-2">
           <a class="btn btn-ghost" href="{% if object %}{% url 'machines:detail' object.pk %}{% else %}{% url 'machines:list' %}{% endif %}">{% trans 'Cancel' %}</a>
           <button class="btn btn-primary" type="submit">{% trans 'Save' %}</button>
@@ -173,15 +159,23 @@
 
     function showSection (section) {
       const tab = tabFor(section);
-      if (tab && !tab.hidden) {
-        tab.click();
+      if (!tab || tab.closest("li").hidden) {
+        return;
       }
+      form.querySelectorAll('[role="tab"][data-section]').forEach((other) => {
+        other.classList.toggle("menu-active", other === tab);
+        other.setAttribute("aria-selected", other === tab ? "true" : "false");
+      });
+      form.querySelectorAll('[role="tabpanel"]').forEach((panel) => {
+        panel.classList.toggle("hidden", panel.dataset.section !== section);
+      });
     }
 
     // Remember the open section in the URL hash, so reloads and links (p.e. #schedule) open it.
     form.addEventListener("click", function (event) {
       const tab = event.target.closest('[role="tab"][data-section]');
       if (tab) {
+        showSection(tab.dataset.section);
         history.replaceState(null, "", "#" + tab.dataset.section);
       }
     });
@@ -285,8 +279,8 @@
       toggle("#div_id_permission_level", !isLockGroup && !needsQualificationInput.checked);
 
       const deviceTab = tabFor("device");
-      deviceTab.hidden = isCompartment;
-      if (isCompartment && deviceTab.classList.contains("tab-active")) {
+      deviceTab.closest("li").hidden = isCompartment;
+      if (isCompartment && deviceTab.classList.contains("menu-active")) {
         showSection("general");
       }
     }

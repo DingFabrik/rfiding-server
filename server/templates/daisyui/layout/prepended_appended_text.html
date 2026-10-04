@@ -10,32 +10,32 @@
     {% endif %}
 
     <div {% if field_class %}class="{{ field_class }}"{% endif %}>
-        <div class="join{% if input_size %} {{ input_size }}{% endif %}">
+        <div class="join w-full{% if input_size %} {{ input_size }}{% endif %}">
             {% if crispy_prepended_text %}
-                <span class="join-item bg-base-200 flex items-center px-3 text">{{ crispy_prepended_text }}</span>
+                <span class="join-item bg-base-200 flex items-center px-3 text-sm whitespace-nowrap">{{ crispy_prepended_text }}</span>
             {% endif %}
 
             {% if field|is_select %}
                 {% if field.errors %}
-                    {% crispy_field field 'class' 'select join-item select-error validator' 'aria-invalid' 'true' %}
+                    {% crispy_field field 'class' 'select join-item flex-1 select-error validator' 'aria-invalid' 'true' %}
                 {% else %}
-                    {% crispy_field field 'class' 'select join-item' %}
+                    {% crispy_field field 'class' 'select join-item flex-1' %}
                 {% endif %}
             {% elif field.errors %}
-                {% crispy_field field 'class' 'input join-item input-error validator' 'aria-invalid' 'true' %}
+                {% crispy_field field 'class' 'input join-item flex-1 input-error validator' 'aria-invalid' 'true' %}
             {% else %}
-                {% crispy_field field 'class' 'input join-item' %}
+                {% crispy_field field 'class' 'input join-item flex-1' %}
             {% endif %}
 
             {% if crispy_appended_text %}
-                <span class="join-item bg-base-200 flex items-center px-3 text">{{ crispy_appended_text }}</span>
-            {% endif %}
-            {% if error_text_inline %}
-                {% include 'daisyui/layout/field_errors.html' %}
-            {% else %}
-                {% include 'daisyui/layout/field_errors_block.html' %}
+                <span class="join-item bg-base-200 flex items-center px-3 text-sm whitespace-nowrap">{{ crispy_appended_text }}</span>
             {% endif %}
         </div>
+        {% if error_text_inline %}
+            {% include 'daisyui/layout/field_errors.html' %}
+        {% else %}
+            {% include 'daisyui/layout/field_errors_block.html' %}
+        {% endif %}
     {% if not help_text_inline %}
         {% include 'daisyui/layout/help_text.html' %}
     {% endif %}
