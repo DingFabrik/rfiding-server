@@ -19,7 +19,6 @@
                 {% endblock %}
             </div>
             <div class="flex items-center gap-1 shrink-0">
-                {% block header_actions %}{% endblock %}
                 <div class="tooltip" data-tip="{% trans "Refresh" %}">
                     <button
                         type="button"
@@ -56,11 +55,9 @@
                 </div>
             </div>
         </div>
-        {% block card_body_outer %}
         <div class="card-body {% block card_body_class %}{% endblock %}">
             {% block content %}{% endblock %}
         </div>
-        {% endblock %}
     </div>
 </div>
 {% if not placeholder %}

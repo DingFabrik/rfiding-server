@@ -39,17 +39,17 @@
               </li>
               <li class="list-row items-center px-0 py-1.5 border-b border-base-200">
                 <span class="text-base-content/60">{% trans 'Usage Times' %}</span>
-                <span class="font-medium truncate text-right">
+                <div class="font-medium text-right">
                   {% if machine.times.exists %}
-            <ul class="list-disc ms-6">
-              {% for time in machine.times.all %}
-                <li>{{ time }}</li>
-              {% endfor %}
-            </ul>
-          {% else %}
-            <span class="text-base-content/60 ms-2">{% trans 'No specific usage times defined.' %}</span>
-          {% endif %}
-                </span>
+                    <ul class="list-disc ms-6">
+                      {% for time in machine.times.all %}
+                        <li>{{ time }}</li>
+                      {% endfor %}
+                    </ul>
+                  {% else %}
+                    <span class="text-base-content/60 ms-2">{% trans 'No specific usage times defined.' %}</span>
+                  {% endif %}
+                </div>
               </li>
             </ul>
           </div>

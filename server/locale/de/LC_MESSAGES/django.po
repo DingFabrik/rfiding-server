@@ -286,16 +286,32 @@ msgid "Access by day (last %(day_count)s days)"
 msgstr "Zugriff nach Tag (letzte %(day_count)s Tage)"
 
 #: access_log/templates/statistics.html:73
-#, fuzzy
-#| msgid "Access Log"
+#: machines/templates/machine_statistics.html:83
 msgid "Access by hour"
-msgstr "Zugriffs Log"
+msgstr "Zugriff nach Uhrzeit"
 
 #: access_log/templates/statistics.html:79
-#, fuzzy
-#| msgid "Access Type"
+#: machines/templates/machine_statistics.html:112
 msgid "Access by weekday"
-msgstr "Zugriffstyp"
+msgstr "Zugriff nach Wochentag"
+
+#: machines/templates/machine_statistics.html:54
+msgid "Access by day"
+msgstr "Zugriff nach Tag"
+
+#: templates/snippets/active_toggle.html:9
+msgid "Loading..."
+msgstr "Lädt..."
+
+#: tokens/templates/token_card.html:7
+#, python-format
+msgid "Token #%(label)s"
+msgstr "Token #%(label)s"
+
+#: space/templates/status.html:8
+#, python-format
+msgid "%(space_name)s Status"
+msgstr "%(space_name)s Status"
 
 #: access_log/templates/statistics.html:88
 msgid "Opening hours and usage"

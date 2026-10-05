@@ -9,22 +9,25 @@
 <div class="fieldset">
     <label class="label" for="version">{% trans "Version" %}</label>
     <input type="text"
+           id="version"
            class="input w-full mb-3"
            value="{{ version }}"
            readonly
     />
     <div class="flex flex-col sm:flex-row gap-3">
         <div class="flex-1">
-            <label class="label" for="scalaVersion">{% trans "Python version" %}</label>
+            <label class="label" for="python_version">{% trans "Python version" %}</label>
             <input type="text"
+                   id="python_version"
                    class="input w-full"
                    value="{{ python_version }}"
                    readonly
             />
         </div>
         <div class="flex-1">
-            <label class="label" for="sbtVersion">{% trans "Django version" %}</label>
+            <label class="label" for="django_version">{% trans "Django version" %}</label>
             <input type="text"
+                   id="django_version"
                    class="input w-full"
                    value="{{ django_version }}"
                    readonly

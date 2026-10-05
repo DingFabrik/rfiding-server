@@ -89,7 +89,7 @@
       </div>
       {% if perms.access_log.view_accesslog %}
         <button role="tab" class="tab" id="accesslog-tab" hx-get="{% url 'access_log:for-person' object.pk %}" hx-target="#accesslog-tab-pane" data-tabs-target="#accesslog-tab-pane" aria-selected="false"><i data-lucide="list" class="w-4 h-4 mr-1"></i>{% trans 'Access Log' %}</button>
-        <div class="tab-content bg-base-100 border-neutral/10" role="tabpanel" class="hidden" id="accesslog-tab-pane" aria-labelledby="accesslog-tab">
+        <div class="tab-content bg-base-100 border-neutral/10" role="tabpanel" id="accesslog-tab-pane" aria-labelledby="accesslog-tab">
           <div class="flex flex-col gap-2 p-6">
             <div class="skeleton h-4 w-full"></div>
             <div class="skeleton h-4 w-full"></div>
@@ -100,7 +100,7 @@
       {% endif %}
       {% if perms.people.comment_person %}
         <button role="tab" class="tab" id="comments-tab" data-tabs-target="#comments-tab-pane" aria-selected="false"><i data-lucide="message-square" class="w-4 h-4 mr-1"></i>{% trans 'Comments' %}</button>
-        <div class="tab-content bg-base-100 border-neutral/10 p-6" role="tabpanel" class="hidden" id="comments-tab-pane" aria-labelledby="comments-tab">
+        <div class="tab-content bg-base-100 border-neutral/10 p-6" role="tabpanel" id="comments-tab-pane" aria-labelledby="comments-tab">
           {% include 'comment_display.html' with comment_url='people:add-comment' %}
         </div>
       {% endif %}

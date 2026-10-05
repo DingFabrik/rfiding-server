@@ -7,9 +7,7 @@
 {% endblock %}
 
 {% block content %}
-<form action="" method="post">
 {% crispy form %}
-</form>
 
 <div class="divider"></div>
 <a href="{% url "users:change_password" %}" class="btn btn-primary">{% trans "Change Password" %}</a>

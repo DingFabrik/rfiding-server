@@ -1,19 +1,23 @@
 {% load i18n %}
 {% load humanize %}
-<html>
+{% get_current_language as LANGUAGE_CODE %}
+<!doctype html>
+<html lang="{{ LANGUAGE_CODE }}">
     <head>
-        <title>Dingfabrik 3.0 Status</title>
+        <meta charset="utf-8">
+        <title>{% blocktrans %}{{ space_name }} Status{% endblocktrans %}</title>
         <style>
-        body { 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            height: 100vh; 
-            margin: 0; 
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: {% if state.is_open %}{% if warning %}#FFE347{% else %}#9BE564{% endif %}{% else %}#F95738{% endif %};
         }
         </style>
     </head>
-    <body bgcolor="{% if state.is_open %}{% if warning %}#FFE347{% else %}#9BE564{% endif %}{% else %}#F95738{% endif %}">
+    <body>
         <div>
             <h1>{% blocktrans %}{{ space_name }} is {{ state_text }}.{% endblocktrans %}</h1>
             {% if warning %}

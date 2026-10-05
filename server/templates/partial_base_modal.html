@@ -5,11 +5,8 @@
   <div class="pt-4">
     {% block content %}{% endblock %}
   </div>
-  {% if buttons %}
-  <div class="modal-action">
-    {% block buttons %}{% endblock %}
-  </div>
-  {% endif %}
+  {# Children wrap their buttons in <div class="modal-action">, so modals without buttons get no empty row. #}
+  {% block buttons %}{% endblock %}
 </div>
 <form method="dialog" class="modal-backdrop"><button>{% trans "close" %}</button></form>
 

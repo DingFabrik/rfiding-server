@@ -1,7 +1,5 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% load l10n %}
-{% load humanize %}
 {% load base_extra %}
 
 {% block main %}
@@ -29,11 +27,6 @@
             class="btn btn-primary">
             <i data-lucide="circle-x" class="w-4 h-4"></i> {% trans "Clear list" %}
         </a>
-    </div>
-      {% block content %}
-      {% endblock content %}
-      <div class="mb-3 flex justify-end gap-2">
-        {% block bottom_actions %}{% endblock %}
     </div>
 {% if tokens %}
 {% include "unknown_token_table.html" %}

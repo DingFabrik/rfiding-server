@@ -38,7 +38,7 @@
         {% if object.actor %}
           <a class="link-hover link-primary" href="{% url 'users:detail' object.actor_id %}">{{ object.actor }}</a>
         {% else %}
-          System
+          {% trans 'System' %}
         {% endif %}
       </td>
       <td class="whitespace-nowrap">

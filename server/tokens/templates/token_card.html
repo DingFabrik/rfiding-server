@@ -4,7 +4,7 @@
         <div class="flex items-center gap-2">
             <i data-lucide="radio-tower" class="w-4 h-4 {% if token.is_active %}text-success{% else %}text-error{% endif %}"></i>
             <a class="link-hover link-primary" href="{% url 'tokens:detail' token.id %}">
-                Token #{{ token.label }} &bull; [{{ token.serial }}]
+                {% blocktrans with label=token.label %}Token #{{ label }}{% endblocktrans %} &bull; [{{ token.serial }}]
             </a>
         </div>
         <p class="m-0">

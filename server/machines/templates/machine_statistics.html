@@ -1,6 +1,5 @@
 {% extends base_template %}
 {% load i18n %}
-{% load crispy_forms_tags %}
 
 {% block content %}
 {% with day_count=selected_days %}
@@ -52,7 +51,7 @@
           labels: by_day.map(row => row.date),
           datasets: [
             {
-              label: 'Access by day',
+              label: '{{ _("Access by day")|escapejs }}',
               data: by_day.map(row => row.count)
             }
           ]
@@ -81,7 +80,7 @@
           labels: by_hour.map(row => row.hour),
           datasets: [
             {
-              label: 'Access by hour',
+              label: '{{ _("Access by hour")|escapejs }}',
               data: by_hour.map(row => row.count)
             }
           ]
@@ -110,7 +109,7 @@
           labels: by_weekday.map(row => row.weekday),
           datasets: [
             {
-              label: 'Access by weekday',
+              label: '{{ _("Access by weekday")|escapejs }}',
               data: by_weekday.map(row => row.count)
             }
           ]

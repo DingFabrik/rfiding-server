@@ -1,8 +1,9 @@
 {% load static %}
 {% load i18n %}
 {% load user_extra %}
+{% get_current_language as LANGUAGE_CODE %}
 <!doctype html>
-<html lang="en" class="h-full bg-base-200" {% theme_html_attrs user %}>
+<html lang="{{ LANGUAGE_CODE }}" class="h-full bg-base-200" {% theme_html_attrs user %}>
   <head>
     {% include "partials/head_links.html" %}
 
@@ -53,8 +54,6 @@
   {% include 'modals/search_universal.html' %}
     {% include "footer.html" %}
     <script type="text/javascript" src="{% static 'js/main.js' %}"></script>
-    {% block js_extra %}
-    {% endblock%}
     <script>
       {% block script_extra %}
       {% endblock%}

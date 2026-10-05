@@ -25,9 +25,11 @@
 {% endblock %}
 
 {% block buttons %}
-  <button type="button" class="btn" data-modal-close>{% trans 'No' %}</button>
-  <form action="{{ request.path }}?next={{ request.GET.next }}" method="post">
-    {% csrf_token %}
-    <input type="submit" value="{% trans 'Revoke' %}" class="btn btn-error" />
-  </form>
+  <div class="modal-action">
+    <button type="button" class="btn" data-modal-close>{% trans 'No' %}</button>
+    <form action="{{ request.path }}?next={{ request.GET.next|urlencode }}" method="post">
+      {% csrf_token %}
+      <input type="submit" value="{% trans 'Revoke' %}" class="btn btn-error" />
+    </form>
+  </div>
 {% endblock %}
