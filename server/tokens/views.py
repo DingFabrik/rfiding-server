@@ -11,7 +11,7 @@ from django.views.generic import (
     DeleteView,
     View,
 )
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.shortcuts import redirect, get_object_or_404
 from django.utils.translation import gettext_lazy as _
 
@@ -77,8 +77,10 @@ class UnknownTokenListView(PermissionRequiredMixin, ListView):
 
 class ClearUnknownTokensView(PermissionRequiredMixin, View):
     permission_required = "tokens.delete_unknowntoken"
+    # POST only, so a cross-site <img src> or link can't trigger it.
+    http_method_names = ["post"]
 
-    def get(self, request):
+    def post(self, request):
         clear_unknown_tokens()
         return redirect("tokens:unknown")
 
@@ -183,9 +185,15 @@ class PersonForTokenPopoverView(PermissionRequiredMixin, TemplateView):
 
 class BlacklistTokenView(PermissionRequiredMixin, View):
     permission_required = "tokens.add_blacklistedtoken"
+    # POST only, so a cross-site <img src> or link can't trigger it.
+    http_method_names = ["post"]
 
-    def get(self, request: HttpRequest, *args: str, **kwargs: Any) -> HttpResponse:
+    def post(self, request: HttpRequest, *args: str, **kwargs: Any) -> HttpResponse:
         blacklist_token(kwargs["serial"])
+        if request.headers.get("HX-Request") == "true":
+            return HttpResponse(
+                status=204, headers={"HX-Redirect": reverse("tokens:blacklisted")}
+            )
         return redirect("tokens:blacklisted")
 
 

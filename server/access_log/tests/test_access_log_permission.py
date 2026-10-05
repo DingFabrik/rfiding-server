@@ -36,7 +36,7 @@ class AccessLogPermissionTests(TestCase):
         from django.contrib.auth.models import Permission
 
         user = get_user_model().objects.create_user(email="staff@example.com", password="pass")
-        user.user_permissions.add(Permission.objects.get(codename="view_accesslog"))
+        user.user_permissions.add(Permission.objects.get(codename="view_accesslog", content_type__app_label="access_log"))
         self.client.force_login(user)
         for url in self.urls:
             response = self.client.get(url)

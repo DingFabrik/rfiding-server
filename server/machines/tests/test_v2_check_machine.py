@@ -61,7 +61,7 @@ class V2CheckMachineTests(APITestCase):
         )
         machine.save()
         response = self.client.get(V2CheckMachineTests.url, data, format="json")
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_inactive_machine(self):
         """
@@ -92,7 +92,7 @@ class V2CheckMachineTests(APITestCase):
         token = Token.objects.create(serial="456", person=person, is_active=False)
         token.save()
         response = self.client.get(V2CheckMachineTests.url, data, format="json")
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_inactive_person(self):
         """
@@ -110,7 +110,7 @@ class V2CheckMachineTests(APITestCase):
         token = Token.objects.create(serial="456", person=person)
         token.save()
         response = self.client.get(V2CheckMachineTests.url, data, format="json")
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_no_qualification(self):
         data = {"mac_address": "aabbccddeeff", "tokenUid": "456"}

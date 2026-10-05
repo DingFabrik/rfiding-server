@@ -67,6 +67,9 @@ class UserForm(forms.ModelForm):
         self.requesting_user = requesting_user
         if requesting_user is not None and not requesting_user.is_superuser:
             self.fields["is_superuser"].disabled = True
+        # Shown for information; they're maintained by Django, not edited by hand.
+        for field_name in ("last_login", "date_joined"):
+            self.fields[field_name].disabled = True
         self.helper = FormHelper(self)
         self.helper.layout = Layout(
             "name",

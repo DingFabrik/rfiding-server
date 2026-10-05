@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     "django_celery_results",
     "django_celery_beat",
     "auditlog",
+    "axes",
     "access_log",
     "base",
     "firmware",
@@ -71,7 +72,26 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "auditlog.middleware.AuditlogMiddleware",
+    # Must be last: turns axes lockouts into the lockout response.
+    "axes.middleware.AxesMiddleware",
 ]
+
+AUTHENTICATION_BACKENDS = [
+    # Must come first, so locked-out logins are rejected before checking the password.
+    "axes.backends.AxesStandaloneBackend",
+    "django.contrib.auth.backends.ModelBackend",
+]
+
+# Lock out a username from an IP after repeated failed logins.
+# Locking by username+IP (not IP alone) means people sharing the space's network
+# don't lock each other out, and an attacker can't lock a user out everywhere.
+AXES_FAILURE_LIMIT = 5
+AXES_COOLOFF_TIME = 1  # hours
+AXES_LOCKOUT_PARAMETERS = [["username", "ip_address"]]
+AXES_RESET_ON_SUCCESS = True
+# The login form posts the email as "username"; axes would otherwise look for
+# a credential named after USERNAME_FIELD ("email") and record no username.
+AXES_USERNAME_FORM_FIELD = "username"
 
 ROOT_URLCONF = "rfiding.urls"
 
@@ -165,7 +185,7 @@ REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
     # or allow read-only access for unauthenticated users.
     "DEFAULT_PERMISSION_CLASSES": ["api.permissions.DjangoModelPermissionsWithView"],
-    # Session/Basic stay first so pre-existing session-authenticated dashboard-internal
+    # Session stays first so pre-existing session-authenticated dashboard-internal
     # DRF views (ajax autocomplete, etc.) keep their original 401-vs-403 behavior -
     # DRF picks authenticators[0].authenticate_header() for that, and OAuth2's header
     # would otherwise coerce every anonymous 403 into a 401. The new `/api/rest/`
@@ -174,7 +194,6 @@ REST_FRAMEWORK = {
     # this order.
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework.authentication.SessionAuthentication",
-        "rest_framework.authentication.BasicAuthentication",
         "oauth2_provider.contrib.rest_framework.OAuth2Authentication",
     ],
     "DEFAULT_FILTER_BACKENDS": [
@@ -184,6 +203,12 @@ REST_FRAMEWORK = {
     ],
     "DEFAULT_PAGINATION_CLASS": "api.pagination.PageLengthPagination",
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    # Applied per view (OAuth2OnlyMixin, machine registration), not globally, so
+    # the machine-facing access API isn't throttled.
+    "DEFAULT_THROTTLE_RATES": {
+        "user": "1000/hour",
+        "machine_register": "30/hour",
+    },
 }
 
 SPECTACULAR_SETTINGS = {

@@ -1,7 +1,10 @@
+import ipaddress
+
 from django.utils import timezone
 from rest_framework.response import Response
 from rest_framework.exceptions import NotFound
 from rest_framework import status, permissions
+from rest_framework.throttling import ScopedRateThrottle
 
 from .common import formatted_mac, BaseAPIView, MachineApiKeyPermission
 from access_log.models import LOG_TYPE_BOOTED, LOG_TYPE_DISABLED
@@ -12,8 +15,19 @@ from machines.api.common import check_access_response
 from machines.models import Machine, MachineRegistrationRequest
 
 
+def is_ip_address(value):
+    try:
+        ipaddress.ip_address(value)
+    except ValueError:
+        return False
+    return True
+
+
 class MachineRegisterView(BaseAPIView):
     permission_classes = [permissions.AllowAny]
+    # Unauthenticated, so limit how fast one client can create registration requests.
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "machine_register"
     required_post_parameters = ["mac_address", "hostname"]
 
     def post(self, request, format=None):
@@ -30,9 +44,9 @@ class MachineRegisterView(BaseAPIView):
             if not MachineRegistrationRequest.objects.filter(
                 mac_address=mac_address
             ).exists():
-                ip_address = request.data.get(
-                    "ip_address", request.META.get("REMOTE_ADDR", None)
-                )
+                ip_address = request.data.get("ip_address", None)
+                if not is_ip_address(ip_address):
+                    ip_address = request.META.get("REMOTE_ADDR", None)
                 hostname = request.data.get("hostname", None)
                 MachineRegistrationRequest.objects.create(
                     mac_address=mac_address,
@@ -153,7 +167,7 @@ class MachineControlView(BaseAPIView):
                 {"error": "Invalid control key"},
                 status=status.HTTP_403_FORBIDDEN,
             )
-        action = request.GET.get("action", None)
+        action = request.data.get("action", None)
         if action not in ["enable", "disable", "restart", "reload_config"]:
             return Response(
                 {"error": "Invalid action"}, status=status.HTTP_400_BAD_REQUEST

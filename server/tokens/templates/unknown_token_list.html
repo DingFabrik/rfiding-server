@@ -20,13 +20,13 @@
           </div>
           <h1 class="text-2xl font-bold">{% trans "Unknown tokens" %}</h1>
         </div>
-        <a
-            href="{% url 'tokens:clear-unknown' %}"
-            ws-send
-            hx-vals='{"action": "clear"}'
-            class="btn btn-primary">
-            <i data-lucide="circle-x" class="w-4 h-4"></i> {% trans "Clear list" %}
-        </a>
+        {# Sent over the websocket; without JS the form falls back to a normal POST. #}
+        <form method="post" action="{% url 'tokens:clear-unknown' %}" ws-send hx-vals='{"action": "clear"}'>
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary">
+                <i data-lucide="circle-x" class="w-4 h-4"></i> {% trans "Clear list" %}
+            </button>
+        </form>
     </div>
 {% if tokens %}
 {% include "unknown_token_table.html" %}

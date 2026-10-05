@@ -1,5 +1,6 @@
-from oauth2_provider.contrib.rest_framework import OAuth2Authentication
+from oauth2_provider.contrib.rest_framework import OAuth2Authentication, TokenHasReadWriteScope
 from rest_framework import viewsets
+from rest_framework.throttling import UserRateThrottle
 
 from api.permissions import check_perm
 
@@ -13,6 +14,22 @@ class OAuth2OnlyMixin:
     """
 
     authentication_classes = [OAuth2Authentication]
+    throttle_classes = [UserRateThrottle]
+
+    def check_permissions(self, request):
+        """Also require the token's scope: `read` for safe methods, `write` otherwise.
+
+        Done here rather than via `permission_classes`, because several viewsets
+        replace those (or override `get_permissions()`), and the scope check must
+        apply to every endpoint and custom action regardless.
+        """
+        super().check_permissions(request)
+        if not TokenHasReadWriteScope().has_permission(request, self):
+            self.permission_denied(
+                request,
+                message="Token is missing the required scope for this request.",
+                code="insufficient_scope",
+            )
 
 
 class BaseModelViewSet(OAuth2OnlyMixin, viewsets.ModelViewSet):

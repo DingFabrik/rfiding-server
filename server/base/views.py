@@ -1,7 +1,7 @@
 from django.views.generic import TemplateView, ListView
 import platform
 import django
-from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from auditlog.models import LogEntry
 from django.utils.translation import gettext_lazy as _
 from django.core.cache import cache
@@ -9,7 +9,7 @@ from django.http import HttpRequest
 from django.shortcuts import get_object_or_404
 from django.utils.cache import get_cache_key
 
-from rfiding import settings
+from django.conf import settings
 from machines.models import Machine
 from people.models import Person
 from tokens.models import Token
@@ -136,7 +136,7 @@ class AuditlogView(TitleMixin, PartialListMixin, PermissionRequiredMixin, ListVi
     queryset = (
         LogEntry.objects.all().select_related("content_type").order_by("-timestamp")
     )
-    permission_required = "tokens.view_token"
+    permission_required = "auditlog.view_logentry"
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -162,14 +162,24 @@ def expire_page(path):
     if cache.has_key(key):
         cache.delete(key)
 
-class UniversalSearchView(TitleMixin, TemplateView):
+class UniversalSearchView(LoginRequiredMixin, TitleMixin, TemplateView):
     title = _("Search")
     template_name = "search_universal_results.html"
-    
+
+    # Each result group is only searched if the user may view that model.
+    search_groups = (
+        (Machine, "machines.view_machine", "name__icontains"),
+        (Person, "people.view_person", "name__icontains"),
+        (Token, "tokens.view_token", "serial__icontains"),
+    )
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        m = Machine.objects.filter(name__icontains=self.request.GET["search"])[:10]
-        p = Person.objects.filter(name__icontains=self.request.GET["search"])[:10]
-        t = Token.objects.filter(serial__icontains=self.request.GET["search"])[:10]
-        context["objects"] = list(m) + list(p) + list(t)
+        term = self.request.GET.get("search", "").strip()
+        objects = []
+        if term:
+            for model, permission, lookup in self.search_groups:
+                if self.request.user.has_perm(permission):
+                    objects += list(model.objects.filter(**{lookup: term})[:10])
+        context["objects"] = objects
         return context

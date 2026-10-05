@@ -9,7 +9,7 @@ from .base import OAuth2OnlyMixin
 class HasAuditLogPermission(BasePermission):
     def has_permission(self, request, view):
         # mirrors base.views.AuditlogView.permission_required
-        return request.user.has_perm("tokens.view_token")
+        return request.user.has_perm("auditlog.view_logentry")
 
 
 class AuditLogViewSet(OAuth2OnlyMixin, viewsets.ReadOnlyModelViewSet):

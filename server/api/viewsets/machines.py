@@ -43,7 +43,10 @@ class MachineViewSet(BaseModelViewSet):
     def qualify(self, request, pk=None):
         self.check_perm("people.qualify_person")
         machine = self.get_object()
-        serializer = QualificationSerializer(data={**request.data, "machine": machine.pk})
+        serializer = QualificationSerializer(
+            data={**request.data, "machine": machine.pk},
+            context=self.get_serializer_context(),
+        )
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=201)

@@ -37,3 +37,14 @@ Copy the example settings:
 
     cp server/rfiding/settings.prod.py server/rfiding/settings.py
 
+The production settings read two secrets from the environment and refuse to
+start without them:
+
+- ``DJANGO_SECRET_KEY``: Django's secret key.
+- ``SPACE_STATE_SECRET``: the secret clients send (in the ``X-Space-Secret``
+  header) to change the space state.
+
+Generate each with ``python -c 'import secrets; print(secrets.token_urlsafe(50))'``.
+Also fill in ``ALLOWED_HOSTS`` and ``CSRF_TRUSTED_ORIGINS``, and check the HTTPS
+settings if TLS is terminated by a reverse proxy.
+

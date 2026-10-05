@@ -88,10 +88,12 @@ urlpatterns = [
     path("tokens/", include("tokens.urls", namespace="tokens")),
     path("users/", include("users.urls", namespace="users")),
     path("firmware/", include("firmware.urls", namespace="firmware")),
-    path("__debug__/", include("debug_toolbar.urls")),
     path("api/", include((api_urls, "api"), namespace="api")),
     path("api/rest/", include("api.urls", namespace="rest")),
     path("statistics/", StatisticsView.as_view(), name="statistics"),
     path("about/", AboutView.as_view(), name="about"),
     path("auditlog/", AuditlogView.as_view(), name="auditlog"),
 ]
+
+if settings.DEBUG and "debug_toolbar" in settings.INSTALLED_APPS:
+    urlpatterns.append(path("__debug__/", include("debug_toolbar.urls")))

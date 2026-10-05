@@ -21,7 +21,7 @@
 <a href="{% url "tokens:assign" token.serial %}" class="tooltip" data-tip="{% trans 'Assign' %}"><i data-lucide="radio-tower" class="w-4 h-4 me-2"></i></a>
 {% endif %}
 {% if can_create_blacklistedtoken %}
-<a href="{% url "tokens:blacklist-token" token.serial %}" class="tooltip" data-tip="{% trans 'Blacklist' %}"><i data-lucide="ban" class="w-4 h-4 text-error"></i></a>
+<button type="button" hx-post="{% url "tokens:blacklist-token" token.serial %}" class="tooltip cursor-pointer" data-tip="{% trans 'Blacklist' %}" aria-label="{% trans 'Blacklist' %}"><i data-lucide="ban" class="w-4 h-4 text-error"></i></button>
 {% endif %}
               </div>
 </td>

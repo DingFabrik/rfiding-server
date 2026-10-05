@@ -193,7 +193,7 @@ USER_WIDGETS = [
 ]
 
 WIDGET_PERMISSIONS = {
-    "audit_log_latest": "tokens.view_token",
+    "audit_log_latest": "auditlog.view_logentry",
     "pending_registration_requests": "machines.add_machine",
     "machines_maintenance": "machines.view_machine",
 }

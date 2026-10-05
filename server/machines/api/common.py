@@ -154,14 +154,17 @@ def check_access(machine, tokenID, compartmentID=None):
         ):
             UnknownToken.objects.get_or_create(serial=tokenID, machine_id=checked_machine.id)
         # The token may exist but be archived/deactivated or belong to an inactive person.
+        # Either way the caller gets the same 403 "No Access!" as for a known token
+        # without access, so the API can't be used to probe which serials exist.
+        # The precise reason is still written to the access log.
         inactive_token_id = (
             Token.objects.filter(serial=tokenID).values_list("id", flat=True).first()
         )
         if inactive_token_id is not None:
-            raise AccessNotFound(
-                "Invalid Token", UnsuccessfulReason.INACTIVE_TOKEN, inactive_token_id
+            raise AccessDenied(
+                "No Access!", UnsuccessfulReason.INACTIVE_TOKEN, inactive_token_id
             ) from None
-        raise AccessNotFound("Invalid Token", UnsuccessfulReason.UNKNOWN_TOKEN) from None
+        raise AccessDenied("No Access!", UnsuccessfulReason.UNKNOWN_TOKEN) from None
 
     def log_enabled():
         save_access_log.delay(

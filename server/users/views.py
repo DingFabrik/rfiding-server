@@ -97,7 +97,8 @@ class HomeWidgetsView(TemplateView):
         context = super().get_context_data(**kwargs)
         widgets = self.request.user.widgets.all()
         if "widget_id" in self.request.GET:
-            widgets = widgets.filter(pk=self.request.GET["widget_id"])
+            widget_id = self.request.GET["widget_id"]
+            widgets = widgets.filter(pk=widget_id) if widget_id.isdigit() else widgets.none()
         widgets = _visible_widgets(self.request, widgets)
         data_provider = WidgetDataProvider()
         data_provider.provide_for_widgets(widgets)

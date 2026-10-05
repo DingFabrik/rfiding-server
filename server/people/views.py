@@ -14,6 +14,7 @@ from django.views.generic import (
     FormView,
 )
 from django.urls import reverse_lazy
+from django.utils.http import url_has_allowed_host_and_scheme
 from django.utils.translation import gettext_lazy as _
 
 from base.views import BaseToggleActiveView, BaseListView, PartialMixin, TitleMixin
@@ -171,6 +172,11 @@ class QualifyPersonView(TitleMixin, PartialMixin, PermissionRequiredMixin, FormV
     def get_title(self):
         return _(f"Qualify {self.get_object().name}")
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
+
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
         context["person"] = self.get_object()
@@ -222,8 +228,13 @@ class RevokeQualificationPersonView(
         )
 
     def get_success_url(self):
-        if self.request.GET.get("next"):
-            return self.request.GET.get("next")
+        next_url = self.request.GET.get("next")
+        if next_url and url_has_allowed_host_and_scheme(
+            next_url,
+            allowed_hosts={self.request.get_host()},
+            require_https=self.request.is_secure(),
+        ):
+            return next_url
         return reverse_lazy("people:detail", kwargs={"pk": self.kwargs["pk"]})
 
 
@@ -245,6 +256,11 @@ class EditQualificationPersonView(TitleMixin, PartialMixin, PermissionRequiredMi
 
     def get_title(self):
         return _(f"Edit Qualification for {self.get_person().name}")
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
 
     def get_object(self, queryset=None):
         return get_object_or_404(

@@ -1,8 +1,29 @@
+import secrets
+from datetime import timedelta
+
 from django.contrib.auth.models import Group, Permission
 from django.test import TestCase
+from django.utils import timezone
+from oauth2_provider.models import AccessToken
 from rest_framework.test import APIClient
 
 from users.models import RFIDingUser, UserWidget
+
+
+def authenticate(client, user, scope="read write"):
+    """Authenticate `client` as `user` with an OAuth2 access token of `scope`.
+
+    `/api/rest/` only accepts OAuth2 tokens and checks their scope, so tests
+    need a real token rather than a bare `force_authenticate(user)`.
+    """
+    token = AccessToken.objects.create(
+        user=user,
+        token=secrets.token_urlsafe(32),
+        expires=timezone.now() + timedelta(hours=1),
+        scope=scope,
+    )
+    client.force_authenticate(user, token=token)
+    return token
 
 
 class UserApiPermissionTests(TestCase):
@@ -11,7 +32,7 @@ class UserApiPermissionTests(TestCase):
             email="staff@example.com", password="old-password"
         )
         self.client = APIClient()
-        self.client.force_authenticate(self.user)
+        authenticate(self.client, self.user)
 
     def test_change_permission_cannot_grant_superuser(self):
         self.user.user_permissions.add(
@@ -31,7 +52,7 @@ class UserApiPermissionTests(TestCase):
         admin = RFIDingUser.objects.create_superuser(
             email="admin@example.com", password="pw"
         )
-        self.client.force_authenticate(admin)
+        authenticate(self.client, admin)
         response = self.client.patch(
             f"/api/rest/v1/users/{self.user.pk}/",
             {"is_superuser": True},

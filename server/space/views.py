@@ -3,7 +3,7 @@ from django.utils.translation import gettext_lazy as _
 from datetime import datetime, timedelta, timezone
 
 from .models import SpaceState
-from rfiding import settings
+from django.conf import settings
 
 
 class ShowSpaceStatus(TemplateView):

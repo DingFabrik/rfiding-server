@@ -13,6 +13,7 @@ from django.urls import reverse, reverse_lazy
 from django.utils.translation import gettext_lazy as _
 
 from access_log.models import AccessLog
+from access_log.statistics import parse_days
 from base.views import BaseListView, PartialMixin, TitleMixin
 from machines.socket_helper import get_socket_data
 from comments.forms import CommentForm
@@ -356,7 +357,7 @@ class MachineStatisticsView(
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        days = int(self.request.GET.get("days", 90))
+        days = parse_days(self.request.GET.get("days"))
         context.update(compute_machine_statistics(self.object, days))
         return context
 
@@ -382,6 +383,7 @@ class QualifyMachineView(TitleMixin, PartialMixin, PermissionRequiredMixin, Form
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs["machine"] = self.get_object()
+        kwargs["user"] = self.request.user
         return kwargs
 
     def get_context_data(self, **kwargs):

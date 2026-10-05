@@ -39,18 +39,20 @@ class UnsuccessfulReasonLoggingTests(APITestCase):
         self.assertEqual(log.unsuccessful_reason, reason)
         self.assertEqual(log.token, token)
 
+    # Unknown and inactive tokens get the same response as a known token without
+    # access, so the API can't be used to probe which serials exist.
     def test_unknown_token(self):
         response = self.check(token_uid="999")
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-        self.assertEqual(response.data["error"], "Invalid Token")
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.data["error"], "No Access!")
         self.assertLogged(UnsuccessfulReason.UNKNOWN_TOKEN)
 
     def test_inactive_token(self):
         self.token.is_active = False
         self.token.save()
         response = self.check()
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-        self.assertEqual(response.data["error"], "Invalid Token")
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.data["error"], "No Access!")
         self.assertLogged(UnsuccessfulReason.INACTIVE_TOKEN, self.token)
 
     def test_unknown_compartment(self):

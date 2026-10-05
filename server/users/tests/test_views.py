@@ -77,7 +77,7 @@ class HomeViewTests(TestCase):
             user=self.user, widget="audit_log_latest", position=0
         )
         self.user.user_permissions.add(
-            Permission.objects.get(codename="view_token")
+            Permission.objects.get(codename="view_logentry", content_type__app_label="auditlog")
         )
         self.user = User.objects.get(pk=self.user.pk)
         self.client.force_login(self.user)

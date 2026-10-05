@@ -60,7 +60,7 @@ def _build_menus(request):
             "name": _("Audit Log"),
             "url": reverse("auditlog"),
             "icon": "history",
-            "has_permission": request.user.is_superuser,
+            "has_permission": request.user.has_perm("auditlog.view_logentry"),
             "active": url_name == "auditlog",
         },
         {

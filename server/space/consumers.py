@@ -1,10 +1,9 @@
-import hmac
 import json
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
-from django.conf import settings as SETTINGS
 import logging
 
 from .common import aupdate_space_state, aget_current_space_state
+from .secret import is_valid_space_secret
 
 logger = logging.getLogger(__name__)
 
@@ -33,17 +32,24 @@ class SpaceStateConsumer(AsyncJsonWebsocketConsumer):
             or text_data.lower() == "pong"
         ):
             return
-        json_data = json.loads(text_data)
+        try:
+            json_data = json.loads(text_data)
+        except ValueError:
+            await self.send(json.dumps({"error": "invalid json"}))
+            return
+        if not isinstance(json_data, dict):
+            await self.send(json.dumps({"error": "invalid message"}))
+            return
 
-        if json_data["method"] == "change_state":
-            secret = json_data.get("secret")
-            if not isinstance(secret, str) or not hmac.compare_digest(
-                secret, SETTINGS.SPACE_STATE_SECRET
-            ):
+        if json_data.get("method") == "change_state":
+            if not is_valid_space_secret(json_data.get("secret")):
                 await self.send(json.dumps({"error": "invalid secret"}))
                 await self.close()
                 return
-            new_state = json_data["state"]
+            new_state = json_data.get("state")
+            if new_state is None:
+                await self.send(json.dumps({"error": "missing state"}))
+                return
             await aupdate_space_state(new_state)
         else:
             await self.send(json.dumps({"error": "invalid method"}))

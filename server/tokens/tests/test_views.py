@@ -96,9 +96,15 @@ class ClearUnknownTokensViewTests(TokenViewsTestCase):
 
     def test_clears_all_unknown_tokens(self):
         UnknownToken.objects.create(serial="123", machine=self.machine)
-        response = self.client.get(self.url)
+        response = self.client.post(self.url)
         self.assertRedirects(response, reverse("tokens:unknown"))
         self.assertFalse(UnknownToken.objects.exists())
+
+    def test_get_does_not_clear(self):
+        UnknownToken.objects.create(serial="123", machine=self.machine)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 405)
+        self.assertTrue(UnknownToken.objects.exists())
 
 
 class AssignTokenViewTests(TokenViewsTestCase):
@@ -189,12 +195,27 @@ class PersonForTokenPopoverViewTests(TokenViewsTestCase):
 class BlacklistTokenViewTests(TokenViewsTestCase):
     def test_blacklists_and_clears_unknown_token(self):
         UnknownToken.objects.create(serial="777", machine=self.machine)
-        response = self.client.get(
+        response = self.client.post(
             reverse("tokens:blacklist-token", kwargs={"serial": "777"})
         )
         self.assertRedirects(response, reverse("tokens:blacklisted"))
         self.assertTrue(BlacklistedToken.objects.filter(serial="777").exists())
         self.assertFalse(UnknownToken.objects.filter(serial="777").exists())
+
+    def test_htmx_post_redirects_client_side(self):
+        response = self.client.post(
+            reverse("tokens:blacklist-token", kwargs={"serial": "777"}),
+            HTTP_HX_REQUEST="true",
+        )
+        self.assertEqual(response.status_code, 204)
+        self.assertEqual(response["HX-Redirect"], reverse("tokens:blacklisted"))
+
+    def test_get_does_not_blacklist(self):
+        response = self.client.get(
+            reverse("tokens:blacklist-token", kwargs={"serial": "777"})
+        )
+        self.assertEqual(response.status_code, 405)
+        self.assertFalse(BlacklistedToken.objects.filter(serial="777").exists())
 
 
 class BlacklistedTokenListViewTests(TokenViewsTestCase):

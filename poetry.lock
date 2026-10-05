@@ -1227,6 +1227,25 @@ nested = ["django-nested-admin (>=3.0.21)"]
 tags = ["django-taggit"]
 
 [[package]]
+name = "django-axes"
+version = "8.3.1"
+description = "Keep track of failed login attempts in Django-powered sites."
+optional = false
+python-versions = ">=3.10"
+groups = ["main"]
+files = [
+    {file = "django_axes-8.3.1-py3-none-any.whl", hash = "sha256:f7887582fd12713064f1602091ff6152752becae5e891a15bf802746cab0f51a"},
+    {file = "django_axes-8.3.1.tar.gz", hash = "sha256:d57e923c0ba33cf45275253dd1313c3a3ff04bec686b38d677beb2b3d43c7bcd"},
+]
+
+[package.dependencies]
+asgiref = ">=3.6.0"
+django = ">=4.2"
+
+[package.extras]
+ipware = ["django-ipware (>=3)"]
+
+[[package]]
 name = "django-celery-beat"
 version = "2.9.0"
 description = "Database-backed Periodic Tasks."
@@ -2981,4 +3000,4 @@ testing = ["coverage[toml]", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.12"
-content-hash = "9abf3df111e18107fc44b2de02885fb084d6b031d3f98b6c80380aa175bb429a"
+content-hash = "0f2704d6830c009c29a6e08cc824a511f233f5670a5ca18631e49db70ede4f45"

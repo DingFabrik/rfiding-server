@@ -28,4 +28,4 @@ class MachineApiEdgeCaseTests(APITestCase):
         )
         data = {"mac_address": "aabbccddeeff", "tokenUid": "x" * 500}
         response = self.client.get(self.check_url, data, format="json")
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)

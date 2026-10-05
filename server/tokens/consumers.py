@@ -25,8 +25,11 @@ class UnknownTokenConsumer(AsyncWebsocketConsumer):
         return await super().disconnect(code)
 
     async def receive(self, text_data):
-        data = json.loads(text_data)
-        if data["action"] == "clear":
+        try:
+            data = json.loads(text_data)
+        except ValueError:
+            return
+        if isinstance(data, dict) and data.get("action") == "clear":
             if not await sync_to_async(self.user.has_perm)("tokens.delete_unknowntoken"):
                 return
             await sync_to_async(clear_unknown_tokens)()

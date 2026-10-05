@@ -17,7 +17,22 @@ class PersonForm(forms.ModelForm):
         fields = make_person_fields()
 
 
-class QualifyPersonForm(forms.ModelForm):
+class InstructorFieldsMixin:
+    """Only users with `people.change_instructor` may appoint instructors and maintainers.
+
+    Without it the fields are disabled, so submitted values are ignored and the
+    stored (or default) value is kept.
+    """
+
+    instructor_fields = ("is_instructor", "is_maintainer")
+
+    def restrict_instructor_fields(self, user):
+        if user is None or not user.has_perm("people.change_instructor"):
+            for field_name in self.instructor_fields:
+                self.fields[field_name].disabled = True
+
+
+class QualifyPersonForm(InstructorFieldsMixin, forms.ModelForm):
     machine_autocomplete = forms.CharField(label=_("Machine"), required=False)
     person_autocomplete = forms.CharField(label=_("Person"), required=False)
 
@@ -51,8 +66,9 @@ class QualifyPersonForm(forms.ModelForm):
     read_only_expiration_fields = ("last_used", "expires_at", "expired")
     editable_expiration_fields = ("notified_at",)
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, user=None, **kwargs):
         super(QualifyPersonForm, self).__init__(*args, **kwargs)
+        self.restrict_instructor_fields(user)
 
         if self.instance.pk:
             instructors = list(
@@ -73,7 +89,7 @@ class QualifyPersonForm(forms.ModelForm):
                 del self.fields[field_name]
 
 
-class BulkQualifyForm(forms.Form):
+class BulkQualifyForm(InstructorFieldsMixin, forms.Form):
     instructed_by = forms.ModelChoiceField(
         label=_("Instructed By"),
         queryset=Person.objects.filter(is_active=True),
@@ -88,8 +104,9 @@ class BulkQualifyForm(forms.Form):
         label=_("Comment"), required=False, widget=forms.Textarea(attrs={"rows": 4})
     )
 
-    def __init__(self, *args, machine=None, **kwargs):
+    def __init__(self, *args, machine=None, user=None, **kwargs):
         super().__init__(*args, **kwargs)
+        self.restrict_instructor_fields(user)
         if machine is not None:
             self.fields["instructed_by"].queryset = Person.objects.filter(
                 qualifications__machine=machine, qualifications__is_instructor=True

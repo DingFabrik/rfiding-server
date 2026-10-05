@@ -1,4 +1,6 @@
+from django.contrib.auth import password_validation
 from django.contrib.auth.models import Group
+from django.core.exceptions import ValidationError as DjangoValidationError
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
@@ -51,6 +53,10 @@ class UserViewSet(BaseModelViewSet):
         password = request.data.get("password")
         if not password:
             raise ValidationError({"password": "This field is required."})
+        try:
+            password_validation.validate_password(password, user)
+        except DjangoValidationError as e:
+            raise ValidationError({"password": list(e.messages)}) from None
         user.set_password(password)
         user.save()
         return Response(status=204)
