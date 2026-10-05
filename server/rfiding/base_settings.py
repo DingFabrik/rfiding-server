@@ -205,6 +205,11 @@ REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     # Applied per view (OAuth2OnlyMixin, machine registration), not globally, so
     # the machine-facing access API isn't throttled.
+    # Throttles identify anonymous clients by IP. With NUM_PROXIES unset DRF
+    # trusts the client-supplied X-Forwarded-For, so anyone could dodge the
+    # limits by sending a new value each time. 0 = use REMOTE_ADDR; behind a
+    # reverse proxy set it to the number of proxies (see settings.prod.py).
+    "NUM_PROXIES": 0,
     "DEFAULT_THROTTLE_RATES": {
         "user": "1000/hour",
         "machine_register": "30/hour",

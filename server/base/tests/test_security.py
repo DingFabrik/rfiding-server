@@ -282,3 +282,14 @@ class MachineApiInputTests(APITestCase):
             url, {"mac_address": "aabbccddffff", "hostname": "m"}, format="json"
         )
         self.assertEqual(response.status_code, 429)
+
+    def test_register_throttle_ignores_spoofed_forwarded_for(self):
+        url = reverse("api:v2:machine_register")
+        for i in range(31):
+            response = self.client.post(
+                url,
+                {"mac_address": f"aabbccdd{i:04x}", "hostname": "m"},
+                format="json",
+                HTTP_X_FORWARDED_FOR=f"10.0.{i}.1",
+            )
+        self.assertEqual(response.status_code, 429)

@@ -34,6 +34,9 @@ SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 SECURE_SSL_REDIRECT = True
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
+# Number of reverse proxies in front of the app: rate limits then use the client
+# address the (last) proxy appended to X-Forwarded-For. Set to 0 without a proxy.
+REST_FRAMEWORK["NUM_PROXIES"] = 1
 # Start low and raise to a year (31536000) once HTTPS is known to work everywhere.
 SECURE_HSTS_SECONDS = 3600
 SECURE_HSTS_INCLUDE_SUBDOMAINS = False
