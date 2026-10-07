@@ -59,6 +59,10 @@ CHANNEL_LAYERS = {
 
 ENABLE_CLIENT_API = False
 
+# Address of the website, used by `manage.py check --deploy --tag services`
+# to ask the web server which version it runs, e.g. "https://rfiding.example.com".
+HEALTH_CHECK_URL = ""
+
 # Configure your space
 # Clients changing the space state must send this secret. An empty secret is
 # rejected; generate one like the SECRET_KEY above.

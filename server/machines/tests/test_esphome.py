@@ -15,6 +15,7 @@ from channels.layers import InMemoryChannelLayer
 from django.test import SimpleTestCase, TestCase, override_settings
 
 from access_log.models import LOG_TYPE_UNSUCCESSFUL, AccessLog
+from base.build import running_version
 from machines.esphome import bridge, protocol
 from machines.esphome.connection import CommandError, DeviceConnection, MachineSettings
 from machines.esphome.handlers import RequestError, handle_request
@@ -585,6 +586,13 @@ class BridgeTests(TestCase):
         try:
             with self.assertRaisesMessage(bridge.CommandFailed, "not connected"):
                 await bridge.asend_command(2, "enable")
+        finally:
+            await self.stop_manager(task)
+
+    async def test_version_round_trip(self):
+        task = await self.run_manager()
+        try:
+            self.assertEqual(await bridge.aget_version(), running_version())
         finally:
             await self.stop_manager(task)
 

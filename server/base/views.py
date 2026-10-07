@@ -1,11 +1,11 @@
-from django.views.generic import TemplateView, ListView
+from django.views.generic import TemplateView, ListView, View
 import platform
 import django
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from auditlog.models import LogEntry
 from django.utils.translation import gettext_lazy as _
 from django.core.cache import cache
-from django.http import HttpRequest
+from django.http import Http404, HttpRequest, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.utils.cache import get_cache_key
 
@@ -13,6 +13,7 @@ from django.conf import settings
 from machines.models import Machine
 from people.models import Person
 from tokens.models import Token
+from base import build
 from base.services import toggle_active
 class PartialMixin:
     full_base_template = "base.html"
@@ -183,3 +184,10 @@ class UniversalSearchView(LoginRequiredMixin, TitleMixin, TemplateView):
                     objects += list(model.objects.filter(**{lookup: term})[:10])
         context["objects"] = objects
         return context
+
+
+class VersionView(View):
+    def get(self, request):
+        if not build.is_valid_health_token(request.headers.get("X-Health-Token")):
+            raise Http404
+        return JsonResponse({"version": build.running_version()})

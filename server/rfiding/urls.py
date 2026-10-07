@@ -25,7 +25,7 @@ from django.contrib.auth.views import (
 )
 from django.conf import settings
 
-from base.views import AboutView, AuditlogView, UniversalSearchView
+from base.views import AboutView, AuditlogView, UniversalSearchView, VersionView
 from users.views import HomeView
 from access_log.views import StatisticsView
 from machines.api import v1, v2
@@ -62,6 +62,7 @@ if ENABLE_API_V2:
 urlpatterns = [
     path("", HomeView.as_view(), name="home"),
     path("search", UniversalSearchView.as_view(), name="search-universal"),
+    path("health/version", VersionView.as_view(), name="health-version"),
     path("admin/", admin.site.urls),
     path(
         "accounts/login/",

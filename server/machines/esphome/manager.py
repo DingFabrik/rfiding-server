@@ -9,6 +9,8 @@ from channels.exceptions import ChannelFull
 from channels.layers import get_channel_layer
 from django.db import close_old_connections
 
+from base.build import running_version
+
 from machines.api.common import machine_config
 from machines.models import Machine
 
@@ -156,6 +158,7 @@ class DeviceManager:
             "machine.changed": self._handle_changed,
             "machine.logs.subscribe": self._handle_logs_subscribe,
             "machine.logs.unsubscribe": self._handle_logs_unsubscribe,
+            "manager.version": self._handle_version,
         }.get(message.get("type"))
         reply_channel = message.get("reply_channel")
         if handler is None:
@@ -170,6 +173,9 @@ class DeviceManager:
                 reply = {"ok": False, "error": "Internal error"}
         if reply_channel:
             await self.layer.send(reply_channel, {"type": "machine.reply", **reply})
+
+    async def _handle_version(self, message):
+        return {"version": running_version()}
 
     def _connection(self, message):
         connection = self.connections.get(message.get("machine"))

@@ -97,6 +97,11 @@ def get_status(machine_pk):
     return async_to_sync(aget_status)(machine_pk)
 
 
+async def aget_version():
+    reply = await arequest("manager.version", timeout=STATUS_TIMEOUT)
+    return reply["version"]
+
+
 async def anotify_machine_changed(machine_pk):
     """Lets the manager (re)connect, disconnect or push config to a machine."""
     await anotify("machine.changed", machine=machine_pk)
