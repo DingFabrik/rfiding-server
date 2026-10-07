@@ -191,7 +191,7 @@ class QualifyPersonView(TitleMixin, PartialMixin, PermissionRequiredMixin, FormV
             pk__in=self.request.POST.getlist("machine_ids"),
             needs_qualification=True,
             state=Machine.MachineStatus.ACTIVE,
-        )
+        ).exclude(type=Machine.MachineType.LOCK_GROUP)
         if not machines:
             form.add_error(None, _("Select at least one machine."))
             return self.form_invalid(form)

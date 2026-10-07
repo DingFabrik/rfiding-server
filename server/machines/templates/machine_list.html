@@ -8,6 +8,7 @@
 {% block table %}
   <thead>
     <tr>
+      <th class="w-10"></th>
       <th>
         {% trans 'Name' %}
       </th>
@@ -20,9 +21,6 @@
       <th>
         {% trans 'State' %}
       </th>
-      <th>
-        {% trans 'Type' %}
-      </th>
       {% if can_edit %}
         <th></th>
       {% endif %}
@@ -30,6 +28,9 @@
   </thead>
   {% for object in machines %}
     <tr>
+      <td>
+        {% include 'snippets/machine_type_badge.html' with machine=object %}
+      </td>
       <td>
         <a class="link-hover link-primary" href="{% url 'machines:detail' object.pk %}">{{ object.name }}</a>
       </td>
@@ -40,7 +41,6 @@
       <td>
         {% include 'snippets/machine_state_label.html' with object=object %}
       </td>
-      <td>{{ object.get_type_display }}</td>
       {% if can_edit %}
         <td>
           <div class="flex gap-2 justify-end">

@@ -95,6 +95,17 @@ class QualifyableMachineAutocompleteViewTests(TestCase):
         response = self.client.get(self.url, {"term": "Laser"})
         self.assertEqual(self.result_ids(response), [qualifying.pk])
 
+    def test_excludes_lockers(self):
+        compartment = Machine.objects.create(
+            name="Locker Compartment", type="compartment", needs_qualification=True
+        )
+        Machine.objects.create(
+            name="Locker", type="lock_group", needs_qualification=True
+        )
+
+        response = self.client.get(self.url, {"term": "Locker"})
+        self.assertEqual(self.result_ids(response), [compartment.pk])
+
     def test_excludes_machines_person_already_qualified_on(self):
         machine = Machine.objects.create(
             mac_address="aa:bb:cc:dd:ee:01",

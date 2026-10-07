@@ -9,10 +9,11 @@ from django.views.generic import (
     FormView,
 )
 from django.core.paginator import Paginator
+from django.db.models import Max, Q
 from django.urls import reverse, reverse_lazy
 from django.utils.translation import gettext_lazy as _
 
-from access_log.models import AccessLog
+from access_log.models import AccessLog, LOG_TYPE_ENABLED
 from access_log.statistics import parse_days
 from base.views import BaseListView, PartialMixin, TitleMixin
 from machines.esphome import bridge
@@ -108,6 +109,13 @@ class MachineDetailView(TitleMixin, PermissionRequiredMixin, DetailView):
             )
             context["qualifications"] = qualifications_paginator.get_page(1)
             context["qualifications_count"] = qualifications_paginator.count
+        if self.object.type == Machine.MachineType.LOCK_GROUP:
+            context["compartments"] = self.object.children.annotate(
+                last_opened=Max(
+                    "accesslog__timestamp",
+                    filter=Q(accesslog__type=LOG_TYPE_ENABLED),
+                )
+            )
         return context
 
 
@@ -169,6 +177,16 @@ class MachineSettingsFormMixin:
         return response
 
 
+def next_compartment_id(locker):
+    """Suggests the compartment ID following the highest numeric one of the locker."""
+    numeric_ids = [
+        int(compartment_id)
+        for compartment_id in locker.children.values_list("compartment_id", flat=True)
+        if compartment_id and compartment_id.isdigit()
+    ]
+    return str(max(numeric_ids, default=0) + 1)
+
+
 class MachineCreateView(
     TitleMixin, PermissionRequiredMixin, MachineSettingsFormMixin, CreateView
 ):
@@ -188,7 +206,21 @@ class MachineCreateView(
             initial["mac_address"] = request.mac_address
             initial["ip_address"] = request.ip_address
             initial["hostname"] = request.hostname
+        locker = self.get_locker()
+        if locker is not None:
+            initial["type"] = Machine.MachineType.COMPARTMENT
+            initial["parent"] = locker
+            initial["compartment_id"] = next_compartment_id(locker)
         return initial
+
+    def get_locker(self):
+        """The locker a new compartment is added to, passed as ?parent=<pk>."""
+        parent = self.request.GET.get("parent", "")
+        if not parent.isdigit():
+            return None
+        return Machine.objects.filter(
+            pk=parent, type=Machine.MachineType.LOCK_GROUP
+        ).first()
 
     def form_valid(self, form, formset):
         f = MachineRegistrationRequest.objects.filter(
@@ -200,7 +232,7 @@ class MachineCreateView(
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        if "request" not in self.request.GET:
+        if "request" not in self.request.GET and self.get_locker() is None:
             context["registration_requests"] = MachineRegistrationRequest.objects.all()
         return context
 

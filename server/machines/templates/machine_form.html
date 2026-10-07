@@ -5,9 +5,6 @@
 
 {% block container_classes %}!max-w-5xl{% endblock %}
 
-{% block title %}
-  {% if object %}{{ object.name }}{% else %}{% trans 'New Machine' %}{% endif %}
-{% endblock %}
 
 {% block content %}
   {% if registration_requests %}
@@ -333,11 +330,20 @@
       toggle("#div_id_needs_qualification", !isLockGroup);
       toggle("#div_id_permission_level", !isLockGroup && !needsQualificationInput.checked);
 
-      const deviceTab = tabFor("device");
-      deviceTab.closest("li").hidden = isCompartment;
-      if (isCompartment && deviceTab.classList.contains("menu-active")) {
-        showSection("general");
-      }
+      // Compartments are driven by their locker's device, and lockers have no access control of their own.
+      const hiddenSections = {
+        device: isCompartment,
+        access: isLockGroup,
+        schedule: isLockGroup,
+        session: isLockGroup,
+      };
+      Object.entries(hiddenSections).forEach(([section, hidden]) => {
+        const tab = tabFor(section);
+        tab.closest("li").hidden = hidden;
+        if (hidden && tab.classList.contains("menu-active")) {
+          showSection("general");
+        }
+      });
     }
 
     typeSelect.addEventListener("change", updateMachineTypeFormElements);

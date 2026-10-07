@@ -286,6 +286,17 @@ class Machine(TimestampedModel):
     def is_active(self):
         return self.state == Machine.MachineStatus.ACTIVE
 
+    @property
+    def type_icon(self):
+        """Lucide icon representing the machine type."""
+        return {
+            Machine.MachineType.PRIMARY: "drill",
+            Machine.MachineType.SECONDARY: "fan",
+            Machine.MachineType.LOCK: "lock",
+            Machine.MachineType.LOCK_GROUP: "grid-2x2",
+            Machine.MachineType.COMPARTMENT: "box",
+        }.get(self.type, "hard-drive")
+
     def get_absolute_url(self):
         return reverse("machines:detail", kwargs={"pk": self.pk})
 

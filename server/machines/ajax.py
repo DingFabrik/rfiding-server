@@ -49,7 +49,7 @@ class QualifyableMachineAutocompleteView(PermissionRequiredMixin, View):
         machines = get_machines(request, request.GET.get("term", None))
         machines = machines.filter(
             needs_qualification=True, state=Machine.MachineStatus.ACTIVE
-        )
+        ).exclude(type=Machine.MachineType.LOCK_GROUP)
         machines = machines.exclude(qualified_people__person__id=person)
         machines = machines.exclude(pk__in=request.GET.getlist("machine_ids"))
         machines = machines[:AUTOCOMPLETE_RESULT_LIMIT]

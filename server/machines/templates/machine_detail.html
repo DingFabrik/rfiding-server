@@ -114,54 +114,7 @@
           </div>
           {% endif %}
           <div class="flex flex-col col-span-12 lg:col-span-3 gap-2">
-          <div class="bg-base-100 border-neutral/10 border rounded-box p-4">
-            <h2 class="text-xs font-semibold uppercase tracking-wide text-base-content/50 mb-2">{% trans 'Details' %}</h2>
-            <ul class="list text-sm">
-              {% if object.parent %}
-                <li class="list-row items-center px-0 py-1.5 border-b border-base-200">
-                  <span class="text-base-content/60">{% trans 'Locker' %}</span>
-                  <span class="font-medium truncate text-right"><a class="link-hover" href="{% url 'machines:detail' object.parent.pk %}">{{ object.parent }}</a></span>
-                </li>
-              {% endif %}
-              <li class="list-row items-center px-0 py-1.5 border-b border-base-200">
-                <span class="text-base-content/60">{% trans 'Location' %}</span>
-                <span class="font-medium truncate text-right">
-                  {% if object.location %}
-                    <a class="link-hover" href="{% url 'locations:detail' object.location.pk %}">{{ object.location }}</a>
-                  {% elif object.parent.location %}
-                    <a class="link-hover" href="{% url 'locations:detail' object.parent.location.pk %}">{{ object.parent.location }}</a>
-                  {% else %}
-                    &ndash;&ndash;
-                  {% endif %}
-                </span>
-              </li>
-              {% if object.type != 'compartment' %}
-                <li class="list-row items-center px-0 py-1.5">
-                  <span class="text-base-content/60">{% trans 'Chip' %}</span>
-                  <span class="font-medium font-mono text-xs text-right">{{ object.get_chip_display }}</span>
-                </li>
-              {% endif %}
-            </ul>
-          </div>
-          {% if machine.type != 'compartment' %}
-            <div class="bg-base-100 border-neutral/10 border rounded-box p-4">
-              <h2 class="text-xs font-semibold uppercase tracking-wide text-base-content/50 mb-2">{% trans 'Network' %}</h2>
-              <ul class="list text-sm">
-                <li class="list-row items-center px-0 py-1.5 border-b border-base-200">
-                  <span class="text-base-content/60">{% trans 'Hostname' %}</span>
-                  <span class="font-medium font-mono text-xs truncate text-right">{{ object.hostname|default:'--' }}</span>
-                </li>
-                <li class="list-row items-center px-0 py-1.5 border-b border-base-200">
-                  <span class="text-base-content/60">{% trans 'MAC Address' %}</span>
-                  <span class="font-medium font-mono text-xs tabular-nums text-right">{{ object.mac_address|default:'--' }}</span>
-                </li>
-                <li class="list-row items-center px-0 py-1.5">
-                  <span class="text-base-content/60">{% trans 'IP-Address' %}</span>
-                  <span class="font-medium font-mono text-xs tabular-nums text-right">{{ object.ip_address|default:'--' }}</span>
-                </li>
-              </ul>
-            </div>
-          {% endif %}
+          {% include 'machine_detail_cards.html' %}
           <div class="bg-base-100 border-neutral/10 border rounded-box p-4">
             <h2 class="text-xs font-semibold uppercase tracking-wide text-base-content/50 mb-2">{% trans 'Configuration' %}</h2>
             <ul class="list text-sm">
@@ -207,43 +160,65 @@
       </div>
     </div>
   {% else %}
-    <div class="mb-5">
-      <h2 class="text-xs font-semibold uppercase tracking-wide text-base-content/50 mb-2">{% trans 'Compartments' %}</h2>
-      <div class="card card-border bg-base-100">
-        <div class="card-body p-2">
-          <table class="table">
-            <thead>
-              <tr>
-                <th class="w-10"></th>
-                <th>
-                  {% trans 'Name' %}
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for child in machine.children.all %}
+    <div class="grid grid-cols-12 gap-2 mb-5">
+      <div class="col-span-12 lg:col-span-9">
+        <div class="bg-base-100 border-neutral/10 border rounded-box pt-4">
+          <div class="flex justify-between items-center mx-4 mb-2">
+            <h2 class="text-xs font-semibold uppercase tracking-wide text-base-content/50">{% trans 'Compartments' %}</h2>
+            {% if perms.machines.add_machine %}
+              <a class="btn btn-primary btn-sm" href="{% url 'machines:create' %}?parent={{ machine.pk }}"><i data-lucide="plus" class="w-4 h-4"></i>{% trans 'Add Compartment' %}</a>
+            {% endif %}
+          </div>
+          <div class="overflow-x-auto">
+            <table class="table">
+              <thead>
                 <tr>
-                  <td>
-                    <div class="avatar avatar-placeholder">
-                      <div class="bg-base-300 text-base-content w-6 rounded-box">
-                        <i data-lucide="box" class="w-3.5 h-3.5"></i>
-                      </div>
-                    </div>
-                  </td>
-                  <td>
-                    <a class="link-hover" href="{% url 'machines:detail' child.pk %}">{{ child.name }}</a>
-                  </td>
+                  <th class="w-10"></th>
+                  <th>{% trans 'Name' %}</th>
+                  <th>{% trans 'Compartment ID' %}</th>
+                  <th>{% trans 'Needs Qualification' %}</th>
+                  <th>{% trans 'Last opened' %}</th>
                 </tr>
-              {% empty %}
-                <tr>
-                  <td colspan="2" class="text-base-content/60 text-sm">
-                    {% trans 'No compartments yet.' %}
-                  </td>
-                </tr>
-              {% endfor %}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {% for child in compartments %}
+                  <tr>
+                    <td>
+                      {% include 'snippets/machine_type_badge.html' with machine=child %}
+                    </td>
+                    <td>
+                      <a class="link-hover" href="{% url 'machines:detail' child.pk %}">{{ child.name }}</a>
+                    </td>
+                    <td class="font-mono">{{ child.compartment_id|default:'--' }}</td>
+                    <td>
+                      {% if child.needs_qualification %}
+                        <span class="badge badge-soft badge-sm badge-warning"><i data-lucide="shield-check" class="w-3 h-3"></i>{% trans 'Yes' %}</span>
+                      {% else %}
+                        <span class="badge badge-soft badge-sm"><i data-lucide="unlock" class="w-3 h-3"></i>{% trans 'No' %}</span>
+                      {% endif %}
+                    </td>
+                    <td class="tabular-nums">
+                      {% if child.last_opened %}
+                        {% include 'snippets/timestamp.html' with timestamp=child.last_opened %}
+                      {% else %}
+                        <span class="text-base-content/60">{% trans 'Never' %}</span>
+                      {% endif %}
+                    </td>
+                  </tr>
+                {% empty %}
+                  <tr>
+                    <td colspan="5" class="text-base-content/60 text-sm">
+                      {% trans 'No compartments yet.' %}
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
         </div>
+      </div>
+      <div class="flex flex-col col-span-12 lg:col-span-3 gap-2">
+        {% include 'machine_detail_cards.html' %}
       </div>
     </div>
   {% endif %}

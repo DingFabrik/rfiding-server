@@ -1,0 +1,49 @@
+{% load i18n %}
+<div class="bg-base-100 border-neutral/10 border rounded-box p-4">
+  <h2 class="text-xs font-semibold uppercase tracking-wide text-base-content/50 mb-2">{% trans 'Details' %}</h2>
+  <ul class="list text-sm">
+    {% if object.parent %}
+      <li class="list-row items-center px-0 py-1.5 border-b border-base-200">
+        <span class="text-base-content/60">{% trans 'Locker' %}</span>
+        <span class="font-medium truncate text-right"><a class="link-hover" href="{% url 'machines:detail' object.parent.pk %}">{{ object.parent }}</a></span>
+      </li>
+    {% endif %}
+    <li class="list-row items-center px-0 py-1.5 border-b border-base-200">
+      <span class="text-base-content/60">{% trans 'Location' %}</span>
+      <span class="font-medium truncate text-right">
+        {% if object.location %}
+          <a class="link-hover" href="{% url 'locations:detail' object.location.pk %}">{{ object.location }}</a>
+        {% elif object.parent.location %}
+          <a class="link-hover" href="{% url 'locations:detail' object.parent.location.pk %}">{{ object.parent.location }}</a>
+        {% else %}
+          &ndash;&ndash;
+        {% endif %}
+      </span>
+    </li>
+    {% if object.type != 'compartment' %}
+      <li class="list-row items-center px-0 py-1.5">
+        <span class="text-base-content/60">{% trans 'Chip' %}</span>
+        <span class="font-medium font-mono text-xs text-right">{{ object.get_chip_display }}</span>
+      </li>
+    {% endif %}
+  </ul>
+</div>
+{% if object.type != 'compartment' %}
+  <div class="bg-base-100 border-neutral/10 border rounded-box p-4">
+    <h2 class="text-xs font-semibold uppercase tracking-wide text-base-content/50 mb-2">{% trans 'Network' %}</h2>
+    <ul class="list text-sm">
+      <li class="list-row items-center px-0 py-1.5 border-b border-base-200">
+        <span class="text-base-content/60">{% trans 'Hostname' %}</span>
+        <span class="font-medium font-mono text-xs truncate text-right">{{ object.hostname|default:'--' }}</span>
+      </li>
+      <li class="list-row items-center px-0 py-1.5 border-b border-base-200">
+        <span class="text-base-content/60">{% trans 'MAC Address' %}</span>
+        <span class="font-medium font-mono text-xs tabular-nums text-right">{{ object.mac_address|default:'--' }}</span>
+      </li>
+      <li class="list-row items-center px-0 py-1.5">
+        <span class="text-base-content/60">{% trans 'IP-Address' %}</span>
+        <span class="font-medium font-mono text-xs tabular-nums text-right">{{ object.ip_address|default:'--' }}</span>
+      </li>
+    </ul>
+  </div>
+{% endif %}

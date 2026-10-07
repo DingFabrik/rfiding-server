@@ -80,6 +80,18 @@ class QualifyPersonViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertFalse(Qualification.objects.filter(person=self.person).exists())
 
+    def test_excludes_lockers(self):
+        locker = Machine.objects.create(name="Locker", type="lock_group")
+        response = self.client.post(
+            reverse("people:qualify", kwargs={"pk": self.person.pk}),
+            {
+                "machine_ids": [locker.pk],
+                "permission_level": "if_space_open",
+            },
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(Qualification.objects.filter(person=self.person).exists())
+
 
 class RevokeAndEditQualificationViewTests(TestCase):
     def setUp(self):

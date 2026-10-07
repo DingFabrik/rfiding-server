@@ -166,6 +166,28 @@ class MachineDetailViewTests(TestCase):
         )
         self.assertIsNone(response.context["instructors"])
 
+    def test_locker_lists_compartments_with_last_opened(self):
+        self.client.force_login(self.user)
+        locker = Machine.objects.create(name="Locker", type="lock_group")
+        opened = Machine.objects.create(
+            name="Opened", type="compartment", parent=locker, compartment_id="1"
+        )
+        Machine.objects.create(
+            name="Unused", type="compartment", parent=locker, compartment_id="2",
+            needs_qualification=False,
+        )
+        AccessLog.objects.create(machine=opened, type=LOG_TYPE_ENABLED)
+        AccessLog.objects.create(machine=opened, type="unsuccessful")
+        response = self.client.get(reverse("machines:detail", kwargs={"pk": locker.pk}))
+        compartments = {c.name: c for c in response.context["compartments"]}
+        self.assertEqual(
+            compartments["Opened"].last_opened,
+            AccessLog.objects.get(machine=opened, type=LOG_TYPE_ENABLED).timestamp,
+        )
+        self.assertIsNone(compartments["Unused"].last_opened)
+        self.assertContains(response, f"?parent={locker.pk}")
+        self.assertContains(response, "Network")
+
 
 class MachineCreateViewTests(TestCase):
     def setUp(self):
@@ -216,6 +238,31 @@ class MachineCreateViewTests(TestCase):
         response = self.client.get(reverse("machines:create"))
         parent_qs = response.context["form"].fields["parent"].queryset
         self.assertEqual(list(parent_qs.values_list("name", flat=True)), ["lock-group"])
+
+    def test_compartment_prefilled_from_parent_locker(self):
+        locker = Machine.objects.create(name="Locker", type="lock_group")
+        Machine.objects.create(
+            name="a", type="compartment", parent=locker, compartment_id="3"
+        )
+        Machine.objects.create(
+            name="b", type="compartment", parent=locker, compartment_id="top"
+        )
+        MachineRegistrationRequest.objects.create(
+            mac_address="aa:bb:cc:dd:ee:ff", hostname="reg-host", ip_address="1.2.3.4"
+        )
+        response = self.client.get(reverse("machines:create"), {"parent": locker.pk})
+        initial = response.context["form"].initial
+        self.assertEqual(initial["type"], "compartment")
+        self.assertEqual(initial["parent"], locker)
+        self.assertEqual(initial["compartment_id"], "4")
+        self.assertNotIn("name", initial)
+        self.assertNotIn("registration_requests", response.context)
+
+    def test_parent_param_ignored_unless_locker(self):
+        primary = Machine.objects.create(name="Primary", type="primary")
+        for parent in (primary.pk, "nope"):
+            response = self.client.get(reverse("machines:create"), {"parent": parent})
+            self.assertNotIn("parent", response.context["form"].initial)
 
 
 class MachineUpdateViewTests(TestCase):
