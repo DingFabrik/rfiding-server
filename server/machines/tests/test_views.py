@@ -276,6 +276,20 @@ class MachineSettingsFormTests(TestCase):
         self.assertEqual(response.context["active_section"], "general")
         self.assertEqual(self.sections_with_errors(response), [])
 
+    def test_key_fields_have_generate_buttons(self):
+        self.machine.encryption_key = "existing"
+        self.machine.save()
+        response = self.client.get(self.url)
+        self.assertContains(response, 'data-generate-key="encryption_key" data-target="id_encryption_key"')
+        self.assertContains(response, 'data-generate-key="api_key" data-target="id_api_key"')
+        self.assertContains(response, 'id="replaceKeyModal"')
+        self.assertContains(response, 'value="existing"')
+
+    def test_key_field_errors_are_shown(self):
+        response = self.client.post(self.url, minimal_machine_data(api_key="x" * 65))
+        self.assertEqual(self.sections_with_errors(response), ["device"])
+        self.assertContains(response, 'id="error_1_id_api_key"')
+
     def test_saves_configuration_fields(self):
         response = self.client.post(
             self.url,

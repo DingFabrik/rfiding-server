@@ -1,0 +1,17 @@
+{% load i18n crispy_forms_field %}
+<div id="div_{{ field.auto_id }}" class="mb-3">
+  <label for="{{ field.id_for_label }}" class="label">{{ field.label }}</label>
+  <div class="join w-full">
+    {% if field.errors %}
+      {% crispy_field field 'class' 'input join-item flex-1 font-mono input-error validator' 'aria-invalid' 'true' %}
+    {% else %}
+      {% crispy_field field 'class' 'input join-item flex-1 font-mono' %}
+    {% endif %}
+    <button type="button" class="btn join-item" data-generate-key="{{ kind }}" data-target="{{ field.auto_id }}">
+      <i data-lucide="key-round" class="w-4 h-4"></i>
+      {% trans 'Generate' %}
+    </button>
+  </div>
+  {% include 'daisyui/layout/field_errors_block.html' with form_show_errors=True %}
+  {% include 'daisyui/layout/help_text.html' %}
+</div>

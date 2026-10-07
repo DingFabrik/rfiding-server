@@ -118,8 +118,8 @@
               {{ form.ip_address|as_crispy_field }}
               {{ form.mac_address|as_crispy_field }}
             </div>
-            {{ form.encryption_key|as_crispy_field }}
-            {{ form.api_key|as_crispy_field }}
+            {% include 'machine_key_field.html' with field=form.encryption_key kind='encryption_key' %}
+            {% include 'machine_key_field.html' with field=form.api_key kind='api_key' %}
           </div>
 
           <div role="tabpanel" id="section-logging" aria-labelledby="section-logging-tab" data-section="logging" class="{% if active_section != 'logging' %}hidden{% endif %}">
@@ -150,6 +150,23 @@
       </div>
     </div>
   </form>
+
+  <dialog class="modal" id="replaceKeyModal">
+    <div class="modal-box">
+      <div class="flex items-start gap-3">
+        <i data-lucide="triangle-alert" class="w-8 h-8 text-warning shrink-0"></i>
+        <h3 class="text-lg font-bold">{% trans 'Replace the existing key?' %}</h3>
+      </div>
+      <p class="pt-4" data-key-warning="encryption_key" hidden>{% trans 'The machine can no longer connect to the server until its firmware is flashed with the new encryption key.' %}</p>
+      <p class="pt-4" data-key-warning="api_key" hidden>{% trans 'The machine can no longer use the API or verify the server until its firmware is flashed with the new API key.' %}</p>
+      <p class="pt-2 text-sm text-base-content/60">{% trans 'The new key is only stored when you save the form.' %}</p>
+      <div class="modal-action">
+        <form method="dialog"><button class="btn">{% trans 'Cancel' %}</button></form>
+        <button type="button" class="btn btn-warning" id="replaceKeyConfirm">{% trans 'Replace key' %}</button>
+      </div>
+    </div>
+    <form method="dialog" class="modal-backdrop"><button>{% trans 'close' %}</button></form>
+  </dialog>
 {% endblock %}
 
 {% block script_extra %}
@@ -213,6 +230,44 @@
           dot.hidden = true;
         }
       }
+    });
+
+    // Generate encryption and API keys in the browser; replacing an existing one needs a confirmation.
+    const keyGenerators = {
+      encryption_key: function (bytes) {
+        return btoa(String.fromCharCode.apply(null, bytes));
+      },
+      api_key: function (bytes) {
+        return Array.from(bytes, (byte) => byte.toString(16).padStart(2, "0")).join("");
+      },
+    };
+    const replaceKeyModal = document.querySelector("#replaceKeyModal");
+    let pendingKeyButton = null;
+
+    function generateKey (button) {
+      const input = form.querySelector("#" + button.dataset.target);
+      input.value = keyGenerators[button.dataset.generateKey](crypto.getRandomValues(new Uint8Array(32)));
+      input.type = "text";
+      input.dispatchEvent(new Event("input", { bubbles: true }));
+    }
+    form.addEventListener("click", function (event) {
+      const button = event.target.closest("[data-generate-key]");
+      if (!button) {
+        return;
+      }
+      if (!form.querySelector("#" + button.dataset.target).value) {
+        generateKey(button);
+        return;
+      }
+      pendingKeyButton = button;
+      replaceKeyModal.querySelectorAll("[data-key-warning]").forEach((warning) => {
+        warning.hidden = warning.dataset.keyWarning !== button.dataset.generateKey;
+      });
+      replaceKeyModal.showModal();
+    });
+    replaceKeyModal.querySelector("#replaceKeyConfirm").addEventListener("click", function () {
+      generateKey(pendingKeyButton);
+      replaceKeyModal.close();
     });
 
     // Active times

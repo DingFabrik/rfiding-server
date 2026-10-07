@@ -133,12 +133,12 @@ class Machine(TimestampedModel):
         null=True, blank=True, verbose_name=_("IP-Address")
     )
     encryption_key = models.CharField(
-        max_length=64,
+        max_length=44,
         null=True,
         blank=True,
         verbose_name=_("Encryption Key"),
         help_text=_(
-            "64 character encryption key for secure communication with the machine."
+            "44 character encryption key for secure communication with the machine."
         ),
     )
     api_key = models.CharField(
