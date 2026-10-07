@@ -1,11 +1,13 @@
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, patch
 
+from channels.layers import get_channel_layer
 from channels.testing import WebsocketCommunicator
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AnonymousUser, Permission
 from django.test import TransactionTestCase
 
 from machines.consumers import MachineLogConsumer, MachineStateConsumer
+from machines.esphome import bridge, protocol
 from machines.models import Machine
 
 User = get_user_model()
@@ -25,11 +27,12 @@ async def grant(user, *codenames):
     return await User.objects.aget(pk=user.pk)
 
 
-def fake_connection_manager():
-    manager = MagicMock()
-    manager.connect = AsyncMock()
-    manager.disconnect = AsyncMock()
-    return manager
+def communicator_for(consumer, user, mac_address="aa:bb:cc:dd:ee:ff", path="state"):
+    communicator = WebsocketCommunicator(
+        consumer.as_asgi(), f"/ws/machines/{mac_address}/{path}"
+    )
+    communicator.scope.update(build_scope(mac_address, user))
+    return communicator
 
 
 class MachineStateConsumerTests(TransactionTestCase):
@@ -40,96 +43,111 @@ class MachineStateConsumerTests(TransactionTestCase):
         self.user = User.objects.create_user(email="user@example.com", password="pass")
 
     async def test_anonymous_user_is_rejected(self):
-        communicator = WebsocketCommunicator(
-            MachineStateConsumer.as_asgi(), "/ws/machines/aa:bb:cc:dd:ee:ff/state"
-        )
-        communicator.scope.update(build_scope("aa:bb:cc:dd:ee:ff", AnonymousUser()))
+        communicator = communicator_for(MachineStateConsumer, AnonymousUser())
         connected, _ = await communicator.connect()
         self.assertFalse(connected)
         await communicator.disconnect()
 
     async def test_user_without_permission_is_rejected(self):
-        communicator = WebsocketCommunicator(
-            MachineStateConsumer.as_asgi(), "/ws/machines/aa:bb:cc:dd:ee:ff/state"
-        )
-        communicator.scope.update(build_scope("aa:bb:cc:dd:ee:ff", self.user))
+        communicator = communicator_for(MachineStateConsumer, self.user)
         connected, _ = await communicator.connect()
         self.assertFalse(connected)
         await communicator.disconnect()
 
-    async def test_user_with_permission_connects_and_disconnects_cleanly(self):
+    async def test_unknown_machine_is_rejected(self):
         self.user = await grant(self.user, "view_machine_state")
-        fake_manager = fake_connection_manager()
+        communicator = communicator_for(
+            MachineStateConsumer, self.user, mac_address="11:22:33:44:55:66"
+        )
+        connected, _ = await communicator.connect()
+        self.assertFalse(connected)
+        await communicator.disconnect()
 
-        with patch("machines.consumers.ConnectionManager", return_value=fake_manager):
-            communicator = WebsocketCommunicator(
-                MachineStateConsumer.as_asgi(), "/ws/machines/aa:bb:cc:dd:ee:ff/state"
-            )
-            communicator.scope.update(build_scope("aa:bb:cc:dd:ee:ff", self.user))
-            connected, _ = await communicator.connect()
-            self.assertTrue(connected)
-            await communicator.receive_nothing(timeout=0.1)
-            fake_manager.connect.assert_awaited_once()
+    async def test_sends_current_status_on_connect(self):
+        self.user = await grant(self.user, "view_machine_state")
+        communicator = communicator_for(MachineStateConsumer, self.user)
+        connected, _ = await communicator.connect()
+        self.assertTrue(connected)
+        # The machine manager is not running in tests.
+        self.assertIn("Offline", await communicator.receive_from())
+        await communicator.disconnect()
 
-            await communicator.disconnect()
-            fake_manager.disconnect.assert_awaited_once()
+    async def test_state_pushed_by_manager_is_rendered(self):
+        self.user = await grant(self.user, "view_machine_state")
+        communicator = communicator_for(MachineStateConsumer, self.user)
+        await communicator.connect()
+        await communicator.receive_from()
+
+        await get_channel_layer().group_send(
+            protocol.machine_group(self.machine.pk),
+            {
+                "type": "machine.state",
+                "status": {"connected": True, "verified": True, "state": "enabled"},
+            },
+        )
+        response = await communicator.receive_from()
+        self.assertIn("Enabled", response)
+        self.assertNotIn("Unverified", response)
+        await communicator.disconnect()
+
+    async def test_unverified_server_is_shown(self):
+        self.user = await grant(self.user, "view_machine_state")
+        communicator = communicator_for(MachineStateConsumer, self.user)
+        await communicator.connect()
+        await communicator.receive_from()
+
+        await get_channel_layer().group_send(
+            protocol.machine_group(self.machine.pk),
+            {
+                "type": "machine.state",
+                "status": {"connected": True, "verified": False, "state": "standby"},
+            },
+        )
+        self.assertIn("Unverified", await communicator.receive_from())
+        await communicator.disconnect()
 
     async def test_command_ignored_without_send_permission(self):
         self.user = await grant(self.user, "view_machine_state")
-        fake_manager = fake_connection_manager()
-
-        with patch("machines.consumers.ConnectionManager", return_value=fake_manager):
-            communicator = WebsocketCommunicator(
-                MachineStateConsumer.as_asgi(), "/ws/machines/aa:bb:cc:dd:ee:ff/state"
-            )
-            communicator.scope.update(build_scope("aa:bb:cc:dd:ee:ff", self.user))
-            connected, _ = await communicator.connect()
-            self.assertTrue(connected)
-            await communicator.receive_nothing(timeout=0.1)
-
+        with patch(
+            "machines.consumers.bridge.asend_command", new_callable=AsyncMock
+        ) as send:
+            communicator = communicator_for(MachineStateConsumer, self.user)
+            await communicator.connect()
+            await communicator.receive_from()
             await communicator.send_json_to({"command": "enable"})
-            fake_manager.send_command.assert_not_called()
-
+            await communicator.receive_nothing(timeout=0.1)
+            send.assert_not_awaited()
             await communicator.disconnect()
 
     async def test_command_forwarded_with_send_permission(self):
         self.user = await grant(
             self.user, "view_machine_state", "send_machine_commands"
         )
-        fake_manager = fake_connection_manager()
-
-        with patch("machines.consumers.ConnectionManager", return_value=fake_manager):
-            communicator = WebsocketCommunicator(
-                MachineStateConsumer.as_asgi(), "/ws/machines/aa:bb:cc:dd:ee:ff/state"
-            )
-            communicator.scope.update(build_scope("aa:bb:cc:dd:ee:ff", self.user))
-            connected, _ = await communicator.connect()
-            self.assertTrue(connected)
-            await communicator.receive_nothing(timeout=0.1)
-
+        with patch(
+            "machines.consumers.bridge.asend_command", new_callable=AsyncMock
+        ) as send:
+            communicator = communicator_for(MachineStateConsumer, self.user)
+            await communicator.connect()
+            await communicator.receive_from()
             await communicator.send_json_to({"command": "enable"})
             await communicator.receive_nothing(timeout=0.1)
-            fake_manager.send_command.assert_called_once_with("enable")
-
+            send.assert_awaited_once_with(self.machine.pk, "enable")
             await communicator.disconnect()
 
-    async def test_state_update_sends_rendered_partial(self):
-        self.user = await grant(self.user, "view_machine_state")
-        fake_manager = fake_connection_manager()
-
-        with patch("machines.consumers.ConnectionManager", return_value=fake_manager):
-            communicator = WebsocketCommunicator(
-                MachineStateConsumer.as_asgi(), "/ws/machines/aa:bb:cc:dd:ee:ff/state"
-            )
-            communicator.scope.update(build_scope("aa:bb:cc:dd:ee:ff", self.user))
-            connected, _ = await communicator.connect()
-            self.assertTrue(connected)
-            await communicator.receive_nothing(timeout=0.1)
-
-            await fake_manager.on_state_change({"state": "enabled"})
-            response = await communicator.receive_from()
-            self.assertIn("Enabled", response)
-
+    async def test_failed_command_is_reported(self):
+        self.user = await grant(
+            self.user, "view_machine_state", "send_machine_commands"
+        )
+        with patch(
+            "machines.consumers.bridge.asend_command",
+            new_callable=AsyncMock,
+            side_effect=bridge.CommandFailed("Machine is offline"),
+        ):
+            communicator = communicator_for(MachineStateConsumer, self.user)
+            await communicator.connect()
+            await communicator.receive_from()
+            await communicator.send_json_to({"command": "enable"})
+            self.assertIn("Machine is offline", await communicator.receive_from())
             await communicator.disconnect()
 
 
@@ -141,29 +159,36 @@ class MachineLogConsumerTests(TransactionTestCase):
         self.user = User.objects.create_user(email="user@example.com", password="pass")
 
     async def test_anonymous_user_is_rejected(self):
-        communicator = WebsocketCommunicator(
-            MachineLogConsumer.as_asgi(), "/ws/machines/aa:bb:cc:dd:ee:ff/logs"
-        )
-        communicator.scope.update(build_scope("aa:bb:cc:dd:ee:ff", AnonymousUser()))
+        communicator = communicator_for(MachineLogConsumer, AnonymousUser(), path="logs")
         connected, _ = await communicator.connect()
         self.assertFalse(connected)
         await communicator.disconnect()
 
-    async def test_user_with_permission_connects_and_subscribes_to_logs(self):
+    async def test_subscribes_streams_and_unsubscribes(self):
         self.user = await grant(self.user, "view_machine_state")
-        fake_manager = fake_connection_manager()
-        fake_manager.client.subscribe_logs = MagicMock()
-
-        with patch("machines.consumers.ConnectionManager", return_value=fake_manager):
-            communicator = WebsocketCommunicator(
-                MachineLogConsumer.as_asgi(), "/ws/machines/aa:bb:cc:dd:ee:ff/logs"
-            )
-            communicator.scope.update(build_scope("aa:bb:cc:dd:ee:ff", self.user))
+        with (
+            patch(
+                "machines.consumers.bridge.asubscribe_logs", new_callable=AsyncMock
+            ) as subscribe,
+            patch(
+                "machines.consumers.bridge.aunsubscribe_logs", new_callable=AsyncMock
+            ) as unsubscribe,
+        ):
+            communicator = communicator_for(MachineLogConsumer, self.user, path="logs")
             connected, _ = await communicator.connect()
             self.assertTrue(connected)
             await communicator.receive_nothing(timeout=0.1)
+            subscribe.assert_awaited_once()
+            self.assertEqual(subscribe.await_args.args[0], self.machine.pk)
+            channel_name = subscribe.await_args.args[1]
 
-            fake_manager.connect.assert_awaited_once()
-            fake_manager.client.subscribe_logs.assert_called_once()
+            await get_channel_layer().send(
+                channel_name,
+                {"type": "machine.log", "level": 1, "message": "Something broke"},
+            )
+            response = await communicator.receive_from()
+            self.assertIn("Something broke", response)
+            self.assertIn("text-error", response)
 
             await communicator.disconnect()
+            unsubscribe.assert_awaited_once_with(self.machine.pk, channel_name)

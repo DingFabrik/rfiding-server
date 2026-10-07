@@ -7,12 +7,17 @@ from rest_framework import status, permissions
 from rest_framework.throttling import ScopedRateThrottle
 
 from .common import formatted_mac, BaseAPIView, MachineApiKeyPermission
-from access_log.models import LOG_TYPE_BOOTED, LOG_TYPE_DISABLED
+from access_log.models import LOG_TYPE_BOOTED
 from access_log.tasks import save_access_log
-from machines.serializers import MachineConfigSerializer
-from machines.socket_helper import send_socket_action
-from machines.api.common import check_access_response
-from machines.models import Machine, MachineRegistrationRequest
+from machines.esphome import bridge
+from machines.esphome.protocol import COMMANDS
+from machines.api.common import (
+    check_access_response,
+    log_machine_disabled,
+    machine_config,
+    update_reported_machine_info,
+)
+from machines.models import MachineRegistrationRequest
 
 
 def is_ip_address(value):
@@ -66,7 +71,7 @@ class MachineConnectView(BaseAPIView):
     required_get_parameters = ["mac_address"]
 
     def get(self, request, format=None):
-        send_socket_action(self.machine.pk, "connect")
+        bridge.notify_machine_changed(self.machine.pk)
 
         return Response(
             {
@@ -83,49 +88,12 @@ class MachineConfigView(BaseAPIView):
 
     def get(self, request, format=None):
         save_access_log.delay(self.machine.id, None, LOG_TYPE_BOOTED, timestamp=timezone.now())
-        return Response(
-            MachineConfigSerializer(
-                {
-                    "runtimer": self.machine.runtimer,
-                    "minPower": self.machine.min_power,
-                    "display_time_countdown": self.machine.display_time_countdown,
-                    "display_power_consumption": self.machine.display_power_consumption,
-                    "link_relays": self.machine.link_relays,
-                }
-            ).data,
-            status=status.HTTP_200_OK,
-        )
+        return Response(machine_config(self.machine), status=status.HTTP_200_OK)
 
     def post(self, request, format=None):
-        was_changed = False
-        if (
-            "ip_address" in request.data
-            and self.machine.ip_address != request.data["ip_address"]
-        ):
-            self.machine.ip_address = request.data["ip_address"]
-            was_changed = True
-        if (
-            "firmware_version" in request.data
-            and self.machine.firmware_version != request.data["firmware_version"]
-        ):
-            self.machine.firmware_version = request.data["firmware_version"]
-            was_changed = True
-        if was_changed:
-            self.machine.save()
-
+        update_reported_machine_info(self.machine, request.data)
         save_access_log.delay(self.machine.id, None, LOG_TYPE_BOOTED, timestamp=timezone.now())
-        return Response(
-            MachineConfigSerializer(
-                {
-                    "runtimer": self.machine.runtimer,
-                    "minPower": self.machine.min_power,
-                    "display_time_countdown": self.machine.display_time_countdown,
-                    "display_power_consumption": self.machine.display_power_consumption,
-                    "link_relays": self.machine.link_relays,
-                }
-            ).data,
-            status=status.HTTP_200_OK,
-        )
+        return Response(machine_config(self.machine), status=status.HTTP_200_OK)
 
 
 class CheckMachineAccessView(BaseAPIView):
@@ -143,13 +111,7 @@ class MachineDisableView(BaseAPIView):
     required_get_parameters = ["mac_address", "tokenUid"]
 
     def get(self, request, format=None):
-        compartmentID = request.GET.get("compartmentID", None)
-        if compartmentID is not None:
-            try:
-                self.machine = self.machine.children.get(compartment_id=compartmentID)
-            except Machine.DoesNotExist:
-                raise NotFound("Machine does not exist") from None
-        save_access_log.delay(self.machine.id, None, LOG_TYPE_DISABLED, timestamp=timezone.now())
+        log_machine_disabled(self.machine, request.GET.get("compartmentID", None))
         return Response({})
 
 class MachineControlView(BaseAPIView):
@@ -168,15 +130,18 @@ class MachineControlView(BaseAPIView):
                 status=status.HTTP_403_FORBIDDEN,
             )
         action = request.data.get("action", None)
-        if action not in ["enable", "disable", "restart", "reload_config"]:
+        if action not in COMMANDS:
             return Response(
                 {"error": "Invalid action"}, status=status.HTTP_400_BAD_REQUEST
             )
 
-        send_socket_action(self.machine.pk, action)
+        try:
+            bridge.send_command(self.machine.pk, action)
+        except bridge.ManagerUnavailable as e:
+            return Response(
+                {"error": str(e)}, status=status.HTTP_503_SERVICE_UNAVAILABLE
+            )
+        except bridge.CommandFailed as e:
+            return Response({"error": str(e)}, status=status.HTTP_502_BAD_GATEWAY)
 
-        return Response(
-            {
-            },
-            status=status.HTTP_200_OK,
-        )
+        return Response({}, status=status.HTTP_200_OK)

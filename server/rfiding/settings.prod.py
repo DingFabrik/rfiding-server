@@ -52,9 +52,12 @@ CACHES = {
 
 CHANNEL_LAYERS = {
     "default": {
-        "BACKEND": "channels.layers.InMemoryChannelLayer",
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {"hosts": ["redis://localhost:6379/2"]},
     },
 }
+
+ENABLE_CLIENT_API = False
 
 # Configure your space
 # Clients changing the space state must send this secret. An empty secret is

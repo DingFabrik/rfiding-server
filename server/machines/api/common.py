@@ -12,10 +12,12 @@ from django.db import transaction
 from django.utils import timezone
 
 from machines.models import Machine, PERMISSION_LEVELS
+from machines.serializers import MachineConfigSerializer
 from holidays.utils import is_today_holiday
 from tokens.models import Token, UnknownToken, BlacklistedToken
 from access_log.tasks import save_access_log
 from access_log.models import (
+    LOG_TYPE_DISABLED,
     LOG_TYPE_ENABLED,
     LOG_TYPE_UNSUCCESSFUL,
     UnsuccessfulReason,
@@ -233,10 +235,11 @@ def check_access(machine, tokenID, compartmentID=None):
     }
 
 
-def check_access_response(machine, tokenID, compartmentID=None):
-    """Runs check_access and turns the outcome into an API response.
+def run_access_check(machine, tokenID, compartmentID=None):
+    """Runs check_access and returns (http_status, data).
 
     Denied attempts are written to the access log together with the reason.
+    Shared by the HTTP API and the ESPHome native API.
     """
     was_successful = False
     reason = UnsuccessfulReason.INTERNAL_ERROR
@@ -244,25 +247,18 @@ def check_access_response(machine, tokenID, compartmentID=None):
     try:
         return_data = check_access(machine, tokenID, compartmentID)
         was_successful = True
-        return Response(return_data, status=status.HTTP_200_OK)
+        return status.HTTP_200_OK, return_data
     except PermissionDenied as e:
         reason = getattr(e, "reason", reason)
         token_id = getattr(e, "token_id", None)
-        return Response(
-            {"error": str(e), "access": 0}, status=status.HTTP_403_FORBIDDEN
-        )
+        return status.HTTP_403_FORBIDDEN, {"error": str(e), "access": 0}
     except NotFound as e:
         reason = getattr(e, "reason", reason)
         token_id = getattr(e, "token_id", None)
-        return Response(
-            {"error": str(e), "access": 0}, status=status.HTTP_404_NOT_FOUND
-        )
+        return status.HTTP_404_NOT_FOUND, {"error": str(e), "access": 0}
     except Exception:
         logger.exception("Unexpected error checking access for machine %s", machine.pk)
-        return Response(
-            {"error": "Internal error", "access": 0},
-            status=status.HTTP_403_FORBIDDEN,
-        )
+        return status.HTTP_403_FORBIDDEN, {"error": "Internal error", "access": 0}
     finally:
         if not was_successful:
             save_access_log.delay(
@@ -272,3 +268,44 @@ def check_access_response(machine, tokenID, compartmentID=None):
                 timestamp=timezone.now(),
                 reason=reason,
             )
+
+
+def check_access_response(machine, tokenID, compartmentID=None):
+    """Runs check_access and turns the outcome into an API response."""
+    status_code, data = run_access_check(machine, tokenID, compartmentID)
+    return Response(data, status=status_code)
+
+
+def machine_config(machine):
+    """The configuration a machine loads from the server."""
+    return MachineConfigSerializer(
+        {
+            "runtimer": machine.runtimer,
+            "minPower": machine.min_power,
+            "display_time_countdown": machine.display_time_countdown,
+            "display_power_consumption": machine.display_power_consumption,
+            "link_relays": machine.link_relays,
+        }
+    ).data
+
+
+def update_reported_machine_info(machine, data):
+    """Stores the ip address and firmware version a machine reports about itself."""
+    changed_fields = []
+    for field in ("ip_address", "firmware_version"):
+        if field in data and data[field] and getattr(machine, field) != data[field]:
+            setattr(machine, field, data[field])
+            changed_fields.append(field)
+    if changed_fields:
+        machine.save()
+    return changed_fields
+
+
+def log_machine_disabled(machine, compartmentID=None):
+    """Logs that a machine (or one of its compartments) was locked again."""
+    if compartmentID is not None:
+        try:
+            machine = machine.children.get(compartment_id=compartmentID)
+        except Machine.DoesNotExist:
+            raise NotFound("Machine does not exist") from None
+    save_access_log.delay(machine.id, None, LOG_TYPE_DISABLED, timestamp=timezone.now())

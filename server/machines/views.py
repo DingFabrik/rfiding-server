@@ -15,7 +15,7 @@ from django.utils.translation import gettext_lazy as _
 from access_log.models import AccessLog
 from access_log.statistics import parse_days
 from base.views import BaseListView, PartialMixin, TitleMixin
-from machines.socket_helper import get_socket_data
+from machines.esphome import bridge
 from comments.forms import CommentForm
 from comments.views import CommentCreateView
 from .models import Machine, MachineRegistrationRequest, MachineTime
@@ -267,7 +267,9 @@ class MachineStatusPartialView(PermissionRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["status"] = get_socket_data(self.object.pk, "status")
+        status = bridge.get_status(self.object.pk)
+        context["status"] = status["state"]
+        context["verified"] = status["verified"]
         return context
 
 

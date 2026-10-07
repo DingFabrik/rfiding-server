@@ -5,6 +5,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
+from machines.esphome import bridge
 from machines.models import Machine, MachineControlKey, MachineRegistrationRequest
 from people.models import Person
 from tokens.models import Token
@@ -61,17 +62,17 @@ class MachineRegisterViewTests(APITestCase):
 class MachineConnectViewTests(APITestCase):
     url = reverse("api:v2:machine_connect")
 
-    def test_connects_and_sends_socket_action(self):
-        Machine.objects.create(
+    def test_connect_notifies_the_machine_manager(self):
+        machine = Machine.objects.create(
             mac_address="aa:bb:cc:dd:ee:ff", hostname="test", name="test"
         )
-        with patch("machines.api.v2.send_socket_action") as mock_send:
+        with patch("machines.api.v2.bridge.notify_machine_changed") as mock_send:
             response = self.client.get(
                 self.url, {"mac_address": "aabbccddeeff"}, format="json"
             )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue(response.data["connected"])
-        mock_send.assert_called_once()
+        mock_send.assert_called_once_with(machine.pk)
 
     def test_unknown_machine_is_not_found(self):
         response = self.client.get(
@@ -261,8 +262,8 @@ class MachineControlViewTests(APITestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-    def test_valid_action_sends_socket_action(self):
-        with patch("machines.api.v2.send_socket_action") as mock_send:
+    def test_valid_action_is_sent_to_the_machine_manager(self):
+        with patch("machines.api.v2.bridge.send_command") as mock_send:
             response = self.client.post(
                 self.url + "?action=enable",
                 {
@@ -274,3 +275,32 @@ class MachineControlViewTests(APITestCase):
             )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         mock_send.assert_called_once_with(self.machine.pk, "enable")
+
+    def test_manager_unavailable_is_service_unavailable(self):
+        response = self.client.post(
+            self.url + "?action=enable",
+            {
+                "mac_address": "aabbccddeeff",
+                "control_key": str(self.control_key.key),
+                "action": "enable",
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_503_SERVICE_UNAVAILABLE)
+
+    def test_failed_command_is_bad_gateway(self):
+        with patch(
+            "machines.api.v2.bridge.send_command",
+            side_effect=bridge.CommandFailed("Machine is offline"),
+        ):
+            response = self.client.post(
+                self.url + "?action=enable",
+                {
+                    "mac_address": "aabbccddeeff",
+                    "control_key": str(self.control_key.key),
+                    "action": "enable",
+                },
+                format="json",
+            )
+        self.assertEqual(response.status_code, status.HTTP_502_BAD_GATEWAY)
+        self.assertEqual(response.data["error"], "Machine is offline")

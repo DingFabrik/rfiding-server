@@ -254,7 +254,7 @@ class MachineApiInputTests(APITestCase):
             encryption_key="secret",
         )
         key = MachineControlKey.objects.create(machine=machine, purpose="test")
-        with mock.patch("machines.api.v2.send_socket_action") as send:
+        with mock.patch("machines.api.v2.bridge.send_command") as send:
             response = self.client.post(
                 reverse("api:v2:machine_control"),
                 {"mac_address": "aabbccddeeff", "action": "restart", "control_key": str(key.key)},

@@ -6,3 +6,6 @@ class MachinesConfig(AppConfig):
     default_auto_field = "django.db.models.BigAutoField"
     name = "machines"
     verbose_name = _("Machines")
+
+    def ready(self):
+        from . import signals  # noqa: F401

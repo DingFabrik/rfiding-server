@@ -16,6 +16,12 @@
   <span class="status status-warning status-md"></span>
   <span class="text-sm font-medium text-warning">{% trans 'Unknown' %}</span>
 {% endif %}
+{% if status != 'disconnected' and not verified %}
+  <span class="badge badge-warning badge-sm tooltip tooltip-bottom" data-tip="{% trans 'The machine has not confirmed this server yet. Check that the API key matches.' %}">{% trans 'Unverified' %}</span>
+{% endif %}
+{% if command_error %}
+  <span class="text-sm text-error">{{ command_error }}</span>
+{% endif %}
 </span>
 
 <div id="command_dropdown">

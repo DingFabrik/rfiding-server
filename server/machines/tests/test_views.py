@@ -400,16 +400,29 @@ class MachinePopoverViewTests(TestCase):
 
 
 class MachineStatusPartialViewTests(TestCase):
-    def test_returns_socket_status(self):
+    def test_returns_manager_status(self):
         user = User.objects.create_superuser(email="admin@example.com", password="pass")
         self.client.force_login(user)
         machine = Machine.objects.create(
             mac_address="aa:bb:cc:dd:ee:ff", hostname="m", name="m"
         )
-        with patch("machines.views.get_socket_data", return_value="enabled") as mock_get:
+        with patch(
+            "machines.views.bridge.get_status",
+            return_value={"state": "enabled", "verified": True},
+        ) as mock_get:
             response = self.client.get(reverse("machines:status", kwargs={"pk": machine.pk}))
         self.assertEqual(response.context["status"], "enabled")
-        mock_get.assert_called_once_with(machine.pk, "status")
+        self.assertTrue(response.context["verified"])
+        mock_get.assert_called_once_with(machine.pk)
+
+    def test_manager_not_running_shows_disconnected(self):
+        user = User.objects.create_superuser(email="admin@example.com", password="pass")
+        self.client.force_login(user)
+        machine = Machine.objects.create(
+            mac_address="aa:bb:cc:dd:ee:ff", hostname="m", name="m"
+        )
+        response = self.client.get(reverse("machines:status", kwargs={"pk": machine.pk}))
+        self.assertEqual(response.context["status"], "disconnected")
 
 
 class MachineQualificationsListViewTests(TestCase):

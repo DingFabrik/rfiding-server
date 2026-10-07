@@ -1,0 +1,148 @@
+hmac_sha256:
+
+api:
+  id: api_id
+  encryption:
+    key: ${encryption_key}
+  reboot_timeout: 0s
+  on_client_connected:
+    - script.execute: update_device_state
+    - if:
+        condition:
+          lambda: return client_info.rfind("rfiding-server", 0) == 0;
+        then:
+          - script.execute: rfiding_new_challenge
+  on_client_disconnected:
+    - if:
+        condition:
+          lambda: return client_info.rfind("rfiding-server", 0) == 0;
+        then:
+          - script.execute: rfiding_new_challenge
+  actions:
+    - action: rfiding_authenticate
+      variables:
+        signature: string
+      supports_response: status
+      then:
+        - if:
+            condition:
+              lambda: |-
+                const std::string &challenge = id(rfiding_challenge).state;
+                if (challenge.empty() || signature.size() != 64) {
+                  return false;
+                }
+                hmac_sha256::HmacSHA256 hmac;
+                hmac.init(std::string("${rfiding_api_key}"));
+                const std::string message = "rfiding-server:" + challenge;
+                hmac.add(message.c_str(), message.size());
+                hmac.calculate();
+                return hmac.equals_hex(signature.c_str());
+            then:
+              - binary_sensor.template.publish:
+                  id: rfiding_server_verified
+                  state: ON
+              - logger.log: "Connected to the verified rfiding server"
+              - api.respond:
+                  success: true
+            else:
+              - logger.log:
+                  level: WARN
+                  format: "Server verification failed, check the API key"
+              - api.respond:
+                  success: false
+                  error_message: "Invalid signature"
+    - action: set_config
+      variables:
+        config: string
+      supports_response: status
+      then:
+        - script.execute:
+            id: parse_config
+            body: !lambda return config;
+        - api.respond:
+            success: true
+    - action: enable
+      then:
+        - switch.turn_on: is_enabled
+    - action: disable
+      then:
+        - switch.turn_off: is_enabled
+    - action: restart
+      then:
+        - lambda: App.safe_reboot();
+    - action: reload_config
+      then:
+        - script.execute: rfiding_api_load_config
+
+text_sensor:
+  - platform: template
+    id: rfiding_challenge
+    name: "rfiding challenge"
+    entity_category: diagnostic
+    update_interval: never
+
+binary_sensor:
+  - platform: template
+    id: rfiding_server_verified
+    name: "rfiding server verified"
+    entity_category: diagnostic
+
+script:
+  - id: rfiding_new_challenge
+    then:
+      - binary_sensor.template.publish:
+          id: rfiding_server_verified
+          state: OFF
+      - lambda: |-
+          uint8_t nonce[16];
+          random_bytes(nonce, sizeof(nonce));
+          id(rfiding_challenge).publish_state(format_hex(nonce, sizeof(nonce)));
+
+  - id: rfiding_api_check_access
+    parameters:
+      token_id: string
+      compartment: string
+    then:
+      - homeassistant.action:
+          action: rfiding.check_access
+          data:
+            token: !lambda return token_id;
+            compartment: !lambda return compartment;
+          capture_response: true
+          on_success:
+            - lambda: |-
+                if (response["access"] | false) {
+                  id(is_enabled).publish_state(true);
+                } else if (response["error"].is<const char *>()) {
+                  id(error_message).publish_state(response["error"].as<std::string>());
+                }
+          on_error:
+            - logger.log:
+                level: WARN
+                format: "Access check failed: %s"
+                args: [error.c_str()]
+            - text.set:
+                id: error_message
+                value: "No Connection"
+
+  - id: rfiding_api_load_config
+    then:
+      - homeassistant.action:
+          action: rfiding.config
+          data:
+            firmware_version: ${project_version}
+          capture_response: true
+          on_success:
+            - lambda: |-
+                std::string body;
+                serializeJson(response, body);
+                id(parse_config).execute(body);
+
+  - id: rfiding_api_send_disabled
+    parameters:
+      compartment: string
+    then:
+      - homeassistant.action:
+          action: rfiding.disabled
+          data:
+            compartment: !lambda return compartment;
