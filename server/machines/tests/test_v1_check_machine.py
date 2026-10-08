@@ -1,3 +1,4 @@
+from django.test import override_settings
 from django.urls import reverse
 from freezegun import freeze_time
 from machines.models import Machine, MachineTime
@@ -46,6 +47,18 @@ class V1CheckMachineTests(APITestCase):
         data = {"machine": "aabbccddeeff", "tokenUid": "456"}
         response = self.client.get(V1CheckMachineTests.url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    @override_settings(TOKEN_ID_MAX_LENGTH=8)
+    def test_long_token_id_is_truncated_for_lookup(self):
+        Machine.objects.create(
+            mac_address="aa:bb:cc:dd:ee:ff", hostname="test", name="test",
+            needs_qualification=False,
+        )
+        person = Person.objects.create(name="test", email="test@example.com")
+        Token.objects.create(serial="04a1b2c3", person=person)
+        data = {"machine": "aa:bb:cc:dd:ee:ff", "tokenUid": "04A1B2C3D4E5F6"}
+        response = self.client.get(V1CheckMachineTests.url, data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_invalid_token(self):
         """

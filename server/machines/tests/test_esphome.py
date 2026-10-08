@@ -22,7 +22,7 @@ from machines.esphome.handlers import RequestError, handle_request
 from machines.esphome.manager import DeviceManager, load_machine_settings
 from machines.models import Machine
 from people.models import Person
-from tokens.models import Token
+from tokens.models import Token, UnknownToken
 
 
 def make_settings(pk=1, **kwargs):
@@ -82,6 +82,22 @@ class HandleRequestTests(TestCase):
             AccessLog.objects.filter(
                 machine=self.machine, type=LOG_TYPE_UNSUCCESSFUL
             ).exists()
+        )
+
+    @override_settings(TOKEN_ID_MAX_LENGTH=6)
+    def test_check_access_truncates_long_token_id(self):
+        result = handle_request(
+            self.machine.pk, protocol.REQUEST_CHECK_ACCESS, {"token": "ABC123DEF456"}
+        )
+        self.assertIs(result["access"], True)
+
+    @override_settings(TOKEN_ID_MAX_LENGTH=6)
+    def test_check_access_saves_unknown_token_truncated(self):
+        handle_request(
+            self.machine.pk, protocol.REQUEST_CHECK_ACCESS, {"token": "FFEEDDCCBBAA"}
+        )
+        self.assertEqual(
+            list(UnknownToken.objects.values_list("serial", flat=True)), ["ffeedd"]
         )
 
     def test_check_access_needs_token(self):

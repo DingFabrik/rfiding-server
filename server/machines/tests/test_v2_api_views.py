@@ -1,14 +1,16 @@
 from datetime import timedelta
 from unittest.mock import patch
 
+from django.test import SimpleTestCase, override_settings
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
+from machines.api.common import truncate_token_id
 from machines.esphome import bridge
 from machines.models import Machine, MachineControlKey, MachineRegistrationRequest
 from people.models import Person
-from tokens.models import Token
+from tokens.models import Token, UnknownToken
 
 
 class MachineRegisterViewTests(APITestCase):
@@ -177,6 +179,68 @@ class CheckMachineAccessViewV2Tests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(response.data["error"], "Internal error")
 
+
+    @override_settings(TOKEN_ID_MAX_LENGTH=8)
+    def test_long_token_id_is_truncated_for_lookup(self):
+        Token.objects.create(serial="04a1b2c3", person=self.person)
+        response = self.client.get(
+            self.url,
+            {"mac_address": "aabbccddeeff", "tokenUid": "04A1B2C3D4E5F6"},
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["access"], 1)
+
+    @override_settings(TOKEN_ID_MAX_LENGTH=8)
+    def test_unknown_long_token_id_is_saved_truncated(self):
+        response = self.client.get(
+            self.url,
+            {"mac_address": "aabbccddeeff", "tokenUid": "04a1b2c3d4e5f6"},
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(
+            list(UnknownToken.objects.values_list("serial", flat=True)), ["04a1b2c3"]
+        )
+
+    @override_settings(TOKEN_ID_MAX_LENGTH=8)
+    def test_short_token_id_is_unchanged(self):
+        response = self.client.get(
+            self.url,
+            {"mac_address": "aabbccddeeff", "tokenUid": "456"},
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @override_settings(TOKEN_ID_MAX_LENGTH=8)
+    def test_stored_serials_are_not_truncated(self):
+        token = Token.objects.create(serial="04a1b2c3d4e5f6", person=self.person)
+        token.refresh_from_db()
+        self.assertEqual(token.serial, "04a1b2c3d4e5f6")
+
+    @override_settings(TOKEN_ID_MAX_LENGTH=None)
+    def test_without_max_length_token_id_is_used_as_sent(self):
+        self.client.get(
+            self.url,
+            {"mac_address": "aabbccddeeff", "tokenUid": "04a1b2c3d4e5f6"},
+            format="json",
+        )
+        self.assertEqual(
+            list(UnknownToken.objects.values_list("serial", flat=True)),
+            ["04a1b2c3d4e5f6"],
+        )
+
+
+class TruncateTokenIdTests(SimpleTestCase):
+    @override_settings(TOKEN_ID_MAX_LENGTH=8)
+    def test_truncates_to_max_length(self):
+        self.assertEqual(truncate_token_id("04a1b2c3d4e5f6"), "04a1b2c3")
+        self.assertEqual(truncate_token_id("04a1b2c3"), "04a1b2c3")
+        self.assertEqual(truncate_token_id("456"), "456")
+
+    @override_settings(TOKEN_ID_MAX_LENGTH=None)
+    def test_disabled_by_default(self):
+        self.assertEqual(truncate_token_id("04a1b2c3d4e5f6"), "04a1b2c3d4e5f6")
 
 class MachineDisableViewTests(APITestCase):
     url = reverse("api:v2:machine_disable")

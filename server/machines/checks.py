@@ -51,3 +51,20 @@ def check_native_api_machines(app_configs, databases=None, **kwargs):
             )
         ]
     return []
+
+
+@register()
+def check_token_id_max_length(app_configs, **kwargs):
+    """TOKEN_ID_MAX_LENGTH is used to slice token IDs, so it must be a positive int."""
+    max_length = getattr(settings, "TOKEN_ID_MAX_LENGTH", None)
+    if max_length is None or (
+        isinstance(max_length, int) and not isinstance(max_length, bool) and max_length > 0
+    ):
+        return []
+    return [
+        Error(
+            f"TOKEN_ID_MAX_LENGTH must be a positive integer or None, not {max_length!r}.",
+            hint="Set it to the ID length legacy readers report, e.g. 8, or None to disable it.",
+            id="machines.E002",
+        )
+    ]

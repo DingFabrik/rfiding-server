@@ -69,3 +69,7 @@ HEALTH_CHECK_URL = ""
 SPACE_STATE_SECRET = required_env("SPACE_STATE_SECRET")
 SPACE_NAME = ""
 SPACE_CONTACT = ""
+
+# Cut token IDs sent for access checks to this many characters, e.g. 8 to match
+# 4-byte UIDs from legacy readers. Stored token serials are not affected.
+TOKEN_ID_MAX_LENGTH = None

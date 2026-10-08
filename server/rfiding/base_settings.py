@@ -246,6 +246,11 @@ SPACE_STATE_SECRET = "12345"
 SPACE_NAME = "Makerspace"
 SPACE_CONTACT = "01234 / 123456"
 
+# Maximum length of a token ID sent by a machine for an access check. Longer IDs
+# are cut to this length before they are looked up and before they are saved as
+# unknown tokens. Stored token serials are not affected. None disables it.
+TOKEN_ID_MAX_LENGTH = None
+
 ASGI_APPLICATION = "rfiding.asgi.application"
 
 CELERY_RESULT_BACKEND = "django-db"

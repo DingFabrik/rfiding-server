@@ -63,3 +63,17 @@ class NativeApiMachinesCheckTests(TestCase):
     def test_native_api_machine_with_client_api(self):
         self.set_encryption_key("c2VjcmV0LWtleS1mb3ItdGVzdGluZy0xMjM0NTY3OA==")
         self.assertEqual(self.run_check(), [])
+
+
+class TokenIdMaxLengthCheckTests(SimpleTestCase):
+    def run_check(self, value):
+        with override_settings(TOKEN_ID_MAX_LENGTH=value):
+            return [e.id for e in checks.check_token_id_max_length(None)]
+
+    def test_valid_values_pass(self):
+        for value in (None, 1, 8, 14):
+            self.assertEqual(self.run_check(value), [], value)
+
+    def test_invalid_values_error(self):
+        for value in (0, -2, "8", 8.0, True):
+            self.assertEqual(self.run_check(value), ["machines.E002"], value)

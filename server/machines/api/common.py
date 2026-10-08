@@ -125,7 +125,22 @@ def check_space_open(permission_level, token_id):
             )
 
 
+def truncate_token_id(token_id):
+    """Cut a token ID read during an access check to TOKEN_ID_MAX_LENGTH.
+
+    Readers report some tag types (e.g. MIFARE Ultralight's 7-byte UIDs) with a
+    longer ID than legacy devices do. Truncating here makes all devices agree on
+    one ID per tag. Stored serials are never truncated - only the ID a machine
+    sends is, before it's looked up and before it's saved as an unknown token.
+    """
+    max_length = getattr(settings, "TOKEN_ID_MAX_LENGTH", None)
+    if max_length:
+        return token_id[:max_length]
+    return token_id
+
+
 def check_access(machine, tokenID, compartmentID=None):
+    tokenID = truncate_token_id(tokenID)
     checked_machine = machine
     if compartmentID is not None:
         try:
