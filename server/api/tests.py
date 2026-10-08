@@ -3,7 +3,9 @@ from datetime import timedelta
 
 from django.contrib.auth.models import Group, Permission
 from django.test import TestCase
+from django.urls import reverse
 from django.utils import timezone
+from drf_spectacular.drainage import GENERATOR_STATS
 from oauth2_provider.models import AccessToken
 from rest_framework.test import APIClient
 
@@ -205,3 +207,30 @@ class UserApiPermissionTests(TestCase):
         self.assertEqual(response.status_code, 201)
         response = self.client.get("/api/rest/v1/widgets/")
         self.assertEqual(response.status_code, 200)
+
+
+class SchemaTests(TestCase):
+    """The OpenAPI schema is generated on request, so a view or serializer that
+    drf-spectacular cannot handle only shows up when someone opens the docs."""
+
+    def setUp(self):
+        self.user = RFIDingUser.objects.create_superuser(
+            email="admin@example.com", password="password"
+        )
+        self.client = APIClient()
+        authenticate(self.client, self.user)
+        # The machine-facing APIViews (api/v1, api/v2, space) have no serializers,
+        # and drf-spectacular prints a warning for each straight to stderr.
+        self.enterContext(GENERATOR_STATS.silence())
+
+    def test_schema_covers_the_rest_api(self):
+        response = self.client.get(reverse("rest:v1:schema"), {"format": "json"})
+        self.assertEqual(response.status_code, 200)
+        paths = response.json()["paths"]
+        for resource in ("machines", "people", "qualifications", "tokens", "access-logs"):
+            self.assertIn(f"/api/rest/v1/{resource}/", paths)
+
+    def test_docs_pages_render(self):
+        for name in ("rest:v1:swagger-ui", "rest:v1:redoc"):
+            with self.subTest(name):
+                self.assertEqual(self.client.get(reverse(name)).status_code, 200)

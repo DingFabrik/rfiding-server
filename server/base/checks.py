@@ -111,3 +111,19 @@ def check_machine_manager_version(app_configs, **kwargs):
     if version != current:
         return [outdated("The machine manager", version, current, "Restart `manage.py machine_manager`.", "services.E007")]
     return []
+
+
+@register(deploy=True)
+def check_shared_cache(app_configs, **kwargs):
+    backend = settings.CACHES.get("default", {}).get("BACKEND", "")
+    if backend == "django.core.cache.backends.locmem.LocMemCache":
+        return [
+            Warning(
+                "The default cache is per-process, so the web server, Celery and the machine "
+                "manager do not see each other's cache entries (e.g. when a holiday is edited, "
+                "machines may keep using the old holiday state).",
+                hint="Use django.core.cache.backends.redis.RedisCache, as in settings.prod.py.",
+                id="base.W001",
+            )
+        ]
+    return []

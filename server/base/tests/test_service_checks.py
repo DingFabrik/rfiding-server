@@ -139,3 +139,13 @@ class MachineManagerVersionCheckTests(SimpleTestCase):
     def test_not_running(self, current):
         with self.manager(side_effect=bridge.ManagerUnavailable("did not answer")):
             self.assertEqual(ids(checks.check_machine_manager_version(None)), ["services.E006"])
+
+
+class SharedCacheCheckTests(SimpleTestCase):
+    @override_settings(CACHES={"default": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"}})
+    def test_per_process_cache(self):
+        self.assertEqual(ids(checks.check_shared_cache(None)), ["base.W001"])
+
+    @override_settings(CACHES={"default": {"BACKEND": "django.core.cache.backends.redis.RedisCache", "LOCATION": "redis://localhost:6379/1"}})
+    def test_shared_cache(self):
+        self.assertEqual(checks.check_shared_cache(None), [])

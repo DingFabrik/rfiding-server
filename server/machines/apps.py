@@ -8,4 +8,4 @@ class MachinesConfig(AppConfig):
     verbose_name = _("Machines")
 
     def ready(self):
-        from . import signals  # noqa: F401
+        from . import checks, signals  # noqa: F401

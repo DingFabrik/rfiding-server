@@ -48,15 +48,29 @@ Generate each with ``python -c 'import secrets; print(secrets.token_urlsafe(50))
 Also fill in ``ALLOWED_HOSTS`` and ``CSRF_TRUSTED_ORIGINS``, and check the HTTPS
 settings if TLS is terminated by a reverse proxy.
 
+Check the configuration, including the parts that need the database (scheduled
+tasks, machines using the native API):
+
+.. code-block:: bash
+
+    ./manage.py check --deploy --database default
+
+Besides Django's own security checks, this warns about settings that make
+features silently not work in production, such as a per-process cache, email or
+Slack notifications without credentials or templates, and qualification expiry
+without its periodic tasks.
+
 
 Services
 --------
 
-A complete installation runs three services, which all need to be restarted
+A complete installation runs these services, which all need to be restarted
 after an update:
 
 - the web server (``daphne rfiding.asgi:application``),
 - the Celery worker (``celery -A rfiding worker``),
+- Celery beat (``celery -A rfiding beat -S django``), if periodic tasks such as
+  ``people.tasks.expire_qualifications`` are scheduled in the admin,
 - the machine manager (``./manage.py machine_manager``), if
   ``ENABLE_CLIENT_API`` is enabled.
 

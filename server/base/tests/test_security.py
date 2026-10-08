@@ -3,6 +3,7 @@
 from unittest import mock
 
 from channels.testing import WebsocketCommunicator
+from django.conf import settings
 from django.contrib.auth.models import Permission
 from django.core.cache import cache
 from django.test import TestCase, TransactionTestCase, override_settings
@@ -188,9 +189,9 @@ class LoginLockoutTests(TestCase):
     def setUp(self):
         RFIDingUser.objects.create_user(email="staff@example.com", password="the-right-password")
 
-    def login(self, password):
+    def login(self, password, **headers):
         return self.client.post(
-            reverse("login"), {"username": "staff@example.com", "password": password}
+            reverse("login"), {"username": "staff@example.com", "password": password}, **headers
         )
 
     def test_repeated_failures_lock_the_account_out(self):
@@ -213,6 +214,72 @@ class LoginLockoutTests(TestCase):
             self.login("wrong")
         self.login("the-right-password")
         self.assertIn("_auth_user_id", self.client.session)
+
+
+class LoginLockoutSpoofingTests(TestCase):
+    """Without a configured proxy, X-Forwarded-For comes from the client and must be ignored."""
+
+    def setUp(self):
+        RFIDingUser.objects.create_user(email="staff@example.com", password="the-right-password")
+
+    def login(self, password, forwarded_for):
+        return self.client.post(
+            reverse("login"),
+            {"username": "staff@example.com", "password": password},
+            HTTP_X_FORWARDED_FOR=forwarded_for,
+        )
+
+    def assert_spoofing_does_not_dodge_the_lockout(self):
+        for i in range(5):
+            self.login("wrong", f"10.0.0.{i}")
+        self.login("the-right-password", "10.0.0.99")
+        self.assertNotIn("_auth_user_id", self.client.session)
+
+    def test_with_default_settings(self):
+        self.assert_spoofing_does_not_dodge_the_lockout()
+
+    @override_settings(REST_FRAMEWORK={**settings.REST_FRAMEWORK, "NUM_PROXIES": None})
+    def test_with_num_proxies_unset(self):
+        # DRF itself would trust the whole header here.
+        self.assert_spoofing_does_not_dodge_the_lockout()
+
+
+@override_settings(REST_FRAMEWORK={**settings.REST_FRAMEWORK, "NUM_PROXIES": 1})
+class LoginLockoutBehindProxyTests(TestCase):
+    """Behind a reverse proxy every request comes from the proxy's address, so
+    lockouts must use the client address the proxy put in X-Forwarded-For."""
+
+    PROXY = "127.0.0.1"
+
+    def setUp(self):
+        RFIDingUser.objects.create_user(email="staff@example.com", password="the-right-password")
+
+    def login(self, password, forwarded_for):
+        return self.client.post(
+            reverse("login"),
+            {"username": "staff@example.com", "password": password},
+            REMOTE_ADDR=self.PROXY,
+            HTTP_X_FORWARDED_FOR=forwarded_for,
+        )
+
+    def test_failures_from_one_client_do_not_lock_out_another(self):
+        for _ in range(5):
+            self.login("wrong", "203.0.113.1")
+        self.login("the-right-password", "203.0.113.2")
+        self.assertIn("_auth_user_id", self.client.session)
+
+    def test_failures_lock_out_the_client(self):
+        for _ in range(5):
+            self.login("wrong", "203.0.113.1")
+        self.login("the-right-password", "203.0.113.1")
+        self.assertNotIn("_auth_user_id", self.client.session)
+
+    def test_spoofed_forwarded_for_does_not_dodge_the_lockout(self):
+        # The client sends its own X-Forwarded-For; the proxy appends the real address.
+        for i in range(5):
+            self.login("wrong", f"10.0.0.{i}, 203.0.113.1")
+        self.login("the-right-password", "10.0.0.99, 203.0.113.1")
+        self.assertNotIn("_auth_user_id", self.client.session)
 
 
 class DebugToolbarRouteTests(TestCase):

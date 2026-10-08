@@ -93,6 +93,10 @@ AXES_RESET_ON_SUCCESS = True
 # The login form posts the email as "username"; axes would otherwise look for
 # a credential named after USERNAME_FIELD ("email") and record no username.
 AXES_USERNAME_FORM_FIELD = "username"
+# Behind a reverse proxy REMOTE_ADDR is the proxy, which would turn the
+# username+IP lockout into a username-only one. Resolve the client address like
+# DRF's throttles instead, honouring REST_FRAMEWORK["NUM_PROXIES"].
+AXES_CLIENT_IP_CALLABLE = "base.client_ip.get_client_ip"
 
 ROOT_URLCONF = "rfiding.urls"
 
