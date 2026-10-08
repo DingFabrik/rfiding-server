@@ -288,14 +288,25 @@ header) to change the space state.</p></li>
 <p>Generate each with <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">-c</span> <span class="pre">'import</span> <span class="pre">secrets;</span> <span class="pre">print(secrets.token_urlsafe(50))'</span></code>.
 Also fill in <code class="docutils literal notranslate"><span class="pre">ALLOWED_HOSTS</span></code> and <code class="docutils literal notranslate"><span class="pre">CSRF_TRUSTED_ORIGINS</span></code>, and check the HTTPS
 settings if TLS is terminated by a reverse proxy.</p>
+<p>Check the configuration, including the parts that need the database (scheduled
+tasks, machines using the native API):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./manage.py<span class="w"> </span>check<span class="w"> </span>--deploy<span class="w"> </span>--database<span class="w"> </span>default
+</pre></div>
+</div>
+<p>Besides Django’s own security checks, this warns about settings that make
+features silently not work in production, such as a per-process cache, email or
+Slack notifications without credentials or templates, and qualification expiry
+without its periodic tasks.</p>
 </section>
 <section id="services">
 <h2>Services<a class="headerlink" href="#services" title="Link to this heading">¶</a></h2>
-<p>A complete installation runs three services, which all need to be restarted
+<p>A complete installation runs these services, which all need to be restarted
 after an update:</p>
 <ul class="simple">
 <li><p>the web server (<code class="docutils literal notranslate"><span class="pre">daphne</span> <span class="pre">rfiding.asgi:application</span></code>),</p></li>
 <li><p>the Celery worker (<code class="docutils literal notranslate"><span class="pre">celery</span> <span class="pre">-A</span> <span class="pre">rfiding</span> <span class="pre">worker</span></code>),</p></li>
+<li><p>Celery beat (<code class="docutils literal notranslate"><span class="pre">celery</span> <span class="pre">-A</span> <span class="pre">rfiding</span> <span class="pre">beat</span> <span class="pre">-S</span> <span class="pre">django</span></code>), if periodic tasks such as
+<code class="docutils literal notranslate"><span class="pre">people.tasks.expire_qualifications</span></code> are scheduled in the admin,</p></li>
 <li><p>the machine manager (<code class="docutils literal notranslate"><span class="pre">./manage.py</span> <span class="pre">machine_manager</span></code>), if
 <code class="docutils literal notranslate"><span class="pre">ENABLE_CLIENT_API</span></code> is enabled.</p></li>
 </ul>
