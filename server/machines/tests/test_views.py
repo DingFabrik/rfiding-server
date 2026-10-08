@@ -60,6 +60,38 @@ class MachineListViewTests(TestCase):
         self.assertIn(active, machines)
         self.assertNotIn(inactive, machines)
 
+    def test_last_used_is_latest_successful_access(self):
+        machine = Machine.objects.create(
+            mac_address="aa:bb:cc:dd:ee:01", hostname="m1", name="used"
+        )
+        old = AccessLog.objects.create(machine=machine, type=LOG_TYPE_ENABLED)
+        new = AccessLog.objects.create(machine=machine, type=LOG_TYPE_ENABLED)
+        AccessLog.objects.filter(pk=old.pk).update(timestamp=timezone.now() - timedelta(days=3))
+        AccessLog.objects.filter(pk=new.pk).update(timestamp=timezone.now() - timedelta(days=1))
+        # Failed attempts and boots don't count as use.
+        AccessLog.objects.create(machine=machine, type="unsuccessful")
+        response = self.client.get(reverse("machines:list"))
+        listed = {m.pk: m for m in response.context["machines"]}
+        new.refresh_from_db()
+        self.assertEqual(listed[machine.pk].last_used, new.timestamp)
+        self.assertContains(response, "Last Used")
+
+    def test_never_used_machine_shows_never(self):
+        Machine.objects.create(mac_address="aa:bb:cc:dd:ee:01", hostname="m1", name="unused")
+        response = self.client.get(reverse("machines:list"))
+        self.assertIsNone(response.context["machines"][0].last_used)
+        self.assertContains(response, "Never")
+
+    def test_sort_by_last_used_puts_never_used_last(self):
+        never = Machine.objects.create(mac_address="aa:bb:cc:dd:ee:01", hostname="m1", name="never")
+        older = Machine.objects.create(mac_address="aa:bb:cc:dd:ee:02", hostname="m2", name="older")
+        newer = Machine.objects.create(mac_address="aa:bb:cc:dd:ee:03", hostname="m3", name="newer")
+        for machine, days in ((older, 5), (newer, 1)):
+            log = AccessLog.objects.create(machine=machine, type=LOG_TYPE_ENABLED)
+            AccessLog.objects.filter(pk=log.pk).update(timestamp=timezone.now() - timedelta(days=days))
+        response = self.client.get(reverse("machines:list"), {"sort": "-last_used"})
+        self.assertEqual(list(response.context["machines"]), [newer, older, never])
+
     def test_status_filters(self):
         Machine.objects.create(
             mac_address="aa:bb:cc:dd:ee:01", hostname="m1", name="maintenance",

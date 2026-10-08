@@ -30,7 +30,7 @@
         <div id="search-results" class="mt-2 max-h-64 overflow-y-auto"></div>
         <div id="selected-container" class="flex flex-wrap gap-1 mt-2">
             {% for selected in selected_people %}
-            <span class="badge badge-soft badge-success gap-1 qualify-chip">{{ selected.name }}<input type="hidden" name="person_ids" value="{{ selected.pk }}"><button type="button" class="qualify-chip-remove" aria-label="{% trans 'Remove' %}">&times;</button></span>
+            <span class="badge badge-soft badge-success gap-1 qualify-chip">{{ selected.name }}{% if selected.email %} ({{ selected.email }}){% endif %} <input type="hidden" name="person_ids" value="{{ selected.pk }}"><button type="button" class="qualify-chip-remove" aria-label="{% trans 'Remove' %}">&times;</button></span>
             {% endfor %}
         </div>
     </div>
@@ -46,7 +46,7 @@
         <div id="search-results" class="mt-2 max-h-64 overflow-y-auto"></div>
         <div id="selected-container" class="flex flex-wrap gap-1 mt-2">
             {% for selected in selected_machines %}
-            <span class="badge badge-outline gap-1 qualify-chip">{{ selected.name }}<input type="hidden" name="machine_ids" value="{{ selected.pk }}"><button type="button" class="qualify-chip-remove" aria-label="{% trans 'Remove' %}">&times;</button></span>
+            <span class="badge badge-soft badge-success gap-1 qualify-chip">{{ selected.name }}{% if selected.hostname %} ({{ selected.hostname }}){% endif %} <input type="hidden" name="machine_ids" value="{{ selected.pk }}"><button type="button" class="qualify-chip-remove" aria-label="{% trans 'Remove' %}">&times;</button></span>
             {% endfor %}
         </div>
     </div>
@@ -65,10 +65,19 @@
 {% endblock %}
 
 {% block script_extra %}
+{% trans 'Remove' as remove_label %}
 (function () {
     var idName = "{% if machine %}person_ids{% else %}machine_ids{% endif %}";
     var container = document.getElementById("selected-container");
     var results = document.getElementById("search-results");
+    var searchInput = container.parentElement.querySelector("input[type='search']");
+
+    // Enter in the search box would submit the whole qualify form.
+    searchInput.addEventListener("keydown", function (event) {
+        if (event.key === "Enter") {
+            event.preventDefault();
+        }
+    });
 
     function makeChip(id, label) {
         var chip = document.createElement("span");
@@ -84,7 +93,7 @@
         var remove = document.createElement("button");
         remove.type = "button";
         remove.className = "qualify-chip-remove";
-        remove.setAttribute("aria-label", "{% trans 'Remove' %}");
+        remove.setAttribute("aria-label", "{{ remove_label|escapejs }}");
         remove.textContent = "×";
         chip.appendChild(remove);
 
@@ -95,6 +104,16 @@
     var instructedBySelect = document.getElementById("id_instructed_by");
     var defaultInstructedByOptions = instructedBySelect ? instructedBySelect.innerHTML : "";
     var instructorOptionsUrlBase = "{% url 'machines:instructor-options' 1 %}".replace(/\/1$/, "/");
+    var instructorRequest = 0;
+
+    function setInstructedByOptions(html, previousValue) {
+        instructedBySelect.innerHTML = html;
+        // Keep the current choice if it is still offered, else fall back to "---------".
+        instructedBySelect.value = previousValue;
+        if (instructedBySelect.selectedIndex === -1) {
+            instructedBySelect.selectedIndex = 0;
+        }
+    }
 
     function onSelectionChanged() {
         if (!instructedBySelect) return;
@@ -102,13 +121,24 @@
             container.querySelectorAll("input[name='machine_ids']"),
             function (input) { return input.value; }
         );
+        var previousValue = instructedBySelect.value;
+        // Responses for an outdated selection are dropped below.
+        var requestId = ++instructorRequest;
         if (ids.length === 1) {
-            htmx.ajax("GET", instructorOptionsUrlBase + ids[0], {
-                target: "#id_instructed_by",
-                swap: "innerHTML",
-            });
+            fetch(instructorOptionsUrlBase + ids[0])
+                .then(function (response) {
+                    return response.ok ? response.text() : Promise.reject(response);
+                })
+                .then(function (html) {
+                    if (requestId !== instructorRequest) return;
+                    setInstructedByOptions(html, previousValue);
+                })
+                .catch(function () {
+                    if (requestId !== instructorRequest) return;
+                    setInstructedByOptions(defaultInstructedByOptions, previousValue);
+                });
         } else {
-            instructedBySelect.innerHTML = defaultInstructedByOptions;
+            setInstructedByOptions(defaultInstructedByOptions, previousValue);
         }
     }
     {% else %}
@@ -134,5 +164,10 @@
         button.closest(".qualify-chip").remove();
         onSelectionChanged();
     });
+
+    // A re-rendered form (validation error) may already have a selection.
+    if (container.querySelector(".qualify-chip")) {
+        onSelectionChanged();
+    }
 })();
 {% endblock %}

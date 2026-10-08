@@ -199,6 +199,17 @@ class QualifyPersonView(TitleMixin, PartialMixin, PermissionRequiredMixin, FormV
         if not machines:
             form.add_error(None, _("Select at least one machine."))
             return self.form_invalid(form)
+        # With a single machine the form only offers that machine's instructors.
+        instructed_by = form.cleaned_data.get("instructed_by")
+        if (
+            instructed_by is not None
+            and len(machines) == 1
+            and not machines[0].instructors.filter(person=instructed_by).exists()
+        ):
+            form.add_error(
+                "instructed_by", _("This person is not an instructor for this machine.")
+            )
+            return self.form_invalid(form)
         bulk_qualify(person=self.get_object(), machines=machines, **form.cleaned_data)
         return super().form_valid(form)
 

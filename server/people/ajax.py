@@ -1,5 +1,6 @@
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.db.models import Q
+from django.http import HttpResponse
 from django.shortcuts import render
 from django.views import View
 
@@ -11,6 +12,7 @@ AUTOCOMPLETE_RESULT_LIMIT = 20
 
 
 def get_people(request, term):
+    term = (term or "").strip()
     if not term:
         return Person.objects.none()
     return Person.objects.filter(Q(name__icontains=term) | Q(email__icontains=term))
@@ -40,6 +42,9 @@ class QualifyablePersonAutocompleteView(PermissionRequiredMixin, View):
     permission_required = "people.view_person"
 
     def get(self, request, machine=None):
+        if not request.GET.get("term", "").strip():
+            # Cleared search box: clear the results instead of "No matches."
+            return HttpResponse("")
         people = get_people(request, request.GET.get("term", None))
         people = people.filter(is_active=True)
         people = people.exclude(qualifications__machine__id=machine)

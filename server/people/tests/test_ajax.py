@@ -77,6 +77,18 @@ class QualifyablePersonAutocompleteViewTests(TestCase):
         self.assertNotContains(response, "Qualified (q@example.com)")
         self.assertContains(response, "Unqualified (u@example.com)")
 
+    def test_blank_term_returns_empty_fragment(self):
+        for term in ("", "   "):
+            response = self.client.get(self.url, {"term": term})
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response.content, b"")
+
+    def test_person_without_member_id_or_email_has_no_none_label(self):
+        Person.objects.create(name="Nomail", email=None, member_id=None)
+        response = self.client.get(self.url, {"term": "Nomail"})
+        self.assertContains(response, 'data-label="Nomail"')
+        self.assertNotContains(response, "None")
+
     def test_ignores_malformed_selected_ids(self):
         response = self.client.get(
             self.url, {"term": "Unqualified", "person_ids": ["", "abc"]}

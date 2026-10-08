@@ -184,13 +184,22 @@ class Qualification(TimestampedModel):
         """Return when this qualification would expire if not used again, or None if disabled."""
         if self.last_used is None:
             days = self.machine.qualification_expiry_unused_days
-            base = self.created
+            # `created` is only set on the first save - fall back to now so the
+            # expiry can be computed before a new qualification is stored.
+            base = self.created or timezone.now()
         else:
             days = self.machine.qualification_expiry_used_days
             base = self.last_used
         if not days:
             return None
         return base + timedelta(days=days)
+
+    def save(self, *args, **kwargs):
+        # Set the expiry right away instead of waiting for the next
+        # `expire_qualifications` run, so it shows up as soon as it's created.
+        if self._state.adding and self.expires_at is None and self.expired is None:
+            self.expires_at = self.compute_expires_at()
+        super().save(*args, **kwargs)
 
     def mark_used(self):
         self.last_used = timezone.now()

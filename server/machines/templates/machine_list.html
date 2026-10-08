@@ -13,13 +13,10 @@
         {% trans 'Name' %}
       </th>
       <th>
-        {% trans 'MAC-Address' %}
-      </th>
-      <th>
-        {% trans 'Hostname' %}
-      </th>
-      <th>
         {% trans 'State' %}
+      </th>
+      <th>
+        {% trans 'Last Used' %}
       </th>
       {% if can_edit %}
         <th></th>
@@ -34,12 +31,15 @@
       <td>
         <a class="link-hover link-primary" href="{% url 'machines:detail' object.pk %}">{{ object.name }}</a>
       </td>
-      <td>{{ object.mac_address }}</td>
-      <td>
-        <a class="link-hover link-primary" href="{% url 'machines:detail' object.pk %}">{{ object.hostname }}</a>
-      </td>
       <td>
         {% include 'snippets/machine_state_label.html' with object=object %}
+      </td>
+      <td class="tabular-nums">
+        {% if object.last_used %}
+          {% include 'snippets/timestamp.html' with timestamp=object.last_used %}
+        {% else %}
+          <span class="text-base-content/60">{% trans 'Never' %}</span>
+        {% endif %}
       </td>
       {% if can_edit %}
         <td>

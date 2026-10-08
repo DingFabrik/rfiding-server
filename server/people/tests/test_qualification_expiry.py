@@ -26,6 +26,19 @@ class QualificationExpiryTests(TestCase):
             qualification.created + timedelta(days=30),
         )
 
+    def test_expires_at_set_on_creation(self):
+        self.machine.qualification_expiry_unused_days = 30
+        self.machine.save()
+        with freeze_time("2026-01-01 12:00:00"):
+            qualification = Qualification.objects.create(machine=self.machine, person=self.person)
+        qualification.refresh_from_db()
+        self.assertEqual(qualification.expires_at, qualification.created + timedelta(days=30))
+
+    def test_expires_at_stays_empty_on_creation_without_expiry(self):
+        qualification = Qualification.objects.create(machine=self.machine, person=self.person)
+        qualification.refresh_from_db()
+        self.assertIsNone(qualification.expires_at)
+
     def test_used_expiry_after_mark_used(self):
         self.machine.qualification_expiry_unused_days = 30
         self.machine.qualification_expiry_used_days = 90

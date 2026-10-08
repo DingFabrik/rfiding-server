@@ -123,6 +123,48 @@ class QualifyPersonViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertFalse(Qualification.objects.filter(person=self.person).exists())
 
+    def test_rejects_non_instructor_for_single_machine(self):
+        outsider = Person.objects.create(name="Outsider", email="out@example.com")
+        response = self.client.post(
+            reverse("people:qualify", kwargs={"pk": self.person.pk}),
+            {
+                "machine_ids": [self.machine.pk],
+                "instructed_by": outsider.pk,
+                "permission_level": "if_space_open",
+            },
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("instructed_by", response.context["form"].errors)
+        self.assertFalse(Qualification.objects.filter(person=self.person).exists())
+
+    def test_accepts_instructor_for_single_machine(self):
+        instructor = Person.objects.create(name="Teacher", email="t@example.com")
+        Qualification.objects.create(
+            person=instructor, machine=self.machine, is_instructor=True
+        )
+        response = self.client.post(
+            reverse("people:qualify", kwargs={"pk": self.person.pk}),
+            {
+                "machine_ids": [self.machine.pk],
+                "instructed_by": instructor.pk,
+                "permission_level": "if_space_open",
+            },
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(
+            Qualification.objects.get(person=self.person).instructed_by, instructor
+        )
+
+    def test_rerendered_chips_match_client_labels(self):
+        response = self.client.post(
+            reverse("people:qualify", kwargs={"pk": self.person.pk}),
+            {"machine_ids": [self.machine.pk], "permission_level": ""},
+        )
+        self.assertContains(
+            response,
+            'class="badge badge-soft badge-success gap-1 qualify-chip">m (m) <input',
+        )
+
     def test_qualifications_list_returns_404_for_nonexistent_person(self):
         response = self.client.get(
             reverse("people:qualifications", kwargs={"pk": 999999})
@@ -250,3 +292,14 @@ class RevokeAndEditQualificationViewTests(TestCase):
         instructor.delete()
         self.qualification.refresh_from_db()
         self.assertIsNone(self.qualification.instructed_by)
+
+    def test_revoke_page_no_link_goes_to_person(self):
+        response = self.client.get(
+            reverse(
+                "people:revoke-qualification",
+                kwargs={"pk": self.person.pk, "qualification": self.qualification.pk},
+            )
+        )
+        self.assertContains(
+            response, f'<a href="{self.person.get_absolute_url()}" class="btn">'
+        )

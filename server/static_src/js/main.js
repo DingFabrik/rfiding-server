@@ -160,7 +160,9 @@ document.addEventListener('click', function (event) {
 });
 
 window.addEventListener('htmx:beforeRequest', function (event) {
-    const alert = document.querySelector('.alert');
+    // Only the alert inside the region being refreshed - not the first one on the
+    // page, which may be an unrelated form error.
+    const alert = event.detail.target?.querySelector('.alert');
     if (alert) {
         alert.classList.add('invisible');
     }
@@ -181,6 +183,10 @@ window.addEventListener('htmx:afterSwap', function (event) {
 })
 
 window.addEventListener('htmx:responseError', function (event) {
+    // An alert <div> can't live inside a <select>; leave its options untouched.
+    if (event.detail.target.tagName === 'SELECT') {
+        return;
+    }
     event.detail.target.innerHTML = '<div class="alert alert-error" role="alert"><h4 class="font-bold">An error occurred.</h4><span>' + event.detail.xhr.statusText + '</span></div>';
 });
 

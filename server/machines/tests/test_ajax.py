@@ -89,6 +89,12 @@ class QualifyableMachineAutocompleteViewTests(TestCase):
         )
         self.assertEqual(self.result_ids(response), [])
 
+    def test_blank_term_returns_empty_fragment(self):
+        for term in ("", "   "):
+            response = self.client.get(self.url, {"term": term})
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response.content, b"")
+
     def test_ignores_malformed_selected_ids(self):
         machine = Machine.objects.create(
             mac_address="aa:bb:cc:dd:ee:01",

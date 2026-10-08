@@ -10,7 +10,7 @@ from django.views.generic import (
 )
 from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404
-from django.db.models import Max, Q
+from django.db.models import F, Max, OuterRef, Q, Subquery
 from django.urls import reverse, reverse_lazy
 from django.utils.translation import gettext_lazy as _
 
@@ -35,6 +35,7 @@ MACHINE_SORT_CHOICES = (
     ("ip_address", _("IP-Address")),
     ("mac_address", _("MAC Address")),
     ("-updated", _("Last Modified")),
+    ("-last_used", _("Last Used")),
 )
 MACHINE_SORT_CHOICES_KEYS = [choice[0] for choice in MACHINE_SORT_CHOICES]
 
@@ -43,10 +44,25 @@ class MachineListView(BaseListView):
     title = _("Machines")
 
     model = Machine
+    # Latest successful access; a correlated subquery, so it only runs for the
+    # machines on the current page.
+    queryset = Machine.objects.annotate(
+        last_used=Subquery(
+            AccessLog.objects.filter(machine=OuterRef("pk"), type=LOG_TYPE_ENABLED)
+            .order_by("-timestamp")
+            .values("timestamp")[:1]
+        )
+    )
     template_name = "machine_list.html"
     context_object_name = "machines"
     sort_fields = MACHINE_SORT_CHOICES_KEYS
     filterset_class = MachineFilterSet
+
+    def sort_queryset(self, queryset):
+        if self.request.GET.get("sort") == "-last_used":
+            # Never-used machines last on every database backend.
+            return queryset.order_by(F("last_used").desc(nulls_last=True))
+        return super().sort_queryset(queryset)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

@@ -1,5 +1,6 @@
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.db.models import Q
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
 from django.views import View
 
@@ -11,6 +12,7 @@ AUTOCOMPLETE_RESULT_LIMIT = 20
 
 
 def get_machines(request, term):
+    term = (term or "").strip()
     if not term:
         return Machine.objects.none()
     return Machine.objects.filter(Q(name__icontains=term) | Q(hostname__icontains=term))
@@ -24,6 +26,9 @@ class QualifyableMachineAutocompleteView(PermissionRequiredMixin, View):
     permission_required = "machines.view_machine"
 
     def get(self, request, person=None):
+        if not request.GET.get("term", "").strip():
+            # Cleared search box: clear the results instead of "No matches."
+            return HttpResponse("")
         machines = get_machines(request, request.GET.get("term", None))
         machines = machines.filter(
             needs_qualification=True, state=Machine.MachineStatus.ACTIVE
