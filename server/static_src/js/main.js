@@ -177,10 +177,14 @@ window.addEventListener('htmx:beforeSwap', function (event) {
     }
 });
 
-window.addEventListener('htmx:afterSwap', function (event) {
+function initSwappedContent() {
     initPopovers();
     window.createIcons();
-})
+}
+
+window.addEventListener('htmx:afterSwap', initSwappedContent);
+// The websocket extension swaps messages in out-of-band, without htmx:afterSwap.
+window.addEventListener('htmx:wsAfterMessage', initSwappedContent);
 
 window.addEventListener('htmx:responseError', function (event) {
     // An alert <div> can't live inside a <select>; leave its options untouched.
