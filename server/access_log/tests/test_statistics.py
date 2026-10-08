@@ -6,6 +6,7 @@ from django.core.management import CommandError, call_command
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
+from freezegun import freeze_time
 
 from access_log.models import (
     AccessLog,
@@ -159,6 +160,9 @@ class QualificationInsightTests(TestCase):
         self.assertEqual(list(stats["expiring_qualifications"]), [soon, later])
 
 
+# Frozen so the statistics see the same "now" as the test; otherwise the
+# currently open period grows by however long the test took to run.
+@freeze_time("2024-04-16 12:00")
 class SpaceUsageTests(TestCase):
     def setUp(self):
         self.machine = Machine.objects.create(mac_address="aa:aa:aa:aa:aa:aa", hostname="m", name="Lathe")

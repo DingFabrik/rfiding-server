@@ -1,3 +1,4 @@
+import sys
 from pathlib import Path
 import toml
 
@@ -305,5 +306,12 @@ LOGGING = {
         },
     },
 }
+
+# Tests deliberately trigger failures (lockouts, unreachable machines, raised
+# exceptions) that would otherwise be printed to stderr by Python's last-resort
+# handler. assertLogs still works, since it installs its own handler.
+if "test" in sys.argv:
+    LOGGING["handlers"]["null"] = {"class": "logging.NullHandler"}
+    LOGGING["root"] = {"handlers": ["null"]}
 
 CELERY_BROKER_URL = "redis://localhost:6379/0"
