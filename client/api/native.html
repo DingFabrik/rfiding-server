@@ -294,6 +294,9 @@ verified on the website.</p></li>
 <p>When the server disconnects, the machine starts over with a new challenge.
 Machines without an API key cannot verify the server. They still connect, but
 the website shows them as <em>Unverified</em>.</p>
+<p>If your firmware doesn’t implement this, set <code class="docutils literal notranslate"><span class="pre">ESPHOME_VERIFY_SERVER</span> <span class="pre">=</span> <span class="pre">False</span></code>.
+The server then neither answers challenges nor shows machines as <em>Unverified</em>.
+The connection is still authenticated and encrypted with the encryption key.</p>
 <p>Test vector: key <code class="docutils literal notranslate"><span class="pre">secret</span></code>, challenge <code class="docutils literal notranslate"><span class="pre">0123456789abcdef</span></code> gives
 <code class="docutils literal notranslate"><span class="pre">edb17743faceece62694a2c3b77480e908df9041bb0c05594084dcaa6b0e73da</span></code>.</p>
 </section>

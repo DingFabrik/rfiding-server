@@ -55,6 +55,10 @@ When the server disconnects, the machine starts over with a new challenge.
 Machines without an API key cannot verify the server. They still connect, but
 the website shows them as *Unverified*.
 
+If your firmware doesn't implement this, set ``ESPHOME_VERIFY_SERVER = False``.
+The server then neither answers challenges nor shows machines as *Unverified*.
+The connection is still authenticated and encrypted with the encryption key.
+
 Test vector: key ``secret``, challenge ``0123456789abcdef`` gives
 ``edb17743faceece62694a2c3b77480e908df9041bb0c05594084dcaa6b0e73da``.
 
