@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('machines', '0039_machine_permission_level'),
+        ("machines", "0039_machine_permission_level"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='machine',
-            name='log_unsuccessful',
-            field=models.BooleanField(default=True, help_text='Log unsuccessful unlock attempts', verbose_name='Log Unsuccessful'),
+            model_name="machine",
+            name="log_unsuccessful",
+            field=models.BooleanField(default=True, help_text="Log unsuccessful unlock attempts", verbose_name="Log Unsuccessful"),
         ),
     ]

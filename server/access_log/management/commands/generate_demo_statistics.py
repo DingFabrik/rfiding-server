@@ -221,7 +221,7 @@ class Command(BaseCommand):
             )
             for index, (name, state, _, _) in enumerate(MACHINES)
         )
-        for machine, (_, _, weight, minutes) in zip(machines, MACHINES):
+        for machine, (_, _, weight, minutes) in zip(machines, MACHINES, strict=True):
             machine.demo_weight = weight
             machine.demo_minutes = minutes
         return machines

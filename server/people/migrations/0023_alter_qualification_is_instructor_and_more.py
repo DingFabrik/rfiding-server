@@ -6,23 +6,23 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('people', '0022_qualification_person_machine_unique'),
+        ("people", "0022_qualification_person_machine_unique"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='qualification',
-            name='is_instructor',
-            field=models.BooleanField(default=False, help_text='Give safety briefings and qualify other people on this machine.', verbose_name='Is Instructor'),
+            model_name="qualification",
+            name="is_instructor",
+            field=models.BooleanField(default=False, help_text="Give safety briefings and qualify other people on this machine.", verbose_name="Is Instructor"),
         ),
         migrations.AlterField(
-            model_name='qualification',
-            name='is_maintainer',
-            field=models.BooleanField(default=False, help_text='Perform maintenance on this machine and activate it in maintenance state.', verbose_name='Is Maintainer'),
+            model_name="qualification",
+            name="is_maintainer",
+            field=models.BooleanField(default=False, help_text="Perform maintenance on this machine and activate it in maintenance state.", verbose_name="Is Maintainer"),
         ),
         migrations.AlterField(
-            model_name='qualification',
-            name='permission_level',
-            field=models.CharField(choices=[('if_space_open', 'If Open'), ('always', 'Always'), ('never', 'Never')], default='if_space_open', max_length=20, verbose_name='Permission Level'),
+            model_name="qualification",
+            name="permission_level",
+            field=models.CharField(choices=[("if_space_open", "If Open"), ("always", "Always"), ("never", "Never")], default="if_space_open", max_length=20, verbose_name="Permission Level"),
         ),
     ]

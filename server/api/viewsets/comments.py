@@ -44,8 +44,8 @@ class CommentViewSet(
             content_object = serializer.validated_data["content_type"].get_object_for_this_type(
                 pk=serializer.validated_data["object_id"]
             )
-        except ObjectDoesNotExist:
-            raise ValidationError({"object_id": "No object with this id."})
+        except ObjectDoesNotExist as err:
+            raise ValidationError({"object_id": "No object with this id."}) from err
         check_perm(self.request, comment_permission_for(content_object))
         serializer.instance = create_comment(
             content_object, self.request.user, serializer.validated_data["text"]
