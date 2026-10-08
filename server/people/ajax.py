@@ -3,19 +3,9 @@ from django.db.models import Q
 from django.shortcuts import render
 from django.views import View
 
-from rest_framework import status
-from rest_framework.response import Response
-from rest_framework.views import APIView
-from rest_framework.permissions import BasePermission
-
 from .models import Person
 
 AUTOCOMPLETE_RESULT_LIMIT = 20
-
-
-class HasViewPersonPermission(BasePermission):
-    def has_permission(self, request, view):
-        return bool(request.user and request.user.has_perm("people.view_person"))
 
 
 def get_people(request, term):
@@ -24,22 +14,20 @@ def get_people(request, term):
     return Person.objects.filter(Q(name__icontains=term) | Q(email__icontains=term))
 
 
-class PersonAutocompleteView(APIView):
-    queryset = Person.objects.all()
-    permission_classes = [HasViewPersonPermission]
+class PersonAutocompleteView(PermissionRequiredMixin, View):
+    """Search partial backing the single-person picker on the token form -
+    renders matching active people as clickable rows for htmx to swap in."""
 
-    def get(self, request, machine=None):
+    permission_required = "people.view_person"
+
+    def get(self, request):
         people = get_people(request, request.GET.get("term", None))
         people = people.filter(is_active=True)[:AUTOCOMPLETE_RESULT_LIMIT]
-        returned = []
-        for person in people:
-            returned.append(
-                {
-                    "value": person.id,
-                    "label": f"{person.name} ({person.email})",
-                }
-            )
-        return Response(returned, status=status.HTTP_200_OK)
+        return render(
+            request,
+            "person_autocomplete_results.html",
+            {"people": people, "term": request.GET.get("term", "")},
+        )
 
 
 class QualifyablePersonAutocompleteView(PermissionRequiredMixin, View):
@@ -59,23 +47,4 @@ class QualifyablePersonAutocompleteView(PermissionRequiredMixin, View):
             request,
             "qualifyable_person_results.html",
             {"people": people},
-        )
-
-
-class InstructorPersonAutocompleteView(APIView):
-    queryset = Person.objects.all()
-    permission_classes = [HasViewPersonPermission]
-
-    def get(self, request, machine=None):
-        people = get_people(request, request.GET.get("term", None))
-        people = people.filter(is_active=True)
-        people = people.exclude(
-            qualifications__machine_id=machine, qualifications__is_instructor=True
-        )[:AUTOCOMPLETE_RESULT_LIMIT]
-        return Response(
-            [
-                {"value": person.id, "label": f"{person.name} ({person.email})"}
-                for person in people
-            ],
-            status=status.HTTP_200_OK,
         )

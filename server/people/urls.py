@@ -53,11 +53,6 @@ urlpatterns = [
         name="autocomplete-qualifyable",
     ),
     path(
-        "autocomplete/instructor/<int:machine>",
-        ajax.InstructorPersonAutocompleteView.as_view(),
-        name="autocomplete-instructor",
-    ),
-    path(
         "person-popover",
         views.PersonPopoverView.as_view(),
         name="person-popover",

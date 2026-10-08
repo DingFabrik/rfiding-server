@@ -1,0 +1,15 @@
+{% load i18n %}
+{% if term %}
+<div class="rounded-box border border-base-300 bg-base-200 p-1 block">
+{% for person in people %}
+<button type="button"
+        class="person-result-row btn btn-ghost w-full justify-start"
+        data-id="{{ person.pk }}"
+        data-label="{{ person.name }} ({{ person.email }})">
+     {{ person.name }} <span class="opacity-60">({{ person.email }})</span>
+</button>
+{% empty %}
+<div class="text-sm opacity-60 px-2 py-1">{% trans "No matches." %}</div>
+{% endfor %}
+</div>
+{% endif %}

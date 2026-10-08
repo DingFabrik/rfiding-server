@@ -3,21 +3,44 @@ import * as htmx_ws from './htmx-ws.js'
 global.htmx = htmx;
 
 import Chart from 'chart.js/auto';
-import { createIcons, icons } from 'lucide';
+// Only icons listed here are bundled. When using a new data-lucide name in a
+// template or Python (APP_ICONS, Machine.type_icon, UserWidget.icon, form
+// SECTIONS, ...), add it here as well.
+import {
+    createIcons,
+    Archive, Ban, BarChart3, Box, Calendar, CalendarClock, CalendarDays,
+    ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Circle, CircleCheck,
+    CircleCheckBig, CirclePlay, CirclePlus, CircleStop, CircleUser, CircleX,
+    Clock, Command, Cpu, DoorOpen, Fan, Grid2x2, GripVertical, HardDrive,
+    History, IdCard, Info, Key, KeyRound, LayoutDashboard, List, Lock, LogIn,
+    LogOut, MapPin, Menu, MessageSquare, OctagonX, Plus, RadioTower, RefreshCw,
+    RobotArm, Rocket, RotateCcwClock, RotateCw, ScrollText, Search, Send,
+    Settings, ShieldCheck, ShieldPlus, ShieldX, SquarePen, Tag, Terminal, Timer,
+    Trash2, TrendingUp, TriangleAlert, Unlock, User, UserCog, UserPlus, Users,
+    Wrench,
+} from 'lucide';
+
+const icons = {
+    Archive, Ban, BarChart3, Box, Calendar, CalendarClock, CalendarDays,
+    ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Circle, CircleCheck,
+    CircleCheckBig, CirclePlay, CirclePlus, CircleStop, CircleUser, CircleX,
+    Clock, Command, Cpu, DoorOpen, Fan, Grid2x2, GripVertical, HardDrive,
+    History, IdCard, Info, Key, KeyRound, LayoutDashboard, List, Lock, LogIn,
+    LogOut, MapPin, Menu, MessageSquare, OctagonX, Plus, RadioTower, RefreshCw,
+    RobotArm, Rocket, RotateCcwClock, RotateCw, ScrollText, Search, Send,
+    Settings, ShieldCheck, ShieldPlus, ShieldX, SquarePen, Tag, Terminal, Timer,
+    Trash2, TrendingUp, TriangleAlert, Unlock, User, UserCog, UserPlus, Users,
+    Wrench,
+};
 import './keyboardshortcuts.js';
 
 window.Chart = Chart;
-
-var jquery = require("jquery");
-window.$ = window.jQuery = jquery; // notice the definition of global variables here
-require("jquery-ui/dist/jquery-ui.js");
 
 window.urlMap = {
 
 };
 
 window.createIcons = function () {
-    console.log("Creating icons");
     createIcons({ icons });
 }
 
@@ -88,13 +111,14 @@ function initPopover(toggle, pkAttr, urlKey) {
                 return;
             }
             content.dataset.loaded = 'true';
-            $.ajax({
-                url: window.urlMap[urlKey] + '?' + pkAttr.replace(/^data-/, '').replace(/-/g, '_') + '=' + pk,
-                success: function (response) {
-                    $(content).html(response);
+            const param = pkAttr.replace(/^data-/, '').replace(/-/g, '_');
+            fetch(window.urlMap[urlKey] + '?' + new URLSearchParams({ [param]: pk }))
+                .then((response) => response.ok ? response.text() : Promise.reject(response))
+                .then((html) => {
+                    content.innerHTML = html;
                     window.createIcons();
-                }
-            });
+                })
+                .catch(() => {});
         };
 
         trigger.addEventListener('mouseenter', show);

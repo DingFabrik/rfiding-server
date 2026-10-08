@@ -8,7 +8,16 @@
     {{ form.errors }}
     {{ form.person }}
     {{ form.serial|as_crispy_field }}
-    {{ form.person_autocomplete|as_crispy_field }}
+    <div class="mb-3">
+        <label class="label" for="id_person_search">{% trans "Person" %}</label>
+        <input type="search" id="id_person_search" name="term" class="input w-full" autocomplete="off"
+               placeholder="{% trans 'Search by name or email' %}"
+               value="{% if form.instance.person %}{{ form.instance.person.name }} ({{ form.instance.person.email }}){% endif %}"
+               hx-get="{% url 'people:autocomplete' %}"
+               hx-trigger="input changed delay:300ms"
+               hx-target="#person-search-results">
+        <div id="person-search-results" class="mt-2 max-h-64 overflow-y-auto"></div>
+    </div>
     {{ form.is_active|as_crispy_field }}
     <div id="div_id_type" class="mb-3">
         <label for="id_type" class="label">
@@ -34,18 +43,23 @@
 {% endblock %}
 
 {% block script_extra %}
-$("#{{ form.person_autocomplete.id_for_label}}").autocomplete({
-    source: "{% url 'people:autocomplete' %}",
-    minLength: 1,
-        select: function( event, ui ) {
-            event.preventDefault();
-            this.value = ui.item.label;
-            $("#{{ form.person.id_for_label}}").val(ui.item.value);
-        },
-        focus: function( event, ui ) {
-            event.preventDefault();
-            this.value = ui.item.label;
-            $("#{{ form.person.id_for_label}}").val(ui.item.value);
+(function () {
+    var search = document.getElementById("id_person_search");
+    var results = document.getElementById("person-search-results");
+    var person = document.getElementById("{{ form.person.id_for_label }}");
+
+    results.addEventListener("click", function (event) {
+        var row = event.target.closest(".person-result-row");
+        if (!row) return;
+        search.value = row.dataset.label;
+        person.value = row.dataset.id;
+        results.innerHTML = "";
+    });
+
+    search.addEventListener("input", function () {
+        if (!search.value) {
+            person.value = "";
         }
-  });
+    });
+})();
 {% endblock %}

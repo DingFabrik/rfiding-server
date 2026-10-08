@@ -9,8 +9,11 @@
 
 {% block script_extra %}
 const superuserElement = document.getElementById("id_is_superuser");
-$("#id_user_permissions").prop("disabled", superuserElement.checked);
-superuserElement.addEventListener('change', (event) => {
-    $("#id_user_permissions").prop("disabled", event.currentTarget.checked);
-});
+const userPermissionsElement = document.getElementById("id_user_permissions");
+if (userPermissionsElement) {
+    userPermissionsElement.disabled = superuserElement.checked;
+    superuserElement.addEventListener('change', (event) => {
+        userPermissionsElement.disabled = event.currentTarget.checked;
+    });
+}
 {% endblock %}

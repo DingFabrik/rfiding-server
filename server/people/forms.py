@@ -33,9 +33,6 @@ class InstructorFieldsMixin:
 
 
 class QualifyPersonForm(InstructorFieldsMixin, forms.ModelForm):
-    machine_autocomplete = forms.CharField(label=_("Machine"), required=False)
-    person_autocomplete = forms.CharField(label=_("Person"), required=False)
-
     class Meta:
         model = Qualification
         fields = [
@@ -54,12 +51,6 @@ class QualifyPersonForm(InstructorFieldsMixin, forms.ModelForm):
         widgets = {
             "person": forms.HiddenInput(),
             "machine": forms.HiddenInput(),
-            "machine_autocomplete": forms.TextInput(
-                attrs={
-                    "class": "form-control",
-                    "placeholder": _("Machine name or hostname"),
-                }
-            ),
             "comment": forms.Textarea(attrs={"rows": 4}),
         }
 
