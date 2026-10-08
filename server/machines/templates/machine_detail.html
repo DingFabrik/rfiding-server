@@ -187,7 +187,7 @@
                       {% include 'snippets/machine_type_badge.html' with machine=child %}
                     </td>
                     <td>
-                      <a class="link-hover" href="{% url 'machines:detail' child.pk %}">{{ child.name }}</a>
+                      <a class="link-hover link-primary" href="{% url 'machines:detail' child.pk %}">{{ child.name }}</a>
                     </td>
                     <td class="font-mono">{{ child.compartment_id|default:'--' }}</td>
                     <td>
