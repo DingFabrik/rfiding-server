@@ -1,0 +1,26 @@
+# systemd unit for the ESPHome machine manager (`manage.py machine_manager`).
+[Unit]
+Description=rfiding machine manager (ESPHome native API)
+After=network-online.target redis-server.service
+Wants=network-online.target redis-server.service
+
+[Service]
+Type=simple
+User=rfiding
+Group=rfiding
+WorkingDirectory=/opt/rfiding-server/server
+Environment=PYTHONUNBUFFERED=1
+ExecStart=/opt/rfiding-server/venv/bin/python manage.py machine_manager
+# The manager closes all connections on SIGTERM.
+KillSignal=SIGTERM
+TimeoutStopSec=15
+Restart=always
+RestartSec=5
+
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=true
+
+[Install]
+WantedBy=multi-user.target
