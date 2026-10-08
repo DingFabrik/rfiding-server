@@ -184,8 +184,9 @@ def check_access(machine, tokenID, compartmentID=None):
         raise AccessDenied("No Access!", UnsuccessfulReason.UNKNOWN_TOKEN) from None
 
     def log_enabled():
+        # On the compartment, like the disable that ends it.
         save_access_log.delay(
-            machine.id, token["id"], LOG_TYPE_ENABLED, timestamp=timezone.now()
+            checked_machine.id, token["id"], LOG_TYPE_ENABLED, timestamp=timezone.now()
         )
 
     if checked_machine.needs_qualification:
@@ -319,11 +320,22 @@ def update_reported_machine_info(machine, data):
     return changed_fields
 
 
-def log_machine_disabled(machine, compartmentID=None):
-    """Logs that a machine (or one of its compartments) was locked again."""
+def log_machine_disabled(machine, compartmentID=None, tokenID=None):
+    """Logs that a machine (or one of its compartments) was locked again.
+
+    Without a token, or with one that isn't known, the disable is attributed to
+    whoever enabled the machine last.
+    """
     if compartmentID is not None:
         try:
             machine = machine.children.get(compartment_id=compartmentID)
         except Machine.DoesNotExist:
             raise NotFound("Machine does not exist") from None
-    save_access_log.delay(machine.id, None, LOG_TYPE_DISABLED, timestamp=timezone.now())
+    token_id = None
+    if tokenID:
+        token_id = (
+            Token.objects.filter(serial=truncate_token_id(tokenID.lower()))
+            .values_list("id", flat=True)
+            .first()
+        )
+    save_access_log.delay(machine.id, token_id, LOG_TYPE_DISABLED, timestamp=timezone.now())

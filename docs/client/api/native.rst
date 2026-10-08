@@ -100,7 +100,9 @@ calls with ``capture_response: true`` with a JSON object. All values in
    machine. Response: the configuration. Logged as a boot.
 
 ``rfiding.disabled``
-   ``data``: optional ``compartment``. Logs that the machine was locked again.
+   ``data``: optional ``compartment`` and ``token``. Logs that the machine was
+   locked again. Without a token, it is attributed to whoever enabled the
+   machine (or compartment) last.
 
 ESPHome sends ``homeassistant.action`` calls to **every** connected client that
 subscribed to them, and the first answer wins. Only send requests while

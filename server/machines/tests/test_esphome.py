@@ -14,7 +14,12 @@ from aioesphomeapi import (
 from channels.layers import InMemoryChannelLayer
 from django.test import SimpleTestCase, TestCase, override_settings
 
-from access_log.models import LOG_TYPE_UNSUCCESSFUL, AccessLog
+from access_log.models import (
+    LOG_TYPE_DISABLED,
+    LOG_TYPE_ENABLED,
+    LOG_TYPE_UNSUCCESSFUL,
+    AccessLog,
+)
 from base.build import running_version
 from machines.esphome import bridge, protocol
 from machines.esphome.connection import CommandError, DeviceConnection, MachineSettings
@@ -114,6 +119,27 @@ class HandleRequestTests(TestCase):
         self.machine.refresh_from_db()
         self.assertEqual(self.machine.firmware_version, "2.0.0")
         self.assertEqual(self.machine.ip_address, "10.0.0.9")
+
+    def test_disabled_is_attributed_to_whoever_enabled_the_compartment(self):
+        lock_group = Machine.objects.create(
+            mac_address="aa:bb:cc:dd:ee:00", hostname="lockers", name="lockers",
+            type=Machine.MachineType.LOCK_GROUP,
+        )
+        compartment = Machine.objects.create(
+            mac_address="aa:bb:cc:dd:ee:01", hostname="locker 1", name="locker 1",
+            parent=lock_group, compartment_id="1", needs_qualification=False,
+            log_disabled=True,
+        )
+        data = {"token": "abc123", "compartment": "1"}
+        result = handle_request(lock_group.pk, protocol.REQUEST_CHECK_ACCESS, data)
+        self.assertIs(result["access"], True)
+        handle_request(lock_group.pk, protocol.REQUEST_DISABLED, {"compartment": "1"})
+        enabled = AccessLog.objects.get(type=LOG_TYPE_ENABLED)
+        disabled = AccessLog.objects.get(type=LOG_TYPE_DISABLED)
+        self.assertEqual(enabled.machine, compartment)
+        self.assertEqual(disabled.machine, compartment)
+        self.assertEqual(disabled.token, enabled.token)
+        self.assertIsNotNone(disabled.enabled_duration)
 
     def test_disabled_with_unknown_compartment_is_an_error(self):
         with self.assertRaises(RequestError):

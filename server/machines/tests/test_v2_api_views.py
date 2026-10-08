@@ -3,9 +3,11 @@ from unittest.mock import patch
 
 from django.test import SimpleTestCase, override_settings
 from django.urls import reverse
+from django.utils import timezone
 from rest_framework import status
 from rest_framework.test import APITestCase
 
+from access_log.models import LOG_TYPE_DISABLED, LOG_TYPE_ENABLED, AccessLog
 from machines.api.common import truncate_token_id
 from machines.esphome import bridge
 from machines.models import Machine, MachineControlKey, MachineRegistrationRequest
@@ -288,6 +290,25 @@ class MachineDisableViewTests(APITestCase):
             format="json",
         )
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_disable_is_logged_with_token_and_duration(self):
+        self.machine.log_disabled = True
+        self.machine.save()
+        person = Person.objects.create(name="Ada", email="ada@example.com")
+        token = Token.objects.create(serial="abc", person=person)
+        AccessLog.objects.create(
+            machine=self.machine,
+            token=token,
+            type=LOG_TYPE_ENABLED,
+            timestamp=timezone.now() - timedelta(minutes=5),
+        )
+        self.client.get(self.url, {"mac_address": "aabbccddeeff", "tokenUid": "ABC"})
+        log = AccessLog.objects.get(type=LOG_TYPE_DISABLED)
+        self.assertEqual(log.machine, self.machine)
+        self.assertEqual(log.token, token)
+        self.assertAlmostEqual(
+            log.enabled_duration.total_seconds(), 300, delta=5
+        )
 
 
 class MachineControlViewTests(APITestCase):

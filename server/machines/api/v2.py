@@ -111,7 +111,11 @@ class MachineDisableView(BaseAPIView):
     required_get_parameters = ["mac_address", "tokenUid"]
 
     def get(self, request, format=None):
-        log_machine_disabled(self.machine, request.GET.get("compartmentID", None))
+        log_machine_disabled(
+            self.machine,
+            request.GET.get("compartmentID", None),
+            request.GET.get("tokenUid", None),
+        )
         return Response({})
 
 class MachineControlView(BaseAPIView):

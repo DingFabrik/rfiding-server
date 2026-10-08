@@ -49,7 +49,9 @@ def config(machine, data):
 
 def disabled(machine, data):
     try:
-        log_machine_disabled(machine, _optional(data, "compartment"))
+        log_machine_disabled(
+            machine, _optional(data, "compartment"), _optional(data, "token")
+        )
     except NotFound as e:
         raise RequestError(str(e)) from None
     return {}

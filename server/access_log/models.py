@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 LOG_TYPE_BOOTED = "booted"
@@ -38,7 +39,11 @@ class AccessLog(models.Model):
         verbose_name_plural = _("Access Logs")
         ordering = ("-timestamp",)
 
-    timestamp = models.DateTimeField(auto_now_add=True, verbose_name=_("Timestamp"))
+    # When it happened, not when it was saved: logs are written by a Celery task
+    # that can run much later, e.g. after retries.
+    timestamp = models.DateTimeField(
+        default=timezone.now, editable=False, verbose_name=_("Timestamp")
+    )
     token = models.ForeignKey(
         "tokens.Token",
         on_delete=models.SET_NULL,

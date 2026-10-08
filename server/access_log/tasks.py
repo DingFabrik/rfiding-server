@@ -24,6 +24,29 @@ delete_days = getattr(settings, "ACCESS_LOG_DELETE_DAYS", 0)
 anonymize_days = getattr(settings, "ACCESS_LOG_ANONYMIZE_DAYS", 0)
 
 
+def find_enabling_log(machine, token_id, timestamp):
+    """The enabled log that a disable at `timestamp` ends, if any.
+
+    Without a token, that is the machine's last enable, unless the machine was
+    already disabled since or it's too old to still be running.
+    """
+    enabled_logs = AccessLog.objects.filter(machine_id=machine.pk, type=LOG_TYPE_ENABLED)
+    if token_id is not None:
+        return enabled_logs.filter(token_id=token_id).order_by("-timestamp").first()
+    last_enabled_log = enabled_logs.order_by("-timestamp").first()
+    if last_enabled_log is None:
+        return None
+    if timestamp - last_enabled_log.timestamp > timedelta(seconds=enabled_duration_max_seconds):
+        return None
+    if AccessLog.objects.filter(
+        machine_id=machine.pk,
+        type=LOG_TYPE_DISABLED,
+        timestamp__gte=last_enabled_log.timestamp,
+    ).exists():
+        return None
+    return last_enabled_log
+
+
 @shared_task(
     autoretry_for=(Exception,),
     retry_backoff=True,
@@ -42,6 +65,13 @@ def save_access_log(machine, token_id, log_type, timestamp=None, reason=None):
         return
     if log_type == LOG_TYPE_UNSUCCESSFUL and not machine.log_unsuccessful:
         return
+    log_timestamp = timestamp or timezone.now()
+    last_enabled_log = None
+    if log_type == LOG_TYPE_DISABLED:
+        last_enabled_log = find_enabling_log(machine, token_id, log_timestamp)
+        if token_id is None and last_enabled_log is not None:
+            # Machines don't always say who locked them: it's whoever unlocked them.
+            token_id = last_enabled_log.token_id
     ago = timezone.now() - timedelta(seconds=duplicate_seconds_ago)
     if AccessLog.objects.filter(
         machine_id=machine.pk,
@@ -52,11 +82,7 @@ def save_access_log(machine, token_id, log_type, timestamp=None, reason=None):
     ).exists():
         return
     enabled_duration = None
-    log_timestamp = timestamp or timezone.now()
     if log_type == LOG_TYPE_DISABLED:
-        last_enabled_log = AccessLog.objects.filter(
-            machine_id=machine.pk, token_id=token_id, type=LOG_TYPE_ENABLED
-        ).order_by("-timestamp").first()
         if last_enabled_log:
             enabled_duration = log_timestamp - last_enabled_log.timestamp
             if enabled_duration.total_seconds() < 0:

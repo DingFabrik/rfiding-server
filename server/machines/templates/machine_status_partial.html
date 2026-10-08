@@ -12,6 +12,9 @@
 {% elif status == 'active' %}
   <span class="status status-success status-md animate-pulse"></span>
   <span class="text-sm font-medium text-success">{% trans 'Active' %}</span>
+{% elif status == 'open' %}
+  <span class="status status-success status-md animate-pulse"></span>
+  <span class="text-sm font-medium text-success">{% trans 'Open' %}</span>
 {% else %}
   <span class="status status-warning status-md"></span>
   <span class="text-sm font-medium text-warning">{% trans 'Unknown' %}</span>
