@@ -127,7 +127,7 @@ class Qualification(TimestampedModel):
     comment = models.TextField(null=True, blank=True, verbose_name=_("Comment"))
     instructed_by = models.ForeignKey(
         Person,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         null=True,
         blank=True,
         related_name="instructed_qualifications",

@@ -9,12 +9,14 @@ from django.views.generic import (
     FormView,
 )
 from django.core.paginator import Paginator
+from django.shortcuts import get_object_or_404
 from django.db.models import Max, Q
 from django.urls import reverse, reverse_lazy
 from django.utils.translation import gettext_lazy as _
 
 from access_log.models import AccessLog, LOG_TYPE_ENABLED
 from access_log.statistics import parse_days
+from base.utils import get_int_list
 from base.views import BaseListView, PartialMixin, TitleMixin
 from machines.esphome import bridge
 from comments.forms import CommentForm
@@ -325,7 +327,7 @@ class MachineQualificationsListView(BaseListView):
 
     def get_object(self):
         if self.object is None:
-            self.object = Machine.objects.get(pk=self.kwargs["pk"])
+            self.object = get_object_or_404(Machine, pk=self.kwargs["pk"])
         return self.object
 
     def get_title(self):
@@ -356,7 +358,7 @@ class MachineInstructorListView(BaseListView):
 
     def get_object(self):
         if self.object is None:
-            self.object = Machine.objects.get(pk=self.kwargs["pk"])
+            self.object = get_object_or_404(Machine, pk=self.kwargs["pk"])
         return self.object
 
     def get_title(self):
@@ -408,7 +410,14 @@ class QualifyMachineView(TitleMixin, PartialMixin, PermissionRequiredMixin, Form
 
     def get_object(self):
         if self.object is None:
-            self.object = Machine.objects.get(pk=self.kwargs["pk"])
+            # Only machines that people can be qualified for - lockers and
+            # machines without `needs_qualification` have no qualifications.
+            self.object = get_object_or_404(
+                Machine.objects.filter(needs_qualification=True).exclude(
+                    type=Machine.MachineType.LOCK_GROUP
+                ),
+                pk=self.kwargs["pk"],
+            )
         return self.object
 
     def get_title(self):
@@ -425,13 +434,13 @@ class QualifyMachineView(TitleMixin, PartialMixin, PermissionRequiredMixin, Form
         context["machine"] = self.get_object()
         if self.request.method == "POST":
             context["selected_people"] = Person.objects.filter(
-                pk__in=self.request.POST.getlist("person_ids")
+                pk__in=get_int_list(self.request.POST, "person_ids")
             )
         return context
 
     def form_valid(self, form):
         people = Person.objects.filter(
-            pk__in=self.request.POST.getlist("person_ids"), is_active=True
+            pk__in=get_int_list(self.request.POST, "person_ids"), is_active=True
         )
         if not people:
             form.add_error(None, _("Select at least one person."))

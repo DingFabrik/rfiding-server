@@ -17,6 +17,7 @@ from django.urls import reverse_lazy
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.utils.translation import gettext_lazy as _
 
+from base.utils import get_int_list
 from base.views import BaseToggleActiveView, BaseListView, PartialMixin, TitleMixin
 from comments.views import CommentCreateView
 from comments.forms import CommentForm
@@ -166,7 +167,7 @@ class QualifyPersonView(TitleMixin, PartialMixin, PermissionRequiredMixin, FormV
 
     def get_object(self):
         if self.object is None:
-            self.object = Person.objects.get(pk=self.kwargs["pk"])
+            self.object = get_object_or_404(Person, pk=self.kwargs["pk"])
         return self.object
 
     def get_title(self):
@@ -182,13 +183,16 @@ class QualifyPersonView(TitleMixin, PartialMixin, PermissionRequiredMixin, FormV
         context["person"] = self.get_object()
         if self.request.method == "POST":
             context["selected_machines"] = Machine.objects.filter(
-                pk__in=self.request.POST.getlist("machine_ids")
+                pk__in=get_int_list(self.request.POST, "machine_ids")
             )
         return context
 
     def form_valid(self, form):
+        if not self.get_object().is_active:
+            form.add_error(None, _("Inactive people cannot be qualified."))
+            return self.form_invalid(form)
         machines = Machine.objects.filter(
-            pk__in=self.request.POST.getlist("machine_ids"),
+            pk__in=get_int_list(self.request.POST, "machine_ids"),
             needs_qualification=True,
             state=Machine.MachineStatus.ACTIVE,
         ).exclude(type=Machine.MachineType.LOCK_GROUP)
@@ -216,7 +220,7 @@ class RevokeQualificationPersonView(
 
     def get_person(self):
         if self.person is None:
-            self.person = Person.objects.get(pk=self.kwargs["pk"])
+            self.person = get_object_or_404(Person, pk=self.kwargs["pk"])
         return self.person
 
     def get_title(self):
@@ -251,7 +255,7 @@ class EditQualificationPersonView(TitleMixin, PartialMixin, PermissionRequiredMi
 
     def get_person(self):
         if self.person is None:
-            self.person = Person.objects.get(pk=self.kwargs["pk"])
+            self.person = get_object_or_404(Person, pk=self.kwargs["pk"])
         return self.person
 
     def get_title(self):
@@ -286,7 +290,7 @@ class PersonQualificationsListView(BaseListView):
 
     def get_object(self):
         if self.object is None:
-            self.object = Person.objects.get(pk=self.kwargs["pk"])
+            self.object = get_object_or_404(Person, pk=self.kwargs["pk"])
         return self.object
 
     def get_title(self):

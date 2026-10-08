@@ -89,6 +89,32 @@ class QualifyableMachineAutocompleteViewTests(TestCase):
         )
         self.assertEqual(self.result_ids(response), [])
 
+    def test_ignores_malformed_selected_ids(self):
+        machine = Machine.objects.create(
+            mac_address="aa:bb:cc:dd:ee:01",
+            hostname="m1",
+            name="Laser",
+            needs_qualification=True,
+        )
+        response = self.client.get(
+            self.url, {"term": "Laser", "machine_ids": ["", "abc"]}
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(self.result_ids(response), [machine.pk])
+
+    def test_results_are_wrapped_in_their_own_container(self):
+        # The qualify form hides the clicked row's parent once it is empty;
+        # without a wrapper that parent is #search-results, hidden for good.
+        Machine.objects.create(
+            mac_address="aa:bb:cc:dd:ee:01",
+            hostname="m1",
+            name="Laser",
+            needs_qualification=True,
+        )
+        response = self.client.get(self.url, {"term": "Laser"})
+        self.assertRegex(
+            response.content.decode().strip(), r"^<div[^>]*>\s*<button[\s\S]*</div>$"
+        )
 
 class MachineInstructorOptionsViewTests(TestCase):
     def setUp(self):

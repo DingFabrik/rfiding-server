@@ -11,7 +11,7 @@
 {% endblock %}
 
 {% block content %}
-<form action="" method="post">
+<form action="{{ request.path }}" method="post">
     {% csrf_token %}
 
     {% if form.non_field_errors %}
@@ -121,7 +121,8 @@
         var resultContainer = row.parentElement;
         container.appendChild(makeChip(row.dataset.id, row.dataset.label));
         row.remove();
-        if (!resultContainer.innerHTML.trim()) {
+        // Never hide #search-results itself - nothing would un-hide it for later searches.
+        if (resultContainer !== results && !resultContainer.innerHTML.trim()) {
             resultContainer.classList.add("hidden");
         }
         onSelectionChanged();

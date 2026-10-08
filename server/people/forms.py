@@ -62,12 +62,24 @@ class QualifyPersonForm(InstructorFieldsMixin, forms.ModelForm):
         self.restrict_instructor_fields(user)
 
         if self.instance.pk:
+            # An existing qualification can't be moved to another person or
+            # machine - disabled fields ignore submitted values.
+            self.fields["person"].disabled = True
+            self.fields["machine"].disabled = True
+
             instructors = list(
                 self.instance.machine.instructors.select_related("person")
                 .order_by("person__name")
                 .values_list("person__pk", "person__name")
                 .all()
             )
+            # Keep the stored instructor selectable even if they are no longer
+            # an instructor, otherwise saving would silently clear it.
+            instructed_by = self.instance.instructed_by
+            if instructed_by is not None and instructed_by.pk not in (
+                pk for pk, _name in instructors
+            ):
+                instructors.append((instructed_by.pk, instructed_by.name))
             instructors.insert(0, ("", "---------"))
             self.fields["instructed_by"].choices = instructors
             self.fields["instructed_by"].widget.choices = instructors

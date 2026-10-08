@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
+from django.utils import timezone
 
 from machines.models import Machine
 from people.models import Person, Qualification
@@ -93,6 +94,41 @@ class QualifyPersonViewTests(TestCase):
         self.assertFalse(Qualification.objects.filter(person=self.person).exists())
 
 
+    def test_form_posts_to_qualify_url(self):
+        # The form is loaded into a modal on the detail page; a blank action
+        # would post to the detail page instead (405).
+        url = reverse("people:qualify", kwargs={"pk": self.person.pk})
+        response = self.client.get(url, HTTP_HX_REQUEST="true")
+        self.assertContains(response, f'<form action="{url}" method="post">')
+
+    def test_nonexistent_person_returns_404(self):
+        response = self.client.get(reverse("people:qualify", kwargs={"pk": 999999}))
+        self.assertEqual(response.status_code, 404)
+
+    def test_malformed_machine_ids_redisplay_with_error(self):
+        response = self.client.post(
+            reverse("people:qualify", kwargs={"pk": self.person.pk}),
+            {"machine_ids": ["x", ""], "permission_level": "if_space_open"},
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(Qualification.objects.filter(person=self.person).exists())
+
+    def test_inactive_person_is_not_qualified(self):
+        self.person.is_active = False
+        self.person.save()
+        response = self.client.post(
+            reverse("people:qualify", kwargs={"pk": self.person.pk}),
+            {"machine_ids": [self.machine.pk], "permission_level": "if_space_open"},
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(Qualification.objects.filter(person=self.person).exists())
+
+    def test_qualifications_list_returns_404_for_nonexistent_person(self):
+        response = self.client.get(
+            reverse("people:qualifications", kwargs={"pk": 999999})
+        )
+        self.assertEqual(response.status_code, 404)
+
 class RevokeAndEditQualificationViewTests(TestCase):
     def setUp(self):
         self.user = User.objects.create_superuser(
@@ -140,3 +176,77 @@ class RevokeAndEditQualificationViewTests(TestCase):
         )
         self.assertTemplateUsed(response, "partial_base_modal.html")
         self.assertTemplateNotUsed(response, "base_slim.html")
+
+
+    def edit_url(self):
+        return reverse(
+            "people:edit-qualification",
+            kwargs={"pk": self.person.pk, "qualification": self.qualification.pk},
+        )
+
+    def edit_data(self, **overrides):
+        data = {
+            "person": self.person.pk,
+            "machine": self.machine.pk,
+            "permission_level": self.qualification.permission_level,
+            "comment": "",
+        }
+        data.update(overrides)
+        return data
+
+    def test_edit_form_posts_to_edit_url(self):
+        response = self.client.get(self.edit_url(), HTTP_HX_REQUEST="true")
+        self.assertContains(response, f'<form action="{self.edit_url()}" method="post">')
+
+    def test_edit_renders_notified_at_and_keeps_it_on_save(self):
+        notified_at = timezone.now().replace(microsecond=0)
+        self.qualification.notified_at = notified_at
+        self.qualification.save()
+        response = self.client.get(self.edit_url())
+        self.assertContains(response, 'name="notified_at"')
+        value = response.context["form"]["notified_at"].value()
+        response = self.client.post(
+            self.edit_url(), self.edit_data(notified_at=value)
+        )
+        self.assertEqual(response.status_code, 302)
+        self.qualification.refresh_from_db()
+        self.assertEqual(self.qualification.notified_at, notified_at)
+
+    def test_edit_keeps_former_instructor_selected(self):
+        former = Person.objects.create(name="Former", email="former@example.com")
+        self.qualification.instructed_by = former
+        self.qualification.save()
+        response = self.client.get(self.edit_url())
+        self.assertContains(response, f'<option value="{former.pk}" selected>')
+        self.client.post(self.edit_url(), self.edit_data(instructed_by=former.pk))
+        self.qualification.refresh_from_db()
+        self.assertEqual(self.qualification.instructed_by, former)
+
+    def test_edit_ignores_tampered_person_and_machine(self):
+        other_person = Person.objects.create(name="o", email="o@example.com")
+        other_machine = Machine.objects.create(
+            mac_address="99:88:77:66:55:44", hostname="o", name="o"
+        )
+        response = self.client.post(
+            self.edit_url(),
+            self.edit_data(person=other_person.pk, machine=other_machine.pk),
+        )
+        self.assertEqual(response.status_code, 302)
+        self.qualification.refresh_from_db()
+        self.assertEqual(self.qualification.person, self.person)
+        self.assertEqual(self.qualification.machine, self.machine)
+
+    def test_edit_and_revoke_return_404_for_nonexistent_person(self):
+        for name in ("people:edit-qualification", "people:revoke-qualification"):
+            response = self.client.get(
+                reverse(name, kwargs={"pk": 999999, "qualification": self.qualification.pk})
+            )
+            self.assertEqual(response.status_code, 404, name)
+
+    def test_deleting_instructor_keeps_qualifications_they_instructed(self):
+        instructor = Person.objects.create(name="i", email="i@example.com")
+        self.qualification.instructed_by = instructor
+        self.qualification.save()
+        instructor.delete()
+        self.qualification.refresh_from_db()
+        self.assertIsNone(self.qualification.instructed_by)

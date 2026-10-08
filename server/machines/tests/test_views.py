@@ -618,6 +618,48 @@ class QualifyMachineViewTests(TestCase):
         self.assertFalse(Qualification.objects.filter(machine=self.machine).exists())
 
 
+    def test_form_posts_to_qualify_url(self):
+        # The form is loaded into a modal on the detail page; a blank action
+        # would post to the detail page instead (405).
+        url = reverse("machines:qualify", kwargs={"pk": self.machine.pk})
+        response = self.client.get(url, HTTP_HX_REQUEST="true")
+        self.assertContains(response, f'<form action="{url}" method="post">')
+
+    def test_nonexistent_machine_returns_404(self):
+        response = self.client.get(reverse("machines:qualify", kwargs={"pk": 999999}))
+        self.assertEqual(response.status_code, 404)
+
+    def test_machine_without_qualification_returns_404(self):
+        machine = Machine.objects.create(
+            mac_address="11:22:33:44:55:66", hostname="n", name="n",
+            needs_qualification=False,
+        )
+        url = reverse("machines:qualify", kwargs={"pk": machine.pk})
+        self.assertEqual(self.client.get(url).status_code, 404)
+        response = self.client.post(
+            url, {"person_ids": [self.person.pk], "permission_level": "if_space_open"}
+        )
+        self.assertEqual(response.status_code, 404)
+        self.assertFalse(Qualification.objects.filter(machine=machine).exists())
+
+    def test_locker_returns_404(self):
+        locker = Machine.objects.create(name="Locker", type="lock_group")
+        response = self.client.get(reverse("machines:qualify", kwargs={"pk": locker.pk}))
+        self.assertEqual(response.status_code, 404)
+
+    def test_malformed_person_ids_redisplay_with_error(self):
+        response = self.client.post(
+            reverse("machines:qualify", kwargs={"pk": self.machine.pk}),
+            {"person_ids": ["x", ""], "permission_level": "if_space_open"},
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(Qualification.objects.filter(machine=self.machine).exists())
+
+    def test_qualification_list_views_return_404_for_nonexistent_machine(self):
+        for name in ("machines:qualifications", "machines:instructors"):
+            response = self.client.get(reverse(name, kwargs={"pk": 999999}))
+            self.assertEqual(response.status_code, 404, name)
+
 class MachineRegistrationRequestDeleteViewTests(TestCase):
     def test_deletes_request_and_redirects_to_create(self):
         user = User.objects.create_superuser(email="admin@example.com", password="pass")

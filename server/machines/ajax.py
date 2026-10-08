@@ -3,6 +3,8 @@ from django.db.models import Q
 from django.shortcuts import get_object_or_404, render
 from django.views import View
 
+from base.utils import get_int_list
+
 from .models import Machine
 
 AUTOCOMPLETE_RESULT_LIMIT = 20
@@ -27,7 +29,7 @@ class QualifyableMachineAutocompleteView(PermissionRequiredMixin, View):
             needs_qualification=True, state=Machine.MachineStatus.ACTIVE
         ).exclude(type=Machine.MachineType.LOCK_GROUP)
         machines = machines.exclude(qualified_people__person__id=person)
-        machines = machines.exclude(pk__in=request.GET.getlist("machine_ids"))
+        machines = machines.exclude(pk__in=get_int_list(request.GET, "machine_ids"))
         machines = machines[:AUTOCOMPLETE_RESULT_LIMIT]
         return render(
             request,

@@ -77,6 +77,13 @@ class QualifyablePersonAutocompleteViewTests(TestCase):
         self.assertNotContains(response, "Qualified (q@example.com)")
         self.assertContains(response, "Unqualified (u@example.com)")
 
+    def test_ignores_malformed_selected_ids(self):
+        response = self.client.get(
+            self.url, {"term": "Unqualified", "person_ids": ["", "abc"]}
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Unqualified (u@example.com)")
+
     def test_excludes_already_selected_people(self):
         response = self.client.get(
             self.url, {"term": "Unqualified", "person_ids": [str(self.unqualified.pk)]}

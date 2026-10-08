@@ -1,4 +1,6 @@
 {% load i18n %}
+{# Wrapper is required: the qualify form's click handler hides the row's parent once it is empty, which must not be #search-results itself. #}
+<div class="rounded-box border border-base-300 bg-base-200 p-1 block empty:hidden">
 {% for machine in machines %}
 <button type="button"
         class="qualify-result-row btn btn-ghost btn-sm w-full justify-start"
@@ -9,3 +11,4 @@
 {% empty %}
 <div class="text-sm opacity-60 px-2 py-1">{% trans "No matches." %}</div>
 {% endfor %}
+</div>
