@@ -13,3 +13,7 @@ def notify_machine_manager(sender, instance, **kwargs):
     if bridge.is_enabled():
         pk = instance.pk
         transaction.on_commit(lambda: bridge.notify_machine_changed(pk))
+        # A locker's config lists its compartments.
+        parent_pk = instance.parent_id
+        if parent_pk is not None:
+            transaction.on_commit(lambda: bridge.notify_machine_changed(parent_pk))

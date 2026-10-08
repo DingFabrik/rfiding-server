@@ -47,6 +47,11 @@ class DurationMillisecondsField(serializers.Field):
         return timedelta(milliseconds=data)
 
 
+class CompartmentConfigSerializer(serializers.Serializer):
+    id = serializers.CharField(source="compartment_id")
+    name = serializers.CharField()
+
+
 class MachineConfigSerializer(serializers.Serializer):
     runtimer = DurationMillisecondsField(default=0)
     minPower = serializers.IntegerField(default=0, min_value=0)
@@ -65,3 +70,5 @@ class MachineConfigSerializer(serializers.Serializer):
     statusDisplayModuleSettings = serializers.JSONField(default=dict, required=False)
     actorModule = serializers.ChoiceField(choices=ACTOR_MODULES, default=0)
     actorModuleSettings = serializers.JSONField(default=dict, required=False)
+    # Only sent to lockers.
+    compartments = CompartmentConfigSerializer(many=True, required=False)

@@ -99,6 +99,25 @@ class MachineConfigViewTests(APITestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["minPower"], 10)
+        self.assertNotIn("compartments", response.data)
+
+    def test_locker_config_lists_compartments(self):
+        self.machine.type = Machine.MachineType.LOCK_GROUP
+        self.machine.save()
+        Machine.objects.create(
+            name="Left", type="compartment", parent=self.machine, compartment_id="1"
+        )
+        Machine.objects.create(
+            name="Right", type="compartment", parent=self.machine, compartment_id="2"
+        )
+        Machine.objects.create(name="No ID", type="compartment", parent=self.machine)
+        response = self.client.get(
+            self.url, {"mac_address": "aabbccddeeff"}, format="json"
+        )
+        self.assertEqual(
+            response.data["compartments"],
+            [{"id": "1", "name": "Left"}, {"id": "2", "name": "Right"}],
+        )
 
     def test_post_updates_ip_address_and_firmware_version(self):
         response = self.client.post(

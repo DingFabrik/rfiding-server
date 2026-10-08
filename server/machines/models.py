@@ -290,7 +290,7 @@ class Machine(TimestampedModel):
     def type_icon(self):
         """Lucide icon representing the machine type."""
         return {
-            Machine.MachineType.PRIMARY: "drill",
+            Machine.MachineType.PRIMARY: "robot-arm",
             Machine.MachineType.SECONDARY: "fan",
             Machine.MachineType.LOCK: "lock",
             Machine.MachineType.LOCK_GROUP: "grid-2x2",

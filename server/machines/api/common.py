@@ -278,15 +278,18 @@ def check_access_response(machine, tokenID, compartmentID=None):
 
 def machine_config(machine):
     """The configuration a machine loads from the server."""
-    return MachineConfigSerializer(
-        {
-            "runtimer": machine.runtimer,
-            "minPower": machine.min_power,
-            "display_time_countdown": machine.display_time_countdown,
-            "display_power_consumption": machine.display_power_consumption,
-            "link_relays": machine.link_relays,
-        }
-    ).data
+    config = {
+        "runtimer": machine.runtimer,
+        "minPower": machine.min_power,
+        "display_time_countdown": machine.display_time_countdown,
+        "display_power_consumption": machine.display_power_consumption,
+        "link_relays": machine.link_relays,
+    }
+    if machine.type == Machine.MachineType.LOCK_GROUP:
+        config["compartments"] = machine.children.exclude(
+            Q(compartment_id__isnull=True) | Q(compartment_id="")
+        )
+    return MachineConfigSerializer(config).data
 
 
 def update_reported_machine_info(machine, data):

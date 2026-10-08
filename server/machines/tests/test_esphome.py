@@ -620,6 +620,18 @@ class MachineSignalTests(TestCase):
                 machine = Machine.objects.create(name="m", ip_address="10.0.0.1")
         notify.assert_called_once_with(machine.pk)
 
+    @override_settings(ENABLE_CLIENT_API=True)
+    def test_saving_a_compartment_notifies_its_locker(self):
+        locker = Machine.objects.create(name="locker", type="lock_group")
+        with patch("machines.signals.bridge.notify_machine_changed") as notify:
+            with self.captureOnCommitCallbacks(execute=True):
+                compartment = Machine.objects.create(
+                    name="c", type="compartment", parent=locker, compartment_id="1"
+                )
+        self.assertEqual(
+            [c.args for c in notify.call_args_list], [(compartment.pk,), (locker.pk,)]
+        )
+
     def test_no_notification_when_client_api_disabled(self):
         with patch("machines.signals.bridge.notify_machine_changed") as notify:
             with self.captureOnCommitCallbacks(execute=True):
