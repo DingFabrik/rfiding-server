@@ -162,7 +162,7 @@ class InstructorPermissionDashboardTests(TestCase):
 @override_settings(ALLOWED_HOSTS=["rfiding.example"], SPACE_STATE_SECRET="test-secret")
 class WebsocketOriginTests(TransactionTestCase):
     async def connect(self, origin=None):
-        headers = [(b"origin", origin)] if origin else []
+        headers = [(b"origin", origin)] if origin is not None else []
         communicator = WebsocketCommunicator(
             AllowedHostsOriginValidator(SpaceStateConsumer.as_asgi()),
             "/ws/space/status/",
@@ -173,7 +173,9 @@ class WebsocketOriginTests(TransactionTestCase):
         return connected
 
     async def test_foreign_origin_is_rejected(self):
-        self.assertFalse(await self.connect(b"https://evil.example"))
+        with self.assertLogs("base.websocket", "WARNING") as logs:
+            self.assertFalse(await self.connect(b"https://evil.example"))
+        self.assertIn("https://evil.example", logs.output[0])
 
     async def test_sibling_subdomain_is_rejected(self):
         self.assertFalse(await self.connect(b"https://other.rfiding.example"))
@@ -183,6 +185,12 @@ class WebsocketOriginTests(TransactionTestCase):
 
     async def test_non_browser_client_without_origin_is_accepted(self):
         self.assertTrue(await self.connect())
+
+    async def test_origin_without_host_is_accepted(self):
+        # arduinoWebSockets on ESP32s sends "file://" by default.
+        for origin in [b"file://", b"null", b""]:
+            with self.subTest(origin=origin):
+                self.assertTrue(await self.connect(origin))
 
 
 class LoginLockoutTests(TestCase):

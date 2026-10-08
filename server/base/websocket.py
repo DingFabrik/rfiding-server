@@ -1,5 +1,9 @@
+import logging
+
 from channels.security.websocket import OriginValidator
 from django.conf import settings
+
+logger = logging.getLogger(__name__)
 
 
 class BrowserOriginValidator(OriginValidator):
@@ -9,12 +13,24 @@ class BrowserOriginValidator(OriginValidator):
     allowed: browsers always send one, so cross-site websocket hijacking always
     carries an Origin, while non-browser clients (door sensors setting the space
     state, scripts) often don't send one at all.
+
+    The same goes for an Origin without a host, such as "file://" (the default of
+    the arduinoWebSockets library used on ESP32s), "null" or an empty value.
+    Browsers only send those from sandboxed or file: contexts, which count as
+    cross-site, so the SameSite session cookie isn't sent and the connection is
+    anonymous, just like a client without an Origin.
     """
 
     def valid_origin(self, parsed_origin):
-        if parsed_origin is None:
+        if parsed_origin is None or parsed_origin.hostname is None:
             return True
-        return super().valid_origin(parsed_origin)
+        if super().valid_origin(parsed_origin):
+            return True
+        logger.warning(
+            "Rejected websocket handshake from origin %r, which is not in ALLOWED_HOSTS",
+            parsed_origin.geturl(),
+        )
+        return False
 
 
 def AllowedHostsOriginValidator(application):

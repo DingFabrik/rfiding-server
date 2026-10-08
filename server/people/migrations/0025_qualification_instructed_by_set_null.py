@@ -7,13 +7,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('people', '0024_backfill_qualification_last_used'),
+        ("people", "0024_backfill_qualification_last_used"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='qualification',
-            name='instructed_by',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='instructed_qualifications', to='people.person', verbose_name='Instructed By'),
+            model_name="qualification",
+            name="instructed_by",
+            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name="instructed_qualifications", to="people.person", verbose_name="Instructed By"),
         ),
     ]

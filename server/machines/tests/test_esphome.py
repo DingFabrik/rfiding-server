@@ -278,6 +278,15 @@ class DeviceConnectionTests(TestCase):
         await self.settle(connection)
         self.assertEqual(self.executed(protocol.ACTION_AUTHENTICATE), [])
 
+    @override_settings(ESPHOME_VERIFY_SERVER=False)
+    async def test_verification_can_be_turned_off(self):
+        with self.assertNoLogs("machines.esphome.connection", "WARNING"):
+            connection = await self.connect()
+            connection._on_state(state(2, "nonce"))
+            await self.settle(connection)
+        self.assertEqual(self.executed(protocol.ACTION_AUTHENTICATE), [])
+        self.assertIsNone(connection.status()["verified"])
+
     async def test_state_changes_are_published(self):
         connection = await self.connect()
         self.manager.publish_status.reset_mock()

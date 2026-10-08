@@ -251,6 +251,12 @@ SPACE_CONTACT = "01234 / 123456"
 # unknown tokens. Stored token serials are not affected. None disables it.
 TOKEN_ID_MAX_LENGTH = None
 
+# Prove to machines on the ESPHome native API that they are connected to this
+# server, by signing their challenge with the machine's API key. Turn it off for
+# firmware that doesn't implement it; the connection is still authenticated and
+# encrypted with the machine's encryption key.
+ESPHOME_VERIFY_SERVER = True
+
 ASGI_APPLICATION = "rfiding.asgi.application"
 
 CELERY_RESULT_BACKEND = "django-db"

@@ -106,6 +106,22 @@ class MachineStateConsumerTests(TransactionTestCase):
         self.assertIn("Unverified", await communicator.receive_from())
         await communicator.disconnect()
 
+    async def test_no_badge_when_verification_is_off(self):
+        self.user = await grant(self.user, "view_machine_state")
+        communicator = communicator_for(MachineStateConsumer, self.user)
+        await communicator.connect()
+        await communicator.receive_from()
+
+        await get_channel_layer().group_send(
+            protocol.machine_group(self.machine.pk),
+            {
+                "type": "machine.state",
+                "status": {"connected": True, "verified": None, "state": "standby"},
+            },
+        )
+        self.assertNotIn("Unverified", await communicator.receive_from())
+        await communicator.disconnect()
+
     async def test_command_ignored_without_send_permission(self):
         self.user = await grant(self.user, "view_machine_state")
         with patch(

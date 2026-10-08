@@ -15,6 +15,7 @@ from aioesphomeapi import (
     SupportsResponseType,
 )
 from asgiref.sync import sync_to_async
+from django.conf import settings as django_settings
 
 from . import protocol
 from .handlers import RequestError, handle_request
@@ -67,6 +68,7 @@ class DeviceConnection:
         self.manager = manager
         self.connected = False
         self.verified = False
+        self.verify_server = django_settings.ESPHOME_VERIFY_SERVER
         self.firmware_version = None
         self.entity_keys = {}
         self.services = {}
@@ -109,7 +111,8 @@ class DeviceConnection:
         state = self.states.get(protocol.ENTITY_DEVICE_STATE) or "unknown"
         return {
             "connected": self.connected,
-            "verified": self.verified,
+            # None: verification is turned off, so there is nothing to show.
+            "verified": self.verified if self.verify_server else None,
             "state": state if self.connected else "disconnected",
             "power": self.states.get(protocol.ENTITY_POWER),
             "error_message": self.states.get(protocol.ENTITY_ERROR_MESSAGE),
@@ -132,7 +135,7 @@ class DeviceConnection:
         logger.info("Connected to %s", self)
         if self.manager.has_log_listeners(self.pk):
             self.set_log_streaming(True)
-        if protocol.ACTION_AUTHENTICATE not in self.services:
+        if self.verify_server and protocol.ACTION_AUTHENTICATE not in self.services:
             logger.warning(
                 "%s does not support server verification (no %s action)",
                 self,
@@ -246,7 +249,8 @@ class DeviceConnection:
         challenge = self.states.get(protocol.ENTITY_CHALLENGE)
         api_key = self.settings.api_key
         if (
-            not self.connected
+            not self.verify_server
+            or not self.connected
             or not challenge
             or challenge == self._signed_challenge
             or protocol.ACTION_AUTHENTICATE not in self.services

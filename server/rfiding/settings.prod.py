@@ -58,6 +58,9 @@ CHANNEL_LAYERS = {
 }
 
 ENABLE_CLIENT_API = False
+# Set to False if your machines' firmware doesn't implement the server
+# verification of the ESPHome native API (see the client docs).
+ESPHOME_VERIFY_SERVER = True
 
 # Address of the website, used by `manage.py check --deploy --tag services`
 # to ask the web server which version it runs, e.g. "https://rfiding.example.com".
