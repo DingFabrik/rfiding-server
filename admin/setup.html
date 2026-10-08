@@ -204,6 +204,7 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../client/api.html">API Docs</a><input aria-label="Toggle navigation of API Docs" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../client/api/v2.html">RFIDing API v2</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../client/api/v1.html">RFIDing API v1 (Legacy)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../client/api/native.html">ESPHome native API</a></li>
 </ul>
 </li>
 </ul>
@@ -277,6 +278,38 @@ poetry<span class="w"> </span>install
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>cp<span class="w"> </span>server/rfiding/settings.prod.py<span class="w"> </span>server/rfiding/settings.py
 </pre></div>
 </div>
+<p>The production settings read two secrets from the environment and refuse to
+start without them:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">DJANGO_SECRET_KEY</span></code>: Django’s secret key.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SPACE_STATE_SECRET</span></code>: the secret clients send (in the <code class="docutils literal notranslate"><span class="pre">X-Space-Secret</span></code>
+header) to change the space state.</p></li>
+</ul>
+<p>Generate each with <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">-c</span> <span class="pre">'import</span> <span class="pre">secrets;</span> <span class="pre">print(secrets.token_urlsafe(50))'</span></code>.
+Also fill in <code class="docutils literal notranslate"><span class="pre">ALLOWED_HOSTS</span></code> and <code class="docutils literal notranslate"><span class="pre">CSRF_TRUSTED_ORIGINS</span></code>, and check the HTTPS
+settings if TLS is terminated by a reverse proxy.</p>
+</section>
+<section id="services">
+<h2>Services<a class="headerlink" href="#services" title="Link to this heading">¶</a></h2>
+<p>A complete installation runs three services, which all need to be restarted
+after an update:</p>
+<ul class="simple">
+<li><p>the web server (<code class="docutils literal notranslate"><span class="pre">daphne</span> <span class="pre">rfiding.asgi:application</span></code>),</p></li>
+<li><p>the Celery worker (<code class="docutils literal notranslate"><span class="pre">celery</span> <span class="pre">-A</span> <span class="pre">rfiding</span> <span class="pre">worker</span></code>),</p></li>
+<li><p>the machine manager (<code class="docutils literal notranslate"><span class="pre">./manage.py</span> <span class="pre">machine_manager</span></code>), if
+<code class="docutils literal notranslate"><span class="pre">ENABLE_CLIENT_API</span></code> is enabled.</p></li>
+</ul>
+<p>Set <code class="docutils literal notranslate"><span class="pre">HEALTH_CHECK_URL</span></code> to the address of the website, then check that all
+services are running the installed code:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./manage.py<span class="w"> </span>check<span class="w"> </span>--deploy<span class="w"> </span>--tag<span class="w"> </span>services<span class="w"> </span>--fail-level<span class="w"> </span>WARNING
+</pre></div>
+</div>
+<p>It fails with an error for every service that is not running or still runs an
+older version, so it can be run from a cronjob or a monitoring system. Each
+process computes its version from the source code and dependencies when it
+starts. If the code is deployed without its source tree, set the same
+<code class="docutils literal notranslate"><span class="pre">RFIDING_BUILD_ID</span></code> environment variable (e.g. the git commit) for all
+services and the check instead.</p>
 </section>
 </section>
 
@@ -342,6 +375,7 @@ poetry<span class="w"> </span>install
 </ul>
 </li>
 <li><a class="reference internal" href="#install-the-project">Install the project</a></li>
+<li><a class="reference internal" href="#services">Services</a></li>
 </ul>
 </li>
 </ul>
