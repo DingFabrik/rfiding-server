@@ -308,7 +308,8 @@ after an update:</p>
 <li><p>Celery beat (<code class="docutils literal notranslate"><span class="pre">celery</span> <span class="pre">-A</span> <span class="pre">rfiding</span> <span class="pre">beat</span> <span class="pre">-S</span> <span class="pre">django</span></code>), if periodic tasks such as
 <code class="docutils literal notranslate"><span class="pre">people.tasks.expire_qualifications</span></code> are scheduled in the admin,</p></li>
 <li><p>the machine manager (<code class="docutils literal notranslate"><span class="pre">./manage.py</span> <span class="pre">machine_manager</span></code>), if
-<code class="docutils literal notranslate"><span class="pre">ENABLE_CLIENT_API</span></code> is enabled.</p></li>
+<code class="docutils literal notranslate"><span class="pre">ENABLE_CLIENT_API</span></code> is enabled. <code class="docutils literal notranslate"><span class="pre">deployments/machine-manager.service</span></code> is
+a systemd unit for it.</p></li>
 </ul>
 <p>Set <code class="docutils literal notranslate"><span class="pre">HEALTH_CHECK_URL</span></code> to the address of the website, then check that all
 services are running the installed code:</p>

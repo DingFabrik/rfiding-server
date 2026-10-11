@@ -331,7 +331,9 @@ successful call; <code class="docutils literal notranslate"><span class="pre">on
 <dt><code class="docutils literal notranslate"><span class="pre">rfiding.config</span></code></dt><dd><p><code class="docutils literal notranslate"><span class="pre">data</span></code>: optional <code class="docutils literal notranslate"><span class="pre">firmware_version</span></code> and <code class="docutils literal notranslate"><span class="pre">ip_address</span></code>, stored on the
 machine. Response: the configuration. Logged as a boot.</p>
 </dd>
-<dt><code class="docutils literal notranslate"><span class="pre">rfiding.disabled</span></code></dt><dd><p><code class="docutils literal notranslate"><span class="pre">data</span></code>: optional <code class="docutils literal notranslate"><span class="pre">compartment</span></code>. Logs that the machine was locked again.</p>
+<dt><code class="docutils literal notranslate"><span class="pre">rfiding.disabled</span></code></dt><dd><p><code class="docutils literal notranslate"><span class="pre">data</span></code>: optional <code class="docutils literal notranslate"><span class="pre">compartment</span></code> and <code class="docutils literal notranslate"><span class="pre">token</span></code>. Logs that the machine was
+locked again. Without a token, it is attributed to whoever enabled the
+machine (or compartment) last.</p>
 </dd>
 </dl>
 <p>ESPHome sends <code class="docutils literal notranslate"><span class="pre">homeassistant.action</span></code> calls to <strong>every</strong> connected client that

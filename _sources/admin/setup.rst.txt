@@ -72,7 +72,8 @@ after an update:
 - Celery beat (``celery -A rfiding beat -S django``), if periodic tasks such as
   ``people.tasks.expire_qualifications`` are scheduled in the admin,
 - the machine manager (``./manage.py machine_manager``), if
-  ``ENABLE_CLIENT_API`` is enabled.
+  ``ENABLE_CLIENT_API`` is enabled. ``deployments/machine-manager.service`` is
+  a systemd unit for it.
 
 Set ``HEALTH_CHECK_URL`` to the address of the website, then check that all
 services are running the installed code:
