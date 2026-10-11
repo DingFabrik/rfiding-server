@@ -78,7 +78,7 @@
 
   <div class="mb-5">
     <div role="tablist" class="tabs tabs-box">
-      <button role="tab" class="tab tab-active" id="qualifications-tab" data-tabs-target="#qualifications-tab-pane" aria-selected="true"><i data-lucide="shield-check" class="w-4 h-4 mr-1"></i>{% trans 'Qualifications' %}</button>
+      <a href="{% url 'people:qualifications' person.pk %}" role="tab" class="tab tab-active" id="qualifications-tab" data-tabs-target="#qualifications-tab-pane" aria-selected="true"><i data-lucide="shield-check" class="w-4 h-4 mr-1"></i>{% trans 'Qualifications' %}</a>
       <div class="tab-content bg-base-100 border-neutral/10" role="tabpanel" id="qualifications-tab-pane" aria-labelledby="qualifications-tab">
         {% if perms.people.qualify_person %}
           <div class="flex justify-end mb-2 mx-6 mt-6">
@@ -88,7 +88,7 @@
         {% include 'qualifications_table.html' with is_partial=True subject='person' %}
       </div>
       {% if perms.access_log.view_accesslog %}
-        <button role="tab" class="tab" id="accesslog-tab" hx-get="{% url 'access_log:for-person' object.pk %}" hx-target="#accesslog-tab-pane" data-tabs-target="#accesslog-tab-pane" aria-selected="false"><i data-lucide="list" class="w-4 h-4 mr-1"></i>{% trans 'Access Log' %}</button>
+        <a href="{% url 'access_log:for-person' object.pk %}" role="tab" class="tab" id="accesslog-tab" hx-get="{% url 'access_log:for-person' object.pk %}" hx-target="#accesslog-tab-pane" data-tabs-target="#accesslog-tab-pane" aria-selected="false"><i data-lucide="list" class="w-4 h-4 mr-1"></i>{% trans 'Access Log' %}</a>
         <div class="tab-content bg-base-100 border-neutral/10" role="tabpanel" id="accesslog-tab-pane" aria-labelledby="accesslog-tab">
           <div class="flex flex-col gap-2 p-6">
             <div class="skeleton h-4 w-full"></div>
@@ -97,7 +97,7 @@
             <div class="skeleton h-4 w-2/3"></div>
           </div>
         </div>
-        <button role="tab" class="tab" id="statistics-tab" hx-get="{% url 'people:statistics' object.pk %}" hx-target="#statistics-tab-pane" data-tabs-target="#statistics-tab-pane" aria-selected="false"><i data-lucide="bar-chart-3" class="w-4 h-4 mr-1"></i>{% trans 'Statistics' %}</button>
+        <a href="{% url 'people:statistics' object.pk %}" role="tab" class="tab" id="statistics-tab" hx-get="{% url 'people:statistics' object.pk %}" hx-target="#statistics-tab-pane" data-tabs-target="#statistics-tab-pane" aria-selected="false"><i data-lucide="bar-chart-3" class="w-4 h-4 mr-1"></i>{% trans 'Statistics' %}</a>
         <div class="tab-content bg-base-100 border-neutral/10 p-6" role="tabpanel" id="statistics-tab-pane" aria-labelledby="statistics-tab">
           <div class="flex flex-col gap-6">
             <div class="skeleton h-75 w-full"></div>

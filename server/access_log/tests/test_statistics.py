@@ -328,6 +328,17 @@ class PersonStatisticsViewTests(TestCase):
         self.assertContains(response, 'hx-target="#statistics-tab-pane"')
         self.assertNotContains(response, "Most active people")
 
+    def test_renders_full_page_without_htmx(self):
+        user = get_user_model().objects.create_superuser(email="admin@example.com", password="pass")
+        self.client.force_login(user)
+
+        response = self.client.get(self.url)
+
+        self.assertContains(response, "<html")
+        self.assertContains(response, f'href="{self.person.get_absolute_url()}"')
+        self.assertContains(response, 'onchange="this.form.submit()"')
+        self.assertNotContains(response, 'hx-target="#statistics-tab-pane"')
+
 
 class GenerateDemoStatisticsCommandTests(TestCase):
     def test_generates_and_clears_demo_data(self):

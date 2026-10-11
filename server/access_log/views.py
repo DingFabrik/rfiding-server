@@ -47,6 +47,17 @@ class AccessLogListView(
         return context
 
 
+SUBJECT_LABELS = {
+    "token": _("token"),
+    "person": _("person"),
+    "machine": _("machine"),
+}
+
+
+def subject_action_label(subject_type):
+    return _("Go to %(subject_type)s") % {"subject_type": SUBJECT_LABELS[subject_type]}
+
+
 class AccessLogForSubjectView(TitleMixin, PermissionRequiredMixin, PartialListMixin, ListView):
     """Base for the "access log for one token/person/machine" pages.
 
@@ -62,11 +73,6 @@ class AccessLogForSubjectView(TitleMixin, PermissionRequiredMixin, PartialListMi
     ordering = ["-timestamp"]
     template_name = "access_log_for_subject.html"
     subject_type = None
-    subject_labels = {
-        "token": _("token"),
-        "person": _("person"),
-        "machine": _("machine"),
-    }
     empty_messages = {
         "token": _("This token has not been used yet."),
         "person": _("This person has not accessed anything yet."),
@@ -94,9 +100,7 @@ class AccessLogForSubjectView(TitleMixin, PermissionRequiredMixin, PartialListMi
         context["subject_type"] = self.subject_type
         context["subject"] = subject
         context["subject_url"] = subject.get_absolute_url()
-        context["subject_action_label"] = _("Go to %(subject_type)s") % {
-            "subject_type": self.subject_labels[self.subject_type]
-        }
+        context["subject_action_label"] = subject_action_label(self.subject_type)
         context["empty_message"] = self.empty_messages[self.subject_type]
         return context
 
@@ -183,3 +187,9 @@ class SubjectStatisticsView(StatisticsMixin, TitleMixin, PartialMixin, Permissio
 
     def get_statistics_filters(self):
         return {self.statistics_scope: self.object}
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["subject_url"] = self.object.get_absolute_url()
+        context["subject_action_label"] = subject_action_label(self.statistics_scope)
+        return context

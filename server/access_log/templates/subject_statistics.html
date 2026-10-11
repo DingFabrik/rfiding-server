@@ -3,10 +3,17 @@
 
 {% block title %}{{ html_title }}{% endblock %}
 
+{% block top_actions %}
+{% include 'statistics_days_select.html' %}
+<a href="{{ subject_url }}" class="btn btn-outline btn-primary btn-sm">{{ subject_action_label }}</a>
+{% endblock %}
+
 {% block content %}
+{% if is_partial %}
 <div class="flex justify-end mb-4">
-  {% include 'statistics_days_select.html' with hx_target=is_partial|yesno:"#statistics-tab-pane," %}
+  {% include 'statistics_days_select.html' with hx_target="#statistics-tab-pane" %}
 </div>
+{% endif %}
 {% include 'statistics_content.html' %}
 {% endblock %}
 

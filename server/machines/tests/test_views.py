@@ -595,6 +595,19 @@ class MachineStatisticsViewTests(TestCase):
         self.assertNotContains(response, "Most used machines")
 
 
+    def test_renders_full_page_without_htmx(self):
+        response = self.client.get(reverse("machines:statistics", kwargs={"pk": self.machine.pk}))
+        self.assertContains(response, "<html")
+        self.assertContains(response, f'href="{self.machine.get_absolute_url()}"')
+
+    def test_detail_tabs_link_to_their_pages(self):
+        response = self.client.get(reverse("machines:detail", kwargs={"pk": self.machine.pk}))
+        for name, kwargs in (
+            ("access_log:for-machine", {"machine": self.machine.pk}),
+            ("machines:statistics", {"pk": self.machine.pk}),
+        ):
+            self.assertContains(response, f'<a href="{reverse(name, kwargs=kwargs)}" role="tab"')
+
     def test_hides_people_ranking_without_access_log_permission(self):
         user = User.objects.create_user(email="viewer@example.com", password="pass")
         user.user_permissions.add(

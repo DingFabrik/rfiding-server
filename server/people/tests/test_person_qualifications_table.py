@@ -28,6 +28,21 @@ class PersonQualificationsTableTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Expiration")
 
+    def test_detail_tabs_link_to_their_pages(self):
+        response = self.client.get(
+            reverse("people:detail", kwargs={"pk": self.person.pk})
+        )
+        for name, kwargs in (
+            ("people:qualifications", {"pk": self.person.pk}),
+            ("access_log:for-person", {"person": self.person.pk}),
+            ("people:statistics", {"pk": self.person.pk}),
+        ):
+            self.assertContains(
+                response, f'<a href="{reverse(name, kwargs=kwargs)}" role="tab"'
+            )
+            page = self.client.get(reverse(name, kwargs=kwargs))
+            self.assertContains(page, "<html")
+
     def test_far_future_expiration_is_hidden(self):
         self.machine.qualification_expiry_unused_days = 365
         self.machine.save()

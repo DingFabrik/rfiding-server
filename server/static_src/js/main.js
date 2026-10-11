@@ -136,6 +136,18 @@ window.initPopovers = function () {
     initPopover('person-popover', 'data-person-pk', 'person-popover');
 }
 
+// Lazy-loaded tabs are links to the full page of their content. Stop
+// modifier clicks before htmx sees them (it would prevent the default), so the
+// browser can open that page in a new tab or window instead.
+document.addEventListener('click', function (event) {
+    if (!(event.metaKey || event.ctrlKey || event.shiftKey)) {
+        return;
+    }
+    if (event.target.closest('a[href][data-tabs-target]')) {
+        event.stopPropagation();
+    }
+}, true);
+
 document.addEventListener('click', function (event) {
     const tab = event.target.closest('[data-tabs-target]');
     if (!tab) {
@@ -147,6 +159,8 @@ document.addEventListener('click', function (event) {
     if (!tabList || !pane) {
         return;
     }
+    // Tab links only lead to their own page when opened in a new tab.
+    event.preventDefault();
     tabList.querySelectorAll('[data-tabs-target]').forEach((btn) => {
         btn.classList.remove('tab-active');
         btn.setAttribute('aria-selected', 'false');
