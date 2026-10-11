@@ -1,0 +1,15 @@
+{% extends base_template %}
+{% load i18n %}
+
+{% block title %}{{ html_title }}{% endblock %}
+
+{% block content %}
+<div class="flex justify-end mb-4">
+  {% include 'statistics_days_select.html' with hx_target=is_partial|yesno:"#statistics-tab-pane," %}
+</div>
+{% include 'statistics_content.html' %}
+{% endblock %}
+
+{% block script_extra %}
+{% include 'statistics_script.html' %}
+{% endblock %}

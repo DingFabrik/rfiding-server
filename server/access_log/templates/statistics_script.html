@@ -1,0 +1,42 @@
+{% load i18n %}
+(function() {
+    const load = (id) => JSON.parse(document.getElementById(id).textContent);
+    const barChart = (canvasId, rows, labelKey) => new Chart(document.getElementById(canvasId), {
+        type: 'bar',
+        data: {
+            labels: rows.map(row => row[labelKey]),
+            datasets: [{
+                label: '{{ _("Accesses")|escapejs }}',
+                data: rows.map(row => row.count)
+            }]
+        },
+        options: {
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
+        }
+    });
+
+    barChart('daily_usage', load('access-by-day'), 'day');
+    barChart('hourly_usage', load('access-by-hour'), 'hour');
+    barChart('weekday_usage', load('access-by-weekday'), 'weekday');
+
+    const spaceData = document.getElementById('space-usage-by-day');
+    if (spaceData) {
+        const rows = JSON.parse(spaceData.textContent);
+        new Chart(document.getElementById('space_usage'), {
+            data: {
+                labels: rows.map(row => row.day),
+                datasets: [
+                    { type: 'bar', label: '{{ _("Hours open")|escapejs }}', data: rows.map(row => row.open_hours) },
+                    { type: 'line', label: '{{ _("Machine usage hours")|escapejs }}', data: rows.map(row => row.usage_hours), pointRadius: 0, tension: 0.3 }
+                ]
+            },
+            options: {
+                maintainAspectRatio: false,
+                interaction: { mode: 'index', intersect: false },
+                scales: { y: { beginAtZero: true } }
+            }
+        });
+    }
+})();

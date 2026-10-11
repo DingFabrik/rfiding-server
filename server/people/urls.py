@@ -41,6 +41,11 @@ urlpatterns = [
         views.PersonQualificationsListView.as_view(),
         name="qualifications",
     ),
+    path(
+        "<int:pk>/statistics",
+        views.PersonStatisticsView.as_view(),
+        name="statistics",
+    ),
     # AJAX calls
     path(
         "autocomplete/person",

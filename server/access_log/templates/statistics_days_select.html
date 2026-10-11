@@ -1,0 +1,13 @@
+{% load i18n %}
+<form method="get" action="{{ request.path }}">
+  <select
+    class="select select-sm"
+    name="days"
+    aria-label="{% trans 'Days to show' %}"
+    {% if hx_target %}hx-get="{{ request.path }}" hx-target="{{ hx_target }}" hx-trigger="change"{% else %}onchange="this.form.submit()"{% endif %}>
+    {% for choice in days_choices %}
+    <option value="{{ choice.0 }}" {% if choice.0 == selected_days %}selected{% endif %}>{{ choice.1 }}</option>
+    {% endfor %}
+  </select>
+  <noscript><button type="submit" class="btn btn-sm">{% trans "Apply" %}</button></noscript>
+</form>

@@ -17,6 +17,7 @@ from django.urls import reverse_lazy
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.utils.translation import gettext_lazy as _
 
+from access_log.views import SubjectStatisticsView
 from base.utils import get_int_list
 from base.views import BaseToggleActiveView, BaseListView, PartialMixin, TitleMixin
 from comments.views import CommentCreateView
@@ -82,6 +83,13 @@ class PersonDetailView(TitleMixin, PermissionRequiredMixin, DetailView):
         )
         context["qualifications"] = qualifications_paginator.get_page(1)
         return context
+
+
+class PersonStatisticsView(SubjectStatisticsView):
+    permission_required = ("people.view_person", "access_log.view_accesslog")
+
+    model = Person
+    statistics_scope = "person"
 
 
 class PersonPublicDetailView(TitleMixin, DetailView):

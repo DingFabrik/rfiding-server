@@ -3,6 +3,7 @@ from datetime import timedelta
 from unittest.mock import patch
 
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Permission
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
@@ -582,6 +583,31 @@ class MachineStatisticsViewTests(TestCase):
         )
         total = sum(d["count"] for d in response.context["access_by_day"])
         self.assertEqual(total, 0)
+
+
+    def test_renders_machine_scoped_sections(self):
+        response = self.client.get(
+            reverse("machines:statistics", kwargs={"pk": self.machine.pk}),
+            HTTP_HX_REQUEST="true",
+        )
+        self.assertEqual(response.context["statistics_scope"], "machine")
+        self.assertContains(response, "Most active people")
+        self.assertNotContains(response, "Most used machines")
+
+
+    def test_hides_people_ranking_without_access_log_permission(self):
+        user = User.objects.create_user(email="viewer@example.com", password="pass")
+        user.user_permissions.add(
+            Permission.objects.get(codename="view_machine"),
+            Permission.objects.get(codename="view_person"),
+        )
+        self.client.force_login(user)
+        response = self.client.get(
+            reverse("machines:statistics", kwargs={"pk": self.machine.pk}),
+            HTTP_HX_REQUEST="true",
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertNotContains(response, "Most active people")
 
 
 class QualifyMachineViewTests(TestCase):

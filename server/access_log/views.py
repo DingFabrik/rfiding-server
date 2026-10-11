@@ -1,13 +1,13 @@
 from typing import Any
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.db.models.query import QuerySet
-from django.views.generic import ListView, TemplateView
+from django.views.generic import DetailView, ListView, TemplateView
 from django.utils.translation import gettext_lazy as _
 
-from base.views import PartialListMixin, ResultCountMixin, TitleMixin
+from base.views import PartialListMixin, PartialMixin, ResultCountMixin, TitleMixin
 from .models import AccessLog
 from .filters import AccessLogFilterSet
-from .statistics import compute_global_statistics, parse_days
+from .statistics import compute_statistics, parse_days
 from tokens.models import Token
 from machines.models import Machine
 from people.models import Person
@@ -146,13 +146,40 @@ class AccessLogForMachineView(AccessLogForSubjectView):
         return Machine.objects.get(pk=self.kwargs["machine"])
 
 
-class StatisticsView(TitleMixin, PermissionRequiredMixin, TemplateView):
+class StatisticsMixin:
+    """Adds usage statistics for the `days` query parameter to the context.
+
+    `statistics_scope` is "global", "machine" or "person" and decides which
+    sections the shared statistics templates show.
+    """
+
+    statistics_scope = "global"
+
+    def get_statistics_filters(self):
+        return {}
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        days = parse_days(self.request.GET.get("days"))
+        context.update(compute_statistics(days, **self.get_statistics_filters()))
+        context["statistics_scope"] = self.statistics_scope
+        return context
+
+
+class StatisticsView(StatisticsMixin, TitleMixin, PermissionRequiredMixin, TemplateView):
     permission_required = "access_log.view_accesslog"
 
     title = _("Statistics")
     template_name = "statistics.html"
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context.update(compute_global_statistics(parse_days(self.request.GET.get("days"))))
-        return context
+
+class SubjectStatisticsView(StatisticsMixin, TitleMixin, PartialMixin, PermissionRequiredMixin, DetailView):
+    """Statistics tab of a machine's or person's detail page."""
+
+    template_name = "subject_statistics.html"
+
+    def get_title(self):
+        return _("Statistics for %(subject)s") % {"subject": self.object}
+
+    def get_statistics_filters(self):
+        return {self.statistics_scope: self.object}

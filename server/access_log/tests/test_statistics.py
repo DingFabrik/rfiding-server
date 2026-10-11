@@ -14,7 +14,7 @@ from access_log.models import (
     LOG_TYPE_ENABLED,
     LOG_TYPE_UNSUCCESSFUL,
 )
-from access_log.statistics import compute_global_statistics, parse_days
+from access_log.statistics import compute_global_statistics, compute_statistics, parse_days
 from machines.models import Machine
 from people.models import Person, Qualification
 from space.models import SpaceState
@@ -121,6 +121,63 @@ class GlobalStatisticsTests(TestCase):
 
         hour = timezone.localtime(timestamp).hour
         self.assertEqual(stats["access_by_hour"][hour]["count"], 3)
+
+
+class ScopedStatisticsTests(TestCase):
+    def setUp(self):
+        self.lathe = Machine.objects.create(mac_address="aa:aa:aa:aa:aa:aa", hostname="lathe", name="Lathe")
+        self.laser = Machine.objects.create(mac_address="bb:bb:bb:bb:bb:bb", hostname="laser", name="Laser")
+        self.alice = Person.objects.create(name="Alice", email="alice@example.com")
+        self.bob = Person.objects.create(name="Bob", email="bob@example.com")
+        self.alice_token = Token.objects.create(serial="1", person=self.alice)
+        self.bob_token = Token.objects.create(serial="2", person=self.bob)
+        create_log(self.lathe, LOG_TYPE_ENABLED, self.alice_token)
+        create_log(self.lathe, LOG_TYPE_ENABLED, self.bob_token)
+        create_log(self.lathe, LOG_TYPE_DISABLED, self.alice_token, duration=timedelta(hours=1))
+        create_log(self.lathe, LOG_TYPE_DISABLED, self.bob_token, duration=timedelta(hours=2))
+        create_log(self.laser, LOG_TYPE_ENABLED, self.alice_token)
+        create_log(self.laser, LOG_TYPE_UNSUCCESSFUL, self.bob_token)
+
+    def test_machine_scope(self):
+        stats = compute_statistics(30, machine=self.lathe)
+
+        self.assertEqual(stats["total_accesses"], 2)
+        self.assertEqual(stats["unsuccessful_attempts"], 0)
+        self.assertEqual(stats["active_people"], 2)
+        self.assertEqual(stats["usage_hours"], 3)
+        self.assertEqual(stats["average_session_minutes"], 90)
+        self.assertNotIn("top_machines", stats)
+        self.assertNotIn("idle_machines", stats)
+        self.assertEqual([row["token__person__name"] for row in stats["top_people"]], ["Alice", "Bob"])
+
+    def test_person_scope(self):
+        stats = compute_statistics(30, person=self.bob)
+
+        self.assertEqual(stats["total_accesses"], 1)
+        self.assertEqual(stats["unsuccessful_attempts"], 1)
+        self.assertEqual(stats["active_machines"], 1)
+        self.assertEqual(stats["usage_hours"], 2)
+        self.assertNotIn("top_people", stats)
+        (lathe,) = stats["top_machines"]
+        self.assertEqual((lathe["machine__name"], lathe["accesses"]), ("Lathe", 1))
+        self.assertEqual(sum(row["count"] for row in stats["access_by_day"]), 1)
+
+    def test_scoped_qualifications(self):
+        old = timezone.now() - timedelta(days=60)
+        unused = Qualification.objects.create(person=self.bob, machine=self.laser)
+        used = Qualification.objects.create(
+            person=self.bob, machine=self.lathe, last_used=timezone.now()
+        )
+        other = Qualification.objects.create(person=self.alice, machine=self.laser)
+        Qualification.objects.filter(pk__in=[unused.pk, used.pk, other.pk]).update(created=old)
+
+        bob = compute_statistics(30, person=self.bob)["unused_qualifications"]
+        self.assertEqual((bob["qualified_total"], bob["unused_total"]), (2, 1))
+        self.assertEqual(bob["qualifications"], [unused])
+        self.assertNotIn("machines", bob)
+
+        laser = compute_statistics(30, machine=self.laser)["unused_qualifications"]
+        self.assertEqual(set(laser["qualifications"]), {unused, other})
 
 
 class QualificationInsightTests(TestCase):
@@ -244,6 +301,32 @@ class StatisticsViewTests(TestCase):
         self.client.force_login(user)
         response = self.client.get(self.url, {"days": "nope"})
         self.assertEqual(response.context["selected_days"], 90)
+
+
+class PersonStatisticsViewTests(TestCase):
+    def setUp(self):
+        self.person = Person.objects.create(name="Alice", email="alice@example.com")
+        self.machine = Machine.objects.create(mac_address="aa:aa:aa:aa:aa:aa", hostname="m", name="Lathe")
+        create_log(self.machine, LOG_TYPE_ENABLED, Token.objects.create(serial="1", person=self.person))
+        self.url = reverse("people:statistics", kwargs={"pk": self.person.pk})
+
+    def test_requires_access_log_permission(self):
+        user = get_user_model().objects.create_user(email="nobody@example.com", password="pass")
+        self.client.force_login(user)
+        self.assertEqual(self.client.get(self.url).status_code, 403)
+
+    def test_renders_partial_for_superuser(self):
+        user = get_user_model().objects.create_superuser(email="admin@example.com", password="pass")
+        self.client.force_login(user)
+
+        response = self.client.get(self.url, {"days": "7"}, HTTP_HX_REQUEST="true")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context["statistics_scope"], "person")
+        self.assertEqual(response.context["total_accesses"], 1)
+        self.assertContains(response, "Lathe")
+        self.assertContains(response, 'hx-target="#statistics-tab-pane"')
+        self.assertNotContains(response, "Most active people")
 
 
 class GenerateDemoStatisticsCommandTests(TestCase):

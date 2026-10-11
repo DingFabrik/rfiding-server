@@ -5,7 +5,8 @@ from django.contrib.contenttypes.models import ContentType
 
 from machines.models import Machine, MachineTime, MachineRegistrationRequest, MachineControlKey
 from machines.filters import MachineFilterSet
-from machines.statistics import compute_machine_statistics
+from access_log.models import AccessLog, LOG_TYPE_ENABLED
+from access_log.statistics import compute_access_breakdown
 from machines.serializers import (
     MachineSerializer,
     MachineTimeSerializer,
@@ -65,7 +66,11 @@ class MachineViewSet(BaseModelViewSet):
     def statistics(self, request, pk=None):
         machine = self.get_object()
         days = int(request.query_params.get("days", 90))
-        return Response(compute_machine_statistics(machine, days))
+        return Response(
+            compute_access_breakdown(
+                AccessLog.objects.filter(machine=machine, type=LOG_TYPE_ENABLED), days
+            )
+        )
 
     @action(detail=True, methods=["get", "post"])
     def comments(self, request, pk=None):

@@ -1,7 +1,7 @@
 from bisect import bisect_right
 from datetime import datetime, time, timedelta
 
-from django.db.models import Count, Q, Sum
+from django.db.models import Count, F, Q, Sum
 from django.db.models.functions import ExtractHour, ExtractIsoWeekDay, TruncDay
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
@@ -102,26 +102,38 @@ def compute_access_breakdown(queryset, days):
     }
 
 
-def compute_unused_qualifications(timeframe_start):
-    """Active qualifications held since before `timeframe_start` but not used since."""
+def compute_unused_qualifications(timeframe_start, scope=Q(), by_machine=True):
+    """Active qualifications in `scope` held since before `timeframe_start` but not used since.
+
+    With `by_machine` the unused ones are summarized per machine, otherwise
+    the qualifications themselves are listed.
+    """
     held = Qualification.objects.filter(
-        expired__isnull=True, person__is_active=True, created__lt=timeframe_start
+        scope, expired__isnull=True, person__is_active=True, created__lt=timeframe_start
     ).exclude(machine__state=Machine.MachineStatus.INACTIVE)
     unused = Q(last_used__isnull=True) | Q(last_used__lt=timeframe_start)
     totals = held.aggregate(qualified=Count("id"), unused=Count("id", filter=unused))
-    machines = list(
-        held.values("machine", "machine__name")
-        .annotate(qualified=Count("id"), unused=Count("id", filter=unused))
-        .filter(unused__gt=0)
-        .order_by("-unused", "machine__name")[:TOP_COUNT]
-    )
-    for row in machines:
-        row["unused_percent"] = row["unused"] / row["qualified"] * 100
-    return {
+    result = {
         "qualified_total": totals["qualified"],
         "unused_total": totals["unused"],
-        "machines": machines,
     }
+    if by_machine:
+        machines = list(
+            held.values("machine", "machine__name")
+            .annotate(qualified=Count("id"), unused=Count("id", filter=unused))
+            .filter(unused__gt=0)
+            .order_by("-unused", "machine__name")[:TOP_COUNT]
+        )
+        for row in machines:
+            row["unused_percent"] = row["unused"] / row["qualified"] * 100
+        result["machines"] = machines
+    else:
+        result["qualifications"] = list(
+            held.filter(unused)
+            .select_related("person", "machine")
+            .order_by(F("last_used").asc(nulls_first=True), "machine__name")[:TOP_COUNT]
+        )
+    return result
 
 
 def get_space_open_intervals(start, end):
@@ -208,29 +220,8 @@ def compute_space_usage(logs, timeframe_start, days):
     }
 
 
-def compute_global_statistics(days=DEFAULT_DAYS):
-    """Usage statistics across all machines and people for the last `days` days."""
-    timeframe_start = timezone.now() - timedelta(days=days)
-    logs = AccessLog.objects.filter(timestamp__gte=timeframe_start)
-
-    totals = logs.aggregate(
-        accesses=Count("id", filter=ENABLED),
-        unsuccessful=Count("id", filter=UNSUCCESSFUL),
-        active_people=Count("token__person", filter=ENABLED, distinct=True),
-        active_machines=Count("machine", filter=ENABLED, distinct=True),
-        usage=Sum("enabled_duration", filter=DISABLED),
-    )
-    previous_accesses = AccessLog.objects.filter(
-        ENABLED,
-        timestamp__gte=timeframe_start - timedelta(days=days),
-        timestamp__lt=timeframe_start,
-    ).count()
-    if previous_accesses:
-        access_change = (totals["accesses"] - previous_accesses) / previous_accesses * 100
-    else:
-        access_change = None
-
-    top_machines = list(
+def _top_machines(logs):
+    return list(
         logs.values("machine", "machine__name")
         .annotate(
             accesses=Count("id", filter=ENABLED),
@@ -241,7 +232,10 @@ def compute_global_statistics(days=DEFAULT_DAYS):
         .filter(accesses__gt=0)
         .order_by("-accesses", "machine__name")[:TOP_COUNT]
     )
-    top_people = list(
+
+
+def _top_people(logs):
+    return list(
         logs.filter(token__person__isnull=False)
         .values("token__person", "token__person__name")
         .annotate(
@@ -252,17 +246,51 @@ def compute_global_statistics(days=DEFAULT_DAYS):
         .filter(accesses__gt=0)
         .order_by("-accesses", "token__person__name")[:TOP_COUNT]
     )
-    for row in top_machines + top_people:
-        row["usage_hours"] = _hours(row["usage"])
 
-    idle_machines = (
-        Machine.objects.filter(state=Machine.MachineStatus.ACTIVE)
-        .exclude(pk__in=logs.filter(ENABLED).values("machine"))
-        .order_by("name")
+
+def compute_statistics(days=DEFAULT_DAYS, machine=None, person=None):
+    """Usage statistics for the last `days` days.
+
+    Covers all machines and people unless limited to one `machine` and/or
+    `person`. Sections that would only ever show the subject itself (e.g.
+    the most used machines on a machine's page) are left out.
+    """
+    log_scope = Q()
+    qualification_scope = Q()
+    if machine is not None:
+        log_scope &= Q(machine=machine)
+        qualification_scope &= Q(machine=machine)
+    if person is not None:
+        log_scope &= Q(token__person=person)
+        qualification_scope &= Q(person=person)
+    is_global = machine is None and person is None
+
+    timeframe_start = timezone.now() - timedelta(days=days)
+    logs = AccessLog.objects.filter(log_scope, timestamp__gte=timeframe_start)
+
+    totals = logs.aggregate(
+        accesses=Count("id", filter=ENABLED),
+        unsuccessful=Count("id", filter=UNSUCCESSFUL),
+        active_people=Count("token__person", filter=ENABLED, distinct=True),
+        active_machines=Count("machine", filter=ENABLED, distinct=True),
+        usage=Sum("enabled_duration", filter=DISABLED),
+        sessions=Count("id", filter=DISABLED & Q(enabled_duration__isnull=False)),
     )
+    previous_accesses = AccessLog.objects.filter(
+        log_scope,
+        ENABLED,
+        timestamp__gte=timeframe_start - timedelta(days=days),
+        timestamp__lt=timeframe_start,
+    ).count()
+    if previous_accesses:
+        access_change = (totals["accesses"] - previous_accesses) / previous_accesses * 100
+    else:
+        access_change = None
+    usage_hours = _hours(totals["usage"])
 
+    qualifications = Qualification.objects.filter(qualification_scope)
     now = timezone.now()
-    expiring = Qualification.objects.filter(
+    expiring = qualifications.filter(
         expired__isnull=True,
         person__is_active=True,
         expires_at__gte=now,
@@ -277,22 +305,44 @@ def compute_global_statistics(days=DEFAULT_DAYS):
             "unsuccessful_attempts": totals["unsuccessful"],
             "active_people": totals["active_people"],
             "active_machines": totals["active_machines"],
-            "usage_hours": _hours(totals["usage"]),
-            "qualifications_granted": Qualification.objects.filter(
+            "usage_hours": usage_hours,
+            "average_session_minutes": (
+                usage_hours * 60 / totals["sessions"] if totals["sessions"] else None
+            ),
+            "qualifications_granted": qualifications.filter(
                 created__gte=timeframe_start
             ).count(),
-            "qualifications_expired": Qualification.objects.filter(
+            "qualifications_expired": qualifications.filter(
                 expired__gte=timeframe_start
             ).count(),
-            "top_machines": top_machines,
-            "top_people": top_people,
-            "idle_machine_count": idle_machines.count(),
-            "idle_machines": idle_machines[:TOP_COUNT],
-            "unused_qualifications": compute_unused_qualifications(timeframe_start),
+            "unused_qualifications": compute_unused_qualifications(
+                timeframe_start, qualification_scope, by_machine=is_global
+            ),
             "expiring_soon_days": EXPIRING_SOON_DAYS,
             "expiring_qualification_count": expiring.count(),
             "expiring_qualifications": expiring[:TOP_COUNT],
             "space_usage": compute_space_usage(logs, timeframe_start, days),
         }
     )
+
+    if machine is None:
+        statistics["top_machines"] = _top_machines(logs)
+    if person is None:
+        statistics["top_people"] = _top_people(logs)
+    for row in statistics.get("top_machines", []) + statistics.get("top_people", []):
+        row["usage_hours"] = _hours(row["usage"])
+
+    if is_global:
+        idle_machines = (
+            Machine.objects.filter(state=Machine.MachineStatus.ACTIVE)
+            .exclude(pk__in=logs.filter(ENABLED).values("machine"))
+            .order_by("name")
+        )
+        statistics["idle_machine_count"] = idle_machines.count()
+        statistics["idle_machines"] = idle_machines[:TOP_COUNT]
     return statistics
+
+
+def compute_global_statistics(days=DEFAULT_DAYS):
+    """Usage statistics across all machines and people for the last `days` days."""
+    return compute_statistics(days)

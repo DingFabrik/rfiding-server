@@ -97,6 +97,12 @@
             <div class="skeleton h-4 w-2/3"></div>
           </div>
         </div>
+        <button role="tab" class="tab" id="statistics-tab" hx-get="{% url 'people:statistics' object.pk %}" hx-target="#statistics-tab-pane" data-tabs-target="#statistics-tab-pane" aria-selected="false"><i data-lucide="bar-chart-3" class="w-4 h-4 mr-1"></i>{% trans 'Statistics' %}</button>
+        <div class="tab-content bg-base-100 border-neutral/10 p-6" role="tabpanel" id="statistics-tab-pane" aria-labelledby="statistics-tab">
+          <div class="flex flex-col gap-6">
+            <div class="skeleton h-75 w-full"></div>
+          </div>
+        </div>
       {% endif %}
       {% if perms.people.comment_person %}
         <button role="tab" class="tab" id="comments-tab" data-tabs-target="#comments-tab-pane" aria-selected="false"><i data-lucide="message-square" class="w-4 h-4 mr-1"></i>{% trans 'Comments' %}</button>

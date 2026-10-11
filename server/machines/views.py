@@ -15,7 +15,7 @@ from django.urls import reverse, reverse_lazy
 from django.utils.translation import gettext_lazy as _
 
 from access_log.models import AccessLog, LOG_TYPE_ENABLED
-from access_log.statistics import parse_days
+from access_log.views import SubjectStatisticsView
 from base.utils import get_int_list
 from base.views import BaseListView, PartialMixin, TitleMixin
 from machines.esphome import bridge
@@ -23,7 +23,6 @@ from comments.forms import CommentForm
 from comments.views import CommentCreateView
 from .models import Machine, MachineRegistrationRequest, MachineTime
 from .forms import MachineForm, MachineTimeFormset
-from .statistics import compute_machine_statistics
 from people.models import Qualification, Person
 from people.forms import BulkQualifyForm
 from people.services import bulk_qualify
@@ -396,22 +395,11 @@ class MachineInstructorListView(BaseListView):
         return context
 
 
-class MachineStatisticsView(
-    TitleMixin, PartialMixin, PermissionRequiredMixin, DetailView
-):
+class MachineStatisticsView(SubjectStatisticsView):
     permission_required = "machines.view_machine"
 
     model = Machine
-    template_name = "machine_statistics.html"
-
-    def get_title(self):
-        return _(f"Statistics for {self.object.name}")
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        days = parse_days(self.request.GET.get("days"))
-        context.update(compute_machine_statistics(self.object, days))
-        return context
+    statistics_scope = "machine"
 
 
 class QualifyMachineView(TitleMixin, PartialMixin, PermissionRequiredMixin, FormView):
