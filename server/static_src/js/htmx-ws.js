@@ -3,7 +3,7 @@ WebSockets Extension
 ============================
 This extension adds support for WebSockets to htmx.  See /www/extensions/ws.md for usage instructions.
 */
-import * as htmx from './htmx.min.js'
+import htmx from './htmx.min.js'
 
 (function() {
   /** @type {import("../htmx").HtmxInternalApi} */

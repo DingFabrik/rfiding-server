@@ -21,6 +21,13 @@ SECRET_KEY = required_env("DJANGO_SECRET_KEY")
 # Directory where static files will be served from. Should be accessible for your Webserver
 STATIC_ROOT = "/var/www/example.com/static/"
 
+# collectstatic writes content-hashed copies (main.3f2a1c.js) so browsers pick up
+# new assets after a deploy. Build the frontend (npm run build) before collectstatic.
+STORAGES = {
+    "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+    "staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.ManifestStaticFilesStorage"},
+}
+
 # Set all hosts your deploy will be available from
 ALLOWED_HOSTS = []
 

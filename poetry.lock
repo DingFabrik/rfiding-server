@@ -1478,18 +1478,6 @@ files = [
 Django = ">=4.2,<6.2"
 
 [[package]]
-name = "django-webpack-loader"
-version = "3.2.4"
-description = "Transparently use webpack with django"
-optional = false
-python-versions = "*"
-groups = ["main"]
-files = [
-    {file = "django_webpack_loader-3.2.4-py2.py3-none-any.whl", hash = "sha256:a9d345746ae4d0700b9a86a7f0683ab8282c56a3a32736070f27ad658a9bfcb2"},
-    {file = "django_webpack_loader-3.2.4.tar.gz", hash = "sha256:0a253113ea6b150403cd2de802e732872c1d5e3185f0ad4a7fac673c00ae5af2"},
-]
-
-[[package]]
 name = "djangorestframework"
 version = "3.18.3"
 description = "Web APIs for Django, made easy."
@@ -3119,4 +3107,4 @@ testing = ["coverage[toml]", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.13"
-content-hash = "3e64221078cca6d7f671b8fc0ef4f9c8cf7b7ef3e36e378d357dd9b686050df3"
+content-hash = "023375068487672e61d36496c7cb475cb50099a331c35e6f4aaa6a288fd9488b"

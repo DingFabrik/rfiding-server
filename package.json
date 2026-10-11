@@ -1,28 +1,17 @@
 {
-  "js": "server/static/js/main.js",
-  "css": "server/static/css/main.css",
-  "targets": {
-    "css": {
-      "source": "server/static_src/css/main.css"
-    },
-    "js": {
-      "engines": {
-        "browsers": "> 0.5%, last 2 versions, not dead"
-      },
-      "outputFormat": "global",
-      "source": "server/static_src/js/main.js"
-    }
-  },
+  "private": true,
   "scripts": {
-    "watch": "parcel watch",
-    "build": "parcel build"
+    "build": "npm run build:css && npm run build:js",
+    "build:css": "tailwindcss -i server/static_src/css/main.css -o server/static/css/main.css --minify",
+    "build:js": "esbuild server/static_src/js/main.js --bundle --minify --format=iife --target=es2020 --outfile=server/static/js/main.js",
+    "watch": "npm run watch:css & npm run watch:js & wait",
+    "watch:css": "tailwindcss -i server/static_src/css/main.css -o server/static/css/main.css --watch=always",
+    "watch:js": "esbuild server/static_src/js/main.js --bundle --sourcemap --format=iife --target=es2020 --outfile=server/static/js/main.js --watch=forever"
   },
   "devDependencies": {
-    "@parcel/reporter-bundle-analyzer": "^2.16.4",
-    "@parcel/reporter-bundle-buddy": "^2.16.4",
-    "@tailwindcss/postcss": "^4.3.3",
+    "@tailwindcss/cli": "^4.3.3",
     "daisyui": "^5.7.47",
-    "parcel": "^2.16.4",
+    "esbuild": "^0.28.2",
     "tailwindcss": "^4.3.3"
   },
   "dependencies": {

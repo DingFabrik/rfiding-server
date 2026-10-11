@@ -3,7 +3,6 @@ db.sqlite3
 venv
 .DS_Store
 /server/rfiding/settings.py
-.parcel-cache
 node_modules
 /server/static/css/main.css
 /server/static/css/main.css.map

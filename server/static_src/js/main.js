@@ -1,6 +1,6 @@
-import * as htmx from './htmx.min.js'
-import * as htmx_ws from './htmx-ws.js'
-global.htmx = htmx;
+import htmx from './htmx.min.js'
+import './htmx-ws.js'
+window.htmx = htmx;
 
 import Chart from 'chart.js/auto';
 // Only icons listed here are bundled. When using a new data-lucide name in a
