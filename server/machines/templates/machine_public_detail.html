@@ -1,78 +1,87 @@
-{% extends 'base.html' %}
+{% extends 'base_public.html' %}
 {% load i18n %}
+
+{% block section_name %}{% trans 'Machines' %}{% endblock %}
+
+{% block navbar_end %}
+  <a class="btn btn-ghost btn-sm" href="{% url 'login' %}?next={{ request.path|urlencode }}">{% trans 'Staff login' %}</a>
+{% endblock %}
+
+{% block pre_title %}
+  {% if location %}
+    <div class="text-sm text-base-content/60">{{ location }}{% if location.parent %} &middot; {{ location.parent }}{% endif %}</div>
+  {% endif %}
+{% endblock %}
 
 {% block title %}{{ machine.name }}{% endblock %}
 
-{% block content %}
-  <div class="flex flex-col md:flex-row gap-4">
-    <div class="flex-1">
-      <div class="bg-base-100 border-neutral/10 border rounded-box p-4">
-            <h2 class="text-xs font-semibold uppercase tracking-wide text-base-content/50 mb-2">{% trans 'Details' %}</h2>
-            <ul class="list text-sm">
-              {% if object.parent %}
-                <li class="list-row items-center px-0 py-1.5 border-b border-base-200">
-                  <span class="text-base-content/60">{% trans 'Locker' %}</span>
-                  <span class="font-medium truncate text-right"><a class="link-hover" href="{% url 'machines:detail' object.parent.pk %}">{{ object.parent }}</a></span>
-                </li>
-              {% endif %}
-              <li class="list-row items-center px-0 py-1.5 border-b border-base-200">
-                <span class="text-base-content/60">{% trans 'Location' %}</span>
-                <span class="font-medium truncate text-right">
-                  {% if object.location %}
-                    <a class="link-hover" href="{% url 'locations:detail' object.location.pk %}">{{ object.location }}</a>
-                  {% elif object.parent.location %}
-                    <a class="link-hover" href="{% url 'locations:detail' object.parent.location.pk %}">{{ object.parent.location }}</a>
-                  {% else %}
-                    &ndash;&ndash;
-                  {% endif %}
-                </span>
-              </li>
-              <li class="list-row items-center px-0 py-1.5 border-b border-base-200">
-                <span class="text-base-content/60">{% trans 'State' %}</span>
-                <span class="font-medium truncate text-right">
-                  {% include "snippets/machine_state_label.html" with object=machine %}
-                </span>
-              </li>
-              <li class="list-row items-center px-0 py-1.5 border-b border-base-200">
-                <span class="text-base-content/60">{% trans 'Allowed on Holidays' %}</span>
-                <span class="font-medium truncate text-right">{{ machine.allowed_on_holidays|yesno:_("Yes,No") }}</span>
-              </li>
-              <li class="list-row items-center px-0 py-1.5 border-b border-base-200">
-                <span class="text-base-content/60">{% trans 'Usage Times' %}</span>
-                <div class="font-medium text-right">
-                  {% if machine.times.exists %}
-                    <ul class="list-disc ms-6">
-                      {% for time in machine.times.all %}
-                        <li>{{ time }}</li>
-                      {% endfor %}
-                    </ul>
-                  {% else %}
-                    <span class="text-base-content/60 ms-2">{% trans 'No specific usage times defined.' %}</span>
-                  {% endif %}
-                </div>
-              </li>
-            </ul>
-          </div>
-    </div>
+{% block top_actions %}
+  {% include "snippets/machine_state_label.html" with object=machine %}
+  {% if user.is_authenticated and perms.machines.view_machine %}
+    <a class="btn btn-sm" href="{% url 'machines:detail' machine.pk %}"><i data-lucide="settings" class="w-4 h-4"></i>{% trans 'Staff view' %}</a>
+  {% endif %}
+{% endblock %}
 
+{% block content %}
+  <div role="status" class="alert alert-soft mb-4 {% if availability.status == 'usable' %}alert-success{% elif availability.status == 'maintenance' %}alert-warning{% elif availability.status == 'inactive' %}alert-error{% else %}alert-info{% endif %} flex flex-col sm:flex-row items-start sm:items-center">
+    <i data-lucide="{% if availability.status == 'usable' %}circle-check-big{% elif availability.status == 'maintenance' %}wrench{% elif availability.status == 'inactive' %}circle-x{% else %}clock{% endif %}" class="w-6 h-6 shrink-0" aria-hidden="true"></i>
     <div class="flex-1">
-      <div class="bg-base-100 border-neutral/10 border rounded-box p-4">
-            <h2 class="text-xs font-semibold uppercase tracking-wide text-base-content/50 mb-2">{% trans 'Instructors' %}</h2>
+      <h2 class="text-xl font-bold">{{ availability.headline }}</h2>
+      <p class="text-sm">
+        {{ weekday }}.
+        {% if availability.detail %}{{ availability.detail }}{% endif %}
+        {% if machine.needs_qualification %}{% trans 'You need a qualification for this machine.' %}{% else %}{% trans 'No qualification needed.' %}{% endif %}
+      </p>
+      {% if availability.message %}
+        <p class="text-sm mt-1 font-medium">{{ availability.message }}</p>
+      {% endif %}
+    </div>
+    <span class="badge badge-ghost badge-sm whitespace-nowrap">
+      {% if machine.allowed_on_holidays %}{% trans 'Allowed on holidays' %}{% else %}{% trans 'Not usable on holidays' %}{% endif %}
+    </span>
+  </div>
+
+  <div class="grid gap-4 md:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
+    <div class="card card-border border-neutral/10 bg-base-100">
+      <div class="card-body gap-1">
         {% if machine.needs_qualification %}
+          <h2 class="text-xs font-semibold uppercase tracking-wide text-base-content/50">{% trans 'Instructors' %} <span class="badge badge-ghost badge-sm ms-1">{{ instructors|length }}</span></h2>
           {% if instructors %}
-            <div class="list">
+            <p class="text-sm text-base-content/60">{% trans 'They can train you and sign off your qualification.' %}</p>
+            <ul class="list">
               {% for qualification in instructors %}
-                <div class="list-row">{{ qualification.person.name }}</div>
+                <li class="list-row items-center px-0 py-2 {% if not forloop.last %}border-b border-base-200{% endif %}">
+                  <i data-lucide="user" class="w-4 h-4 text-base-content/50" aria-hidden="true"></i>
+                  <span>{{ qualification.person.name }}</span>
+                </li>
               {% endfor %}
-            </div>
+            </ul>
           {% else %}
-            <p class="text-base-content/60">{% trans 'No instructors are currently assigned to this machine.' %}</p>
+            <p class="text-sm text-base-content/60">{% trans 'No instructors are currently assigned to this machine.' %}</p>
           {% endif %}
         {% else %}
-            <p class="text-base-content/60">{% trans 'This machine does not require qualification, so there are no instructors assigned.' %}</p>
+          <h2 class="text-xs font-semibold uppercase tracking-wide text-base-content/50">{% trans 'Qualification' %}</h2>
+          <p class="text-sm text-base-content/60">{% trans 'This machine does not require qualification, so there are no instructors assigned.' %}</p>
         {% endif %}
       </div>
     </div>
-      </div>
 
+    <div class="card card-border border-neutral/10 bg-base-100">
+      <div class="card-body gap-1">
+        <h2 class="text-xs font-semibold uppercase tracking-wide text-base-content/50">{% trans 'Usage times' %}</h2>
+        <table class="table table-sm">
+          <tbody>
+            {% for row in usage_rows %}
+              <tr class="{% if row.is_today %}bg-primary/10 font-semibold{% endif %}">
+                <td>{{ row.label }}</td>
+                <td class="tabular-nums">{{ row.hours }}</td>
+              </tr>
+            {% empty %}
+              <tr><td>{% trans 'Every day' %}</td><td>{% trans 'Any time' %}</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 {% endblock %}

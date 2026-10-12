@@ -114,3 +114,18 @@ class BulkQualifyForm(InstructorFieldsMixin, forms.Form):
             self.fields["instructed_by"].queryset = Person.objects.filter(
                 qualifications__machine=machine, qualifications__is_instructor=True
             ).order_by("name")
+
+
+class SelfServiceLoginForm(forms.Form):
+    email = forms.EmailField(label=_("E-Mail address"))
+
+
+class SelfServiceCodeForm(forms.Form):
+    code = forms.RegexField(
+        label=_("Code"),
+        regex=r"^\s*\d{6}\s*$",
+        error_messages={"invalid": _("Enter the 6-digit code from the e-mail.")},
+    )
+
+    def clean_code(self):
+        return self.cleaned_data["code"].strip()

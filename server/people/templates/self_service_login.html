@@ -1,0 +1,25 @@
+{% extends 'base_public.html' %}
+{% load i18n %}
+
+{% block section_name %}{% trans 'My qualifications' %}{% endblock %}
+
+{% block main %}
+  <div class="w-full max-w-sm mx-auto">
+    <div class="card card-border border-neutral/10 bg-base-100">
+      <div class="card-body">
+        <h1 class="card-title text-xl">{% trans 'Sign in' %}</h1>
+        <p class="text-sm text-base-content/60">{% trans "Enter the e-mail address you're registered with. We'll send you a code and a link to see your qualifications." %}</p>
+        <form method="post" class="fieldset" novalidate>
+          {% csrf_token %}
+          <label class="label" for="{{ form.email.id_for_label }}">{{ form.email.label }}</label>
+          <label class="input w-full {% if form.email.errors %}input-error{% endif %}">
+            <i data-lucide="mail" class="w-4 h-4 opacity-50" aria-hidden="true"></i>
+            <input type="email" id="{{ form.email.id_for_label }}" name="{{ form.email.html_name }}" value="{{ form.email.value|default:'' }}" autocomplete="email" required autofocus>
+          </label>
+          {% for error in form.email.errors %}<p class="label text-error">{{ error }}</p>{% endfor %}
+          <button class="btn btn-primary btn-block mt-4" type="submit">{% trans 'Send code' %}</button>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}

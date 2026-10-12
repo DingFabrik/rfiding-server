@@ -1,10 +1,11 @@
+import logging
 from typing import Any
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.core.exceptions import PermissionDenied
 from django.db.models.base import Model as Model
 from django.db.models.query import QuerySet
 from django.core.paginator import Paginator
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from django.views.generic import (
     DetailView,
     CreateView,
@@ -12,9 +13,11 @@ from django.views.generic import (
     DeleteView,
     TemplateView,
     FormView,
+    View,
 )
 from django.urls import reverse_lazy
 from django.utils.http import url_has_allowed_host_and_scheme
+from django.utils import translation
 from django.utils.translation import gettext_lazy as _
 
 from access_log.views import SubjectStatisticsView
@@ -24,9 +27,26 @@ from comments.views import CommentCreateView
 from comments.forms import CommentForm
 from machines.models import Machine
 from .models import Person, Qualification
-from .forms import PersonForm, QualifyPersonForm, BulkQualifyForm
+from .conf import PERSON_LOGIN_CODE_VALID_MINUTES
+from .forms import (
+    PersonForm,
+    QualifyPersonForm,
+    BulkQualifyForm,
+    SelfServiceCodeForm,
+    SelfServiceLoginForm,
+)
+from .self_service import (
+    PENDING_EMAIL_SESSION_KEY,
+    build_qualification_rows,
+    get_logged_in_person,
+    login_person,
+    logout_person,
+    send_login_code,
+)
 from .services import bulk_qualify
 from .filters import PersonFilterSet
+
+logger = logging.getLogger(__name__)
 
 
 PEOPLE_SORT_CHOICES = (
@@ -92,32 +112,103 @@ class PersonStatisticsView(SubjectStatisticsView):
     statistics_scope = "person"
 
 
-class PersonPublicDetailView(TitleMixin, DetailView):
-    model = Person
-    template_name = "person_public_detail.html"
-    context_object_name = "person"
-    public_qualifications_page_length = 50
+class PersonPublicDetailView(View):
+    """The link from the sign-in e-mail: signs the person in and shows their page."""
 
-    def get_object(self, queryset=None):
-        person = get_object_or_404(Person, detail_key=self.kwargs["key"])
+    def get(self, request, *args, **kwargs):
+        person = get_object_or_404(Person, detail_key=self.kwargs["key"], is_active=True)
         if not person.detail_key_valid:
             raise PermissionDenied(_("This link has expired."))
-        return person
+        login_person(request, person)
+        return redirect("people:me")
 
-    def get_title(self):
-        return self.object.name
+
+class SelfServiceMixin(TitleMixin):
+    def dispatch(self, request, *args, **kwargs):
+        self.person = get_logged_in_person(request)
+        return super().dispatch(request, *args, **kwargs)
+
+
+class SelfServiceLoginView(SelfServiceMixin, FormView):
+    title = _("Sign in")
+    template_name = "self_service_login.html"
+    form_class = SelfServiceLoginForm
+
+    def get(self, request, *args, **kwargs):
+        if self.person is not None:
+            return redirect("people:me")
+        return super().get(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        email = form.cleaned_data["email"]
+        person = Person.objects.filter(email__iexact=email, is_active=True).first()
+        # Same response whether or not the address is known, so this can't be
+        # used to find out who is a member.
+        if person is not None and person.can_send_login_code:
+            try:
+                send_login_code(self.request, person)
+            except Exception:
+                logger.exception("Failed to send login code to %s", person)
+        self.request.session[PENDING_EMAIL_SESSION_KEY] = email
+        return redirect("people:me-verify")
+
+
+class SelfServiceVerifyView(SelfServiceMixin, FormView):
+    title = _("Enter code")
+    template_name = "self_service_verify.html"
+    form_class = SelfServiceCodeForm
+
+    def dispatch(self, request, *args, **kwargs):
+        self.email = request.session.get(PENDING_EMAIL_SESSION_KEY)
+        if not self.email:
+            return redirect("people:me-login")
+        return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        qualifications = (
-            self.object.qualifications.select_related("machine")
-            .select_related("instructed_by")
-            .all()
-        )
-        qualifications_paginator = Paginator(
-            qualifications, self.public_qualifications_page_length
-        )
-        context["qualifications"] = qualifications_paginator.get_page(1)
+        context["email"] = self.email
+        context["valid_minutes"] = PERSON_LOGIN_CODE_VALID_MINUTES
+        return context
+
+    def form_valid(self, form):
+        person = Person.objects.filter(email__iexact=self.email, is_active=True).first()
+        if person is None or not person.check_login_code(form.cleaned_data["code"]):
+            form.add_error(
+                "code",
+                _("This code is wrong or has expired. Check the e-mail or request a new code."),
+            )
+            return self.form_invalid(form)
+        login_person(self.request, person)
+        return redirect("people:me")
+
+
+class SelfServiceLogoutView(View):
+    def post(self, request, *args, **kwargs):
+        person = get_logged_in_person(request)
+        if person is not None:
+            # Also invalidate the e-mailed link, so it can't sign in again.
+            person.expire_detail_key()
+        logout_person(request)
+        return redirect("people:me-login")
+
+
+class MyQualificationsView(SelfServiceMixin, TemplateView):
+    template_name = "self_service_qualifications.html"
+
+    def get(self, request, *args, **kwargs):
+        if self.person is None:
+            return redirect("people:me-login")
+        # Show the page in the person's language rather than the site default.
+        translation.activate(self.person.language)
+        return super().get(request, *args, **kwargs)
+
+    def get_title(self):
+        return self.person.name
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["person"] = self.person
+        context["rows"] = build_qualification_rows(self.person)
         return context
 
 

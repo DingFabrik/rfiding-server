@@ -12,6 +12,7 @@ from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404
 from django.db.models import F, Max, OuterRef, Q, Subquery
 from django.urls import reverse, reverse_lazy
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from access_log.models import AccessLog, LOG_TYPE_ENABLED
@@ -21,6 +22,7 @@ from base.views import BaseListView, PartialMixin, TitleMixin
 from machines.esphome import bridge
 from comments.forms import CommentForm
 from comments.views import CommentCreateView
+from .availability import get_availability, get_usage_rows, weekday_name
 from .models import Machine, MachineRegistrationRequest, MachineTime
 from .forms import MachineForm, MachineTimeFormset
 from people.models import Qualification, Person
@@ -74,19 +76,32 @@ class MachinePublicDetailView(TitleMixin, DetailView):
     template_name = "machine_public_detail.html"
     context_object_name = "machine"
 
+    def get_queryset(self):
+        return Machine.objects.select_related(
+            "location__parent", "parent__location__parent"
+        ).prefetch_related("times")
+
     def get_title(self):
         return self.object.name
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        if self.object.needs_qualification:
-            context["instructors"] = (
-                self.object.qualified_people.filter(is_instructor=True)
+        machine = self.object
+        now = timezone.localtime()
+        if machine.needs_qualification:
+            context["instructors"] = list(
+                machine.qualified_people.filter(is_instructor=True, person__is_active=True)
                 .select_related("person")
-                .all()
+                .order_by("person__name")
             )
         else:
             context["instructors"] = None
+        context["location"] = machine.location or (
+            machine.parent.location if machine.parent else None
+        )
+        context["availability"] = get_availability(machine, now)
+        context["usage_rows"] = get_usage_rows(machine, now)
+        context["weekday"] = weekday_name(now)
         return context
 
 

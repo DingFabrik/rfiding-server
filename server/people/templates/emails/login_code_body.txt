@@ -1,0 +1,12 @@
+{% load i18n %}{% autoescape off %}{% blocktrans with name=person.name %}Hello {{ name }},{% endblocktrans %}
+
+{% blocktrans with space_name=space_name %}Use this code to see your qualifications at {{ space_name }}:{% endblocktrans %}
+
+    {{ code }}
+
+{% trans "Or open this link:" %}
+{{ link }}
+
+{% blocktrans count minutes=valid_minutes %}The code and link expire in {{ minutes }} minute.{% plural %}The code and link expire in {{ minutes }} minutes.{% endblocktrans %}
+{% trans "If you did not ask to sign in, you can ignore this e-mail." %}
+{% endautoescape %}

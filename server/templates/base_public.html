@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block container_classes %}max-w-5xl{% endblock %}
+
+{% block public_navbar %}
+  <div class="navbar bg-base-100 border-neutral/10 fixed top-0 z-30 border-b shadow-sm">
+    <div class="navbar-start gap-1">
+      <span class="btn btn-ghost px-2 pointer-events-none">
+        <img src="{% static "images/logo_dark.svg" %}" alt="Logo" width="40" height="40">
+      </span>
+      <span class="font-semibold">{% if space_name %}{{ space_name }} &middot; {% endif %}{% block section_name %}{% endblock %}</span>
+    </div>
+    <div class="navbar-end gap-1">
+      {% block navbar_end %}{% endblock %}
+      {% if space_state %}
+        <span class="badge {% if space_state.is_open %}badge-success{% else %}badge-error{% endif %}">{{ space_state }}</span>
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}

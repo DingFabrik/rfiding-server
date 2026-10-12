@@ -23,6 +23,8 @@
     {% else %}
       {% if user.is_authenticated %}
         {% include "partials/navbar.html" %}
+      {% else %}
+        {% block public_navbar %}{% endblock %}
       {% endif %}
     {% endif %}
 <main id="main" role="main" class="container mx-auto px-4 {% if user.is_authenticated and nav_style == "sidebar" %}pt-4{% else %}pt-20{% endif %} mb-3 flex-shrink-0 {% block container_classes %}{% endblock %}" {% block container_div %}{% endblock %}>

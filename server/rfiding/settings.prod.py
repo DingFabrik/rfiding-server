@@ -15,6 +15,10 @@ def required_env(name):
 # Production settings
 DEBUG = False
 
+# Time zone of the space. Machine usage times, holidays and qualification dates
+# are evaluated in this zone, so it must match where the machines are.
+TIME_ZONE = "Europe/Berlin"
+
 # Generate with: python -c 'import secrets; print(secrets.token_urlsafe(50))'
 SECRET_KEY = required_env("DJANGO_SECRET_KEY")
 

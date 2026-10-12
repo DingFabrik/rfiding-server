@@ -8,7 +8,7 @@ from users.models import RFIDingUser
 
 
 def version_processor(request):
-    return {"rfiding_version": SETTINGS.VERSION}
+    return {"rfiding_version": SETTINGS.VERSION, "space_name": SETTINGS.SPACE_NAME}
 
 
 def _build_menus(request):

@@ -1,0 +1,1 @@
+{% load i18n %}{% blocktrans with space_name=space_name code=code %}{{ code }} is your {{ space_name }} sign-in code{% endblocktrans %}

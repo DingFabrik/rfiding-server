@@ -4,6 +4,7 @@ from datetime import timedelta
 from django.conf import settings
 from django.db import models
 from django.utils import timezone
+from django.utils.crypto import constant_time_compare, salted_hmac
 from django.utils.translation import gettext_lazy as _
 from django.utils.translation import gettext
 from django.urls import reverse
@@ -13,7 +14,13 @@ from django.contrib.contenttypes.fields import GenericRelation
 from base.models import TimestampedModel
 
 from machines.models import Machine, PERMISSION_LEVELS
-from .conf import PERSON_DEFAULT_LANGUAGE, PERSON_DETAIL_KEY_VALID_HOURS
+from .conf import (
+    PERSON_DEFAULT_LANGUAGE,
+    PERSON_DETAIL_KEY_VALID_HOURS,
+    PERSON_LOGIN_CODE_MAX_ATTEMPTS,
+    PERSON_LOGIN_CODE_RESEND_SECONDS,
+    PERSON_LOGIN_CODE_VALID_MINUTES,
+)
 
 QUALIFICATION_EXPIRY_WARNING_DAYS = getattr(
     settings, "QUALIFICATION_EXPIRY_WARNING_DAYS", 7
@@ -58,6 +65,11 @@ class Person(TimestampedModel):
     detail_key_expires_at = models.DateTimeField(
         null=True, blank=True, verbose_name=_("Detail Key Expires At")
     )
+    login_code_hash = models.CharField(
+        max_length=128, null=True, blank=True, editable=False
+    )
+    login_code_issued_at = models.DateTimeField(null=True, blank=True, editable=False)
+    login_code_attempts = models.PositiveSmallIntegerField(default=0, editable=False)
 
     comments = GenericRelation("comments.Comment")
 
@@ -87,6 +99,80 @@ class Person(TimestampedModel):
         )
         self.save(update_fields=["detail_key", "detail_key_expires_at"])
         return self.detail_key
+
+    def _hash_login_code(self, code):
+        # Bound to the detail key, so a code is only valid with the link it was sent with.
+        return salted_hmac(
+            "people.Person.login_code", f"{self.detail_key}:{code}"
+        ).hexdigest()
+
+    @property
+    def can_send_login_code(self):
+        return self.login_code_issued_at is None or (
+            timezone.now() - self.login_code_issued_at
+            >= timedelta(seconds=PERSON_LOGIN_CODE_RESEND_SECONDS)
+        )
+
+    def generate_login_code(self):
+        """Generate a new detail key and a 6-digit login code, both valid for
+        PERSON_LOGIN_CODE_VALID_MINUTES. Returns the plain code."""
+        now = timezone.now()
+        code = f"{secrets.randbelow(10**6):06d}"
+        self.detail_key = secrets.token_urlsafe(32)
+        self.detail_key_expires_at = now + timedelta(
+            minutes=PERSON_LOGIN_CODE_VALID_MINUTES
+        )
+        self.login_code_hash = self._hash_login_code(code)
+        self.login_code_issued_at = now
+        self.login_code_attempts = 0
+        self.save(
+            update_fields=[
+                "detail_key",
+                "detail_key_expires_at",
+                "login_code_hash",
+                "login_code_issued_at",
+                "login_code_attempts",
+            ]
+        )
+        return code
+
+    def check_login_code(self, code):
+        """Whether `code` is the current, unexpired login code. A correct code is
+        consumed; too many wrong attempts invalidate it.
+
+        The attempt is counted in the database before comparing, so parallel
+        requests can't exceed PERSON_LOGIN_CODE_MAX_ATTEMPTS."""
+        people = Person.objects.filter(pk=self.pk, login_code_hash__isnull=False)
+        if not people.filter(
+            login_code_attempts__lt=PERSON_LOGIN_CODE_MAX_ATTEMPTS
+        ).update(login_code_attempts=models.F("login_code_attempts") + 1):
+            return False
+        self.refresh_from_db(
+            fields=[
+                "detail_key",
+                "detail_key_expires_at",
+                "login_code_hash",
+                "login_code_attempts",
+            ]
+        )
+        if not self.login_code_hash or not self.detail_key_valid:
+            return False
+        if constant_time_compare(self._hash_login_code(code), self.login_code_hash):
+            # Only one request can consume the code.
+            consumed = people.filter(login_code_hash=self.login_code_hash).update(
+                login_code_hash=None
+            )
+            self.login_code_hash = None
+            return bool(consumed)
+        if self.login_code_attempts >= PERSON_LOGIN_CODE_MAX_ATTEMPTS:
+            people.update(login_code_hash=None)
+            self.login_code_hash = None
+        return False
+
+    def expire_detail_key(self):
+        self.detail_key_expires_at = timezone.now()
+        self.login_code_hash = None
+        self.save(update_fields=["detail_key_expires_at", "login_code_hash"])
 
     def get_detail_url(self):
         return reverse("people:public-detail", kwargs={"key": self.detail_key})
@@ -230,5 +316,17 @@ class Qualification(TimestampedModel):
         ]
 
 
-auditlog.register(Person, mask_fields=["email"], exclude_fields=["created", "updated"])
+auditlog.register(
+    Person,
+    mask_fields=["email"],
+    exclude_fields=[
+        "created",
+        "updated",
+        "detail_key",
+        "detail_key_expires_at",
+        "login_code_hash",
+        "login_code_issued_at",
+        "login_code_attempts",
+    ],
+)
 auditlog.register(Qualification, exclude_fields=["created", "updated"])

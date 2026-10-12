@@ -16,6 +16,22 @@ NON_DELIVERING_EMAIL_BACKENDS = {
 }
 
 
+# Django's default for a MAILERS entry without a "BACKEND".
+DEFAULT_MAILER_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+
+
+def default_email_backend():
+    """Backend that send_mail() uses: MAILERS["default"] if MAILERS is defined
+    (EMAIL_BACKEND can't be read then), otherwise the legacy EMAIL_BACKEND.
+    None if MAILERS has no default mailer."""
+    if hasattr(settings, "MAILERS"):
+        mailer = settings.MAILERS.get("default")
+        if mailer is None:
+            return None
+        return mailer.get("BACKEND", DEFAULT_MAILER_BACKEND)
+    return settings.EMAIL_BACKEND
+
+
 def email_enabled():
     return getattr(settings, "PERSON_ENABLE_EMAIL", True)
 
@@ -29,10 +45,19 @@ def check_email_notifications(app_configs, **kwargs):
     if not email_enabled():
         return []
     errors = []
-    if settings.EMAIL_BACKEND in NON_DELIVERING_EMAIL_BACKENDS:
+    backend = default_email_backend()
+    if backend is None:
         errors.append(
             Warning(
-                f"Email notifications are enabled, but EMAIL_BACKEND ({settings.EMAIL_BACKEND}) does not deliver mail.",
+                "Email notifications are enabled, but MAILERS has no 'default' mailer to send them with.",
+                hint="Add a 'default' entry to MAILERS, or set PERSON_ENABLE_EMAIL = False.",
+                id="people.W007",
+            )
+        )
+    elif backend in NON_DELIVERING_EMAIL_BACKENDS:
+        errors.append(
+            Warning(
+                f"Email notifications are enabled, but the default mail backend ({backend}) does not deliver mail.",
                 hint="Configure an SMTP backend, or set PERSON_ENABLE_EMAIL = False.",
                 id="people.W001",
             )

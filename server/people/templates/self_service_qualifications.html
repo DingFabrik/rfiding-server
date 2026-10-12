@@ -1,0 +1,115 @@
+{% extends 'base_public.html' %}
+{% load i18n %}
+
+{% block section_name %}{% trans 'My qualifications' %}{% endblock %}
+
+{% block pre_title %}
+  <div class="text-sm text-base-content/60">{% blocktrans with date=person.created|date:"M Y" %}Member since {{ date }}{% endblocktrans %}</div>
+{% endblock %}
+
+{% block title %}{{ person.name }}{% endblock %}
+
+{% block top_actions %}
+  <form method="post" action="{% url 'people:me-logout' %}">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-sm"><i data-lucide="log-out" class="w-4 h-4"></i>{% trans 'Sign out' %}</button>
+  </form>
+{% endblock %}
+
+{% block content %}
+  {% if rows %}
+    {# Wide screens: one row per machine #}
+    <div class="card card-border border-neutral/10 bg-base-100 hidden md:block">
+      <div class="overflow-x-auto">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>{% trans 'Machine' %}</th>
+              <th>{% trans 'Status' %}</th>
+              <th>{% trans 'Expires' %}</th>
+              <th>{% trans 'Granted' %}</th>
+              <th>{% trans 'Instructor' %}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in rows %}
+              <tr class="hover:bg-base-200/50">
+                <td>
+                  <div class="font-medium">{{ row.machine.name }}</div>
+                  {% if row.location %}<div class="text-xs text-base-content/60">{{ row.location }}</div>{% endif %}
+                </td>
+                <td>{% include "snippets/qualification_status_badge.html" %}</td>
+                <td>
+                  {% if row.expires %}{{ row.expires|date:"d M Y" }}{% else %}<span class="text-base-content/60">{% trans 'Does not expire' %}</span>{% endif %}
+                  {% if row.rule %}<div class="text-xs text-base-content/60">{{ row.rule }}</div>{% endif %}
+                </td>
+                <td>{{ row.qualification.created|date:"d M Y" }}</td>
+                <td>{{ row.qualification.instructed_by.name|default:"–" }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    {# Phones: needs attention first, then valid #}
+    <div class="md:hidden flex flex-col gap-3">
+      {% regroup rows by status as groups %}
+      {% for group in groups %}
+        {% if group.grouper != "valid" and forloop.first %}
+          <h2 class="text-xs font-semibold uppercase tracking-wide text-base-content/50">{% trans 'Needs attention' %}</h2>
+        {% endif %}
+        {% if group.grouper == "valid" %}
+          <div class="card card-border border-neutral/10 bg-base-100">
+            <div class="card-body gap-1 py-3">
+              <h2 class="text-xs font-semibold uppercase tracking-wide text-base-content/50">{% trans 'Valid' %}</h2>
+              <ul class="list">
+                {% for row in group.list %}
+                  <li class="list-row px-0 py-2 {% if not forloop.last %}border-b border-base-200{% endif %}">
+                    <div class="list-col-grow">
+                      <div>{{ row.machine.name }}</div>
+                      {% include "snippets/qualification_granted.html" %}
+                    </div>
+                    <span class="text-sm text-base-content/70 whitespace-nowrap">{% if row.expires %}{% blocktrans with date=row.expires|date:"d M Y" %}until {{ date }}{% endblocktrans %}{% else %}{% trans 'no expiry' %}{% endif %}</span>
+                  </li>
+                {% endfor %}
+              </ul>
+            </div>
+          </div>
+        {% else %}
+          {% for row in group.list %}
+            <div role="alert" class="alert alert-soft {% if row.status == 'expired' %}alert-error{% else %}alert-warning{% endif %} items-start">
+              <i data-lucide="{% if row.status == 'expired' %}circle-x{% else %}clock-alert{% endif %}" class="w-5 h-5 shrink-0" aria-hidden="true"></i>
+              <div class="flex-1">
+                <div class="flex justify-between items-baseline gap-2">
+                  <strong>{{ row.machine.name }}</strong>
+                  {% include "snippets/qualification_status_badge.html" %}
+                </div>
+                <p class="text-sm mt-1">
+                  {% if row.status == "expired" %}
+                    {% blocktrans with date=row.expires|date:"d M Y" %}Expired {{ date }}.{% endblocktrans %}
+                    {% if row.rule %}{{ row.rule }}.{% endif %}
+                    {% trans 'Ask an instructor to renew.' %}
+                  {% else %}
+                    {% blocktrans with date=row.expires|date:"d M Y" %}Expires {{ date }}.{% endblocktrans %}
+                    {% if row.machine.qualification_expiry_used_days %}{% trans 'Use it once to reset.' %}{% endif %}
+                  {% endif %}
+                </p>
+                {% include "snippets/qualification_granted.html" %}
+              </div>
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endfor %}
+    </div>
+
+    <p class="text-xs text-base-content/60 mt-3">{% trans 'Using a machine resets its “after last use” date. To renew an expired qualification, ask an instructor of that machine.' %}</p>
+  {% else %}
+    <div class="card card-border border-neutral/10 bg-base-100">
+      <div class="card-body items-center text-center">
+        <i data-lucide="award" class="w-8 h-8 text-base-content/40" aria-hidden="true"></i>
+        <p class="text-base-content/60">{% trans "You don't have any qualifications yet. Ask an instructor of a machine to train you." %}</p>
+      </div>
+    </div>
+  {% endif %}
+{% endblock %}

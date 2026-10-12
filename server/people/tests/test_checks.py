@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.test import SimpleTestCase, TestCase, override_settings
 from django_celery_beat.models import IntervalSchedule, PeriodicTask
 
@@ -14,16 +15,26 @@ def ids(messages):
 
 @override_settings(
     PERSON_ENABLE_EMAIL=True,
-    EMAIL_BACKEND=SMTP,
+    MAILERS={"default": {"BACKEND": SMTP}},
     DEFAULT_FROM_EMAIL="rfiding@example.com",
 )
 class EmailNotificationCheckTests(SimpleTestCase):
     def test_configured_email_passes(self):
         self.assertEqual(checks.check_email_notifications(None), [])
 
-    @override_settings(EMAIL_BACKEND="django.core.mail.backends.console.EmailBackend")
+    @override_settings(MAILERS={"default": {}})
+    def test_backend_defaults_to_smtp(self):
+        self.assertEqual(checks.check_email_notifications(None), [])
+
+    @override_settings(
+        MAILERS={"default": {"BACKEND": "django.core.mail.backends.console.EmailBackend"}}
+    )
     def test_non_delivering_backend(self):
         self.assertEqual(ids(checks.check_email_notifications(None)), ["people.W001"])
+
+    @override_settings(MAILERS={"other": {"BACKEND": SMTP}})
+    def test_missing_default_mailer(self):
+        self.assertEqual(ids(checks.check_email_notifications(None)), ["people.W007"])
 
     @override_settings(DEFAULT_FROM_EMAIL="webmaster@localhost")
     def test_placeholder_sender(self):
@@ -32,6 +43,25 @@ class EmailNotificationCheckTests(SimpleTestCase):
     @override_settings(PERSON_ENABLE_EMAIL=False, DEFAULT_FROM_EMAIL="webmaster@localhost")
     def test_disabled_email_is_not_checked(self):
         self.assertEqual(checks.check_email_notifications(None), [])
+
+
+@override_settings(PERSON_ENABLE_EMAIL=True, DEFAULT_FROM_EMAIL="rfiding@example.com")
+class LegacyEmailBackendCheckTests(SimpleTestCase):
+    """Settings that still use EMAIL_BACKEND instead of MAILERS."""
+
+    def setUp(self):
+        # override_settings can only set values, so drop MAILERS by hand; the
+        # class-level override restores it afterwards.
+        if hasattr(settings, "MAILERS"):
+            del settings.MAILERS
+
+    @override_settings(EMAIL_BACKEND=SMTP)
+    def test_configured_email_passes(self):
+        self.assertEqual(checks.check_email_notifications(None), [])
+
+    @override_settings(EMAIL_BACKEND="django.core.mail.backends.console.EmailBackend")
+    def test_non_delivering_backend(self):
+        self.assertEqual(ids(checks.check_email_notifications(None)), ["people.W001"])
 
 
 @override_settings(PERSON_ENABLE_SLACK_EMAIL=True, PERSON_SLACK_TOKEN="xoxb-token")

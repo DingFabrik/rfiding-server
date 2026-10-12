@@ -1,0 +1,26 @@
+{% extends 'base_public.html' %}
+{% load i18n %}
+
+{% block section_name %}{% trans 'My qualifications' %}{% endblock %}
+
+{% block main %}
+  <div class="w-full max-w-sm mx-auto">
+    <div class="card card-border border-neutral/10 bg-base-100">
+      <div class="card-body">
+        <h1 class="card-title text-xl">{% trans 'Check your e-mail' %}</h1>
+        <div role="alert" class="alert alert-info alert-soft text-sm">
+          <i data-lucide="mail-check" class="w-5 h-5 shrink-0" aria-hidden="true"></i>
+          <span>{% blocktrans count minutes=valid_minutes %}If {{ email }} is registered, we've sent it a 6-digit code and a link. Both expire after {{ minutes }} minute.{% plural %}If {{ email }} is registered, we've sent it a 6-digit code and a link. Both expire after {{ minutes }} minutes.{% endblocktrans %}</span>
+        </div>
+        <form method="post" class="fieldset" novalidate>
+          {% csrf_token %}
+          <label class="label" for="{{ form.code.id_for_label }}">{{ form.code.label }}</label>
+          <input type="text" class="input w-full font-mono tracking-[0.3em] text-lg {% if form.code.errors %}input-error{% endif %}" id="{{ form.code.id_for_label }}" name="{{ form.code.html_name }}" value="{{ form.code.value|default:'' }}" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" required autofocus>
+          {% for error in form.code.errors %}<p class="label text-error whitespace-normal">{{ error }}</p>{% endfor %}
+          <button class="btn btn-primary btn-block mt-4" type="submit">{% trans 'Sign in' %}</button>
+        </form>
+        <a class="link link-hover text-sm" href="{% url 'people:me-login' %}">{% trans 'Use a different address or request a new code' %}</a>
+      </div>
+    </div>
+  </div>
+{% endblock %}
