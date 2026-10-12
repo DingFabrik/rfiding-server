@@ -15,7 +15,7 @@ from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
-from access_log.models import AccessLog, LOG_TYPE_ENABLED
+from access_log.models import ACCESS_LOG_TYPES, AccessLog
 from access_log.views import SubjectStatisticsView
 from base.utils import get_int_list
 from base.views import BaseListView, PartialMixin, TitleMixin
@@ -49,7 +49,7 @@ class MachineListView(BaseListView):
     # machines on the current page.
     queryset = Machine.objects.annotate(
         last_used=Subquery(
-            AccessLog.objects.filter(machine=OuterRef("pk"), type=LOG_TYPE_ENABLED)
+            AccessLog.objects.filter(machine=OuterRef("pk"), type__in=ACCESS_LOG_TYPES)
             .order_by("-timestamp")
             .values("timestamp")[:1]
         )
@@ -145,7 +145,7 @@ class MachineDetailView(TitleMixin, PermissionRequiredMixin, DetailView):
             context["compartments"] = self.object.children.annotate(
                 last_opened=Max(
                     "accesslog__timestamp",
-                    filter=Q(accesslog__type=LOG_TYPE_ENABLED),
+                    filter=Q(accesslog__type__in=ACCESS_LOG_TYPES),
                 )
             )
         return context

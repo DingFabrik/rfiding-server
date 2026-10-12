@@ -7,9 +7,9 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from access_log.models import (
+    ACCESS_LOG_TYPES,
     AccessLog,
     LOG_TYPE_DISABLED,
-    LOG_TYPE_ENABLED,
     LOG_TYPE_UNSUCCESSFUL,
 )
 from machines.models import Machine
@@ -36,7 +36,7 @@ DEFAULT_DAYS = 90
 TOP_COUNT = 10
 EXPIRING_SOON_DAYS = 30
 
-ENABLED = Q(type=LOG_TYPE_ENABLED)
+ENABLED = Q(type__in=ACCESS_LOG_TYPES)
 DISABLED = Q(type=LOG_TYPE_DISABLED)
 UNSUCCESSFUL = Q(type=LOG_TYPE_UNSUCCESSFUL)
 

@@ -11,6 +11,8 @@ from .models import (
     LOG_TYPE_BOOTED,
     LOG_TYPE_DISABLED,
     LOG_TYPE_UNSUCCESSFUL,
+    LOG_TYPE_OPENED,
+    ACCESS_LOG_TYPES,
 )
 from machines.models import Machine
 
@@ -25,12 +27,12 @@ anonymize_days = getattr(settings, "ACCESS_LOG_ANONYMIZE_DAYS", 0)
 
 
 def find_enabling_log(machine, token_id, timestamp):
-    """The enabled log that a disable at `timestamp` ends, if any.
+    """The enabled (or opened) log that a disable at `timestamp` ends, if any.
 
     Without a token, that is the machine's last enable, unless the machine was
     already disabled since or it's too old to still be running.
     """
-    enabled_logs = AccessLog.objects.filter(machine_id=machine.pk, type=LOG_TYPE_ENABLED)
+    enabled_logs = AccessLog.objects.filter(machine_id=machine.pk, type__in=ACCESS_LOG_TYPES)
     if token_id is not None:
         return enabled_logs.filter(token_id=token_id).order_by("-timestamp").first()
     last_enabled_log = enabled_logs.order_by("-timestamp").first()
@@ -60,6 +62,8 @@ def save_access_log(machine, token_id, log_type, timestamp=None, reason=None):
     if log_type == LOG_TYPE_BOOTED and not machine.log_booted:
         return
     if log_type == LOG_TYPE_ENABLED and not machine.log_enabled:
+        return
+    if log_type == LOG_TYPE_OPENED and not machine.log_enabled:
         return
     if log_type == LOG_TYPE_DISABLED and not machine.log_disabled:
         return

@@ -20,6 +20,7 @@ from access_log.models import (
     LOG_TYPE_DISABLED,
     LOG_TYPE_ENABLED,
     LOG_TYPE_UNSUCCESSFUL,
+    LOG_TYPE_OPENED,
     UnsuccessfulReason,
 )
 from people.models import Person, Qualification
@@ -184,10 +185,15 @@ def check_access(machine, tokenID, compartmentID=None):
         raise AccessDenied("No Access!", UnsuccessfulReason.UNKNOWN_TOKEN) from None
 
     def log_enabled():
-        # On the compartment, like the disable that ends it.
-        save_access_log.delay(
-            checked_machine.id, token["id"], LOG_TYPE_ENABLED, timestamp=timezone.now()
-        )
+        machine_type = checked_machine.type
+        if machine_type == Machine.MachineType.LOCK or machine_type == Machine.MachineType.COMPARTMENT:
+            save_access_log.delay(
+                checked_machine.id, token["id"], LOG_TYPE_OPENED, timestamp=timezone.now()
+            )
+        else:
+            save_access_log.delay(
+                checked_machine.id, token["id"], LOG_TYPE_ENABLED, timestamp=timezone.now()
+            )
 
     if checked_machine.needs_qualification:
         person = token["person__id"]

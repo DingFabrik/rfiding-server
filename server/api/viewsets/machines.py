@@ -5,7 +5,7 @@ from django.contrib.contenttypes.models import ContentType
 
 from machines.models import Machine, MachineTime, MachineRegistrationRequest, MachineControlKey
 from machines.filters import MachineFilterSet
-from access_log.models import AccessLog, LOG_TYPE_ENABLED
+from access_log.models import ACCESS_LOG_TYPES, AccessLog
 from access_log.statistics import compute_access_breakdown
 from machines.serializers import (
     MachineSerializer,
@@ -68,7 +68,7 @@ class MachineViewSet(BaseModelViewSet):
         days = int(request.query_params.get("days", 90))
         return Response(
             compute_access_breakdown(
-                AccessLog.objects.filter(machine=machine, type=LOG_TYPE_ENABLED), days
+                AccessLog.objects.filter(machine=machine, type__in=ACCESS_LOG_TYPES), days
             )
         )
 

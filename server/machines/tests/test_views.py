@@ -8,7 +8,7 @@ from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
 
-from access_log.models import AccessLog, LOG_TYPE_ENABLED
+from access_log.models import AccessLog, LOG_TYPE_ENABLED, LOG_TYPE_OPENED
 from locations.models import Location
 from machines.models import Machine, MachineRegistrationRequest, MachineTime
 from people.models import Person, Qualification
@@ -209,13 +209,13 @@ class MachineDetailViewTests(TestCase):
             name="Unused", type="compartment", parent=locker, compartment_id="2",
             needs_qualification=False,
         )
-        AccessLog.objects.create(machine=opened, type=LOG_TYPE_ENABLED)
+        AccessLog.objects.create(machine=opened, type=LOG_TYPE_OPENED)
         AccessLog.objects.create(machine=opened, type="unsuccessful")
         response = self.client.get(reverse("machines:detail", kwargs={"pk": locker.pk}))
         compartments = {c.name: c for c in response.context["compartments"]}
         self.assertEqual(
             compartments["Opened"].last_opened,
-            AccessLog.objects.get(machine=opened, type=LOG_TYPE_ENABLED).timestamp,
+            AccessLog.objects.get(machine=opened, type=LOG_TYPE_OPENED).timestamp,
         )
         self.assertIsNone(compartments["Unused"].last_opened)
         self.assertContains(response, f"?parent={locker.pk}")

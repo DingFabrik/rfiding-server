@@ -2,6 +2,8 @@
 <span class="badge badge-soft badge-info badge-sm"><i data-lucide="rocket" class="w-3 h-3"></i><span class="hidden md:inline">{{ object.get_type_display }}</span></span>
 {% elif object.type == "enabled" %}
 <span class="badge badge-soft badge-success badge-sm"><i data-lucide="circle-play" class="w-3 h-3"></i><span class="hidden md:inline">{{ object.get_type_display }}</span></span>
+{% elif object.type == "opened" %}
+<span class="badge badge-soft badge-success badge-sm"><i data-lucide="lock-open" class="w-3 h-3"></i><span class="hidden md:inline">{{ object.get_type_display }}</span></span>
 {% elif object.type == "disabled" %}
 <span class="badge badge-soft badge-sm"><i data-lucide="circle-stop" class="w-3 h-3"></i><span class="hidden md:inline">{{ object.get_type_display }}</span></span>
 {% elif object.type == "unsuccessful" %}

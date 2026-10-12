@@ -9,6 +9,7 @@ from access_log.models import (
     LOG_TYPE_BOOTED,
     LOG_TYPE_DISABLED,
     LOG_TYPE_ENABLED,
+    LOG_TYPE_OPENED,
     LOG_TYPE_UNSUCCESSFUL,
     UnsuccessfulReason,
 )
@@ -44,12 +45,12 @@ class AccessLogFilterTests(TestCase):
         )
         self.assertEqual(
             response.context["filter_choices"]["action"]["value"],
-            [LOG_TYPE_BOOTED, "registered", LOG_TYPE_ENABLED, LOG_TYPE_DISABLED],
+            [LOG_TYPE_BOOTED, "registered", LOG_TYPE_ENABLED, LOG_TYPE_OPENED, LOG_TYPE_DISABLED],
         )
 
     def test_renders_checkboxes_with_default_state(self):
         response = self.get_list()
-        self.assertContains(response, 'type="checkbox"', count=5)
+        self.assertContains(response, 'type="checkbox"', count=6)
         self.assertContains(response, 'value="enabled"\n                        checked')
         self.assertNotContains(response, 'value="unsuccessful"\n                        checked')
 

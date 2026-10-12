@@ -6,12 +6,17 @@ LOG_TYPE_BOOTED = "booted"
 LOG_TYPE_REGISTERED = "registered"
 LOG_TYPE_ENABLED = "enabled"
 LOG_TYPE_DISABLED = "disabled"
+LOG_TYPE_OPENED = "opened"
 LOG_TYPE_UNSUCCESSFUL = "unsuccessful"
+
+# Someone successfully used a machine: enabled it, or opened a lock/compartment.
+ACCESS_LOG_TYPES = (LOG_TYPE_ENABLED, LOG_TYPE_OPENED)
 
 LOG_TYPES = (
     (LOG_TYPE_BOOTED, _("Booted")),
     (LOG_TYPE_REGISTERED, _("Registered")),
     (LOG_TYPE_ENABLED, _("Enabled")),
+    (LOG_TYPE_OPENED, _("Opened")),
     (LOG_TYPE_DISABLED, _("Disabled")),
     (LOG_TYPE_UNSUCCESSFUL, _("Unsuccessful")),
 )

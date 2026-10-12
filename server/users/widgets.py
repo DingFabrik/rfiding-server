@@ -8,7 +8,7 @@ from auditlog.models import LogEntry
 from people.models import Person
 from tokens.models import Token
 from machines.models import Machine, MachineRegistrationRequest
-from access_log.models import AccessLog, LOG_TYPE_ENABLED
+from access_log.models import ACCESS_LOG_TYPES, AccessLog
 from space.models import SpaceState
 
 SPACE_HEATMAP_WEEKS = 12
@@ -63,7 +63,7 @@ class WidgetDataProvider():
             timeframe_start = timezone.now() - timedelta(days=days)
             day_counts = (
                 AccessLog.objects.filter(
-                    timestamp__gte=timeframe_start, type=LOG_TYPE_ENABLED
+                    timestamp__gte=timeframe_start, type__in=ACCESS_LOG_TYPES
                 )
                 .annotate(day=TruncDay("timestamp"))
                 .values("day")

@@ -16,8 +16,8 @@ import {
     LogOut, MapPin, Menu, MessageSquare, OctagonX, Plus, RadioTower, RefreshCw,
     RobotArm, Rocket, RotateCcwClock, RotateCw, ScrollText, Search, Send,
     Settings, ShieldCheck, ShieldPlus, ShieldX, SquarePen, Tag, Terminal, Timer,
-    Trash2, TrendingUp, TriangleAlert, Unlock, User, UserCog, UserPlus, Users,
-    Wrench, Mail, Award
+    Trash2, TrendingUp, TriangleAlert, LockOpen, User, UserCog, UserPlus, Users,
+    Wrench, Mail, Award, MailCheck, ClockAlert
 } from 'lucide';
 
 const icons = {
@@ -29,8 +29,8 @@ const icons = {
     LogOut, MapPin, Menu, MessageSquare, OctagonX, Plus, RadioTower, RefreshCw,
     RobotArm, Rocket, RotateCcwClock, RotateCw, ScrollText, Search, Send,
     Settings, ShieldCheck, ShieldPlus, ShieldX, SquarePen, Tag, Terminal, Timer,
-    Trash2, TrendingUp, TriangleAlert, Unlock, User, UserCog, UserPlus, Users,
-    Wrench, Mail, Award,
+    Trash2, TrendingUp, TriangleAlert, LockOpen, User, UserCog, UserPlus, Users,
+    Wrench, Mail, Award, MailCheck, ClockAlert,
 };
 import './keyboardshortcuts.js';
 
