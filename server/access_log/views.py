@@ -163,6 +163,10 @@ class StatisticsMixin:
     """
 
     statistics_scope = "global"
+    
+    @silk_profile()
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
 
     def get_statistics_filters(self):
         return {}
