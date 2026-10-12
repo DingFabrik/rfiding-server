@@ -81,9 +81,6 @@ class Token(TimestampedModel):
         verbose_name_plural = _("Tokens")
         ordering = ["serial"]
         unique_together = ("serial", "archived")
-        indexes = [
-            models.Index(fields=["serial"]),
-        ]
 
 
 class UnknownToken(TimestampedModel):

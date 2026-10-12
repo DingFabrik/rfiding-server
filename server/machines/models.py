@@ -248,7 +248,6 @@ class Machine(TimestampedModel):
         verbose_name_plural = _("Machines")
         ordering = ["name"]
         indexes = [
-            models.Index(fields=["mac_address"]),
             models.Index(fields=["name"]),
         ]
         permissions = (
@@ -313,19 +312,21 @@ class Machine(TimestampedModel):
 
     @staticmethod
     def get_valid_end_time_for_times(times):
-        now = datetime.datetime.now()
-        match = (
-            times.filter(weekdays__contains=now.weekday())
-            .filter(start_time__lte=now.time())
-            .filter(end_time__gte=now.time())
-            .order_by("end_time")
-            .first()
-        )
-        if match is not None:
-            return match.end_time
-        if not times.exists():
+        # A machine has only a few times: one query, then match them here.
+        times = list(times)
+        if not times:
             return datetime.time(23, 59, 59)
-        return None
+        now = datetime.datetime.now()
+        weekday, current_time = now.weekday(), now.time()
+        return min(
+            (
+                time.end_time
+                for time in times
+                if weekday in time.weekdays
+                and time.start_time <= current_time <= time.end_time
+            ),
+            default=None,
+        )
 
     @staticmethod
     def get_valid_end_time_for_machine(machine_id):

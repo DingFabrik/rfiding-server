@@ -60,6 +60,7 @@ class QualificationAdmin(admin.ModelAdmin):
     list_display = ("person", "machine", "permission_level", "is_instructor", "is_maintainer", "last_used", "expired")
     list_filter = (ExpiredListFilter, "permission_level", "is_instructor", "is_maintainer")
     
+    list_select_related = ("person", "machine")
     actions = [mark_expired, mark_unexpired]
 
 admin.site.register(Person, PersonAdmin)

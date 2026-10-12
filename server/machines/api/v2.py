@@ -1,6 +1,5 @@
 import ipaddress
 
-from django.utils import timezone
 from rest_framework.response import Response
 from rest_framework.exceptions import NotFound
 from rest_framework import status, permissions
@@ -8,7 +7,7 @@ from rest_framework.throttling import ScopedRateThrottle
 
 from .common import formatted_mac, BaseAPIView, MachineApiKeyPermission
 from access_log.models import LOG_TYPE_BOOTED
-from access_log.tasks import save_access_log
+from access_log.tasks import log_access
 from machines.esphome import bridge
 from machines.esphome.protocol import COMMANDS
 from machines.api.common import (
@@ -87,12 +86,12 @@ class MachineConfigView(BaseAPIView):
     required_post_parameters = ["mac_address"]
 
     def get(self, request, format=None):
-        save_access_log.delay(self.machine.id, None, LOG_TYPE_BOOTED, timestamp=timezone.now())
+        log_access(self.machine, None, LOG_TYPE_BOOTED)
         return Response(machine_config(self.machine), status=status.HTTP_200_OK)
 
     def post(self, request, format=None):
         update_reported_machine_info(self.machine, request.data)
-        save_access_log.delay(self.machine.id, None, LOG_TYPE_BOOTED, timestamp=timezone.now())
+        log_access(self.machine, None, LOG_TYPE_BOOTED)
         return Response(machine_config(self.machine), status=status.HTTP_200_OK)
 
 

@@ -185,7 +185,9 @@ def compute_space_usage(logs, timeframe_start, days):
 
     starts = [start for start, _ in intervals]
     accesses_open = accesses_closed = 0
-    for timestamp in logs.filter(ENABLED).values_list("timestamp", flat=True):
+    # Can be a year of logs: stream them instead of loading them all at once.
+    timestamps = logs.filter(ENABLED).order_by().values_list("timestamp", flat=True)
+    for timestamp in timestamps.iterator(chunk_size=2000):
         index = bisect_right(starts, timestamp) - 1
         if index >= 0 and timestamp < intervals[index][1]:
             accesses_open += 1
@@ -291,6 +293,10 @@ def compute_statistics(days=DEFAULT_DAYS, machine=None, person=None):
     usage_hours = _hours(totals["usage"])
 
     qualifications = Qualification.objects.filter(qualification_scope)
+    qualification_counts = qualifications.aggregate(
+        granted=Count("id", filter=Q(created__gte=timeframe_start)),
+        expired=Count("id", filter=Q(expired__gte=timeframe_start)),
+    )
     now = timezone.now()
     expiring = qualifications.filter(
         expired__isnull=True,
@@ -311,12 +317,8 @@ def compute_statistics(days=DEFAULT_DAYS, machine=None, person=None):
             "average_session_minutes": (
                 usage_hours * 60 / totals["sessions"] if totals["sessions"] else None
             ),
-            "qualifications_granted": qualifications.filter(
-                created__gte=timeframe_start
-            ).count(),
-            "qualifications_expired": qualifications.filter(
-                expired__gte=timeframe_start
-            ).count(),
+            "qualifications_granted": qualification_counts["granted"],
+            "qualifications_expired": qualification_counts["expired"],
             "unused_qualifications": compute_unused_qualifications(
                 timeframe_start, qualification_scope, by_machine=is_global
             ),

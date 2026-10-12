@@ -5,7 +5,7 @@ from django.http import HttpResponseRedirect
 
 from .models import Comment
 from .forms import CommentForm
-from .services import create_comment
+from .services import comments_for, create_comment
 from base.views import TitleMixin, PermissionRequiredMixin, PartialMixin
 class CommentCreateView(TitleMixin, PartialMixin, PermissionRequiredMixin, CreateView):
     permission_required = "machines.view_machine"
@@ -41,6 +41,7 @@ class CommentCreateView(TitleMixin, PartialMixin, PermissionRequiredMixin, Creat
     def render_tab_pane(self, comment_form=None):
         context = {
             "object": self.get_content_object(),
+            "comments": comments_for(self.get_content_object()),
             "comment_form": comment_form or CommentForm(),
             "comment_url": self.request.resolver_match.view_name,
         }

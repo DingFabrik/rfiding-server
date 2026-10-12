@@ -25,6 +25,7 @@ from base.utils import get_int_list
 from base.views import BaseToggleActiveView, BaseListView, PartialMixin, TitleMixin
 from comments.views import CommentCreateView
 from comments.forms import CommentForm
+from comments.services import comments_for
 from machines.models import Machine
 from .models import Person, Qualification
 from .conf import PERSON_LOGIN_CODE_VALID_MINUTES
@@ -93,6 +94,8 @@ class PersonDetailView(TitleMixin, PermissionRequiredMixin, DetailView):
         context["can_edit"] = self.request.user.has_perm("people.change_person")
         context["can_delete"] = self.request.user.has_perm("people.delete_person")
         context["comment_form"] = CommentForm()
+        context["comments"] = comments_for(self.object)
+        context["tokens"] = list(self.object.token_set.select_related("type"))
         qualifications = (
             self.object.qualifications.select_related("machine")
             .select_related("instructed_by")

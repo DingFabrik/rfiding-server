@@ -218,7 +218,7 @@ class UserWidget(models.Model):
     class Meta:
         verbose_name = _("User Widget")
         verbose_name_plural = _("User Widgets")
-        ordering = ["user", "position"]
+        ordering = ["user_id", "position"]
 
     @property
     def template(self):

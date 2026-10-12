@@ -43,7 +43,9 @@ class PersonViewSet(BaseModelViewSet):
             comment = create_comment(person, request.user, serializer.validated_data["text"])
             return Response(CommentSerializer(comment).data, status=201)
         content_type = ContentType.objects.get_for_model(Person)
-        comments = Comment.objects.filter(content_type=content_type, object_id=person.pk)
+        comments = Comment.objects.filter(
+            content_type=content_type, object_id=person.pk
+        ).select_related("author")
         return Response(CommentSerializer(comments, many=True).data)
 
 

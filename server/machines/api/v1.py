@@ -1,10 +1,9 @@
-from django.utils import timezone
 from rest_framework.response import Response
 from rest_framework import status
 
 from .common import check_access_response, BaseAPIView, MachineApiKeyPermission
 from access_log.models import LOG_TYPE_BOOTED
-from access_log.tasks import save_access_log
+from access_log.tasks import log_access
 
 
 class V1MachineApiKeyPermission(MachineApiKeyPermission):
@@ -16,7 +15,7 @@ class MachineConfigView(BaseAPIView):
     required_get_parameters = ["machine"]
 
     def get(self, request, format=None):
-        save_access_log.delay(self.machine.id, None, LOG_TYPE_BOOTED, timestamp=timezone.now())
+        log_access(self.machine, None, LOG_TYPE_BOOTED)
         return Response(
             {
                 "runtimer": self.machine.runtimer.seconds * 1000 + self.machine.runtimer.microseconds // 1000,

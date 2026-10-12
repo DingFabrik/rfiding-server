@@ -1,6 +1,6 @@
 from datetime import datetime, time, timedelta
 
-from django.db.models import Count
+from django.db.models import Count, Q
 from django.db.models.functions import TruncDay
 from django.utils import timezone
 from auditlog.models import LogEntry
@@ -32,24 +32,31 @@ class WidgetDataProvider():
         self.data = {}
 
     def prepare_token_counts(self):
-        if "activeTokenCount" not in self.data:
-            self.data["activeTokenCount"] = Token.objects.filter(is_active=True).count()
         if "tokenCount" not in self.data:
-            self.data["tokenCount"] = Token.objects.count()
+            counts = Token.objects.aggregate(
+                active=Count("id", filter=Q(is_active=True)), total=Count("id")
+            )
+            self.data["activeTokenCount"] = counts["active"]
+            self.data["tokenCount"] = counts["total"]
 
     def prepare_machine_counts(self):
-        if "activeMachineCount" not in self.data:
-            self.data["activeMachineCount"] = Machine.objects.filter(state="active").count()
-        if "maintenanceMachineCount" not in self.data:
-            self.data["maintenanceMachineCount"] = Machine.objects.filter(state="maintenance").count()
         if "machineCount" not in self.data:
-            self.data["machineCount"] = Machine.objects.count()
+            counts = Machine.objects.aggregate(
+                active=Count("id", filter=Q(state="active")),
+                maintenance=Count("id", filter=Q(state="maintenance")),
+                total=Count("id"),
+            )
+            self.data["activeMachineCount"] = counts["active"]
+            self.data["maintenanceMachineCount"] = counts["maintenance"]
+            self.data["machineCount"] = counts["total"]
 
     def prepare_person_counts(self):
-        if "activePeopleCount" not in self.data:
-            self.data["activePeopleCount"] = Person.objects.filter(is_active=True).count()
         if "peopleCount" not in self.data:
-            self.data["peopleCount"] = Person.objects.count()
+            counts = Person.objects.aggregate(
+                active=Count("id", filter=Q(is_active=True)), total=Count("id")
+            )
+            self.data["activePeopleCount"] = counts["active"]
+            self.data["peopleCount"] = counts["total"]
 
     def prepare_access_log_latest(self):
         if "latestAccessLog" not in self.data:

@@ -1,10 +1,15 @@
 from datetime import timedelta
+from itertools import batched
 
 from celery import shared_task
+from django.db import transaction
 from django.utils import timezone
 
 from .models import QUALIFICATION_EXPIRY_WARNING_DAYS, Qualification
 from .notifications import send_qualification_expiration_notification
+
+
+EXPIRE_BATCH_SIZE = 500
 
 
 @shared_task
@@ -12,21 +17,30 @@ def expire_qualifications():
     """Refresh expiration dates and expire any qualification that is due."""
     now = timezone.now()
     expired_count = 0
-    for qualification in Qualification.objects.filter(
-        expired__isnull=True
-    ).select_related("machine"):
-        expires_at = qualification.compute_expires_at()
-        update_fields = []
-        if expires_at != qualification.expires_at:
-            qualification.expires_at = expires_at
-            update_fields.append("expires_at")
-        if expires_at is not None and expires_at <= now:
-            qualification.expired = now
-            update_fields.append("expired")
-            expired_count += 1
-        if update_fields:
-            # Per-row save, not bulk_update, so auditlog's signals record it.
-            qualification.save(update_fields=update_fields)
+    qualifications = (
+        Qualification.objects.filter(expired__isnull=True)
+        .select_related("machine")
+        # The default ordering joins machine and person just to sort.
+        .order_by()
+        .iterator(chunk_size=EXPIRE_BATCH_SIZE)
+    )
+    for batch in batched(qualifications, EXPIRE_BATCH_SIZE):
+        # One commit per batch rather than per row, without locking every
+        # updated row until the end - access checks update these rows too.
+        with transaction.atomic():
+            for qualification in batch:
+                expires_at = qualification.compute_expires_at()
+                update_fields = []
+                if expires_at != qualification.expires_at:
+                    qualification.expires_at = expires_at
+                    update_fields.append("expires_at")
+                if expires_at is not None and expires_at <= now:
+                    qualification.expired = now
+                    update_fields.append("expired")
+                    expired_count += 1
+                if update_fields:
+                    # Per-row save, not bulk_update, so auditlog's signals record it.
+                    qualification.save(update_fields=update_fields)
     return expired_count
 
 
@@ -40,7 +54,7 @@ def notify_expiring_qualifications(days_before=QUALIFICATION_EXPIRY_WARNING_DAYS
         notified_at__isnull=True,
         expires_at__isnull=False,
         expires_at__lte=threshold,
-    ).select_related("person", "machine"):
+    ).select_related("person", "machine").order_by():
         sent_via = send_qualification_expiration_notification(qualification)
         if sent_via:
             qualification.notified_at = timezone.now()

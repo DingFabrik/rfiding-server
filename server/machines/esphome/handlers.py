@@ -1,12 +1,11 @@
 import logging
 
 from django.db import close_old_connections
-from django.utils import timezone
 from rest_framework import status
 from rest_framework.exceptions import NotFound
 
 from access_log.models import LOG_TYPE_BOOTED
-from access_log.tasks import save_access_log
+from access_log.tasks import log_access
 from machines.api.common import (
     log_machine_disabled,
     machine_config,
@@ -43,7 +42,7 @@ def check_access(machine, data):
 
 def config(machine, data):
     update_reported_machine_info(machine, data)
-    save_access_log.delay(machine.id, None, LOG_TYPE_BOOTED, timestamp=timezone.now())
+    log_access(machine, None, LOG_TYPE_BOOTED)
     return machine_config(machine)
 
 

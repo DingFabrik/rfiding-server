@@ -5,7 +5,7 @@ from .models import TokenType
 
 
 def _token_type_choices():
-    return [(str(token_type.pk), token_type.name) for token_type in TokenType.objects.all()]
+    return [(str(pk), name) for pk, name in TokenType.objects.values_list("pk", "name")]
 
 
 class TokenFilterSet(FilterSet):

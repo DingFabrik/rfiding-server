@@ -9,13 +9,12 @@ from rest_framework.exceptions import ValidationError, NotFound, PermissionDenie
 from django.db.models import Q
 from django.conf import settings
 from django.db import transaction
-from django.utils import timezone
 
 from machines.models import Machine, PERMISSION_LEVELS
 from machines.serializers import MachineConfigSerializer
 from holidays.utils import is_today_holiday
 from tokens.models import Token, UnknownToken, BlacklistedToken
-from access_log.tasks import save_access_log
+from access_log.tasks import log_access
 from access_log.models import (
     LOG_TYPE_DISABLED,
     LOG_TYPE_ENABLED,
@@ -23,7 +22,7 @@ from access_log.models import (
     LOG_TYPE_OPENED,
     UnsuccessfulReason,
 )
-from people.models import Person, Qualification
+from people.models import Qualification
 from space.models import SpaceState
 
 logger = logging.getLogger(__name__)
@@ -161,7 +160,9 @@ def check_access(machine, tokenID, compartmentID=None):
         raise AccessDenied("Machine is restricted", UnsuccessfulReason.OUTSIDE_HOURS)
 
     try:
-        token = Token.objects.values("id", "person__id").get(
+        token = Token.objects.values(
+            "id", "person__id", "person__is_system_maintainer"
+        ).get(
             serial=tokenID, archived=None, is_active=True, person__is_active=True
         )
     except Token.DoesNotExist:
@@ -187,13 +188,9 @@ def check_access(machine, tokenID, compartmentID=None):
     def log_enabled():
         machine_type = checked_machine.type
         if machine_type == Machine.MachineType.LOCK or machine_type == Machine.MachineType.COMPARTMENT:
-            save_access_log.delay(
-                checked_machine.id, token["id"], LOG_TYPE_OPENED, timestamp=timezone.now()
-            )
+            log_access(checked_machine, token["id"], LOG_TYPE_OPENED)
         else:
-            save_access_log.delay(
-                checked_machine.id, token["id"], LOG_TYPE_ENABLED, timestamp=timezone.now()
-            )
+            log_access(checked_machine, token["id"], LOG_TYPE_ENABLED)
 
     if checked_machine.needs_qualification:
         person = token["person__id"]
@@ -218,11 +215,7 @@ def check_access(machine, tokenID, compartmentID=None):
             denied_reason = None
         if denied_reason is not None:
             if checked_machine.state == Machine.MachineStatus.MAINTENANCE:
-                is_system_maintainer = Person.objects.filter(
-                    id=person,
-                    is_system_maintainer=True
-                ).exists()
-                if not is_system_maintainer:
+                if not token["person__is_system_maintainer"]:
                     raise AccessDenied(
                         "Machine in maintenance",
                         UnsuccessfulReason.MAINTENANCE,
@@ -234,6 +227,8 @@ def check_access(machine, tokenID, compartmentID=None):
 
         if not is_maintainer_bypass:
             check_space_open(qualification.permission_level, token["id"])
+            # Already loaded - saves mark_used() fetching it again.
+            qualification.machine = checked_machine
             with transaction.atomic():
                 qualification.mark_used()
                 transaction.on_commit(log_enabled)
@@ -283,19 +278,18 @@ def run_access_check(machine, tokenID, compartmentID=None):
         return status.HTTP_403_FORBIDDEN, {"error": "Internal error", "access": 0}
     finally:
         if not was_successful:
-            save_access_log.delay(
-                machine.id,
-                token_id,
-                LOG_TYPE_UNSUCCESSFUL,
-                timestamp=timezone.now(),
-                reason=reason,
-            )
+            log_access(machine, token_id, LOG_TYPE_UNSUCCESSFUL, reason=reason)
 
 
 def check_access_response(machine, tokenID, compartmentID=None):
     """Runs check_access and turns the outcome into an API response."""
     status_code, data = run_access_check(machine, tokenID, compartmentID)
     return Response(data, status=status_code)
+
+
+def configured_compartments(queryset):
+    """The compartments of `queryset` that have a compartment ID."""
+    return queryset.exclude(Q(compartment_id__isnull=True) | Q(compartment_id=""))
 
 
 def machine_config(machine):
@@ -308,9 +302,10 @@ def machine_config(machine):
         "link_relays": machine.link_relays,
     }
     if machine.type == Machine.MachineType.LOCK_GROUP:
-        config["compartments"] = machine.children.exclude(
-            Q(compartment_id__isnull=True) | Q(compartment_id="")
-        )
+        compartments = getattr(machine, "prefetched_compartments", None)
+        if compartments is None:
+            compartments = configured_compartments(machine.children.all())
+        config["compartments"] = compartments
     return MachineConfigSerializer(config).data
 
 
@@ -322,7 +317,7 @@ def update_reported_machine_info(machine, data):
             setattr(machine, field, data[field])
             changed_fields.append(field)
     if changed_fields:
-        machine.save()
+        machine.save(update_fields=[*changed_fields, "updated"])
     return changed_fields
 
 
@@ -344,4 +339,4 @@ def log_machine_disabled(machine, compartmentID=None, tokenID=None):
             .values_list("id", flat=True)
             .first()
         )
-    save_access_log.delay(machine.id, token_id, LOG_TYPE_DISABLED, timestamp=timezone.now())
+    log_access(machine, token_id, LOG_TYPE_DISABLED)

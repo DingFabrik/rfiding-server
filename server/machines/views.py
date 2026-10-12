@@ -21,6 +21,7 @@ from base.utils import get_int_list
 from base.views import BaseListView, PartialMixin, TitleMixin
 from machines.esphome import bridge
 from comments.forms import CommentForm
+from comments.services import comments_for
 from comments.views import CommentCreateView
 from .availability import get_availability, get_usage_rows, weekday_name
 from .models import Machine, MachineRegistrationRequest, MachineTime
@@ -111,6 +112,7 @@ class MachineDetailView(TitleMixin, PermissionRequiredMixin, DetailView):
     model = Machine
     template_name = "machine_detail.html"
     context_object_name = "machine"
+    queryset = Machine.objects.select_related("location", "parent__location")
 
     def dispatch(self, request, *args, **kwargs):
         if not request.user.is_authenticated or not request.user.has_perm("machines.view_machine") or request.GET.get("public", "false").lower() == "true":
@@ -125,6 +127,7 @@ class MachineDetailView(TitleMixin, PermissionRequiredMixin, DetailView):
         context["can_edit"] = self.request.user.has_perm("machines.change_machine")
         context["can_delete"] = self.request.user.has_perm("machines.delete_machine")
         context["comment_form"] = CommentForm()
+        context["comments"] = comments_for(self.object)
         try:
             access = AccessLog.objects.filter(machine=self.object).latest("timestamp")
             context["last_access"] = access.timestamp
@@ -255,11 +258,9 @@ class MachineCreateView(
         ).first()
 
     def form_valid(self, form, formset):
-        f = MachineRegistrationRequest.objects.filter(
+        MachineRegistrationRequest.objects.filter(
             mac_address=form.cleaned_data["mac_address"]
-        )
-        if f.exists():
-            f.delete()
+        ).delete()
         return super().form_valid(form, formset)
 
     def get_context_data(self, **kwargs):
@@ -311,7 +312,9 @@ class MachinePopoverView(PermissionRequiredMixin, TemplateView):
     model = Machine
     
     def get_queryset(self):
-        return Machine.objects.filter(pk=self.request.GET["machine_pk"])
+        return Machine.objects.filter(pk=self.request.GET["machine_pk"]).select_related(
+            "location"
+        )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

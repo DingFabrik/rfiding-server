@@ -291,7 +291,11 @@ class Qualification(TimestampedModel):
         self.last_used = timezone.now()
         self.expires_at = self.compute_expires_at()
         self.notified_at = None
-        self.save(update_fields=["last_used", "expires_at", "notified_at"])
+        Qualification.objects.filter(pk=self.pk).update(
+            last_used=self.last_used,
+            expires_at=self.expires_at,
+            notified_at=None,
+        )
 
     @property
     def expires_soon(self):

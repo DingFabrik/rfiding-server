@@ -43,14 +43,14 @@
         <i data-lucide="clock" class="w-8 h-8"></i>
       </div>
       <div class="stat-title text-xs">{% trans 'Last used' %}</div>
-      <div class="stat-value text-lg tabular-nums">{{ object.accesslog_set.first.timestamp|default:_('Never') }}</div>
+      <div class="stat-value text-lg tabular-nums">{{ last_used|default:_('Never') }}</div>
     </div>
     <div class="stat py-3">
         <div class="stat-figure text-primary">
           <i data-lucide="trending-up" class="w-8 h-8"></i>
         </div>
       <div class="stat-title text-xs">{% trans 'Total uses' %}</div>
-      <div class="stat-value text-lg tabular-nums">{{ object.accesslog_set.count }}</div>
+      <div class="stat-value text-lg tabular-nums">{{ total_uses }}</div>
     </div>
   </div>
 

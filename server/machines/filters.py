@@ -6,7 +6,7 @@ from .models import Machine
 
 
 def _location_choices():
-    return [(str(location.pk), location.name) for location in Location.objects.all()]
+    return [(str(pk), name) for pk, name in Location.objects.values_list("pk", "name")]
 
 
 class MachineFilterSet(FilterSet):

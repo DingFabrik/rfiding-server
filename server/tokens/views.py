@@ -13,8 +13,10 @@ from django.views.generic import (
 )
 from django.urls import reverse, reverse_lazy
 from django.shortcuts import redirect, get_object_or_404
+from django.db.models import Count, Max
 from django.utils.translation import gettext_lazy as _
 
+from access_log.models import AccessLog
 from base.views import BaseToggleActiveView, BaseListView
 from .models import Token, TokenType, UnknownToken, BlacklistedToken
 from .forms import TokenForm
@@ -99,9 +101,7 @@ class AssignTokenView(PermissionRequiredMixin, CreateView):
 
     def form_valid(self, form):
         r = super().form_valid(form)
-        unknown_token = UnknownToken.objects.filter(serial=form.instance.serial)
-        if unknown_token.exists():
-            unknown_token.delete()
+        UnknownToken.objects.filter(serial=form.instance.serial).delete()
         return r
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
@@ -114,6 +114,7 @@ class TokenDetailView(PermissionRequiredMixin, DetailView):
     permission_required = "tokens.view_token"
 
     model = Token
+    queryset = Token.objects.select_related("person", "type")
     template_name = "token_detail.html"
     context_object_name = "token"
 
@@ -121,6 +122,10 @@ class TokenDetailView(PermissionRequiredMixin, DetailView):
         context = super().get_context_data(**kwargs)
         context["can_edit"] = self.request.user.has_perm("tokens.change_token")
         context["can_delete"] = self.request.user.has_perm("tokens.delete_token")
+        usage = AccessLog.objects.filter(token=self.object).aggregate(
+            last_used=Max("timestamp"), total_uses=Count("id")
+        )
+        context.update(usage)
         return context
 
 

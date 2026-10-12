@@ -26,6 +26,33 @@ delete_days = getattr(settings, "ACCESS_LOG_DELETE_DAYS", 0)
 anonymize_days = getattr(settings, "ACCESS_LOG_ANONYMIZE_DAYS", 0)
 
 
+# The machine setting that decides whether a log type is saved.
+LOG_TYPE_SETTINGS = {
+    LOG_TYPE_BOOTED: "log_booted",
+    LOG_TYPE_ENABLED: "log_enabled",
+    LOG_TYPE_OPENED: "log_enabled",
+    LOG_TYPE_DISABLED: "log_disabled",
+    LOG_TYPE_UNSUCCESSFUL: "log_unsuccessful",
+}
+
+
+def is_logged(machine, log_type):
+    setting = LOG_TYPE_SETTINGS.get(log_type)
+    return setting is None or getattr(machine, setting)
+
+
+def log_access(machine, token_id, log_type, reason=None):
+    """Queues save_access_log for an event that happened now.
+
+    Skips the task when `machine` doesn't log this type anyway. The task checks
+    again, in case the setting changes before it runs.
+    """
+    if is_logged(machine, log_type):
+        save_access_log.delay(
+            machine.id, token_id, log_type, timestamp=timezone.now(), reason=reason
+        )
+
+
 def find_enabling_log(machine, token_id, timestamp):
     """The enabled (or opened) log that a disable at `timestamp` ends, if any.
 
@@ -59,15 +86,7 @@ def find_enabling_log(machine, token_id, timestamp):
 def save_access_log(machine, token_id, log_type, timestamp=None, reason=None):
     if not isinstance(machine, Machine):
         machine = Machine.objects.get(pk=machine)
-    if log_type == LOG_TYPE_BOOTED and not machine.log_booted:
-        return
-    if log_type == LOG_TYPE_ENABLED and not machine.log_enabled:
-        return
-    if log_type == LOG_TYPE_OPENED and not machine.log_enabled:
-        return
-    if log_type == LOG_TYPE_DISABLED and not machine.log_disabled:
-        return
-    if log_type == LOG_TYPE_UNSUCCESSFUL and not machine.log_unsuccessful:
+    if not is_logged(machine, log_type):
         return
     log_timestamp = timestamp or timezone.now()
     last_enabled_log = None

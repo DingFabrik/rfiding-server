@@ -21,7 +21,7 @@
         <i data-lucide="radio-tower" class="w-8 h-8"></i>
       </div>
       <div class="stat-title text-xs">{% trans 'Tokens' %}</div>
-      <div class="stat-value text-lg tabular-nums">{{ person.token_set.count }}</div>
+      <div class="stat-value text-lg tabular-nums">{{ tokens|length }}</div>
     </div>
     <div class="stat py-3">
       <div class="stat-figure text-primary">
@@ -62,16 +62,14 @@
     <div class="bg-base-100 p-4 lg:col-span-2">
       <h2 class="text-xs font-semibold uppercase tracking-wide text-base-content/50 mb-2">{% trans 'Tokens' %}</h2>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
-        {% with tokens=person.token_set.all %}
-          {% for token in tokens %}
-            {% include 'token_card.html' %}
-          {% empty %}
-            {% blocktrans asvar empty_tokens_message with name=person.name %}<b>{{ name }}</b> has no tokens.{% endblocktrans %}
-            <div class="col-span-full">
-              {% include 'snippets/empty.html' with icon='ban' message=empty_tokens_message %}
-            </div>
-          {% endfor %}
-        {% endwith %}
+        {% for token in tokens %}
+          {% include 'token_card.html' %}
+        {% empty %}
+          {% blocktrans asvar empty_tokens_message with name=person.name %}<b>{{ name }}</b> has no tokens.{% endblocktrans %}
+          <div class="col-span-full">
+            {% include 'snippets/empty.html' with icon='ban' message=empty_tokens_message %}
+          </div>
+        {% endfor %}
       </div>
     </div>
   </div>

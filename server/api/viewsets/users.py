@@ -20,7 +20,7 @@ from .base import BaseModelViewSet
 
 
 class UserViewSet(BaseModelViewSet):
-    queryset = RFIDingUser.objects.all()
+    queryset = RFIDingUser.objects.prefetch_related("groups")
     serializer_class = UserSerializer
     search_fields = ["name", "email"]
     ordering_fields = ["email", "name"]
@@ -67,7 +67,7 @@ class UserViewSet(BaseModelViewSet):
 
 
 class GroupViewSet(BaseModelViewSet):
-    queryset = Group.objects.all()
+    queryset = Group.objects.prefetch_related("permissions")
     serializer_class = GroupSerializer
     search_fields = ["name"]
 

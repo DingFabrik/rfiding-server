@@ -8,10 +8,11 @@ from asgiref.sync import sync_to_async
 from channels.exceptions import ChannelFull
 from channels.layers import get_channel_layer
 from django.db import close_old_connections
+from django.db.models import Prefetch
 
 from base.build import running_version
 
-from machines.api.common import machine_config
+from machines.api.common import configured_compartments, machine_config
 from machines.models import Machine
 
 from . import protocol
@@ -51,7 +52,14 @@ def load_machine_settings(machine_pk=None):
     """{pk: MachineSettings} of all managed machines, or only of machine_pk."""
     close_old_connections()
     try:
-        machines = managed_machines()
+        machines = managed_machines().prefetch_related(
+            # machine_config() would otherwise query each locker's compartments.
+            Prefetch(
+                "children",
+                queryset=configured_compartments(Machine.objects.all()),
+                to_attr="prefetched_compartments",
+            )
+        )
         if machine_pk is not None:
             machines = machines.filter(pk=machine_pk)
         return {machine.pk: machine_settings(machine) for machine in machines}

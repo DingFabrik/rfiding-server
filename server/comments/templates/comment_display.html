@@ -1,7 +1,7 @@
 {% load crispy_forms_tags %}{% load i18n %}{% load base_extra %}
 <div class="flex flex-col lg:flex-row gap-4">
   <div class="min-w-0 grow">
-    {% for comment in object.comments.all %}
+    {% for comment in comments %}
       {% include "comment.html" %}
     {% empty %}
       {% include 'snippets/empty.html' with icon='message-square' message='No comments yet.'|translate %}

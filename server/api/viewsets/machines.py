@@ -83,7 +83,9 @@ class MachineViewSet(BaseModelViewSet):
             comment = create_comment(machine, request.user, serializer.validated_data["text"])
             return Response(CommentSerializer(comment).data, status=201)
         content_type = ContentType.objects.get_for_model(Machine)
-        comments = Comment.objects.filter(content_type=content_type, object_id=machine.pk)
+        comments = Comment.objects.filter(
+            content_type=content_type, object_id=machine.pk
+        ).select_related("author")
         return Response(CommentSerializer(comments, many=True).data)
 
 

@@ -43,6 +43,15 @@ class AccessLog(models.Model):
         verbose_name = _("Access Log")
         verbose_name_plural = _("Access Logs")
         ordering = ("-timestamp",)
+        indexes = [
+            models.Index(fields=["-timestamp"], name="accesslog_timestamp_idx"),
+            # Latest/duplicate lookups per machine, the machine list's last_used.
+            models.Index(
+                fields=["machine", "type", "-timestamp"],
+                name="accesslog_machine_type_ts_idx",
+            ),
+            models.Index(fields=["token", "-timestamp"], name="accesslog_token_ts_idx"),
+        ]
 
     # When it happened, not when it was saved: logs are written by a Celery task
     # that can run much later, e.g. after retries.
