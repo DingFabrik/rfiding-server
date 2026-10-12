@@ -716,3 +716,8 @@
   position: absolute;
   width: 1px;
 }
+
+
+.input:focus-within {
+  outline: 0;
+}

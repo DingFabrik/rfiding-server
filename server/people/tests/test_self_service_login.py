@@ -154,3 +154,17 @@ class MyQualificationsPageTests(TestCase):
         self.assertEqual(names, ["Table saw", "CNC router", "Soldering station"])
         statuses = [row.status for row in response.context["rows"]]
         self.assertEqual(statuses, ["expiring", "expired", "valid"])
+
+    def test_links_to_public_machine_pages(self):
+        qualification = self.qualify(self.person, "Table saw")
+        response = self.client.get(reverse("people:me"))
+        self.assertContains(
+            response,
+            reverse("machines:detail", args=[qualification.machine.pk]) + "?public=true",
+        )
+
+
+class StaffLoginPageTests(TestCase):
+    def test_links_to_self_service_login(self):
+        response = self.client.get(reverse("login"))
+        self.assertContains(response, reverse("people:me-login"))

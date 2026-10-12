@@ -35,7 +35,7 @@
             {% for row in rows %}
               <tr class="hover:bg-base-200/50">
                 <td>
-                  <div class="font-medium">{{ row.machine.name }}</div>
+                  <a class="font-medium link link-hover" href="{% url 'machines:detail' row.machine.pk %}?public=true">{{ row.machine.name }}</a>
                   {% if row.location %}<div class="text-xs text-base-content/60">{{ row.location }}</div>{% endif %}
                 </td>
                 <td>{% include "snippets/qualification_status_badge.html" %}</td>
@@ -67,7 +67,7 @@
                 {% for row in group.list %}
                   <li class="list-row px-0 py-2 {% if not forloop.last %}border-b border-base-200{% endif %}">
                     <div class="list-col-grow">
-                      <div>{{ row.machine.name }}</div>
+                      <a class="link link-hover" href="{% url 'machines:detail' row.machine.pk %}?public=true">{{ row.machine.name }}</a>
                       {% include "snippets/qualification_granted.html" %}
                     </div>
                     <span class="text-sm text-base-content/70 whitespace-nowrap">{% if row.expires %}{% blocktrans with date=row.expires|date:"d M Y" %}until {{ date }}{% endblocktrans %}{% else %}{% trans 'no expiry' %}{% endif %}</span>
@@ -82,7 +82,7 @@
               <i data-lucide="{% if row.status == 'expired' %}circle-x{% else %}clock-alert{% endif %}" class="w-5 h-5 shrink-0" aria-hidden="true"></i>
               <div class="flex-1">
                 <div class="flex justify-between items-baseline gap-2">
-                  <strong>{{ row.machine.name }}</strong>
+                  <a class="font-bold link link-hover" href="{% url 'machines:detail' row.machine.pk %}?public=true">{{ row.machine.name }}</a>
                   {% include "snippets/qualification_status_badge.html" %}
                 </div>
                 <p class="text-sm mt-1">
