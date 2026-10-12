@@ -60,9 +60,7 @@ class WidgetDataProvider():
 
     def prepare_access_log_latest(self):
         if "latestAccessLog" not in self.data:
-            self.data["latestAccessLog"] = AccessLog.objects.select_related(
-                "machine", "token"
-            ).all()
+            self.data["latestAccessLog"] = AccessLog.objects.for_list()
 
     def prepare_access_log_chart(self):
         if "accessLogByDay" not in self.data:

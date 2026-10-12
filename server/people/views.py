@@ -65,9 +65,7 @@ class PersonListView(BaseListView):
     permission_required = "people.view_person"
 
     model = Person
-    queryset = Person.objects.values(
-        "pk", "name", "email", "is_active", "member_id"
-    ).all()
+    queryset = Person.objects.values("pk", "name", "is_active", "member_id")
     template_name = "person_list.html"
     context_object_name = "people"
     sort_fields = PEOPLE_SORT_CHOICES_KEYS

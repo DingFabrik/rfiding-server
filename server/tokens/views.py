@@ -38,8 +38,20 @@ TOKEN_SORT_CHOICES_KEYS = [choice[0] for choice in TOKEN_SORT_CHOICES]
 
 class TokenListView(BaseListView):
     queryset = (
-        Token.objects.select_related("person")
-        .select_related("type")
+        Token.objects.select_related("person", "type")
+        # Only what token_list.html renders, including format_label() and Person.__str__.
+        .only(
+            "serial",
+            "label_id",
+            "purpose",
+            "is_active",
+            "archived",
+            "type__name",
+            "type__label_prefix",
+            "type__label_id_padding",
+            "person__name",
+            "person__member_id",
+        )
         .order_by("id")
     )
     permission_required = "tokens.view_token"

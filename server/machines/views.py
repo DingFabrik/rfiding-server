@@ -48,7 +48,7 @@ class MachineListView(BaseListView):
     model = Machine
     # Latest successful access; a correlated subquery, so it only runs for the
     # machines on the current page.
-    queryset = Machine.objects.annotate(
+    queryset = Machine.objects.only("name", "type", "state").annotate(
         last_used=Subquery(
             AccessLog.objects.filter(machine=OuterRef("pk"), type__in=ACCESS_LOG_TYPES)
             .order_by("-timestamp")

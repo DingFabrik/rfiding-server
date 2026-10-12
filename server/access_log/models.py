@@ -38,7 +38,21 @@ class UnsuccessfulReason(models.TextChoices):
     INTERNAL_ERROR = "internal_error", _("Internal error")
 
 
+class AccessLogQuerySet(models.QuerySet):
+    def for_list(self):
+        """Only load what the access log tables (cells/access_log_row.html) render."""
+        return self.select_related("machine", "token").only(
+            "timestamp",
+            "type",
+            "unsuccessful_reason",
+            "machine__name",
+            "token__serial",
+        )
+
+
 class AccessLog(models.Model):
+    objects = AccessLogQuerySet.as_manager()
+
     class Meta:
         verbose_name = _("Access Log")
         verbose_name_plural = _("Access Logs")

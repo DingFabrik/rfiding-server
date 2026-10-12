@@ -20,7 +20,7 @@ class AccessLogListView(
 
     title = _("Access Logs")
     model = AccessLog
-    queryset = AccessLog.objects.select_related("token").select_related("machine").all()
+    queryset = AccessLog.objects.for_list()
     template_name = "access_log_list.html"
     context_object_name = "access_logs"
     ordering = ["-timestamp"]
@@ -79,6 +79,9 @@ class AccessLogForSubjectView(TitleMixin, PermissionRequiredMixin, PartialListMi
         "machine": _("This machine has not been used yet."),
     }
 
+    def get_queryset(self) -> QuerySet[Any]:
+        return super().get_queryset().for_list()
+
     def get_subject(self):
         raise NotImplementedError
 
@@ -112,7 +115,6 @@ class AccessLogForTokenView(AccessLogForSubjectView):
         return (
             super()
             .get_queryset()
-            .select_related("machine")
             .filter(token__pk=self.kwargs["token"])
         )
 
@@ -127,7 +129,6 @@ class AccessLogForPersonView(AccessLogForSubjectView):
         return (
             super()
             .get_queryset()
-            .select_related("machine", "token")
             .filter(token__person__pk=self.kwargs["person"])
         )
 
@@ -142,7 +143,6 @@ class AccessLogForMachineView(AccessLogForSubjectView):
         return (
             super()
             .get_queryset()
-            .select_related("token")
             .filter(machine__pk=self.kwargs["machine"])
         )
 
