@@ -4,6 +4,7 @@ import signal
 
 from django.core.management.base import BaseCommand
 
+from base.slow_queries import enable_slow_query_logging
 from machines.esphome.manager import DeviceManager
 
 logger = logging.getLogger(__name__)
@@ -16,6 +17,7 @@ class Command(BaseCommand):
     )
 
     def handle(self, *args, **kwargs):
+        enable_slow_query_logging()
         asyncio.run(self.run())
 
     async def run(self):

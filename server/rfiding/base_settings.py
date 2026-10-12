@@ -313,6 +313,12 @@ LOGGING = {
             "filters": ["require_debug_false"],
             "class": "django.utils.log.AdminEmailHandler",
         },
+        # Also in production: Celery and the machine manager log to stderr,
+        # which ends up in their service logs.
+        "console_always": {
+            "class": "logging.StreamHandler",
+            "formatter": "verbose",
+        },
     },
     "loggers": {
         "django": {
@@ -324,8 +330,18 @@ LOGGING = {
             "handlers": ["console_verbose", "mail_admins"],
             "level": "INFO",
         },
+        "rfiding.slow_queries": {
+            "handlers": ["console_always"],
+            "level": "WARNING",
+            "propagate": False,
+        },
     },
 }
+
+# Celery workers and the machine manager log queries taking at least this many
+# milliseconds (see base/slow_queries.py). Silk covers web requests. None turns
+# it off.
+SLOW_QUERY_THRESHOLD_MS = 500
 
 # Tests deliberately trigger failures (lockouts, unreachable machines, raised
 # exceptions) that would otherwise be printed to stderr by Python's last-resort
@@ -333,6 +349,7 @@ LOGGING = {
 if "test" in sys.argv:
     LOGGING["handlers"]["null"] = {"class": "logging.NullHandler"}
     LOGGING["root"] = {"handlers": ["null"]}
+    LOGGING["loggers"]["rfiding.slow_queries"]["handlers"] = ["null"]
 
 # Silk records requests with their SQL queries, viewable at /silk/.
 SILKY_AUTHENTICATION = True
