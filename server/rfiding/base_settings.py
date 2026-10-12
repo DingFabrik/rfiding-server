@@ -231,6 +231,7 @@ SPECTACULAR_SETTINGS = {
     "DESCRIPTION": "REST API covering the data and actions available in the Rfiding admin dashboard.",
     "VERSION": VERSION,
     "SERVE_INCLUDE_SCHEMA": False,
+    "PREPROCESSING_HOOKS": ["api.schema.only_admin_api"],
     "ENUM_NAME_OVERRIDES": {
         "ThemeColorEnum": "users.models.THEME_COLORS",
     },
@@ -242,7 +243,29 @@ OAUTH2_PROVIDER = {
         "write": "Write access to perform dashboard actions",
     },
     "ACCESS_TOKEN_EXPIRE_SECONDS": 60 * 60 * 8,
+    # RFC 9700 (OAuth 2.0 Security Best Current Practice). These become the
+    # defaults in django-oauth-toolkit 4.0. Clients use the authorization code
+    # flow with PKCE (S256) or client credentials; the implicit and password
+    # grants are rejected.
+    "COMPLIANT_BCP_RFC9700_IMPLICIT_GRANT": True,
+    "COMPLIANT_BCP_RFC9700_PASSWORD_GRANT": True,
+    "COMPLIANT_BCP_RFC9700_PKCE_METHOD": True,
+    # Only in the Authorization header, never in the query string (and so in logs).
+    "COMPLIANT_BCP_RFC9700_ACCESS_TOKEN_TRANSPORT": True,
+    "COMPLIANT_BCP_RFC9700_AUTHZ_RESPONSE_ISS": True,
+    # Only a SHA-256 checksum of new tokens is stored. Tokens issued before this
+    # was enabled stay valid until they expire.
+    "COMPLIANT_BCP_RFC9700_TOKEN_STORAGE": True,
+    # Reusing an already rotated refresh token revokes all tokens descended from it.
+    "REFRESH_TOKEN_REUSE_PROTECTION": True,
+    "COMPLIANT_BCP_RFC9700_REFRESH_TOKEN": True,
 }
+
+SILENCED_SYSTEM_CHECKS = [
+    # http redirect URIs stay allowed on purpose, for native apps' loopback
+    # callbacks (http://127.0.0.1, RFC 8252).
+    "oauth2_provider.W008",
+]
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "daisyui"
 CRISPY_TEMPLATE_PACK = "daisyui"

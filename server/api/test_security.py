@@ -159,7 +159,7 @@ class AuditLogApiPermissionTests(TestCase):
 
 
 class OAuthPasswordGrantTests(TestCase):
-    """django-axes wraps authenticate(); the OAuth password grant must keep working."""
+    """The password grant is disabled (RFC 9700), even for valid credentials."""
 
     def setUp(self):
         from oauth2_provider.models import Application
@@ -188,10 +188,10 @@ class OAuthPasswordGrantTests(TestCase):
             },
         )
 
-    def test_password_grant_issues_token(self):
+    def test_password_grant_is_rejected(self):
         response = self.request_token("the-right-password")
-        self.assertEqual(response.status_code, 200, response.content)
-        self.assertEqual(response.json()["scope"], "read")
+        self.assertEqual(response.status_code, 400, response.content)
+        self.assertNotIn("access_token", response.json())
 
     def test_wrong_password_is_rejected(self):
         response = self.request_token("wrong")
