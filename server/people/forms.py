@@ -12,9 +12,19 @@ def make_person_fields():
         fields.insert(1, "email")
     return fields
 class PersonForm(forms.ModelForm):
+    # Members' names and addresses must not end up in the browser's autofill,
+    # where they'd be suggested on other forms, e.g. the login page.
+    no_autocomplete_fields = ("name", "email", "slack_email")
+
     class Meta:
         model = Person
         fields = make_person_fields()
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for name in self.no_autocomplete_fields:
+            if name in self.fields:
+                self.fields[name].widget.attrs["autocomplete"] = "off"
 
 
 class InstructorFieldsMixin:

@@ -6,23 +6,23 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('people', '0025_qualification_instructed_by_set_null'),
+        ("people", "0025_qualification_instructed_by_set_null"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='person',
-            name='login_code_attempts',
+            model_name="person",
+            name="login_code_attempts",
             field=models.PositiveSmallIntegerField(default=0, editable=False),
         ),
         migrations.AddField(
-            model_name='person',
-            name='login_code_hash',
+            model_name="person",
+            name="login_code_hash",
             field=models.CharField(blank=True, editable=False, max_length=128, null=True),
         ),
         migrations.AddField(
-            model_name='person',
-            name='login_code_issued_at',
+            model_name="person",
+            name="login_code_issued_at",
             field=models.DateTimeField(blank=True, editable=False, null=True),
         ),
     ]

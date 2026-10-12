@@ -52,7 +52,7 @@
       <li>
         <form method="post" action="{% url "logout" %}">
           {% csrf_token %}
-          <button type="submit"><i data-lucide="log-out" class="w-4 h-4"></i> {% trans "Sign out" %}</button>
+          <button type="submit" class="flex items-center gap-2 w-full"><i data-lucide="log-out" class="w-4 h-4"></i> {% trans "Sign out" %}</button>
         </form>
       </li>
     </ul>

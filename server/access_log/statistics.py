@@ -102,12 +102,14 @@ def compute_access_breakdown(queryset, days):
     }
 
 
-def compute_unused_qualifications(timeframe_start, scope=Q(), by_machine=True):
+def compute_unused_qualifications(timeframe_start, scope=None, by_machine=True):
     """Active qualifications in `scope` held since before `timeframe_start` but not used since.
 
     With `by_machine` the unused ones are summarized per machine, otherwise
-    the qualifications themselves are listed.
+    the qualifications themselves are listed. Without a `scope`, all are counted.
     """
+    if scope is None:
+        scope = Q()
     held = Qualification.objects.filter(
         scope, expired__isnull=True, person__is_active=True, created__lt=timeframe_start
     ).exclude(machine__state=Machine.MachineStatus.INACTIVE)

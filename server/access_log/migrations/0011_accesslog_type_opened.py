@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('access_log', '0010_accesslog_timestamp_default'),
+        ("access_log", "0010_accesslog_timestamp_default"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='accesslog',
-            name='type',
-            field=models.CharField(choices=[('booted', 'Booted'), ('registered', 'Registered'), ('enabled', 'Enabled'), ('opened', 'Opened'), ('disabled', 'Disabled'), ('unsuccessful', 'Unsuccessful')], max_length=20, verbose_name='Type'),
+            model_name="accesslog",
+            name="type",
+            field=models.CharField(choices=[("booted", "Booted"), ("registered", "Registered"), ("enabled", "Enabled"), ("opened", "Opened"), ("disabled", "Disabled"), ("unsuccessful", "Unsuccessful")], max_length=20, verbose_name="Type"),
         ),
     ]

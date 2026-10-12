@@ -7,13 +7,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('access_log', '0009_accesslog_unsuccessful_reason_machine_blocked'),
+        ("access_log", "0009_accesslog_unsuccessful_reason_machine_blocked"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='accesslog',
-            name='timestamp',
-            field=models.DateTimeField(default=django.utils.timezone.now, editable=False, verbose_name='Timestamp'),
+            model_name="accesslog",
+            name="timestamp",
+            field=models.DateTimeField(default=django.utils.timezone.now, editable=False, verbose_name="Timestamp"),
         ),
     ]

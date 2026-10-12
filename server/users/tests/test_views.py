@@ -1,4 +1,5 @@
 import json
+import re
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group, Permission
@@ -325,3 +326,26 @@ class WidgetViewsTests(TestCase):
             reverse("users:widgets:reorder"), {"order": "not-json"}
         )
         self.assertEqual(response.status_code, 400)
+
+
+class UserFormAutocompleteTests(TestCase):
+    """Staff members' details must not be saved to the browser's autofill."""
+
+    def setUp(self):
+        self.admin = User.objects.create_superuser(email="admin@example.com", password="pass")
+        self.client.force_login(self.admin)
+
+    def assert_autocomplete_off(self, response):
+        content = response.content.decode()
+        for name in ("name", "email"):
+            tag = re.search(rf'<input[^>]*name="{name}"[^>]*>', content).group(0)
+            self.assertIn('autocomplete="off"', tag)
+
+    def test_create_form(self):
+        self.assert_autocomplete_off(self.client.get(reverse("users:create")))
+
+    def test_update_form(self):
+        other = User.objects.create_user(email="staff@example.com", password="pass")
+        self.assert_autocomplete_off(
+            self.client.get(reverse("users:update", kwargs={"pk": other.pk}))
+        )

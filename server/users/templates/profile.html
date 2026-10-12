@@ -1,14 +1,14 @@
-{% extends "base_slim.html" %}
+{% extends 'base_slim.html' %}
 {% load i18n %}
 {% load crispy_forms_tags %}
 
 {% block title %}
-{% trans "Settings" %}
+  {% trans 'Settings' %}
 {% endblock %}
 
 {% block content %}
-{% crispy form %}
+  {% crispy form %}
 
-<div class="divider"></div>
-<a href="{% url "users:change_password" %}" class="btn btn-primary">{% trans "Change Password" %}</a>
+  <div class="divider"></div>
+  <a href="{% url 'users:change_password' %}" class="btn btn-primary">{% trans 'Change Password' %}</a>
 {% endblock %}

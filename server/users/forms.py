@@ -61,9 +61,14 @@ class ProfileForm(forms.ModelForm):
         ]
 
 class UserForm(forms.ModelForm):
+    # Other staff members' names and addresses must not end up in the browser's
+    # autofill, where they'd be suggested on other forms, e.g. the login page.
+    no_autocomplete_fields = ("name", "email")
 
     def __init__(self, *args, requesting_user=None, **kwargs):
         super(UserForm, self).__init__(*args, **kwargs)
+        for name in self.no_autocomplete_fields:
+            self.fields[name].widget.attrs["autocomplete"] = "off"
         self.requesting_user = requesting_user
         if requesting_user is not None and not requesting_user.is_superuser:
             self.fields["is_superuser"].disabled = True
