@@ -63,7 +63,15 @@ def check_celery_version(app_configs, **kwargs):
     try:
         with app.connection_for_write() as connection:
             connection.ensure_connection(max_retries=1)
-        replies = app.control.inspect(timeout=CELERY_TIMEOUT).rfiding_version()
+        # A custom inspect command (rfiding/celery.py), so the client-side Inspect
+        # has no method for it. Each worker answers with {hostname: reply}.
+        replies = {
+            worker: reply
+            for answer in app.control.broadcast(
+                "rfiding_version", reply=True, timeout=CELERY_TIMEOUT
+            )
+            for worker, reply in answer.items()
+        }
     except Exception as e:
         return [
             Error(

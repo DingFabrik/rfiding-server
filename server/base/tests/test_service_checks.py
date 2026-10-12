@@ -80,8 +80,8 @@ class WebVersionCheckTests(SimpleTestCase):
 class CeleryVersionCheckTests(SimpleTestCase):
     def inspect(self, replies):
         return patch(
-            "rfiding.celery.app.control.inspect",
-            return_value=MagicMock(rfiding_version=MagicMock(return_value=replies)),
+            "rfiding.celery.app.control.broadcast",
+            return_value=[{worker: reply} for worker, reply in (replies or {}).items()],
         )
 
     @override_settings(CELERY_TASK_ALWAYS_EAGER=True)
@@ -90,8 +90,16 @@ class CeleryVersionCheckTests(SimpleTestCase):
         connection.assert_not_called()
 
     def test_up_to_date(self, connection, current):
-        with self.inspect({"celery@a": {"version": CURRENT}, "celery@b": {"version": CURRENT}}):
+        with self.inspect({"celery@a": {"version": CURRENT}, "celery@b": {"version": CURRENT}}) as broadcast:
             self.assertEqual(checks.check_celery_version(None), [])
+        self.assertEqual(broadcast.call_args.args, ("rfiding_version",))
+
+    def test_workers_have_the_command(self, connection, current):
+        from celery.worker.control import Panel
+
+        import rfiding.celery  # noqa: F401  registers the command
+
+        self.assertIn("rfiding_version", Panel.data)
 
     def test_outdated_workers(self, connection, current):
         replies = {
