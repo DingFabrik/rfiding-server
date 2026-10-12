@@ -68,6 +68,10 @@ CHANNEL_LAYERS = {
     },
 }
 
+# Silk (see base_settings.py) records only this percentage of requests, to keep
+# the extra database writes low. Raise it temporarily to investigate something.
+SILKY_INTERCEPT_PERCENT = 10
+
 ENABLE_CLIENT_API = False
 # Set to False if your machines' firmware doesn't implement the server
 # verification of the ESPHome native API (see the client docs).

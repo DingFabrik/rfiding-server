@@ -2,6 +2,8 @@ import sys
 from pathlib import Path
 import toml
 
+from base.silk import should_record
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -48,6 +50,7 @@ INSTALLED_APPS = [
     "django_celery_results",
     "django_celery_beat",
     "auditlog",
+    "silk",
     "axes",
     "access_log",
     "base",
@@ -65,6 +68,8 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    # Early, so the requests' time and queries include the other middleware.
+    "silk.middleware.SilkyMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -328,5 +333,34 @@ LOGGING = {
 if "test" in sys.argv:
     LOGGING["handlers"]["null"] = {"class": "logging.NullHandler"}
     LOGGING["root"] = {"handlers": ["null"]}
+
+# Silk records requests with their SQL queries, viewable at /silk/.
+SILKY_AUTHENTICATION = True
+SILKY_AUTHORISATION = True
+# Only superusers: recorded SQL includes its parameters, e.g. session keys,
+# OAuth tokens and self-service keys.
+SILKY_PERMISSIONS = lambda user: user.is_superuser  # noqa: E731
+# Masked in recorded request bodies, in addition to Silk's defaults (password,
+# token, key, ...). "code" is the self-service login code. Headers are only
+# masked on an exact name match, so the secret headers are listed by name.
+# Silk always masks Authorization and Cookie.
+SILKY_SENSITIVE_KEYS = {
+    "username", "api", "token", "key", "secret", "password", "signature", "code",
+    "api-key", "x-health-token", "x-csrftoken",
+}
+SILKY_MAX_REQUEST_BODY_SIZE = 1024
+SILKY_MAX_RESPONSE_BODY_SIZE = 1024
+# Keep the newest 10,000 requests; older ones are cleaned up on 10% of requests.
+SILKY_MAX_RECORDED_REQUESTS = 10**4
+SILKY_MAX_RECORDED_REQUESTS_CHECK_PERCENT = 10
+# Also record how long Silk itself takes to save each request.
+SILKY_META = True
+# Record every request; settings.prod.py only records a sample.
+SILKY_INTERCEPT_PERCENT = 100
+# Applies SILKY_INTERCEPT_PERCENT and skips the OAuth endpoints.
+SILKY_INTERCEPT_FUNC = should_record
+if "test" in sys.argv:
+    # Tests don't need recordings, and Silk's writes would slow them down.
+    SILKY_INTERCEPT_PERCENT = 0
 
 CELERY_BROKER_URL = "redis://localhost:6379/0"

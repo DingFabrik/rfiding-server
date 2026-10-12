@@ -94,6 +94,7 @@ urlpatterns = [
     path("statistics/", StatisticsView.as_view(), name="statistics"),
     path("about/", AboutView.as_view(), name="about"),
     path("auditlog/", AuditlogView.as_view(), name="auditlog"),
+    path("silk/", include("silk.urls", namespace="silk")),
 ]
 
 if settings.DEBUG and "debug_toolbar" in settings.INSTALLED_APPS:

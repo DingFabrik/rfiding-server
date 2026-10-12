@@ -1463,6 +1463,26 @@ docs = ["myst-parser", "sphinx (==7.2.6)", "sphinx-rtd-theme (==2.0.0)"]
 test = ["coverage", "django-ninja", "djangorestframework", "pytest", "pytest-cov", "pytest-django", "pytest-mock", "pytest-xdist"]
 
 [[package]]
+name = "django-silk"
+version = "5.6.0"
+description = "Silky smooth profiling for the Django Framework"
+optional = false
+python-versions = ">=3.10"
+groups = ["main"]
+files = [
+    {file = "django_silk-5.6.0-py3-none-any.whl", hash = "sha256:761300bde25b8ce3c381dc0710e82c792c099c0ee6558fad3165dc560a06dd48"},
+    {file = "django_silk-5.6.0.tar.gz", hash = "sha256:bb741fb8af45eba663e8ed832207d16ecd731496313311f6dfae5fe776bed38e"},
+]
+
+[package.dependencies]
+Django = ">=5.2"
+gprof2dot = ">=2017.9.19"
+sqlparse = "*"
+
+[package.extras]
+formatting = ["autopep8"]
+
+[[package]]
 name = "django-timezone-field"
 version = "7.2.2"
 description = "A Django app providing DB, form, and REST framework fields for zoneinfo and pytz timezone objects."
@@ -1598,6 +1618,18 @@ beautifulsoup4 = "*"
 pygments = ">=2.7"
 sphinx = ">=7.0,<10.0"
 sphinx-basic-ng = ">=1.0.0b2"
+
+[[package]]
+name = "gprof2dot"
+version = "2025.4.14"
+description = "Generate a dot graph from the output of several profilers."
+optional = false
+python-versions = ">=3.8"
+groups = ["main"]
+files = [
+    {file = "gprof2dot-2025.4.14-py3-none-any.whl", hash = "sha256:0742e4c0b4409a5e8777e739388a11e1ed3750be86895655312ea7c20bd0090e"},
+    {file = "gprof2dot-2025.4.14.tar.gz", hash = "sha256:35743e2d2ca027bf48fa7cba37021aaf4a27beeae1ae8e05a50b55f1f921a6ce"},
+]
 
 [[package]]
 name = "hyperlink"
@@ -3107,4 +3139,4 @@ testing = ["coverage[toml]", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.13"
-content-hash = "023375068487672e61d36496c7cb475cb50099a331c35e6f4aaa6a288fd9488b"
+content-hash = "eb52946d7eaa1b77ac72ede7fd89c2dd968a93c51bf2ab36f129e70e450949a3"
