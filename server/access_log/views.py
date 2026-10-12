@@ -3,6 +3,7 @@ from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.db.models.query import QuerySet
 from django.views.generic import DetailView, ListView, TemplateView
 from django.utils.translation import gettext_lazy as _
+from silk.profiling.profiler import silk_profile
 
 from base.views import PartialListMixin, PartialMixin, ResultCountMixin, TitleMixin
 from .models import AccessLog
@@ -25,6 +26,10 @@ class AccessLogListView(
     context_object_name = "access_logs"
     ordering = ["-timestamp"]
     filterset_class = AccessLogFilterSet
+    
+    @silk_profile()
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
 
     def get_filterset(self, queryset):
         return self.filterset_class(self.request.GET, queryset, request=self.request)
