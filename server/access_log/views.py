@@ -27,7 +27,7 @@ class AccessLogListView(
     ordering = ["-timestamp"]
     filterset_class = AccessLogFilterSet
     
-    @silk_profile()
+    @silk_profile("Accesslog list")
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
 
@@ -164,7 +164,7 @@ class StatisticsMixin:
 
     statistics_scope = "global"
     
-    @silk_profile()
+    @silk_profile("StatisticsMixin")
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
 
