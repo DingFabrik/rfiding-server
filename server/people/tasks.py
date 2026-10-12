@@ -24,7 +24,7 @@ def expire_qualifications():
         .order_by()
         .iterator(chunk_size=EXPIRE_BATCH_SIZE)
     )
-    for batch in batched(qualifications, EXPIRE_BATCH_SIZE):
+    for batch in batched(qualifications, EXPIRE_BATCH_SIZE, strict=False):
         # One commit per batch rather than per row, without locking every
         # updated row until the end - access checks update these rows too.
         with transaction.atomic():

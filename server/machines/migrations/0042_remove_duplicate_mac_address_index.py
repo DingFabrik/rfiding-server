@@ -6,12 +6,12 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('machines', '0041_alter_machine_encryption_key'),
+        ("machines", "0041_alter_machine_encryption_key"),
     ]
 
     operations = [
         migrations.RemoveIndex(
-            model_name='machine',
-            name='machines_ma_mac_add_9ca8e5_idx',
+            model_name="machine",
+            name="machines_ma_mac_add_9ca8e5_idx",
         ),
     ]

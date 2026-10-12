@@ -6,12 +6,12 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('space', '0003_alter_spacestate_options_alter_spacestate_created_and_more'),
+        ("space", "0003_alter_spacestate_options_alter_spacestate_created_and_more"),
     ]
 
     operations = [
         migrations.AddIndex(
-            model_name='spacestate',
-            index=models.Index(fields=['-created'], name='spacestate_created_idx'),
+            model_name="spacestate",
+            index=models.Index(fields=["-created"], name="spacestate_created_idx"),
         ),
     ]

@@ -6,12 +6,12 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('tokens', '0016_alter_blacklistedtoken_created_and_more'),
+        ("tokens", "0016_alter_blacklistedtoken_created_and_more"),
     ]
 
     operations = [
         migrations.RemoveIndex(
-            model_name='token',
-            name='tokens_toke_serial_ec627d_idx',
+            model_name="token",
+            name="tokens_toke_serial_ec627d_idx",
         ),
     ]

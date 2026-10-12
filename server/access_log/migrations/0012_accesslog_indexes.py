@@ -6,22 +6,22 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('access_log', '0011_accesslog_type_opened'),
-        ('machines', '0041_alter_machine_encryption_key'),
-        ('tokens', '0016_alter_blacklistedtoken_created_and_more'),
+        ("access_log", "0011_accesslog_type_opened"),
+        ("machines", "0041_alter_machine_encryption_key"),
+        ("tokens", "0016_alter_blacklistedtoken_created_and_more"),
     ]
 
     operations = [
         migrations.AddIndex(
-            model_name='accesslog',
-            index=models.Index(fields=['-timestamp'], name='accesslog_timestamp_idx'),
+            model_name="accesslog",
+            index=models.Index(fields=["-timestamp"], name="accesslog_timestamp_idx"),
         ),
         migrations.AddIndex(
-            model_name='accesslog',
-            index=models.Index(fields=['machine', 'type', '-timestamp'], name='accesslog_machine_type_ts_idx'),
+            model_name="accesslog",
+            index=models.Index(fields=["machine", "type", "-timestamp"], name="accesslog_machine_type_ts_idx"),
         ),
         migrations.AddIndex(
-            model_name='accesslog',
-            index=models.Index(fields=['token', '-timestamp'], name='accesslog_token_ts_idx'),
+            model_name="accesslog",
+            index=models.Index(fields=["token", "-timestamp"], name="accesslog_token_ts_idx"),
         ),
     ]
